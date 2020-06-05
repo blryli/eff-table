@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     tableClass() {
-      let tClass = 'v-table'
+      let tClass = 'eff-table'
       this.bodyOverflowX && (tClass += ' is-overflow-x')
       this.bodyOverflowY && (tClass += ' is-overflow-y')
       this.border && (tClass += ' is-border')
@@ -58,7 +58,7 @@ export default {
     },
     bodyHeightChange() {
       this.$nextTick(() => {
-        const body = this.$el.querySelector('.v-table__body-wrapper')
+        const body = this.$el.querySelector('.eff-table__body-wrapper')
         if (!body) return
         const { scrollHeight, clientHeight } = body
         this.bodyOverflowY = scrollHeight > clientHeight

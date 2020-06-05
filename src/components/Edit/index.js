@@ -65,7 +65,7 @@ export default {
     this.$nextTick(() => {
       this.table.$on('cell-click', this.handleEditCell)
 
-      this.wrapper = this.table.$el.querySelector('.v-table__body-wrapper')
+      this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
       on(this.wrapper, 'scroll', debounce(this.wrapperScroll, 50))
     })
   },
@@ -185,7 +185,7 @@ export default {
       this.column = this.columns[cellIndex]
       this.cell = cell
       this.cellIndex = cellIndex
-      this.rowIndex = [...this.table.$el.querySelector('.v-table__body').childNodes].findIndex(d => d.contains(cell))
+      this.rowIndex = [...this.table.$el.querySelector('.eff-table__body').childNodes].findIndex(d => d.contains(cell))
       this.show = true
       // 处理 skip 字段
       if (this.handleType === 'to' && this.skip()) return
@@ -208,7 +208,7 @@ export default {
       const { leftWidth, rightWidth } = this.table
       const overflow = isOverflow(cell, wrapper, { leftWidth, rightWidth })
       const { width: wrapperWidth, height: wrapperHeight } = wrapper.getBoundingClientRect()
-      !this.oldCell && (this.oldCell = wrapper.querySelector('.v-table__body-row').childNodes[0])
+      !this.oldCell && (this.oldCell = wrapper.querySelector('.eff-table__body-row').childNodes[0])
       const keys = []
       for (const key in overflow) {
         if (overflow[key]) {

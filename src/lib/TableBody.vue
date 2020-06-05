@@ -1,8 +1,8 @@
 <template>
-  <div class="v-table__body-wrapper" :style="style">
-    <div class="v-table__body--x-space" />
-    <div class="v-table__body--y-space" :style="{height:totalHeight + 'px'}" />
-    <div v-if="data.length" class="v-table__body" :style="{ marginTop }">
+  <div class="eff-table__body-wrapper" :style="style">
+    <div class="eff-table__body--x-space" />
+    <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
+    <div v-if="data.length" class="eff-table__body" :style="{ marginTop }">
       <TableBodyRow v-for="(item, index) in renderData" :key="index + currentIndex" :item="item" :index="index + currentIndex" />
     </div>
     <div v-else class="empty-text" :style="{height: table.rowHeight + 'px'}">没有数据</div>
@@ -126,7 +126,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-table__body-wrapper{
+.eff-table__body-wrapper{
   overflow: auto;
 }
 .v-scroller {

@@ -3,7 +3,7 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
-        <v-table
+        <eff-table
           ref="table"
           v-model="columns"
           fullscreen
@@ -14,7 +14,7 @@
           <template slot="toolbar">
             <button @click="() => $refs.table.validate(val => val)">校验</button>
           </template>
-        </v-table>
+        </eff-table>
       </div>
     </section>
 

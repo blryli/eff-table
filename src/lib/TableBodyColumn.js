@@ -37,7 +37,7 @@ export default {
       return columnWidth
     },
     columnClass() {
-      let classes = `v-table__column`
+      let classes = `eff-table__column`
       this.column.fixed && this.table.bodyOverflowX && (classes += ' is--fixed')
       this.column.className && (classes += ` ${this.column.className}`)
       return classes

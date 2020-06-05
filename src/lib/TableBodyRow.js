@@ -12,7 +12,7 @@ export default {
   render(h) {
     return (
       <div
-        class={`v-table__body-row${this.table.currentRow === this.index ? ' current-row' : ''}`}
+        class={`eff-table__body-row${this.table.currentRow === this.index ? ' current-row' : ''}`}
         style={this.table.rowStyle}
         data-rowid={this.index + 1}
         on-click={event => this.handleClick(event)}
@@ -31,7 +31,7 @@ export default {
           })
         }
         {
-          <div class='v-table__column is--space' hidden={this.table.minWidth > this.table.bodyWidth} />
+          <div class='eff-table__column is--space' hidden={this.table.minWidth > this.table.bodyWidth} />
         }
       </div>
     )

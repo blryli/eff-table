@@ -6,7 +6,7 @@
 #### 使用
 
 ```html
-  <v-table
+  <eff-table
     ref="table"
     edit
     v-model="columns"

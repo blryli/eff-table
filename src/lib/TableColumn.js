@@ -1,5 +1,5 @@
 export default {
-  name: 'VTableColumn',
+  name: 'EffTableColumn',
   props: {
     type: { type: String, default: '' },
     width: { type: Number, default: 0 },

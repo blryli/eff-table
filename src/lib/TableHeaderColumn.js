@@ -1,7 +1,7 @@
 import VCheckbox from '../components/Checkbox'
 
 export default {
-  name: 'VTableHeaderColumn',
+  name: 'EffTableHeaderColumn',
   props: {
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 }
@@ -16,7 +16,7 @@ export default {
       return columnWidth
     },
     columnClass() {
-      let classes = `v-table__column`
+      let classes = `eff-table__column`
       if (this.column.fixed) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX) classes += ' is--fixed'

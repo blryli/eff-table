@@ -3,7 +3,7 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
-        <v-table
+        <eff-table
           ref="table"
           v-model="columns"
           drag
@@ -116,7 +116,7 @@ export default {
 </script>
 
 <style lang="scss">
-.v-table .cell .el-radio__label{
+.eff-table .cell .el-radio__label{
   display: none;
 }
 .table-toobar__left{

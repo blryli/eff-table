@@ -9,9 +9,9 @@
       <!-- body -->
       <TableBody ref="TableBody" :data="data" />
       <!-- 左侧 fixed 投影 -->
-      <div v-show="bodyOverflowX && bodyScrollLeft && leftWidth" class="v-table__shadow-left" :style="{left: `${leftWidth - 2}px`}" />
+      <div v-show="bodyOverflowX && bodyScrollLeft && leftWidth" class="eff-table__shadow-left" :style="{left: `${leftWidth - 2}px`}" />
       <!-- 右侧 fixed 投影 -->
-      <div v-show="bodyOverflowX && rightWidth && !isScrollRightEnd" class="v-table__shadow-right" :style="{right: `${rightWidth + scrollYwidth}px`}" />
+      <div v-show="bodyOverflowX && rightWidth && !isScrollRightEnd" class="eff-table__shadow-right" :style="{right: `${rightWidth + scrollYwidth}px`}" />
     </div>
     <drag
       v-if="border && drag"
@@ -31,7 +31,7 @@
     />
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :content="popoverSlot" />
-    <div v-show="lineShow" ref="line" class="v-table-line" />
+    <div v-show="lineShow" ref="line" class="eff-table-line" />
     <p>spaceWidth {{ spaceWidth }}</p>
     <p>minWidth {{ minWidth }}</p>
     <p>bodyWidth {{ bodyWidth }}</p>
@@ -53,7 +53,7 @@ import Toolbar from '../components/Toolbar'
 import Edit from '../components/Edit'
 
 export default {
-  name: 'VTable',
+  name: 'EffTable',
   components: {
     TableHeader,
     TableBody,
@@ -158,7 +158,7 @@ export default {
 <style lang="scss">
 @import '../components/Edit/index.scss';
 
-.v-table {
+.eff-table {
   font-size: 14px;
   position: relative;
   color: #606266;
@@ -172,22 +172,22 @@ export default {
   text-align: center;
   color: #666;
 }
-.v-table__shadow-left, .v-table__shadow-right{
+.eff-table__shadow-left, .eff-table__shadow-right{
   position: absolute;
   top: 0;
   bottom: 17px;
   width: 1px;
 }
-.v-table__shadow-left{
+.eff-table__shadow-left{
   box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.5);
 }
-.v-table__shadow-right{
+.eff-table__shadow-right{
   box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.5);
 }
 </style>
 
 <style lang="scss">
-.v-table {
+.eff-table {
   .v-cell{
     box-sizing: border-box;
     overflow: hidden;
@@ -203,35 +203,35 @@ export default {
 }
 
 /** header */
-.v-table__header-wrapper {
+.eff-table__header-wrapper {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid #ddd;
   background-color: #f6f7f8;
   box-sizing: border-box;
 }
-.v-table__header-wrapper{
+.eff-table__header-wrapper{
   &::-webkit-scrollbar {
     border-left: 1px solid #ddd;
   }
 }
-.is-overflow-y .v-table__header-wrapper{
+.is-overflow-y .eff-table__header-wrapper{
   overflow-y: scroll;
 }
-.v-table__header, .v-table__body-row {
+.eff-table__header, .eff-table__body-row {
   position: relative;
   width: 100%;
   display: flex;
   align-items: stretch;
   box-sizing: border-box;
 }
-.v-table__column{
+.eff-table__column{
   display: flex;
   align-items: center;
   box-sizing: border-box;
 }
-.v-table__header{
-  .v-table__column{
+.eff-table__header{
+  .eff-table__column{
     color: #666;
     font-weight: bold;
     user-select: none;
@@ -266,7 +266,7 @@ export default {
   }
 }
 
-.v-table__body{
+.eff-table__body{
   &--x-space{
     width: 100%;
     height: 1px;
@@ -277,21 +277,21 @@ export default {
     float: left;
   }
 }
-.v-table__body-row{
-  .v-table__column{
+.eff-table__body-row{
+  .eff-table__column{
     background-color: #fff;
     border-bottom: 1px solid #ddd;
   }
-  &.current-row .v-table__column {
+  &.current-row .eff-table__column {
     background-color: #e8f4ff;
   }
-  &:hover .v-table__column{
+  &:hover .eff-table__column{
     background-color: #f1f3f5;
   }
 }
 
-.is-border .v-table__header .v-table__column + .v-table__column,
-.is-border .v-table__body-row .v-table__column + .v-table__column{
+.is-border .eff-table__header .eff-table__column + .eff-table__column,
+.is-border .eff-table__body-row .eff-table__column + .eff-table__column{
   border-left: 1px solid #ddd;
 }
 .is--fixed {
@@ -300,7 +300,7 @@ export default {
   bottom: 0;
 }
 
-.v-table-line{
+.eff-table-line{
   position: fixed;
   left: 50px;
   top: 0;

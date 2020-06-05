@@ -1,9 +1,9 @@
-import VTableHeaderColumn from './TableHeaderColumn'
+import EffTableHeaderColumn from './TableHeaderColumn'
 import { on, off, hasClass, onMousemove } from 'utils/dom'
 
 export default {
-  name: 'VTableHeader',
-  components: { VTableHeaderColumn },
+  name: 'EffTableHeader',
+  components: { EffTableHeaderColumn },
   data() {
     return {
       dragingTarget: null,
@@ -29,9 +29,9 @@ export default {
   },
   render(h) {
     return (
-      <div class='v-table__header-wrapper'>
+      <div class='eff-table__header-wrapper'>
         <div
-          class={{ 'v-table__header': true, 'is--move': this.isDraging }}
+          class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
           style={this.$parent.rowStyle}
           on-click={this.handleClick}
@@ -40,14 +40,14 @@ export default {
         >
           {
             this.$parent.columns.reduce((acc, column, columnIndex) => {
-              return column.show !== false ? acc.concat(<VTableHeaderColumn
+              return column.show !== false ? acc.concat(<EffTableHeaderColumn
                 column={column}
                 columnIndex={columnIndex}
               />) : acc
             }, [])
           }
           {
-            this.$parent.minWidth <= this.$parent.bodyWidth ? <div class='v-table__column is--space' /> : null
+            this.$parent.minWidth <= this.$parent.bodyWidth ? <div class='eff-table__column is--space' /> : null
           }
           {
             <div
@@ -71,7 +71,7 @@ export default {
     handleMousemove(e) {
       if (!this.$parent.border) return
       let target = e.target
-      while (target && !hasClass(target, 'v-table__column')) {
+      while (target && !hasClass(target, 'eff-table__column')) {
         target = target.parentNode
       }
       if (!target) return

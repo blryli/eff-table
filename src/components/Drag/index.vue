@@ -56,7 +56,7 @@ export default {
 
     this.$nextTick(() => {
       this.sortable = new Sortable({
-        el: this.$parent.$el.querySelector('.v-table__header'),
+        el: this.$parent.$el.querySelector('.eff-table__header'),
         group: 'table',
         filter: 'is-drag--filter',
         dragImage: {
@@ -114,7 +114,7 @@ export default {
       this.dradingTarget = null
     },
     isHeadNode(target) {
-      return hasClass(target, 'v-table__header')
+      return hasClass(target, 'eff-table__header')
     },
     handleDragenter({ from, to, fromEl, toEl, willInsertAfter }) {
       // console.log({ from, to, fromEl, toEl, willInsertAfter })

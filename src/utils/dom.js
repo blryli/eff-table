@@ -154,7 +154,7 @@ export const getCell = (event) => {
   let cell = event.target
 
   while (cell && cell.tagName.toUpperCase() !== 'HTML') {
-    if (hasClass(cell, 'v-table__column')) {
+    if (hasClass(cell, 'eff-table__column')) {
       return cell
     }
     cell = cell.parentNode
