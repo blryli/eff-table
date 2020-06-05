@@ -1,0 +1,16 @@
+stages:
+  - deploy
+publish:
+  image: 'node:10.10.0-jessie'
+  stage: deploy
+  cache:
+    key: eff-table
+    paths:
+      - node_modules/
+  script:
+    - npm install
+    - npm run build
+    - 'echo export default $CI_PIPELINE_ID > version.js'
+    - npm publish --registry=http://192.168.88.9:8081/repository/npmlocal/
+  tags:
+    - docker 

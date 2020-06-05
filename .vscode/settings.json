@@ -1,0 +1,45 @@
+{
+  "editor.tabSize": 2,
+  "files.associations": {
+      "*.vue": "vue"
+  },
+  "eslint.options": {
+      "extensions": [
+          ".js",
+          ".vue"
+      ]
+  },
+  "search.exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/dist": true
+  },
+  "emmet.syntaxProfiles": {
+      "javascript": "js",
+      "vue": "html",
+      "vue-html": "html"
+  },
+  "git.confirmSync": false,
+  "window.zoomLevel": -1,
+  "editor.renderWhitespace": "boundary",
+  "editor.cursorBlinking": "smooth",
+  "editor.minimap.enabled": true,
+  "editor.minimap.renderCharacters": false,
+  "editor.fontFamily": "'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+  "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}",
+  "editor.codeLens": true,
+    "editor.snippetSuggestions": "top",
+    "editor.renderIndentGuides": false,
+    "git.enableSmartCommit": true,
+    "editor.wordWrap": "on",
+    "workbench.activityBar.visible": true,
+    "workbench.sideBar.location": "left",
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "explorer.confirmDelete": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}
