@@ -32,11 +32,6 @@
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :content="popoverSlot" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
-    <p>spaceWidth {{ spaceWidth }}</p>
-    <p>minWidth {{ minWidth }}</p>
-    <p>bodyWidth {{ bodyWidth }}</p>
-    <p>bodyOverflowX {{ bodyOverflowX }}</p>
-    <p>bodyOverflowY {{ bodyOverflowY }}</p>
   </div>
 </template>
 
