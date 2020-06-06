@@ -43,7 +43,6 @@ export default {
       }
     },
     renderData() {
-      console.log({ currentIndex: this.currentIndex })
       return this.data.slice(this.currentIndex, this.pageSize + this.currentIndex)
     },
     pageSize() {

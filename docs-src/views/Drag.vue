@@ -8,6 +8,7 @@
           v-model="columns"
           drag
           edit
+          :edit-stop="editStop"
           column-control
           fullscreen
           border
@@ -57,6 +58,24 @@ export default {
       mainSnippet,
       componentSnippet,
       data: [],
+      options: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
+      value: '',
+      editStop: false,
       columns: [
         {
           show: true,
@@ -69,17 +88,28 @@ export default {
           show: true,
           prop: 'message',
           label: '消息',
-          width: 100,
-          edit: {
-            render: (h, { rowIndex }) => {
-              return h('el-input', {
-                attrs: { value: this.data[rowIndex].message },
-                on: {
-                  input: val => (this.data[rowIndex].message = val)
-                }
-              })
-            }
-          }
+          width: 100
+          // edit: {
+          //   render: (h, { rowIndex }) => {
+          //     return <el-select
+          //       value={this.value}
+          //       placeholder='请选择'
+          //       automatic-dropdown
+          //       on-visible-change={val => (this.editStop = val)}
+          //       on-input={val => (this.value = val)}
+          //     >
+          //       {
+          //         this.options.map(item => {
+          //           return <el-option
+          //             key={item.value}
+          //             label={item.label}
+          //             value={item.value}>
+          //           </el-option>
+          //         })
+          //       }
+          //     </el-select>
+          //   }
+          // }
         },
         {
           show: true,

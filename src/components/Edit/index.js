@@ -14,7 +14,6 @@ export default {
       cell: null,
       oldCell: null,
       wrapper: null,
-      suggestionVisible: false,
       placement: '',
       component: null,
       handleType: null,
@@ -42,15 +41,6 @@ export default {
         this.column = null
         this.cell = null
         this.$emit('editClose')
-      }
-    },
-    component(val) {
-      this.unwatch && this.unwatch()
-      if (val) {
-        // 下拉选项打开时暂停处理
-        this.unwatch = val.$watch('suggestionVisible', val => {
-          this.suggestionVisible = val
-        })
       }
     },
     cell(val, oldVal) {
@@ -84,7 +74,7 @@ export default {
       this.table.validateCell(this.rowIndex, field || prop, rule)
     },
     handleWindowKeyup(e) {
-      if (!this.show || this.suggestionVisible || !this.inTable(e.target)) return
+      if (!this.show || this.table.editStop || !this.inTable(e.target)) return
       const keysStr = getKeysStr(e)
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
 
@@ -279,7 +269,7 @@ export default {
       this.$el.style.height = `${height}px`
     },
     handleWindowMousedown(e) {
-      if (!this.show || this.$el.contains(e.target) || this.suggestionVisible) return
+      if (!this.show || this.$el.contains(e.target) || this.table.editStop) return
       this.show = false
     },
     close() {

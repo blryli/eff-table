@@ -70,6 +70,7 @@ export default {
     border: Boolean,
     drag: Boolean,
     edit: Boolean,
+    editStop: Boolean,
     columnControl: Boolean,
     fullscreen: Boolean,
     rowHeight: { type: Number, default: 36 },

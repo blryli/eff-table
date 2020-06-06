@@ -11,7 +11,6 @@ export default {
   inject: ['table'],
   render(h) {
     const { currentRow, rowStyle, columns, showSpace } = this.table
-    console.log(showSpace)
     return (
       <div
         class={`eff-table__body-row${currentRow === this.index ? ' current-row' : ''}`}

@@ -16,8 +16,8 @@ export default {
     }
   },
   render(h) {
-    const rowRender = this.rowRender(h)
-    const slot = rowRender || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.renderIndex() : this.column.prop ? this.item[this.column.prop] : '')
+    const render = this.render(h)
+    const slot = render || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.index + 1 : this.column.prop ? this.item[this.column.prop] : '')
     return (
       <div
         class={this.columnClass}
@@ -79,11 +79,8 @@ export default {
       this.table.$emit('cell.mouse.leave', item, column, cell, event, slot)
       this.table.show = false
     },
-    renderIndex() {
-      return this.index + 1
-    },
-    rowRender(h) {
-      return this.column.rowRender && this.column.rowRender(h, { row: this.item, $index: this.index })
+    render(h) {
+      return this.column.render && this.column.render(h, { row: this.item, $index: this.index })
     },
     selectionRowChange(selected) {
       this.table.$emit('row.selection.change', this.index, selected)
