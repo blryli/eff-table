@@ -125,7 +125,6 @@ export default {
       this.$refs.TableBody.forceUpdate()
     },
     handleDragend(column, width) {
-      console.log({ column, width })
       const { columns } = this
       const index = columns.findIndex(d => {
         const { label = '', type = '', prop = '' } = column
@@ -159,7 +158,6 @@ export default {
 
 <style lang="scss">
 @import '../components/Edit/index.scss';
-
 .eff-table {
   font-size: 14px;
   position: relative;

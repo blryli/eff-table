@@ -121,6 +121,9 @@ export default {
           show: true,
           prop: 'email',
           label: '邮箱'
+          // edit: {
+          //   skip: true
+          // }
         },
         {
           show: true,

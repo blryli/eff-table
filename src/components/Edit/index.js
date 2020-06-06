@@ -118,11 +118,27 @@ export default {
     },
     toX() {
       const { placement } = this
-      const cell = getTableNode(this.cell, placement)
-      const cellIndex = placement === 'right' ? this.cellIndex + 1 : this.cellIndex - 1
-      const column = this.columns[cellIndex]
-      if (this.canFocus(column, cell, cellIndex)) {
-        this.editCell(column, cell, cellIndex)
+      let cellIndex = 0
+      let columns = []
+      let column = {}
+      const filterColumns = columns => columns.filter(d => {
+        const { prop, fixed } = d
+        return prop && !fixed && !this.skip(d)
+      })
+      if (placement === 'right') {
+        cellIndex = this.cellIndex + 1
+        columns = filterColumns(this.columns.slice(cellIndex, this.columns.length - 1))
+        column = columns[0] || false
+      } else {
+        cellIndex = this.cellIndex
+        columns = filterColumns(this.columns.slice(0, cellIndex))
+        console.log(JSON.stringify(columns, null, 2))
+        column = columns[columns.length - 1] || false
+      }
+      const { cell } = this.getColumn(column.prop)
+
+      if (column && this.canFocus(column, cell)) {
+        this.editCell(column, cell)
       } else {
         shake(this.$el, 'x')
         this.$emit('columnLast', placement)
@@ -132,8 +148,7 @@ export default {
       const { placement, column } = this
       const cell = getTableNode(this.cell, placement)
       if (cell) {
-        const { prop } = column || {}
-        this.editCell(column, cell, this.getCellIndex(prop))
+        this.editCell(column, cell)
       } else {
         shake(this.$el, 'y')
         this.$emit('rowLast', placement)
@@ -151,34 +166,34 @@ export default {
       }
       return stop || false
     },
-    skip() {
-      const { edit: { skip } = {}} = this.column || {}
+    skip(column) {
+      const { edit: { skip } = {}} = column || {}
       if (skip === undefined) return false
 
       if (typeof skip === 'function') {
-        return skip(this.rowIndex) && this.to()
+        return skip(this.rowIndex)
       }
       if (typeof skip !== 'boolean') {
         console.error(`${this.column.prop} 字段，skip类型必须是 function/boolean`)
       }
-      return skip && this.to()
+      return skip
     },
 
     handleEditCell(row, column, cell) {
       this.handleType = 'click'
       const { prop } = column
-      prop && this.editCell(this.columns.find(d => d.prop === prop), cell, this.getCellIndex(prop))
+      prop && this.editCell(this.columns.find(d => d.prop === prop), cell)
     },
-    editCell(column, cell, cellIndex) {
+    editCell(column, cell) {
+      const { prop } = column || {}
+      const cellIndex = this.getCellIndex(prop)
       // console.log({ column, cell, cellIndex })
       if (cellIndex === -1 || !this.canFocus(column, cell)) return
-      this.column = this.columns[cellIndex]
+      this.column = column
       this.cell = cell
       this.cellIndex = cellIndex
       this.rowIndex = [...this.table.$el.querySelector('.eff-table__body').childNodes].findIndex(d => d.contains(cell))
       this.show = true
-      // 处理 skip 字段
-      if (this.handleType === 'to' && this.skip()) return
 
       this.$nextTick(() => {
         const overflows = this.fixOverflow() // 处理溢出
@@ -188,9 +203,11 @@ export default {
             unWatchScroll && unWatchScroll()
           })
         }
-        this.setElPos() // 设置编辑框位置
+        setTimeout(() => {
+          this.setElPos() // 设置编辑框位置
 
-        this.handleFocus() // 处理聚焦
+          this.handleFocus() // 处理聚焦
+        }, 0)
       })
     },
     fixOverflow() {
@@ -276,11 +293,15 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop) {
-      const cellIndex = this.getCellIndex(prop)
-      const cell = this.table.tableBody.childNodes[rowIndex].childNodes[cellIndex]
-      const column = this.columns[cellIndex]
+      const { column, cell, cellIndex } = this.getColumn(prop, rowIndex)
       this.handleType = 'to'
       this.editCell(column, cell, cellIndex)
+    },
+    getColumn(prop, rowIndex = this.rowIndex) {
+      const cellIndex = this.getCellIndex(prop)
+      const cell = this.table.$el.querySelector('.eff-table__body').childNodes[rowIndex].childNodes[cellIndex]
+      const column = this.columns[cellIndex]
+      return { column, cell, cellIndex }
     },
     getCellIndex(prop) {
       const index = this.columns.findIndex(d => d.prop && d.prop === prop)
@@ -291,9 +312,9 @@ export default {
     }
   },
   render(h) {
-    const classes = `table-edit${this.show ? ' is-show' : ' is-hide'}`
+    const classes = `eff-table-edit${this.show ? ' is-show' : ' is-hide'}`
     const style = { '--height': this.table.rowHeight - 2 + 'px' }
-    const input = this.$createElement('input', { attrs: { class: 'editInput' }, ref: 'editInput' })
+    const input = this.$createElement('input', { class: 'eff-table-edit-input', ref: 'editInput' })
     return h('div', { class: classes, style }, [this.editRender, input])
   }
 }
