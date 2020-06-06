@@ -19,6 +19,10 @@ export default {
     spaceWidth() {
       const spaceNode = this.columns.filter(d => !d.width).length
       return spaceNode ? (this.bodyWidth - this.minWidth - (this.bodyOverflowY ? 20 : 0)) / spaceNode : 0
+    },
+    showSpace() {
+      const { minWidth, bodyWidth, spaceWidth } = this
+      return minWidth + spaceWidth < bodyWidth - 20
     }
   },
   watch: {

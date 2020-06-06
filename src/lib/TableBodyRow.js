@@ -10,16 +10,18 @@ export default {
   },
   inject: ['table'],
   render(h) {
+    const { currentRow, rowStyle, columns, showSpace } = this.table
+    console.log(showSpace)
     return (
       <div
-        class={`eff-table__body-row${this.table.currentRow === this.index ? ' current-row' : ''}`}
-        style={this.table.rowStyle}
+        class={`eff-table__body-row${currentRow === this.index ? ' current-row' : ''}`}
+        style={rowStyle}
         data-rowid={this.index + 1}
         on-click={event => this.handleClick(event)}
         on-dblclick= {event => this.handleDoubleClick(event)}
       >
         {
-          this.table.columns.filter(d => d.show !== false).map((column, columnIndex) => {
+          columns.filter(d => d.show !== false).map((column, columnIndex) => {
             const colid = `${this.index + 1}-${columnIndex + 1}`
             return <TableBodyColumn
               data-colid={colid}
@@ -31,7 +33,7 @@ export default {
           })
         }
         {
-          <div class='eff-table__column is--space' hidden={this.table.minWidth > this.table.bodyWidth} />
+          showSpace ? <div class='eff-table__column is--space' /> : ''
         }
       </div>
     )

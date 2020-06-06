@@ -8,6 +8,10 @@
       <TableHeader ref="header" @dragend="handleDragend" />
       <!-- body -->
       <TableBody ref="TableBody" :data="data" />
+      <!-- footer -->
+      <TableFooter v-if="$slots.footer" ref="TableFooter">
+        <slot name="footer" />
+      </TableFooter>
       <!-- 左侧 fixed 投影 -->
       <div v-show="bodyOverflowX && bodyScrollLeft && leftWidth" class="eff-table__shadow-left" :style="{left: `${leftWidth - 2}px`}" />
       <!-- 右侧 fixed 投影 -->
@@ -42,6 +46,7 @@ import Layout from 'mixins/layout'
 import validate from 'mixins/validate'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
+import TableFooter from './TableFooter'
 import Popover from '../components/Popover'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
@@ -52,6 +57,7 @@ export default {
   components: {
     TableHeader,
     TableBody,
+    TableFooter,
     Popover,
     Drag,
     Toolbar,

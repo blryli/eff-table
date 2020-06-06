@@ -5,7 +5,7 @@
     <div v-if="data.length" class="eff-table__body" :style="{ marginTop }">
       <TableBodyRow v-for="(item, index) in renderData" :key="index + currentIndex" :item="item" :index="index + currentIndex" />
     </div>
-    <div v-else class="empty-text" :style="{height: table.rowHeight + 'px'}">没有数据</div>
+    <div v-else class="empty-text" :style="{height: table.rowHeight + 'px'}">{{ table.emptyText }}</div>
   </div>
 </template>
 

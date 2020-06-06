@@ -28,18 +28,19 @@ export default {
     }
   },
   render(h) {
+    const { rowStyle, columns, showSpace } = this.$parent
     return (
       <div class='eff-table__header-wrapper'>
         <div
           class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
-          style={this.$parent.rowStyle}
+          style={rowStyle}
           on-click={this.handleClick}
           on-mousemove={this.handleMousemove}
           on-mouseleave={this.handleMouseleave}
         >
           {
-            this.$parent.columns.reduce((acc, column, columnIndex) => {
+            columns.reduce((acc, column, columnIndex) => {
               return column.show !== false ? acc.concat(<EffTableHeaderColumn
                 column={column}
                 columnIndex={columnIndex}
@@ -47,7 +48,7 @@ export default {
             }, [])
           }
           {
-            this.$parent.minWidth <= this.$parent.bodyWidth ? <div class='eff-table__column is--space' /> : null
+            showSpace ? <div class='eff-table__column is--space' /> : ''
           }
           {
             <div
