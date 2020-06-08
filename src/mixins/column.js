@@ -25,7 +25,6 @@ export default {
     },
     showSpace() {
       const { minWidth, bodyWidth, spaceWidth, spaceNum } = this
-      console.log(minWidth + spaceWidth * (spaceNum || 1))
       return minWidth + spaceWidth * (spaceNum || 1) < bodyWidth - (spaceNum === 1 ? 2 : 2.5) - (this.bodyOverflowY ? 20 : 0)
     }
   },

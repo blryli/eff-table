@@ -29,7 +29,6 @@ export default class Sortable {
   }
 
   init() {
-    // this.addDragImage()
     on(this.el, 'mousedown', e => this.on_mousedown(e))
     on(this.el, 'mouseup', e => this.on_mouseup(e))
 
@@ -84,8 +83,6 @@ export default class Sortable {
   on_dragstart(e) {
     const { target } = e
     relation.fromEl = target
-
-    // this.showDragImage(e)
 
     // 设置拖动开始区域 from
     relation.from = this.el
@@ -152,7 +149,6 @@ export default class Sortable {
   on_drop(e) {
     e.preventDefault()
     if (!this.isSameGroup()) return false
-    // this.hiddenDragImage(e)
     // 阻止默认动作（如打开一些元素的链接）
     // const target = this.getDragNode(e.target)
 
@@ -197,45 +193,5 @@ export default class Sortable {
     if (from === to) return true
     if (fromGroup && fromGroup === toGroup) return true
     return false
-  }
-
-  addDragImage() {
-    const { dragImage } = this.options
-    if (dragImage && !relation.dragImageEl) {
-      relation.dragImageEl = document.createElement('div')
-      relation.dragImageEl.style.cssText = 'display: none;position: fixed;padding: 0 10px;font-size: 14px;border: 1px solid #1177e8;box-sizing: border-box;z-index: -1;color: #000;background-color: white;font-weight: bold'
-      document.body.appendChild(relation.dragImageEl)
-    }
-  }
-
-  showDragImage(e) {
-    const { dragImage } = this.options
-    const { target } = e
-    if (dragImage) {
-      e.dataTransfer.effectAllowed = 'move'
-      e.dataTransfer.setData('text', e.target.innerText)
-
-      const targetRect = target.getBoundingClientRect()
-      const { width, left, top, height } = targetRect
-      const { dragImageEl } = relation
-      dragImageEl.style.display = 'block'
-      dragImageEl.style.width = width + 'px'
-      dragImageEl.style.left = left + 'px'
-      dragImageEl.style.top = top + 'px'
-      const dragImageHeight = height
-      dragImageEl.style.height = dragImageHeight + 'px'
-      dragImageEl.style.lineHeight = dragImageHeight + 'px'
-      dragImageEl.innerText = e.target.innerText
-
-      e.dataTransfer.setDragImage(dragImageEl, 5, dragImageHeight / 2)
-    }
-  }
-
-  hiddenDragImage(e) {
-    const { dragImageEl } = relation
-    if (dragImageEl) {
-      e.dataTransfer.clearData('text')
-      dragImageEl.style.display = 'none'
-    }
   }
 }

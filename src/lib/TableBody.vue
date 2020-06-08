@@ -128,19 +128,10 @@ export default {
 .eff-table__body-wrapper{
   overflow: auto;
 }
-.v-scroller {
-  flex: 1;
-  height: 100%;
-  font-size: 12px;
-  min-height: 30px;
-}
-</style>
-<style>
-.vue-recycle-scroller.is--fixed::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0!important;
-}
-.vue-recycle-scroller__item-wrapper {
-  min-width: var(--width) !important;
+.empty-text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
 }
 </style>
