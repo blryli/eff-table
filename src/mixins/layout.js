@@ -48,12 +48,11 @@ export default {
   methods: {
     resize() {
       this.bodyWidth = this.$el.getBoundingClientRect().width
-      const { minWidth } = this
+      const { minWidth, bodyWidth } = this
       this.tableWidth = this.bodyWidth > minWidth ? this.bodyWidth : minWidth
       this.bodyHeightChange()
       this.$nextTick(() => {
-        const { offsetWidth, scrollWidth } = this.$refs.header.$el
-        this.bodyOverflowX = scrollWidth - 20 > offsetWidth
+        this.bodyOverflowX = minWidth > bodyWidth - this.scrollYwidth
       })
     },
     bodyHeightChange() {

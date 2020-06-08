@@ -267,6 +267,8 @@ export default {
 }
 
 .eff-table__body{
+  box-sizing: border-box;
+
   &--x-space{
     width: 100%;
     height: 1px;

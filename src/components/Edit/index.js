@@ -13,7 +13,6 @@ export default {
       rowIndex: 0,
       cell: null,
       oldCell: null,
-      wrapper: null,
       placement: '',
       component: null,
       handleType: null,
@@ -56,6 +55,7 @@ export default {
       this.table.$on('cell-click', this.handleEditCell)
 
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
+      this.body = this.wrapper.querySelector('.eff-table__body')
       on(this.wrapper, 'scroll', debounce(this.wrapperScroll, 50))
     })
   },
@@ -132,7 +132,6 @@ export default {
       } else {
         cellIndex = this.cellIndex
         columns = filterColumns(this.columns.slice(0, cellIndex))
-        console.log(JSON.stringify(columns, null, 2))
         column = columns[columns.length - 1] || false
       }
       const { cell } = this.getColumn(column.prop)
@@ -186,14 +185,16 @@ export default {
     },
     editCell(column, cell) {
       const { prop } = column || {}
-      const cellIndex = this.getCellIndex(prop)
+      const cellIndex = this.getColIndex(prop)
       // console.log({ column, cell, cellIndex })
       if (cellIndex === -1 || !this.canFocus(column, cell)) return
       this.column = column
-      this.cell = cell
       this.cellIndex = cellIndex
-      this.rowIndex = [...this.table.$el.querySelector('.eff-table__body').childNodes].findIndex(d => d.contains(cell))
+      this.cell = cell
       this.show = true
+      const colid = cell.getAttribute('data-colid')
+      const [rowIndex] = colid.split('-')
+      this.rowIndex = (+rowIndex) - 1
 
       this.$nextTick(() => {
         const overflows = this.fixOverflow() // 处理溢出
@@ -293,17 +294,22 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop) {
-      const { column, cell, cellIndex } = this.getColumn(prop, rowIndex)
+      const { column, cell, colIndex } = this.getColumn(prop, rowIndex)
       this.handleType = 'to'
-      this.editCell(column, cell, cellIndex)
+      this.editCell(column, cell, colIndex)
+    },
+    getRow(rowIndex, colIndex) {
+      const rowid = rowIndex + 1
+      const colid = colIndex + 1
+      return this.body.querySelector(`.eff-table__body-row[data-rowid='${rowIndex + 1}'] .eff-table__column[data-colid='${rowid}-${colid}']`)
     },
     getColumn(prop, rowIndex = this.rowIndex) {
-      const cellIndex = this.getCellIndex(prop)
-      const cell = this.table.$el.querySelector('.eff-table__body').childNodes[rowIndex].childNodes[cellIndex]
-      const column = this.columns[cellIndex]
-      return { column, cell, cellIndex }
+      const colIndex = this.getColIndex(prop)
+      const cell = this.getRow(rowIndex, colIndex)
+      const column = this.columns[colIndex]
+      return { column, cell, colIndex }
     },
-    getCellIndex(prop) {
+    getColIndex(prop) {
       const index = this.columns.findIndex(d => d.prop && d.prop === prop)
       return index > -1 ? index : this.columns.findIndex(d => d.prop)
     },

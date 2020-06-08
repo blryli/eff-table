@@ -120,10 +120,10 @@ export default {
         {
           show: true,
           prop: 'email',
-          label: '邮箱'
-          // edit: {
-          //   skip: true
-          // }
+          label: '邮箱',
+          edit: {
+            skip: true
+          }
         },
         {
           show: true,
@@ -144,7 +144,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|1000': [
+        'array|500': [
           {
             'message': '@email',
             'name': '@cname',

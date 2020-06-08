@@ -16,13 +16,17 @@ export default {
     minWidth() {
       return this.columns.reduce((acc, cur) => cur.show !== false ? acc + cur.width : acc, 0)
     },
+    spaceNum() {
+      return this.columns.filter(d => !d.width).length
+    },
     spaceWidth() {
-      const spaceNode = this.columns.filter(d => !d.width).length
-      return spaceNode ? (this.bodyWidth - this.minWidth - (this.bodyOverflowY ? 20 : 0)) / spaceNode : 0
+      const { spaceNum } = this
+      return spaceNum ? (this.bodyWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - (this.bodyOverflowY ? 20 : 0)) / spaceNum : 0
     },
     showSpace() {
-      const { minWidth, bodyWidth, spaceWidth } = this
-      return minWidth + spaceWidth < bodyWidth - 20
+      const { minWidth, bodyWidth, spaceWidth, spaceNum } = this
+      console.log(minWidth + spaceWidth * (spaceNum || 1))
+      return minWidth + spaceWidth * (spaceNum || 1) < bodyWidth - (spaceNum === 1 ? 2 : 2.5) - (this.bodyOverflowY ? 20 : 0)
     }
   },
   watch: {
