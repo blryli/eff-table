@@ -79,7 +79,7 @@ export default {
       this.table.show = false
     },
     cellRender(h) {
-      return this.column.render && this.column.cellRender(h, { row: this.item, rowIndex: this.index })
+      return this.column.cellRender && this.column.cellRender(h, { row: this.item, rowIndex: this.index })
     },
     selectionRowChange(selected) {
       this.table.$emit('row.selection.change', this.index, selected)
