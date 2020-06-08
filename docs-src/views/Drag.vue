@@ -80,14 +80,14 @@ export default {
         {
           show: true,
           type: 'index',
-          label: '序号',
+          title: '序号',
           width: 80,
           fixed: 'left'
         },
         {
           show: true,
           prop: 'message',
-          label: '消息',
+          title: '消息',
           width: 100
           // edit: {
           //   render: (h, { rowIndex }) => {
@@ -102,7 +102,7 @@ export default {
           //         this.options.map(item => {
           //           return <el-option
           //             key={item.value}
-          //             label={item.label}
+          //             title={item.title}
           //             value={item.value}>
           //           </el-option>
           //         })
@@ -114,13 +114,13 @@ export default {
         {
           show: true,
           prop: 'name',
-          label: '名字',
+          title: '名字',
           width: 100
         },
         {
           show: true,
           prop: 'email',
-          label: '邮箱',
+          title: '邮箱',
           edit: {
             skip: true
           }
@@ -128,13 +128,13 @@ export default {
         {
           show: true,
           prop: 'city',
-          label: '城市',
+          title: '城市',
           width: 100
         },
         {
           show: true,
           prop: 'datetime',
-          label: '时间',
+          title: '时间',
           width: 100,
           fixed: 'right'
         }

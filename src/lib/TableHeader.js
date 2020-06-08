@@ -40,10 +40,10 @@ export default {
           on-mouseleave={this.handleMouseleave}
         >
           {
-            columns.reduce((acc, column, columnIndex) => {
+            columns.reduce((acc, column, colIndex) => {
               return column.show !== false ? acc.concat(<EffTableHeaderColumn
                 column={column}
-                columnIndex={columnIndex}
+                colIndex={colIndex}
               />) : acc
             }, [])
           }

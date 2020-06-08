@@ -20,14 +20,14 @@ export default {
         on-dblclick= {event => this.handleDoubleClick(event)}
       >
         {
-          columns.filter(d => d.show !== false).map((column, columnIndex) => {
-            const colid = `${this.index + 1}-${columnIndex + 1}`
+          columns.filter(d => d.show !== false).map((column, colIndex) => {
+            const colid = `${this.index + 1}-${colIndex + 1}`
             return <TableBodyColumn
               data-colid={colid}
               item={this.item}
               index={this.index}
               column={column}
-              columnIndex={columnIndex}
+              colIndex={colIndex}
             />
           })
         }

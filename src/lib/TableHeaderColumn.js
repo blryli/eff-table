@@ -4,7 +4,7 @@ export default {
   name: 'EffTableHeaderColumn',
   props: {
     column: { type: Object, default: () => {} },
-    columnIndex: { type: Number, default: 0 }
+    colIndex: { type: Number, default: 0 }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -17,23 +17,23 @@ export default {
     },
     columnClass() {
       let classes = `eff-table__column`
-      if (this.column.fixed) {
+      if (this.column.fixed || this.column.drag === false) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX) classes += ' is--fixed'
       }
-      this.column.labelClassName && (classes += ` ${this.column.labelClassName}`)
+      this.column.titleClassName && (classes += ` ${this.column.titleClassName}`)
       return classes
     }
   },
   render(h) {
-    const { column, columnIndex: $index } = this
-    const slot = column.headerRender && column.headerRender(h, { column, $index }) || column.header || (column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.label || '#') : column.label)
+    const { column, colIndex } = this
+    const slot = column.titleRender && column.titleRender(h, { column, colIndex }) || column.header || (column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title)
 
     return (
       <div
         class={this.columnClass}
-        data-colid={this.columnIndex}
-        style={this.table.setColumnStyle(column, $index, this.width)}
+        data-colid={this.colIndex}
+        style={this.table.setColumnStyle(column, colIndex, this.width)}
       >
         <div class='v-cell'>{slot}</div>
       </div>

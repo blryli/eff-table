@@ -78,12 +78,27 @@ export default {
 | column-control         | 是否启用列管理             | Boolean      |            | false      |
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
+| editStop               | 是否暂停编辑               | Boolean      |            | false      |
 | message                | 提示消息，跟校验结果并存    | Boolean      |            | false      |
 
 ```js
 value: [
   {
     show: true,// boolean 列是否显示
+
+    type: 'selection', // string
+
+    // table标题 (优先级 titleRender > type > title)
+    title: '', // string
+    titleRender: (h, {column, colIndex}) => {
+      return // jsx
+    }
+
+    // table单元格 (优先级 cellRender > type > prop)
+    prop: '', // string
+    cellRender: (h, row, rowIndex) => {
+      return // jsx
+    }
 
     // 编辑
     edit: { // object
@@ -100,14 +115,15 @@ value: [
       field: '' // 指定校验字段( 默认为prop )
     }
 
+    drag: true，// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
+
     width: 80, // number
 
-    type: 'selection', // string
-    fixed: '', // string
-    prop: '', // string
-    label: '', // string
-    sortable: '', // string
+    fixed: '', // string left/right
+
     showOverflowTooltip: true，// boolean
+
+    sortable: '', // string 未开发
   }
 ]
 ```
@@ -122,7 +138,6 @@ value: [
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateCell | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
-| toggleDragCardShow | 列拖动 | props:array | prop:string |
 
 ### Events
 

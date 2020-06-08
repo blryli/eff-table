@@ -49,8 +49,6 @@ export default class Sortable {
   on_mousedown(e) {
     if (e.button === 0) {
       const target = this.getDragNode(e.target)
-      console.log({ target })
-      console.log({ el: this.el })
       if (this.isFilter(target) || target === this.el) return
       this.downTarget = target
       this.downTarget && this.downTarget.setAttribute('draggable', true)

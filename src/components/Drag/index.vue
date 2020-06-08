@@ -6,7 +6,7 @@
       title="列控制"
       @close="close"
     >
-      <div v-for="(d, i) in hiddenColumns" :key="i">{{ d.label }}</div>
+      <div v-for="(d, i) in hiddenColumns" :key="i">{{ d.title }}</div>
     </card>
   </div>
 </template>
@@ -100,7 +100,7 @@ export default {
       this.show = val === undefined ? !this.show : val
     },
     elDragendChange(newWidth, oldWidth, column, event) {
-      const index = this.columns.findIndex(d => d.label === column.label)
+      const index = this.columns.findIndex(d => d.title === column.title)
       if (index > -1) {
         this.columns[index].width = newWidth
 
@@ -139,15 +139,15 @@ export default {
     handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
       this.dradingTarget = null
       const columns = [...this.columns]
-      console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+      // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) =>
-        column.label && column.label.trim() === el.innerText.trim()
+        column.title && column.title.trim() === el.innerText.trim()
       const oldIndex = columns.findIndex(d => some(d, fromEl))
-      if (oldIndex < 0) { return console.error(`没有找到label为 ${fromEl.innerText} 的节点`) }
+      if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
 
       if (hasClass(toEl, 'is-drag--filter')) {
-        this.$info('不能放入固定的列！')
+        this.$info('该列不能做拖动操作！')
         return
       }
 

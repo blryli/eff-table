@@ -6,7 +6,7 @@ export default {
     index: { type: Number, default: 0 },
     item: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
-    columnIndex: { type: Number, default: 0 }
+    colIndex: { type: Number, default: 0 }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -16,12 +16,11 @@ export default {
     }
   },
   render(h) {
-    const render = this.render(h)
-    const slot = render || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.index + 1 : this.column.prop ? this.item[this.column.prop] : '')
+    const slot = this.cellRender(h) || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.index + 1 : this.column.prop ? this.item[this.column.prop] : '')
     return (
       <div
         class={this.columnClass}
-        style={this.table.setColumnStyle(this.column, this.columnIndex, this.width)}
+        style={this.table.setColumnStyle(this.column, this.colIndex, this.width)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
@@ -79,8 +78,8 @@ export default {
       this.table.$emit('cell.mouse.leave', item, column, cell, event, slot)
       this.table.show = false
     },
-    render(h) {
-      return this.column.render && this.column.render(h, { row: this.item, $index: this.index })
+    cellRender(h) {
+      return this.column.render && this.column.cellRender(h, { row: this.item, rowIndex: this.index })
     },
     selectionRowChange(selected) {
       this.table.$emit('row.selection.change', this.index, selected)

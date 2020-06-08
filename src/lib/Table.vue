@@ -127,9 +127,9 @@ export default {
     handleDragend(column, width) {
       const { columns } = this
       const index = columns.findIndex(d => {
-        const { label = '', type = '', prop = '' } = column
-        const { label: dLabel = '', type: dType = '', prop: dProp = '' } = d
-        return label + type + prop === dLabel + dType + dProp
+        const { title = '', type = '', prop = '' } = column
+        const { title: dTitle = '', type: dType = '', prop: dProp = '' } = d
+        return title + type + prop === dTitle + dType + dProp
       })
       columns[index].width = width
       this.columns = [...columns]
@@ -165,12 +165,6 @@ export default {
   border: 1px solid #ddd;
   box-sizing: border-box;
   overflow: hidden;
-}
-.nodata {
-  font-size: 12px;
-  line-height: 40px;
-  text-align: center;
-  color: #666;
 }
 .eff-table__shadow-left, .eff-table__shadow-right{
   position: absolute;
