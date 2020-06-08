@@ -284,7 +284,7 @@ export default {
       this.$el.style.left = `${left - 1}px`
       this.$el.style.top = `${top - 1}px`
       this.$el.style.width = `${width + 1}px`
-      this.$el.style.height = `${height}px`
+      this.$el.style.height = `${height + 1}px`
     },
     handleWindowMousedown(e) {
       if (!this.show || this.$el.contains(e.target) || this.table.editStop) return
