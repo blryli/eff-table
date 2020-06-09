@@ -112,7 +112,7 @@ export default {
           // }
         },
         {
-          show: true,
+          show: false,
           prop: 'name',
           title: '名字',
           width: 100
@@ -126,7 +126,7 @@ export default {
           }
         },
         {
-          show: true,
+          show: false,
           prop: 'city',
           title: '城市',
           width: 100
@@ -135,8 +135,7 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 100,
-          fixed: 'right'
+          width: 100
         }
       ]
     }

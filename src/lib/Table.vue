@@ -33,6 +33,11 @@
       @rowLast="handleRowLast"
       @validate="handleValidate"
     />
+    <!-- <p>minWidth{{ minWidth }}</p>
+    <p>spaceWidth{{ spaceWidth }}</p>
+    <p>bodyWidth{{ bodyWidth }}</p>
+    <p>showSpace{{ showSpace }}</p>
+    <p>bodyOverflowY{{ bodyOverflowY }}</p> -->
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :content="popoverSlot" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />

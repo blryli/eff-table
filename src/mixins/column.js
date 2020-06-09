@@ -5,19 +5,19 @@ export default {
   },
   computed: {
     columnsWidth() {
-      return this.columns.reduce((acc, cur) => acc.concat(cur.width), [])
+      return this.visibleColumns.reduce((acc, cur) => acc.concat(cur.width), [])
     },
     leftWidth() {
-      return this.columns.reduce((acc, cur) => cur.fixed === 'left' ? acc + cur.width : acc, 0)
+      return this.visibleColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + cur.width : acc, 0)
     },
     rightWidth() {
-      return this.columns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
+      return this.visibleColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
     },
     minWidth() {
-      return this.columns.reduce((acc, cur) => cur.show !== false ? acc + cur.width : acc, 0)
+      return this.visibleColumns.reduce((acc, cur) => cur.show !== false ? acc + cur.width : acc, 0)
     },
     spaceNum() {
-      return this.columns.filter(d => !d.width).length
+      return this.visibleColumns.filter(d => !d.width).length
     },
     spaceWidth() {
       const { spaceNum } = this
