@@ -14,7 +14,9 @@
           border
           :height="400"
           :data="data"
-        />
+        >
+          <div slot="footer">121</div>
+        </eff-table>
       </div>
     </section>
 
@@ -126,16 +128,18 @@ export default {
           }
         },
         {
-          show: false,
+          show: true,
           prop: 'city',
           title: '城市',
-          width: 100
+          width: 100,
+          fixed: 'right'
         },
         {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 100
+          width: 100,
+          fixed: 'right'
         }
       ]
     }
@@ -143,7 +147,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|500': [
+        'array|50': [
           {
             'message': '@email',
             'name': '@cname',
@@ -155,7 +159,7 @@ export default {
         ]
       }).array
       console.log(this.data)
-    }, 1000)
+    }, 500)
   },
   methods: {
 

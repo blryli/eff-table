@@ -28,7 +28,7 @@ export default {
     }
   },
   render(h) {
-    const { rowStyle, columns, showSpace } = this.$parent
+    const { rowStyle, visibleColumns, showSpace } = this.$parent
     return (
       <div class='eff-table__header-wrapper'>
         <div
@@ -40,12 +40,12 @@ export default {
           on-mouseleave={this.handleMouseleave}
         >
           {
-            columns.reduce((acc, column, colIndex) => {
-              return column.show !== false ? acc.concat(<EffTableHeaderColumn
+            visibleColumns.map((column, colIndex) => {
+              return <EffTableHeaderColumn
                 column={column}
                 colIndex={colIndex}
-              />) : acc
-            }, [])
+              />
+            })
           }
           {
             showSpace ? <div class='eff-table__column is--space' /> : ''
@@ -119,7 +119,7 @@ export default {
       this.isDraging = false
 
       const colid = this.dragingTarget.getAttribute('data-colid')
-      this.$emit('dragend', this.$parent.columns[colid], this.dragingTarget.offsetWidth + this.moveX)
+      this.$emit('dragend', this.$parent.visibleColumns[colid], this.dragingTarget.offsetWidth + this.moveX)
 
       setTimeout(() => {
         const dragMove = this.$refs.dragMove

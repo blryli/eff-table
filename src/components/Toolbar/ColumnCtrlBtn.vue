@@ -29,6 +29,7 @@ export default {
     width: 10px;
     height: 8px;
     border: 2px solid #888;
+    box-sizing: content-box;
     &::before, &::after{
       content: '';
       position: absolute;
@@ -57,6 +58,7 @@ export default {
     border: 2px solid #888;
     background-color: white;
     box-shadow: -1px -1px 1px rgba($color: #fff, $alpha: 1.0);
+    box-sizing: content-box;
   }
 
   &:hover{

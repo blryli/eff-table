@@ -37,7 +37,8 @@
     <p>spaceWidth{{ spaceWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>
     <p>showSpace{{ showSpace }}</p>
-    <p>bodyOverflowY{{ bodyOverflowY }}</p> -->
+    <p>bodyOverflowY{{ bodyOverflowY }}</p>
+    <p>bodyOverflowX{{ bodyOverflowX }}</p> -->
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :content="popoverSlot" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -139,11 +140,11 @@ export default {
       columns[index].width = width
       this.columns = [...columns]
       this.change()
-      this.resize()
     },
     change() {
       this.$emit('input', this.columns)
       this.$emit('dragChange', this.columns)
+      this.resize()
     },
     handleCardClose() {
       this.$emit('dragCardClose')
@@ -282,6 +283,11 @@ export default {
   .eff-table__column{
     background-color: #fff;
     border-bottom: 1px solid #ddd;
+  }
+  &:last-child{
+    .eff-table__column{
+      border-bottom: 1px solid transparent;
+    }
   }
   &.current-row .eff-table__column {
     background-color: #e8f4ff;

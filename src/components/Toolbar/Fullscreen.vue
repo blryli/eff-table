@@ -68,6 +68,7 @@ export default {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  box-sizing: border-box;
   &-item {
     position: absolute;
     width: 2px;

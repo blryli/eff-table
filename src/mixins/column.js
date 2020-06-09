@@ -14,18 +14,18 @@ export default {
       return this.visibleColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
     },
     minWidth() {
-      return this.visibleColumns.reduce((acc, cur) => cur.show !== false ? acc + cur.width : acc, 0)
+      return this.visibleColumns.reduce((acc, cur) => acc + cur.width, 0)
     },
     spaceNum() {
       return this.visibleColumns.filter(d => !d.width).length
     },
     spaceWidth() {
       const { spaceNum } = this
-      return spaceNum ? (this.bodyWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - (this.bodyOverflowY ? 20 : 0)) / spaceNum : 0
+      return spaceNum ? (this.bodyWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - (this.bodyOverflowY ? 17 : 0)) / spaceNum : 0
     },
     showSpace() {
       const { minWidth, bodyWidth, spaceWidth, spaceNum } = this
-      return minWidth + spaceWidth * (spaceNum || 1) < bodyWidth - (spaceNum === 1 ? 2 : 2.5) - (this.bodyOverflowY ? 20 : 0)
+      return minWidth + spaceWidth * (spaceNum || 1) < bodyWidth - (spaceNum === 1 ? 2 : 2.5) - (this.bodyOverflowY ? 17 : 0)
     }
   },
   watch: {
@@ -44,16 +44,24 @@ export default {
       style.minWidth = width + 'px'
       style.maxWidth = width + 'px'
 
-      // 如果有横向滚动条 设置左右定位元素的位置
-      if (this.bodyOverflowX) {
-        column.fixed === 'left' && (style.left = (colIndex ? this.columnsWidth[colIndex - 1] : 0) + this.bodyScrollLeft + 'px')
+      const { bodyOverflowX, columnsWidth, isScrollRightEnd, tableWidth, bodyWidth, bodyScrollLeft } = this
 
-        if (!this.isScrollRightEnd) {
+      // 如果有横向滚动条 设置左右定位元素的位置
+      if (bodyOverflowX) {
+        column.fixed === 'left' && (style.left = (colIndex ? columnsWidth[colIndex - 1] : 0) + bodyScrollLeft + 'px')
+
+        if (!isScrollRightEnd) {
           const firstRightFixedIndex = this.columns.findIndex(d => d.fixed === 'right')
           colIndex === firstRightFixedIndex && (style.borderLeftColor = 'transparent')
         }
 
-        column.fixed === 'right' && (style.right = (colIndex !== this.columnsWidth.length - 1 ? this.columnsWidth[colIndex + 1] : 0) + (this.tableWidth - this.bodyWidth) - this.bodyScrollLeft + this.scrollYwidth + 2 + 'px')
+        if (column.fixed === 'right') {
+          if (bodyScrollLeft - 40 > tableWidth - bodyWidth) {
+            style.right = 0
+          } else {
+            style.right = (colIndex !== columnsWidth.length - 1 ? columnsWidth[colIndex + 1] : 0) + (tableWidth - bodyWidth) - bodyScrollLeft + this.scrollYwidth + 2 + 'px'
+          }
+        }
       }
       return style
     },

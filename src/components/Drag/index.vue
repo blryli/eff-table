@@ -156,7 +156,8 @@ export default {
         const oldItem = columns[oldIndex]
         columns.splice(oldIndex, 1)
         if (hasClass(toEl, 'is--space')) {
-          columns.push(oldItem)
+          const index = columns.findIndex(d => d.fixed === 'right')
+          index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
         } else {
           let newIndex = columns.findIndex(d => some(d, toEl))
           if (toIndex > fromIndex) {
@@ -178,7 +179,8 @@ export default {
           oldItem.show = true
           columns.splice(oldIndex, 1)
           if (hasClass(toEl, 'is--space')) {
-            columns.push(oldItem)
+            const index = columns.findIndex(d => d.fixed === 'right')
+            index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
           } else {
             const newIndex = columns.findIndex(d => some(d, toEl))
             columns.splice(newIndex, 0, oldItem)
