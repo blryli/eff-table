@@ -28,7 +28,7 @@ export default {
   },
   render(h) {
     const { column, colIndex } = this
-    const slot = column.titleRender && column.titleRender(h, { column, colIndex }) || column.header || (column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title)
+    const slot = column.titleRender && column.titleRender(h, { column, colIndex }) || column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
 
     return (
       <div

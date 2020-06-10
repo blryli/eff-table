@@ -216,7 +216,7 @@ export default {
     border-left: 1px solid #ddd;
   }
 }
-.is-overflow-y .eff-table__header-wrapper{
+.is-overflow--y .eff-table__header-wrapper{
   overflow-y: scroll;
 }
 .eff-table__header, .eff-table__body-row {

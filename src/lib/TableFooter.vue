@@ -1,5 +1,5 @@
 <template>
-  <div class="eff-table-footer" :style="style">
+  <div class="eff-table__footer" :style="style">
     <slot />
   </div>
 </template>
@@ -21,12 +21,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.eff-table-footer{
+.eff-table__footer{
   position: relative;
   border-top: 1px solid #ddd;
 }
-.is-overflow-y{
-  .eff-table-footer{
+.is-overflow--y{
+  .eff-table__footer{
     &::after{
       content:  '';
       width: 1px;

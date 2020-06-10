@@ -22,7 +22,7 @@ export default {
     tableClass() {
       let tClass = 'eff-table'
       this.bodyOverflowX && (tClass += ' is-overflow-x')
-      this.bodyOverflowY && (tClass += ' is-overflow-y')
+      this.bodyOverflowY && (tClass += ' is-overflow--y')
       this.border && (tClass += ' is-border')
       return tClass
     },
