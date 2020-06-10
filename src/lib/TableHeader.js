@@ -83,7 +83,9 @@ export default {
       this.dragingTarget = hasClass(target, 'is--space') ? null : target
     },
     handleMouseleave() {
-      !this.isDraging && (this.dragingTarget = null)
+      !this.isDraging && setTimeout(() => {
+        this.dragingTarget = null
+      }, 110)
     },
     moveMousedown() {
       onMousemove({
@@ -93,6 +95,7 @@ export default {
       })
     },
     start(e) {
+      if (!this.dragingTarget) return
       this.$parent.lineShow = true
       const { right: columnRight } = this.dragingTarget.getBoundingClientRect()
       this.startX = columnRight + 2
@@ -122,10 +125,12 @@ export default {
       this.$emit('dragend', this.$parent.visibleColumns[colid], this.dragingTarget.offsetWidth + this.moveX)
 
       setTimeout(() => {
-        const dragMove = this.$refs.dragMove
-        const { right } = this.dragingTarget.getBoundingClientRect()
-        dragMove.style.left = right - dragMove.offsetWidth + 'px'
-        this.dragingTarget = null
+        if (this.dragingTarget) {
+          const dragMove = this.$refs.dragMove
+          const { right } = this.dragingTarget.getBoundingClientRect()
+          dragMove.style.left = right - dragMove.offsetWidth + 'px'
+          this.dragingTarget = null
+        }
       }, 100)
     }
   },

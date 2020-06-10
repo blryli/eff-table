@@ -37,8 +37,12 @@ export default {
     },
     columnClass() {
       let classes = `eff-table__column`
-      this.column.fixed && this.table.bodyOverflowX && (classes += ' is--fixed')
-      this.column.className && (classes += ` ${this.column.className}`)
+      const { fixed, className } = this.column
+      if (fixed) {
+        classes += ' is-drag--filter'
+        if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
+      }
+      className && (classes += ` ${className}`)
       return classes
     }
   },

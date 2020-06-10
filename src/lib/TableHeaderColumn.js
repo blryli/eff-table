@@ -16,12 +16,13 @@ export default {
       return columnWidth
     },
     columnClass() {
+      const { fixed, drag, titleClassName } = this.column
       let classes = `eff-table__column`
-      if (this.column.fixed || this.column.drag === false) {
+      if (fixed || drag === false) {
         classes += ' is-drag--filter'
-        if (this.table.bodyOverflowX) classes += ' is--fixed'
+        if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
       }
-      this.column.titleClassName && (classes += ` ${this.column.titleClassName}`)
+      titleClassName && (classes += ` ${titleClassName}`)
       return classes
     }
   },
