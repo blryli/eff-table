@@ -40,10 +40,10 @@ export default {
           on-mouseleave={this.handleMouseleave}
         >
           {
-            visibleColumns.map((column, colIndex) => {
+            visibleColumns.map((column, columnIndex) => {
               return <EffTableHeaderColumn
                 column={column}
-                colIndex={colIndex}
+                columnIndex={columnIndex}
               />
             })
           }

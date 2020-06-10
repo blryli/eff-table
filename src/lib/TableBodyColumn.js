@@ -6,7 +6,7 @@ export default {
     index: { type: Number, default: 0 },
     item: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
-    colIndex: { type: Number, default: 0 }
+    columnIndex: { type: Number, default: 0 }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -20,7 +20,7 @@ export default {
     return (
       <div
         class={this.columnClass}
-        style={this.table.setColumnStyle(this.column, this.colIndex, this.width)}
+        style={this.table.setColumnStyle(this.column, this.columnIndex, this.width)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >

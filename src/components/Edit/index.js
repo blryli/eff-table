@@ -25,8 +25,9 @@ export default {
   inject: ['table'],
   computed: {
     editRender() {
-      const { edit: { render } = {}} = this.column || {}
-      return render && typeof render === 'function' && render(this.$createElement, { rowIndex: this.rowIndex }) || ''
+      const { rowIndex, table, column, $createElement } = this
+      const { edit: { render } = {}} = column || {}
+      return render && typeof render === 'function' && render($createElement, { row: table.data[rowIndex], rowIndex }) || ''
     }
   },
   watch: {
@@ -185,7 +186,7 @@ export default {
     },
     editCell(column, cell) {
       const { prop } = column || {}
-      const cellIndex = this.getColIndex(prop)
+      const cellIndex = this.getColumnIndex(prop)
       // console.log({ column, cell, cellIndex })
       if (cellIndex === -1 || !this.canFocus(column, cell)) return
       this.column = column
@@ -294,22 +295,22 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop) {
-      const { column, cell, colIndex } = this.getColumn(prop, rowIndex)
+      const { column, cell, columnIndex } = this.getColumn(prop, rowIndex)
       this.handleType = 'to'
-      this.editCell(column, cell, colIndex)
+      this.editCell(column, cell, columnIndex)
     },
-    getRow(rowIndex, colIndex) {
+    getRow(rowIndex, columnIndex) {
       const rowid = rowIndex + 1
-      const colid = colIndex + 1
+      const colid = columnIndex + 1
       return this.body.querySelector(`.eff-table__body-row[data-rowid='${rowIndex + 1}'] .eff-table__column[data-colid='${rowid}-${colid}']`)
     },
     getColumn(prop, rowIndex = this.rowIndex) {
-      const colIndex = this.getColIndex(prop)
-      const cell = this.getRow(rowIndex, colIndex)
-      const column = this.columns[colIndex]
-      return { column, cell, colIndex }
+      const columnIndex = this.getColumnIndex(prop)
+      const cell = this.getRow(rowIndex, columnIndex)
+      const column = this.columns[columnIndex]
+      return { column, cell, columnIndex }
     },
-    getColIndex(prop) {
+    getColumnIndex(prop) {
       const index = this.columns.findIndex(d => d.prop && d.prop === prop)
       return index > -1 ? index : this.columns.findIndex(d => d.prop)
     },

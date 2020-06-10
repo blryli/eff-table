@@ -90,28 +90,28 @@ export default {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 100
-          // edit: {
-          //   render: (h, { rowIndex }) => {
-          //     return <el-select
-          //       value={this.value}
-          //       placeholder='请选择'
-          //       automatic-dropdown
-          //       on-visible-change={val => (this.editStop = val)}
-          //       on-input={val => (this.value = val)}
-          //     >
-          //       {
-          //         this.options.map(item => {
-          //           return <el-option
-          //             key={item.value}
-          //             title={item.title}
-          //             value={item.value}>
-          //           </el-option>
-          //         })
-          //       }
-          //     </el-select>
-          //   }
-          // }
+          width: 100,
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-select
+                value={row['message']}
+                placeholder='请选择'
+                automatic-dropdown
+                on-visible-change={val => (this.editStop = val)}
+                on-input={val => (row['message'] = val)}
+              >
+                {
+                  this.options.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
+            }
+          }
         },
         {
           show: false,

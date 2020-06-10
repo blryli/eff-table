@@ -13,7 +13,8 @@ export default {
         console.error('需要校验的字段，必须具有 prop 属性')
         return
       }
-      const value = this.data[rowIndex][prop]
+      const row = this.data[rowIndex]
+      const value = row[prop]
       if (!rule) {
         const { validator = {}} = this.columns.find(d => d.prop === prop) || {}
         if (typeof validator.rule === 'function') {
@@ -35,7 +36,7 @@ export default {
         return obj
       }
 
-      const result = rule(value, rowIndex)
+      const result = rule(value, row, rowIndex)
       // 异步校验
       if (this.getType(result) === 'Promise') {
         const cellIndex = this.columns.findIndex(d => d.prop && d.prop === prop)

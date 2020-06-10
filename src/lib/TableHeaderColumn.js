@@ -4,7 +4,7 @@ export default {
   name: 'EffTableHeaderColumn',
   props: {
     column: { type: Object, default: () => {} },
-    colIndex: { type: Number, default: 0 }
+    columnIndex: { type: Number, default: 0 }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -27,14 +27,14 @@ export default {
     }
   },
   render(h) {
-    const { column, colIndex } = this
-    const slot = column.titleRender && column.titleRender(h, { column, colIndex }) || column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
+    const { column, columnIndex } = this
+    const slot = column.titleRender && column.titleRender(h, { column, columnIndex }) || column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
 
     return (
       <div
         class={this.columnClass}
-        data-colid={this.colIndex}
-        style={this.table.setColumnStyle(column, colIndex, this.width)}
+        data-colid={this.columnIndex}
+        style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
         <div class='v-cell'>{slot}</div>
       </div>

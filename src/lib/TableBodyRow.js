@@ -20,14 +20,14 @@ export default {
         on-dblclick= {event => this.handleDoubleClick(event)}
       >
         {
-          visibleColumns.filter(d => d.show !== false).map((column, colIndex) => {
-            const colid = `${this.index + 1}-${colIndex + 1}`
+          visibleColumns.filter(d => d.show !== false).map((column, columnIndex) => {
+            const colid = `${this.index + 1}-${columnIndex + 1}`
             return <TableBodyColumn
               data-colid={colid}
               item={this.item}
               index={this.index}
               column={column}
-              colIndex={colIndex}
+              columnIndex={columnIndex}
             />
           })
         }
@@ -52,8 +52,8 @@ export default {
       if (cell) {
         const colid = cell.getAttribute('data-colid')
         if (colid) {
-          const [, colIndex] = colid.split('-')
-          column = table.visibleColumns[colIndex - 1]
+          const [, columnIndex] = colid.split('-')
+          column = table.visibleColumns[columnIndex - 1]
           if (column) {
             table.$emit(`cell-${name}`, this.item, column, cell, event)
           }

@@ -90,19 +90,19 @@ value: [
 
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
-    titleRender: (h, {column, colIndex}) => {
+    titleRender: (h, {column, columnIndex}) => {
       return // jsx
     }
 
     // table单元格 (优先级 cellRender > type > prop)
     prop: '', // string
-    cellRender: (h, row, rowIndex) => {
+    cellRender: (h, {row, rowIndex}) => {
       return // jsx
     }
 
     // 编辑
     edit: { // object
-      render(h, {rowIndex}) {
+      render(h, {row, rowIndex}) {
         return <your-component vModel={value} vOn:change={change} />
       },
       skip: false, // boolean | function(rowIndex){} 若为true就死也进不来
@@ -111,19 +111,18 @@ value: [
 
     // 校验
     validator: {
-      rule: val => !val && '不能为空', // 校验规则
+      rule: (val, row, rowIndex) => !val && '不能为空', // 校验规则
       field: '' // 指定校验字段( 默认为prop )
     }
 
-    drag: true，// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
+    drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
 
     width: 80, // number
 
     fixed: '', // string left/right
 
-    showOverflowTooltip: true，// boolean
-
-    sortable: '', // string 未开发
+    // 未开发
+    sortable: '', // string 
   }
 ]
 ```

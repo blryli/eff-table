@@ -39,7 +39,7 @@ export default {
     })
   },
   methods: {
-    setColumnStyle(column, colIndex, width) {
+    setColumnStyle(column, columnIndex, width) {
       const style = {}
       style.minWidth = width + 'px'
       style.maxWidth = width + 'px'
@@ -48,20 +48,20 @@ export default {
 
       // 如果有横向滚动条 设置左右定位元素的位置
       if (column.fixed === 'left' && bodyOverflowX) {
-        column.fixed === 'left' && (style.left = (colIndex ? columnsWidth[colIndex - 1] : 0) + bodyScrollLeft + 'px')
+        column.fixed === 'left' && (style.left = (columnIndex ? columnsWidth[columnIndex - 1] : 0) + bodyScrollLeft + 'px')
       }
 
       if (column.fixed === 'right') {
         if (bodyOverflowX) {
           if (!isScrollRightEnd) {
             const firstRightFixedIndex = this.visibleColumns.findIndex(d => d.fixed === 'right')
-            colIndex === firstRightFixedIndex && (style.borderLeftColor = 'transparent')
+            columnIndex === firstRightFixedIndex && (style.borderLeftColor = 'transparent')
           }
         }
         if (bodyScrollLeft - 40 > bodyWidth - bodyWrapperWidth) {
           style.right = 0
         } else {
-          style.right = (colIndex !== columnsWidth.length - 1 ? columnsWidth[colIndex + 1] : 0) + (bodyWidth - bodyWrapperWidth) - bodyScrollLeft + (bodyOverflowX ? this.scrollYwidth + 2 : 0) + 'px'
+          style.right = (columnIndex !== columnsWidth.length - 1 ? columnsWidth[columnIndex + 1] : 0) + (bodyWidth - bodyWrapperWidth) - bodyScrollLeft + (bodyOverflowX ? this.scrollYwidth + 2 : 0) + 'px'
         }
       }
       return style
