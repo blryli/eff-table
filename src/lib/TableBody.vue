@@ -75,6 +75,10 @@ export default {
     'table.bodyScrollLeft'(val) {
       this.$el.scrollLeft = val
     },
+    'table.minWidth'(val) {
+      const { bodyWrapperWidth, scrollYwidth } = this.table
+      val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
+    },
     scrollIndex(val) {
       const last = this.data.length - this.pageSize
       val > last - 2 && (val = last)

@@ -2,8 +2,8 @@ import { on, off } from 'utils/dom'
 export default {
   data() {
     return {
-      tableWidth: 0,
       bodyWidth: 0,
+      bodyWrapperWidth: 0,
       offset: 0,
       bodyOverflowX: false,
       bodyOverflowY: false,
@@ -32,7 +32,7 @@ export default {
       style.height = this.rowHeight + 'px'
       const { leftWidth, rightWidth } = this
       if (this.bodyOverflowX) {
-        style.width = this.tableWidth + 'px'
+        style.width = this.bodyWidth + 'px'
         leftWidth && (style.paddingLeft = `${leftWidth}px`)
         rightWidth && (style.paddingRight = `${rightWidth}px`)
       }
@@ -42,17 +42,17 @@ export default {
       return this.bodyOverflowY ? 17 : 0
     },
     isScrollRightEnd() {
-      return this.bodyWidth + this.bodyScrollLeft > this.tableWidth + this.scrollYwidth
+      return this.bodyWrapperWidth + this.bodyScrollLeft > this.bodyWidth + this.scrollYwidth
     }
   },
   methods: {
     resize() {
-      this.bodyWidth = this.$el.getBoundingClientRect().width
-      const { minWidth, bodyWidth } = this
-      this.tableWidth = this.bodyWidth > minWidth ? this.bodyWidth : minWidth
+      this.bodyWrapperWidth = this.$el.getBoundingClientRect().width
+      const { minWidth, bodyWrapperWidth } = this
+      this.bodyWidth = this.bodyWrapperWidth > minWidth ? this.bodyWrapperWidth : minWidth
       this.bodyHeightChange()
       this.$nextTick(() => {
-        this.bodyOverflowX = minWidth > bodyWidth - this.scrollYwidth
+        this.bodyOverflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
       })
     },
     bodyHeightChange() {

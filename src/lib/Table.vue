@@ -34,8 +34,9 @@
       @validate="handleValidate"
     />
     <!-- <p>minWidth{{ minWidth }}</p>
-    <p>spaceWidth{{ spaceWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>
+    <p>spaceWidth{{ spaceWidth }}</p>
+    <p>bodyWrapperWidth{{ bodyWrapperWidth }}</p>
     <p>showSpace{{ showSpace }}</p>
     <p>bodyOverflowY{{ bodyOverflowY }}</p>
     <p>bodyOverflowX{{ bodyOverflowX }}</p> -->

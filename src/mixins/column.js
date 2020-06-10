@@ -21,11 +21,11 @@ export default {
     },
     spaceWidth() {
       const { spaceNum } = this
-      return spaceNum ? (this.bodyWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - this.scrollYwidth) / spaceNum : 0
+      return spaceNum ? (this.bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - this.scrollYwidth) / spaceNum : 0
     },
     showSpace() {
-      const { minWidth, bodyWidth, spaceWidth, spaceNum } = this
-      return minWidth + spaceWidth * (spaceNum || 1) < bodyWidth - (spaceNum === 1 ? 2 : 2.5) - this.scrollYwidth
+      const { minWidth, bodyWrapperWidth, spaceWidth, spaceNum } = this
+      return minWidth + spaceWidth * (spaceNum || 1) < bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - this.scrollYwidth
     }
   },
   watch: {
@@ -44,7 +44,7 @@ export default {
       style.minWidth = width + 'px'
       style.maxWidth = width + 'px'
 
-      const { bodyOverflowX, columnsWidth, isScrollRightEnd, tableWidth, bodyWidth, bodyScrollLeft } = this
+      const { bodyOverflowX, columnsWidth, isScrollRightEnd, bodyWidth, bodyWrapperWidth, bodyScrollLeft } = this
 
       // 如果有横向滚动条 设置左右定位元素的位置
       if (column.fixed === 'left' && bodyOverflowX) {
@@ -58,10 +58,10 @@ export default {
             colIndex === firstRightFixedIndex && (style.borderLeftColor = 'transparent')
           }
         }
-        if (bodyScrollLeft - 40 > tableWidth - bodyWidth) {
+        if (bodyScrollLeft - 40 > bodyWidth - bodyWrapperWidth) {
           style.right = 0
         } else {
-          style.right = (colIndex !== columnsWidth.length - 1 ? columnsWidth[colIndex + 1] : 0) + (tableWidth - bodyWidth) - bodyScrollLeft + (bodyOverflowX ? this.scrollYwidth + 2 : 0) + 'px'
+          style.right = (colIndex !== columnsWidth.length - 1 ? columnsWidth[colIndex + 1] : 0) + (bodyWidth - bodyWrapperWidth) - bodyScrollLeft + (bodyOverflowX ? this.scrollYwidth + 2 : 0) + 'px'
         }
       }
       return style
