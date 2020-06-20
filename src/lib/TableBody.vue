@@ -3,7 +3,7 @@
     <div class="eff-table__body--x-space" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div class="eff-table__body" :style="{ marginTop }">
-      <TableBodyRow v-for="(item, index) in renderData" :key="index + currentIndex" :item="item" :index="index + currentIndex" />
+      <TableBodyRow v-for="(row, index) in renderData" :key="index + currentIndex" :row="row" :row-index="index + currentIndex" />
       <div v-if="!data.length" class="empty-text" :style="{height: table.rowHeight + 'px'}">{{ table.emptyText }}</div>
     </div>
   </div>

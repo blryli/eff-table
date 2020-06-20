@@ -6,8 +6,7 @@
         <eff-table
           ref="table"
           v-model="columns"
-          drag
-          column-control
+          search
           fullscreen
           border
           :height="400"
@@ -57,6 +56,11 @@ export default {
       mainSnippet,
       componentSnippet,
       radio: null,
+      form: {
+        email: '',
+        city: '',
+        datetime: ''
+      },
       data: [],
       forData: [
         { prop: 'city', label: '标题5' },
@@ -70,26 +74,53 @@ export default {
         {
           show: true,
           type: 'index',
-          label: '序号',
+          title: '序号',
           width: 80
         },
         {
           show: true,
           prop: 'email',
-          label: '邮箱',
-          width: 100
+          title: '邮箱',
+          width: 100,
+          search: {
+            render: (h, { column, columnIndex }) => {
+              return <el-input
+                value={this.form.email}
+                on-input={val => (this.form.email = val)}
+              />
+            },
+            position: 'form'
+          }
         },
         {
           show: true,
           prop: 'city',
-          label: '城市',
-          width: 100
+          title: '城市',
+          width: 100,
+          search: {
+            render: (h, { column, columnIndex }) => {
+              return <el-input
+                value={this.form.city}
+                on-input={val => (this.form.city = val)}
+              />
+            },
+            position: 'table'
+          }
         },
         {
           show: true,
           prop: 'datetime',
-          label: '时间',
-          width: 100
+          title: '时间',
+          width: 100,
+          search: {
+            render: (h, { column, columnIndex }) => {
+              return <el-input
+                value={this.form.datetime}
+                on-input={val => (this.form.datetime = val)}
+              />
+            },
+            position: 'all'
+          }
         }
       ]
     }

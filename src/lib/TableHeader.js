@@ -1,9 +1,10 @@
-import EffTableHeaderColumn from './TableHeaderColumn'
-import { on, off, hasClass, onMousemove } from 'utils/dom'
+import TableHeaderColumn from './TableHeaderColumn'
+import TableSearchColumn from './TableSearchColumn'
+import { on, off, hasClass, onMousemove, getCell } from 'utils/dom'
 
 export default {
-  name: 'EffTableHeader',
-  components: { EffTableHeaderColumn },
+  name: 'TableHeader',
+  components: { TableHeaderColumn, TableSearchColumn },
   data() {
     return {
       dragingTarget: null,
@@ -27,8 +28,9 @@ export default {
       }
     }
   },
+  inject: ['table'],
   render(h) {
-    const { rowStyle, visibleColumns, showSpace } = this.$parent
+    const { rowStyle, visibleColumns, showSpace, search } = this.$parent
     return (
       <div class='eff-table__header-wrapper'>
         <div
@@ -41,7 +43,7 @@ export default {
         >
           {
             visibleColumns.map((column, columnIndex) => {
-              return <EffTableHeaderColumn
+              return <TableHeaderColumn
                 column={column}
                 columnIndex={columnIndex}
               />
@@ -59,6 +61,26 @@ export default {
             />
           }
         </div>
+        {
+          search
+            ? <div
+              class='eff-table__search'
+              ref= 'search'
+              style={rowStyle}
+            >
+              {
+                visibleColumns.map((column, columnIndex) => {
+                  return <TableSearchColumn
+                    column={column}
+                    columnIndex={columnIndex}
+                  />
+                })
+              }
+              {
+                showSpace ? <div class='eff-table__column is--space' /> : ''
+              }
+            </div> : ''
+        }
       </div>
     )
   },
@@ -66,8 +88,17 @@ export default {
     handleScroll(e) {
       this.$parent.bodyScrollLeft = e.target.scrollLeft
     },
-    handleClick(e) {
-      this.$parent.$emit('header-click', e)
+    handleClick(event) {
+      const table = this.table
+      const cell = getCell(event)
+      let column
+      if (cell) {
+        const columnIndex = cell.getAttribute('data-colid')
+        column = table.visibleColumns[columnIndex - 1]
+        if (column) {
+          table.$emit(`header-click`, { column, columnIndex, cell, event })
+        }
+      }
     },
     handleMousemove(e) {
       if (!this.$parent.border) return

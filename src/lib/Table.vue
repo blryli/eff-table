@@ -76,6 +76,7 @@ export default {
     data: { type: Array, default: () => [] },
     border: Boolean,
     drag: Boolean,
+    search: Boolean,
     edit: Boolean,
     editStop: Boolean,
     columnControl: Boolean,
@@ -85,7 +86,8 @@ export default {
     maxHeight: { type: Number, default: 0 },
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
-    showOverflowTooltip: Boolean
+    showOverflowTooltip: Boolean,
+    cellClassName: { type: [String, Function], default: '' }
   },
   data() {
     return {
@@ -219,12 +221,15 @@ export default {
 .is-overflow--y .eff-table__header-wrapper{
   overflow-y: scroll;
 }
-.eff-table__header, .eff-table__body-row {
+.eff-table__header, .eff-table__search, .eff-table__body-row {
   position: relative;
   width: 100%;
   display: flex;
   align-items: stretch;
   box-sizing: border-box;
+}
+.eff-table__search{
+  border-top: 1px solid #ddd;
 }
 .eff-table__column{
   display: flex;
@@ -299,6 +304,7 @@ export default {
 }
 
 .is-border .eff-table__header .eff-table__column + .eff-table__column,
+.is-border .eff-table__search .eff-table__column + .eff-table__column,
 .is-border .eff-table__body-row .eff-table__column + .eff-table__column{
   border-left: 1px solid #ddd;
 }

@@ -1,7 +1,14 @@
-## TableExtension 全局组件
+## eff-table 高效表格
 
-- 饿了么table扩展组件
-- 赋予table列拖动管理、列搜索功能
+#### 主要功能
+
+- 虚拟滚动
+
+- 列管理(列拖动，列展示隐藏)
+
+- 编辑
+
+- 校验
 
 #### 使用
 
@@ -32,11 +39,10 @@ export default {
           width: 135,
           show: true,
           edit: {
-            render: (h, { rowIndex }) => {
-              this.rowIndex = rowIndex
+            render: (h, { row, rowIndex }) => {
               return h('el-input', {
                 on: {
-                  input: val => this.list[rowIndex].skip = val
+                  input: val => row.skip = val
                 }
               })
             }
@@ -103,7 +109,7 @@ value: [
     // 编辑
     edit: { // object
       render(h, {row, rowIndex}) {
-        return <your-component vModel={value} vOn:change={change} />
+        return <your-component vModel={value} on-change={this.change} />
       },
       skip: false, // boolean | function(rowIndex){} 若为true就死也进不来
       stop: false // boolean | function(rowIndex){} 若为true进来就别想再切出去
@@ -147,3 +153,10 @@ value: [
 | editColumnLastToNext | 在列的最后一个可聚焦元素跳下一个 | placement: string |
 | editRowLast | 在行的最后一个可聚焦元素跳下一个 | placement: string |
 | validate | 任一表单项被校验后触发 | val: {prop: string success: boolean, message: string}, validators: array |
+|row-click|当某一行被点击时会触发该事件|{ row, column, rowIndex, event }|
+|row-dblclick|当某一行被双击时会触发该事件|{ row, column, rowIndex, event }|
+|cell-click|当某个单元格被点击时会触发该事件|{ row, column, rowIndex, columnIndex, cell, event }|
+|cell-dblclick|当某个单元格被双击击时会触发该事件|{ row, column, rowIndex, columnIndex, cell, event }|
+|cell-mouse-enter|当单元格 hover 进入时会触发该事件|{item, column, rowIndex, columnIndex, cell, event}|
+|cell-mouse-leave|当单元格 hover 退出时会触发该事件|{item, column, rowIndex, columnIndex, cell, event}|
+|header-click|当某一列的表头被点击时会触发该事件|{column, columnIndex, cell, event}|

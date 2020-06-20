@@ -3,8 +3,8 @@ import VCheckbox from '../components/Checkbox'
 export default {
   name: 'TableBodyColumn',
   props: {
-    index: { type: Number, default: 0 },
-    item: { type: Object, default: () => {} },
+    row: { type: Object, default: () => {} },
+    rowIndex: { type: Number, default: 0 },
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 }
   },
@@ -16,7 +16,7 @@ export default {
     }
   },
   render(h) {
-    const slot = this.cellRender(h) || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.index + 1 : this.column.prop ? this.item[this.column.prop] : '')
+    const slot = this.cellRender(h) || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.rowIndex + 1 : this.column.prop ? this.row[this.column.prop] : '')
     return (
       <div
         class={this.columnClass}
@@ -49,14 +49,14 @@ export default {
   methods: {
     renderSelection(h) {
       return h('v-checkbox', {
-        attrs: { value: this.table.isChecked(this.index), key: this.index },
+        attrs: { value: this.table.isChecked(this.rowIndex), key: this.rowIndex },
         on: { change: this.selectionRowChange }
       })
     },
     handleMouseenter(event, slot) {
-      const { item, column } = this
+      const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
-      this.table.$emit('cell.mouse.enter', item, column, cell, event, slot)
+      this.table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
       if (!cell.classList.contains('v-cell') && cell.childNodes.length) {
         return
       }
@@ -77,16 +77,16 @@ export default {
       return window.getComputedStyle(elem, null).getPropertyValue(prop)
     },
     handleMouseleave(event, slot) {
-      const { item, column } = this
+      const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
-      this.table.$emit('cell.mouse.leave', item, column, cell, event, slot)
+      this.table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       this.table.show = false
     },
     cellRender(h) {
-      return this.column.cellRender && this.column.cellRender(h, { row: this.item, rowIndex: this.index })
+      return this.column.cellRender && this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
     },
     selectionRowChange(selected) {
-      this.table.$emit('row.selection.change', this.index, selected)
+      this.table.$emit('row.selection.change', this.rowIndex, selected)
     }
   }
 }

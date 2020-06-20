@@ -5,27 +5,27 @@ export default {
   name: 'TableBodyRow',
   components: { TableBodyColumn },
   props: {
-    item: { type: Object, default: () => {} },
-    index: Number
+    row: { type: Object, default: () => {} },
+    rowIndex: Number
   },
   inject: ['table'],
   render(h) {
     const { currentRow, rowStyle, visibleColumns, showSpace } = this.table
     return (
       <div
-        class={`eff-table__body-row${currentRow === this.index ? ' current-row' : ''}`}
+        class={`eff-table__body-row${currentRow === this.rowIndex ? ' current-row' : ''}`}
         style={rowStyle}
-        data-rowid={this.index + 1}
+        data-rowid={this.rowIndex + 1}
         on-click={event => this.handleClick(event)}
         on-dblclick= {event => this.handleDoubleClick(event)}
       >
         {
           visibleColumns.filter(d => d.show !== false).map((column, columnIndex) => {
-            const colid = `${this.index + 1}-${columnIndex + 1}`
+            const colid = `${this.rowIndex + 1}-${columnIndex + 1}`
             return <TableBodyColumn
               data-colid={colid}
-              item={this.item}
-              index={this.index}
+              row={this.row}
+              rowIndex={this.rowIndex}
               column={column}
               columnIndex={columnIndex}
             />
@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     handleClick(event) {
-      this.table.highlightCurrentRow && (this.table.currentRow = this.index)
+      this.table.highlightCurrentRow && (this.table.currentRow = this.rowIndex)
       this.handleEvent(event, 'click')
     },
     handleDoubleClick(event) {
@@ -48,6 +48,7 @@ export default {
     handleEvent(event, name) {
       const table = this.table
       const cell = getCell(event)
+      const { row, rowIndex } = this
       let column
       if (cell) {
         const colid = cell.getAttribute('data-colid')
@@ -55,11 +56,11 @@ export default {
           const [, columnIndex] = colid.split('-')
           column = table.visibleColumns[columnIndex - 1]
           if (column) {
-            table.$emit(`cell-${name}`, this.item, column, cell, event)
+            table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
           }
         }
       }
-      table.$emit(`row-${name}`, this.item, column, event)
+      table.$emit(`row-${name}`, { row, column, rowIndex, event })
     }
   }
 }

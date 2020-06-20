@@ -6,6 +6,7 @@
         <eff-table
           ref="table"
           v-model="columns"
+          draggable="false"
           drag
           edit
           :edit-stop="editStop"
@@ -93,38 +94,51 @@ export default {
           width: 100,
           edit: {
             render: (h, { row, rowIndex }) => {
-              return <el-select
-                value={row['message']}
-                placeholder='请选择'
-                automatic-dropdown
-                on-visible-change={val => (this.editStop = val)}
-                on-input={val => (row['message'] = val)}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
+              return <el-input value={row.message} on-input={val => (row.message = val)} />
+              // return <el-select
+              //   value={row['message']}
+              //   placeholder='请选择'
+              //   automatic-dropdown
+              //   on-visible-change={val => (this.editStop = val)}
+              //   on-input={val => (row['message'] = val)}
+              // >
+              //   {
+              //     this.options.map(item => {
+              //       return <el-option
+              //         key={item.value}
+              //         title={item.title}
+              //         value={item.value}>
+              //       </el-option>
+              //     })
+              //   }
+              // </el-select>
+            }
+          },
+          on: {
+            mouseenter: (row, column, cell, event) => {
+              console.log({ row, column, cell, event })
             }
           }
         },
         {
-          show: false,
+          show: true,
           prop: 'name',
           title: '名字',
-          width: 100
+          width: 100,
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-input value={row.name} on-input={val => (row.name = val)} />
+            }
+          }
         },
         {
           show: true,
           prop: 'email',
           title: '邮箱',
           edit: {
-            skip: true
+            render: (h, { row, rowIndex }) => {
+              return <el-input value={row.email} on-input={val => (row.email = val)} />
+            }
           }
         },
         {
@@ -132,14 +146,22 @@ export default {
           prop: 'city',
           title: '城市',
           width: 100,
-          fixed: 'right'
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-input value={row.city} on-input={val => (row.city = val)} />
+            }
+          }
         },
         {
           show: true,
           prop: 'datetime',
           title: '时间',
           width: 100,
-          fixed: 'right'
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />
+            }
+          }
         }
       ]
     }
@@ -147,7 +169,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|50': [
+        'array|1000': [
           {
             'message': '@email',
             'name': '@cname',
