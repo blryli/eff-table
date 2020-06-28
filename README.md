@@ -128,7 +128,7 @@ value: [
     fixed: '', // string left/right
 
     // 未开发
-    sortable: '', // string 
+    sortable: '', // string
   }
 ]
 ```
@@ -148,15 +148,15 @@ value: [
 
 | 事件名称 | 说明                   | 回调参数                    |
 | -------- | ---------------------- | --------------------------- |
-| dragChange | 列拖动后触发 | 返回新的tableColumns数组 |
+| dragChange | 列拖动或表头宽度调整后触发 | 返回新的tableColumns数组 |
 | searchChange | 搜索条件变化后出发 | 返回搜索条件数组集合 |
-| editColumnLastToNext | 在列的最后一个可聚焦元素跳下一个 | placement: string |
-| editRowLast | 在行的最后一个可聚焦元素跳下一个 | placement: string |
+| editColumnLastToNext | 在列的最后一个可聚焦元素键入跳下一个指令是触发 | placement: string |
+| editRowLast | 在行的最后一个可聚焦元素键入跳下一个指令是触发 | placement: string |
 | validate | 任一表单项被校验后触发 | val: {prop: string success: boolean, message: string}, validators: array |
 |row-click|当某一行被点击时会触发该事件|{ row, column, rowIndex, event }|
 |row-dblclick|当某一行被双击时会触发该事件|{ row, column, rowIndex, event }|
 |cell-click|当某个单元格被点击时会触发该事件|{ row, column, rowIndex, columnIndex, cell, event }|
 |cell-dblclick|当某个单元格被双击击时会触发该事件|{ row, column, rowIndex, columnIndex, cell, event }|
-|cell-mouse-enter|当单元格 hover 进入时会触发该事件|{item, column, rowIndex, columnIndex, cell, event}|
-|cell-mouse-leave|当单元格 hover 退出时会触发该事件|{item, column, rowIndex, columnIndex, cell, event}|
-|header-click|当某一列的表头被点击时会触发该事件|{column, columnIndex, cell, event}|
+|cell-mouse-enter|当单元格 hover 进入时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
+|cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
+|header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|

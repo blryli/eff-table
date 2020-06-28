@@ -43,7 +43,7 @@ export default {
       }
     },
     renderData() {
-      return this.data.slice(this.currentIndex, this.pageSize + this.currentIndex)
+      return this.isVirtual ? this.data.slice(this.currentIndex, this.pageSize + this.currentIndex) : this.data
     },
     pageSize() {
       return parseInt(this.bodyHeight / this.table.rowHeight + 4)
@@ -69,6 +69,9 @@ export default {
         surHeight = height
       }
       return surHeight
+    },
+    isVirtual() {
+      return this.data.length > 20
     }
   },
   watch: {
@@ -121,8 +124,10 @@ export default {
       const last = this.totalHeight - this.pageSize * this.table.rowHeight
       this.scrollTop = scrollTop < last ? scrollTop : last
 
-      this.scrollIndex = parseInt(this.scrollTop / this.table.rowHeight)
-      scrollTop === 0 && (this.marginTop = '0')
+      if (this.isVirtual) {
+        this.scrollIndex = parseInt(this.scrollTop / this.table.rowHeight)
+        scrollTop === 0 && (this.marginTop = '0')
+      }
     }
   }
 }
