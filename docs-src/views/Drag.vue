@@ -113,11 +113,6 @@ export default {
               //   }
               // </el-select>
             }
-          },
-          on: {
-            mouseenter: (row, column, cell, event) => {
-              console.log({ row, column, cell, event })
-            }
           }
         },
         {
