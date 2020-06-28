@@ -7,6 +7,7 @@ export default {
       offset: 0,
       bodyOverflowX: false,
       bodyOverflowY: false,
+      overflowYHeight: 0,
       bodyScrollLeft: 0
     }
   },
@@ -60,6 +61,7 @@ export default {
         const body = this.$el.querySelector('.eff-table__body-wrapper')
         if (!body) return
         const { scrollHeight, clientHeight } = body
+        this.overflowYHeight = scrollHeight - clientHeight
         this.bodyOverflowY = scrollHeight > clientHeight
       })
     }

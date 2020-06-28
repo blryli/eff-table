@@ -71,7 +71,7 @@ export default {
       return surHeight
     },
     isVirtual() {
-      return this.data.length > 20
+      return this.table.overflowYHeight > this.table.rowHeight * 5
     }
   },
   watch: {
