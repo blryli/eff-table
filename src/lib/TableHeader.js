@@ -1,10 +1,10 @@
 import TableHeaderColumn from './TableHeaderColumn'
-import TableSearchColumn from './TableSearchColumn'
+import Search from '../components/Search'
 import { on, off, hasClass, onMousemove, getCell } from 'utils/dom'
 
 export default {
   name: 'TableHeader',
-  components: { TableHeaderColumn, TableSearchColumn },
+  components: { TableHeaderColumn, Search },
   data() {
     return {
       dragingTarget: null,
@@ -62,24 +62,7 @@ export default {
           }
         </div>
         {
-          search
-            ? <div
-              class='eff-table__search'
-              ref= 'search'
-              style={rowStyle}
-            >
-              {
-                visibleColumns.map((column, columnIndex) => {
-                  return <TableSearchColumn
-                    column={column}
-                    columnIndex={columnIndex}
-                  />
-                })
-              }
-              {
-                showSpace ? <div class='eff-table__column is--space' /> : ''
-              }
-            </div> : ''
+          search ? <Search styles={rowStyle} columns={visibleColumns} showSpace={showSpace} /> : ''
         }
       </div>
     )

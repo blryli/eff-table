@@ -55,9 +55,10 @@ export default {
     this.$parent.$on('header-dragend', this.elDragendChange)
 
     this.$nextTick(() => {
+      this.id = Date.now()
       this.sortable = new Sortable({
         el: this.$parent.$el.querySelector('.eff-table__header'),
-        group: 'table',
+        group: this.id,
         filter: 'is-drag--filter',
         dragImage: {
           height: 30
@@ -72,7 +73,7 @@ export default {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
             el: this.$el.querySelector('.drag-card__body'),
-            group: 'table',
+            group: this.id,
             dragImage: {
               height: 30
             },

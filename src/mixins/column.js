@@ -1,8 +1,4 @@
 export default {
-  created() {
-    this.$on('insert.column', this.insertColumn)
-    this.$on('remove.column', this.removeColumn)
-  },
   computed: {
     columnsWidth() {
       return this.visibleColumns.reduce((acc, cur) => acc.concat(cur.width), [])
@@ -27,16 +23,6 @@ export default {
       const { minWidth, bodyWrapperWidth, spaceWidth, spaceNum } = this
       return minWidth + spaceWidth * (spaceNum || 1) < bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - this.scrollYwidth
     }
-  },
-  watch: {
-    columns(columns) {
-
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.isLoad = true
-    })
   },
   methods: {
     setColumnStyle(column, columnIndex, width) {
@@ -65,18 +51,6 @@ export default {
         }
       }
       return style
-    },
-    exchange(parant, node1, node2) {
-      var createNode1 = document.createElement('div')
-      var createNode2 = document.createElement('div')
-      parant.insertBefore(createNode1, node1)
-      parant.insertBefore(createNode2, node2)
-      parant.replaceChild(node1, createNode2)
-      parant.replaceChild(node2, createNode1)
     }
-  },
-  beforeDestroy() {
-    this.$off('insert.column', this.headerColumn)
-    this.$off('remove.column', this.removeColumn)
   }
 }

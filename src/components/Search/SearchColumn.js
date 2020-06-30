@@ -1,12 +1,9 @@
-import VCheckbox from '../components/Checkbox'
-
 export default {
   name: 'TableSearchColumn',
   props: {
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 }
   },
-  components: { VCheckbox },
   inject: ['table'],
   computed: {
     width() {
@@ -40,7 +37,7 @@ export default {
         data-colid={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
-        <div class='v-cell'>{slot}</div>
+        <div class='eff-table__search-item'>{slot}</div>
       </div>
     )
   },

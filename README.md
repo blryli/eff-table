@@ -121,6 +121,14 @@ value: [
       field: '' // 指定校验字段( 默认为prop )
     }
 
+    // 搜索
+    search: {
+      render(h, {row, rowIndex}) {
+        return <your-component vModel={value} on-change={this.change} />
+      },
+      operator: false // boolean 搜索范围
+    }
+
     drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
 
     width: 80, // number

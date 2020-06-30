@@ -191,7 +191,7 @@ export default {
 
 <style lang="scss">
 .eff-table {
-  .v-cell{
+  .eff-cell{
     box-sizing: border-box;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -230,6 +230,15 @@ export default {
 }
 .eff-table__search{
   border-top: 1px solid #ddd;
+  input{
+    border-radius: 0;
+    padding: 0 5px;
+    border-color: transparent;
+    box-sizing: border-box;
+    &:focus, &:active{
+      border-color: #1177E8;
+    }
+  }
 }
 .eff-table__column{
   display: flex;

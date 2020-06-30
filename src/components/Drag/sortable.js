@@ -173,10 +173,6 @@ export default class Sortable {
     return filters.find(d => target.classList.contains(d))
   }
 
-  isFirstChild(target) {
-    return target.parentNode === this.el
-  }
-
   getDragNode(el) {
     if (!el || !el.parentNode) return false
     while (el.parentNode !== this.el && !el.contains(this.el)) {
@@ -188,8 +184,6 @@ export default class Sortable {
   isSameGroup() {
     const { from, to, fromGroup, toGroup } = relation
     // console.log({ from, to, fromGroup, toGroup })
-    if (from === to) return true
-    if (fromGroup && fromGroup === toGroup) return true
-    return false
+    return from === to || (fromGroup && fromGroup === toGroup)
   }
 }

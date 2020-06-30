@@ -113,6 +113,11 @@ export default {
               //   }
               // </el-select>
             }
+          },
+          on: {
+            mouseenter: (row, column, cell, event) => {
+              console.log({ row, column, cell, event })
+            }
           }
         },
         {
@@ -164,7 +169,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|1000': [
+        'array|100': [
           {
             'message': '@email',
             'name': '@cname',

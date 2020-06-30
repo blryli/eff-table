@@ -36,7 +36,7 @@ export default {
         data-colid={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
-        <div class='v-cell'>{slot}</div>
+        <div class='eff-cell'>{slot}</div>
       </div>
     )
   },

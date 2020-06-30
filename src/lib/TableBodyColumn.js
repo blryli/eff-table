@@ -24,7 +24,7 @@ export default {
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
-        <div ref='cell' class='v-cell'>{slot}</div>
+        <div ref='cell' class='eff-cell'>{slot}</div>
       </div>
     )
   },
@@ -57,7 +57,7 @@ export default {
       const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
       this.table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
-      if (!cell.classList.contains('v-cell') && cell.childNodes.length) {
+      if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
       // 如果文本溢出 显示tooltip

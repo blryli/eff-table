@@ -45,6 +45,9 @@ export default {
         return result.then(res => {
           cell.classList.remove('is-async-validator')
           return validate(res)
+        }).catch(err => {
+          cell.classList.remove('is-async-validator')
+          console.error(err)
         })
       }
 
@@ -60,6 +63,8 @@ export default {
       }, [])
       Promise.all(validators).then(res => {
         cb(!res.find(re => re.message), res)
+      }).catch(err => {
+        console.error(err)
       })
     },
     validateRow(rowIndex) {
