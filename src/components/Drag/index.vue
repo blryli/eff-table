@@ -55,7 +55,7 @@ export default {
     this.$parent.$on('header-dragend', this.elDragendChange)
 
     this.$nextTick(() => {
-      this.id = Date.now()
+      this.id = Math.floor(Math.random() * 100000)
       this.sortable = new Sortable({
         el: this.$parent.$el.querySelector('.eff-table__header'),
         group: this.id,
