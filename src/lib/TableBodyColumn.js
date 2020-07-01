@@ -38,11 +38,20 @@ export default {
     columnClass() {
       let classes = `eff-table__column`
       const { fixed, className } = this.column
+      const { cellClassName } = this.table
       if (fixed) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
       }
       className && (classes += ` ${className}`)
+      if (cellClassName) {
+        if (typeof cellClassName === 'function') {
+          const { row, column, rowIndex, columnIndex } = this
+          classes += ` ${cellClassName({ row, column, rowIndex, columnIndex })}`
+        } else {
+          classes += ` ${cellClassName}`
+        }
+      }
       return classes
     }
   },
