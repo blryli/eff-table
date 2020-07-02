@@ -46,8 +46,8 @@ export default {
       className && (classes += ` ${className}`)
       if (cellClassName) {
         if (typeof cellClassName === 'function') {
-          const c = cellClassName({ row, column, rowIndex, columnIndex })
           const { row, column, rowIndex, columnIndex } = this
+          const c = cellClassName({ row, column, rowIndex, columnIndex })
           c && (classes += ` ${c}`)
         } else {
           classes += ` ${cellClassName}`
