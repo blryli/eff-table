@@ -1,5 +1,5 @@
 <template>
-  <div class="table-wrapper">
+  <div class="table-wrapper" :class="{'is--screenfull': isScreenfull}">
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
@@ -82,7 +82,7 @@ export default {
     columnControl: Boolean,
     fullscreen: Boolean,
     rowHeight: { type: Number, default: 36 },
-    height: { type: Number, default: 400 },
+    height: { type: Number, default: 0 },
     maxHeight: { type: Number, default: 0 },
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
@@ -167,6 +167,7 @@ export default {
 
 <style lang="scss">
 @import '../components/Edit/index.scss';
+
 .eff-table {
   font-size: 14px;
   position: relative;
@@ -333,5 +334,15 @@ export default {
 }
 .is--space{
   flex: 1;
+}
+
+.is--screenfull{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>

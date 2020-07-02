@@ -3,6 +3,7 @@
   z-index: 10;
   border: 1px solid #1177E8;
   box-sizing: border-box;
+  overflow: hidden;
   &.is-show{
     visibility: visible;
   }

@@ -15,8 +15,13 @@ export default {
     on(window, 'resize', this.resize, { passive: true })
   },
   watch: {
-    data(val) {
+    data() {
       this.resize()
+    },
+    isScreenfull() {
+      setTimeout(() => {
+        this.resize()
+      }, 0)
     }
   },
   computed: {

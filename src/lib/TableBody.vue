@@ -35,12 +35,18 @@ export default {
   inject: ['table'],
   computed: {
     style() {
+      const style = {}
       const { table, bodyHeight } = this
-      const { maxHeight } = table
-
-      return {
-        maxHeight: (maxHeight || bodyHeight || '') + 'px'
+      const { maxHeight, height, isScreenfull } = table
+      if (isScreenfull) {
+        style.height = bodyHeight + 'px'
+      } else {
+        if (height) style.height = height + 'px'
+        if (maxHeight) style.maxHeight = maxHeight + 'px'
+        if (!height && !maxHeight) style.height = bodyHeight + 'px'
       }
+
+      return style
     },
     renderData() {
       return this.isVirtual ? this.data.slice(this.currentIndex, this.pageSize + this.currentIndex) : this.data
@@ -54,7 +60,7 @@ export default {
     },
     bodyHeight() {
       const { table } = this
-      const { height } = table
+      const { height, maxHeight } = table
       const { $el, isScreenfull } = table
       let surHeight = window.screen.height
       if (isScreenfull && $el) {
@@ -66,7 +72,7 @@ export default {
           surHeight -= header.$el.offsetHeight
         }
       } else {
-        surHeight = height
+        surHeight = Math.max(height, maxHeight) || 400
       }
       return surHeight
     },

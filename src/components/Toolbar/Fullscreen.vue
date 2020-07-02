@@ -42,7 +42,7 @@ export default {
         console.error('you browser can not work')
         return false
       }
-      screenfull.toggle(this.table.$el)
+      screenfull.toggle()
     },
     change() {
       this.isFullscreen = screenfull.isFullscreen
