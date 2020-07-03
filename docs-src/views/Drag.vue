@@ -123,6 +123,16 @@ export default {
         {
           show: true,
           prop: 'name',
+          title: '规格',
+          children: [
+            { prop: 'long', title: '长', width: 100 },
+            { prop: 'width', title: '宽', width: 100 },
+            { prop: 'height', title: '高', width: 100 }
+          ]
+        },
+        {
+          show: true,
+          prop: 'name',
           title: '名字',
           width: 100,
           edit: {

@@ -4,7 +4,8 @@ export default {
   name: 'TableHeaderColumn',
   props: {
     column: { type: Object, default: () => {} },
-    columnIndex: { type: Number, default: 0 }
+    columnIndex: { type: Number, default: 0 },
+    colid: { type: String, default: '' }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -33,7 +34,7 @@ export default {
     return (
       <div
         class={this.columnClass}
-        data-colid={this.columnIndex}
+        data-colid={this.colid}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
         <div class='eff-cell'>{slot}</div>

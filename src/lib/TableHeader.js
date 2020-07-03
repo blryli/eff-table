@@ -26,28 +26,37 @@ export default {
         top: top + 'px',
         left: left + width - 8 + 'px'
       }
+    },
+    ranked() {
+      let num = 1
+      const ranked = arr => {
+        arr.forEach(d => {
+          const { children = [] } = d
+          if (children.length) {
+            num++
+            ranked(children)
+          }
+        })
+      }
+      ranked(this.table.visibleColumns)
+      return num
     }
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, visibleColumns, showSpace, search } = this.$parent
+    const { rowStyle, visibleColumns, showSpace, rowHeight, search } = this.table
     return (
       <div class='eff-table__header-wrapper'>
         <div
           class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
-          style={rowStyle}
+          style={{ ...{ rowStyle }, ...{ height: rowHeight * this.ranked + 'px' }}}
           on-click={this.handleClick}
           on-mousemove={this.handleMousemove}
           on-mouseleave={this.handleMouseleave}
         >
           {
-            visibleColumns.map((column, columnIndex) => {
-              return <TableHeaderColumn
-                column={column}
-                columnIndex={columnIndex}
-              />
-            })
+            visibleColumns.map((column, columnIndex) => this.renderColumns(column, columnIndex))
           }
           {
             showSpace ? <div class='eff-table__column is--space' /> : ''
@@ -68,8 +77,31 @@ export default {
     )
   },
   methods: {
+    renderColumns(column, columnIndex, colid) {
+      const { children = [] } = column
+      if (!colid) colid = `${columnIndex + 1}`
+      if (column.prop && children.length) {
+        const width = children.reduce((acc, cur) => acc + cur.width, 0)
+        return <div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
+          <div class='header-title' style={{ height: this.table.rowHeight + 'px' }}>
+            {column.title}
+          </div>
+          <div class='header-children'>
+            {
+              children.map((col, idx) => this.renderColumns(col, idx, `${colid}-${idx + 1}`))
+            }
+          </div>
+        </div>
+      } else {
+        return <TableHeaderColumn
+          colid={colid}
+          column={column}
+          columnIndex={columnIndex}
+        />
+      }
+    },
     handleScroll(e) {
-      this.$parent.bodyScrollLeft = e.target.scrollLeft
+      this.table.bodyScrollLeft = e.target.scrollLeft
     },
     handleClick(event) {
       const table = this.table
@@ -77,14 +109,14 @@ export default {
       let column
       if (cell) {
         const columnIndex = cell.getAttribute('data-colid')
-        column = table.visibleColumns[columnIndex - 1]
+        column = table.visibleColumns[columnIndex]
         if (column) {
           table.$emit(`header-click`, { column, columnIndex, cell, event })
         }
       }
     },
     handleMousemove(e) {
-      if (!this.$parent.border) return
+      if (!this.table.border) return
       let target = e.target
       while (target && !hasClass(target, 'eff-table__column')) {
         target = target.parentNode
@@ -110,7 +142,7 @@ export default {
     },
     start(e) {
       if (!this.dragingTarget) return
-      this.$parent.lineShow = true
+      this.table.lineShow = true
       const { right: columnRight } = this.dragingTarget.getBoundingClientRect()
       this.startX = columnRight + 2
       this.moveing()
@@ -132,11 +164,29 @@ export default {
       line.style.cssText = `left:${left}px;top:${tableTop}px;height:${tableHeight}px;`
     },
     end() {
-      this.$parent.lineShow = false
+      this.table.lineShow = false
       this.isDraging = false
 
       const colid = this.dragingTarget.getAttribute('data-colid')
-      this.$emit('dragend', this.$parent.visibleColumns[colid], this.dragingTarget.offsetWidth + this.moveX)
+      const width = this.dragingTarget.offsetWidth + this.moveX
+      let obj = {}
+      const ids = colid.split('-')
+      const [start, next] = ids
+      if (next) {
+        obj = ids.reduce((acc, cur, idx) => {
+          const num = +cur - 1
+          if (idx === 0) {
+            return this.table.visibleColumns[num]
+          } else {
+            console.log(acc)
+            return acc.children[num]
+          }
+        }, {})
+      } else {
+        obj = this.table.visibleColumns[start]
+      }
+      obj.width = width
+      this.$emit('dragend', this.table.visibleColumns[start])
 
       setTimeout(() => {
         if (this.dragingTarget) {

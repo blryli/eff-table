@@ -1,19 +1,19 @@
 export default {
   computed: {
     columnsWidth() {
-      return this.visibleColumns.reduce((acc, cur) => acc.concat(cur.width), [])
+      return this.bodyColumns.reduce((acc, cur) => acc.concat(cur.width), [])
     },
     leftWidth() {
-      return this.visibleColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + cur.width : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + cur.width : acc, 0)
     },
     rightWidth() {
-      return this.visibleColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
     },
     minWidth() {
-      return this.visibleColumns.reduce((acc, cur) => acc + cur.width, 0)
+      return this.bodyColumns.reduce((acc, cur) => acc + cur.width, 0)
     },
     spaceNum() {
-      return this.visibleColumns.filter(d => !d.width).length
+      return this.bodyColumns.filter(d => !d.width).length
     },
     spaceWidth() {
       const { spaceNum } = this

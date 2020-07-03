@@ -142,8 +142,11 @@ export default {
       const columns = [...this.columns]
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
-      const some = (column, el) =>
-        column.title && column.title.trim() === el.innerText.trim()
+      const some = (column, el) => {
+        const { children = [] } = column
+        const { innerText } = children.length ? el.querySelector('.header-title') : el
+        return column.title && column.title.trim() === innerText.trim()
+      }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
       if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
 

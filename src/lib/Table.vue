@@ -105,6 +105,15 @@ export default {
   computed: {
     visibleColumns() {
       return this.columns.filter(d => d.show !== false)
+    },
+    bodyColumns() {
+      const plat = arr => {
+        return arr.reduce((acc, cur) => {
+          const { children = [] } = cur
+          return children.length ? acc.concat(children) : acc.concat(cur)
+        }, [])
+      }
+      return plat(this.visibleColumns)
     }
   },
   watch: {
@@ -133,14 +142,17 @@ export default {
     forceUpdate() {
       this.$refs.TableBody.forceUpdate()
     },
-    handleDragend(column, width) {
+    focus(rowIndex, prop) {
+      this.edit && this.$refs.edit.focus(rowIndex, prop)
+    },
+    handleDragend(column) {
       const { columns } = this
       const index = columns.findIndex(d => {
         const { title = '', type = '', prop = '' } = column
         const { title: dTitle = '', type: dType = '', prop: dProp = '' } = d
         return title + type + prop === dTitle + dType + dProp
       })
-      columns[index].width = width
+      columns[index] = column
       this.columns = [...columns]
       this.change()
     },
@@ -213,6 +225,24 @@ export default {
   border-bottom: 1px solid #ddd;
   background-color: #f6f7f8;
   box-sizing: border-box;
+}
+
+.eff-table__header-group{
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  .header-title{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+  }
+  .header-children{
+    flex: 1;
+    display: flex;
+  }
 }
 .eff-table__header-wrapper{
   &::-webkit-scrollbar {
@@ -313,9 +343,9 @@ export default {
   }
 }
 
-.is-border .eff-table__header .eff-table__column + .eff-table__column,
-.is-border .eff-table__search .eff-table__column + .eff-table__column,
-.is-border .eff-table__body-row .eff-table__column + .eff-table__column{
+.is-border  .eff-table__header-group + .eff-table__column,
+.is-border .eff-table__column + .eff-table__header-group,
+.is-border .eff-table__column + .eff-table__column{
   border-left: 1px solid #ddd;
 }
 .is--fixed {

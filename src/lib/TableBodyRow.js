@@ -10,7 +10,7 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { currentRow, rowStyle, visibleColumns, showSpace } = this.table
+    const { currentRow, rowStyle, bodyColumns, showSpace } = this.table
     return (
       <div
         class={`eff-table__body-row${currentRow === this.rowIndex ? ' current-row' : ''}`}
@@ -20,7 +20,7 @@ export default {
         on-dblclick= {event => this.handleDoubleClick(event)}
       >
         {
-          visibleColumns.filter(d => d.show !== false).map((column, columnIndex) => {
+          bodyColumns.map((column, columnIndex) => {
             const colid = `${this.rowIndex + 1}-${columnIndex + 1}`
             return <TableBodyColumn
               data-colid={colid}
@@ -54,7 +54,7 @@ export default {
         const colid = cell.getAttribute('data-colid')
         if (colid) {
           const [, columnIndex] = colid.split('-')
-          column = table.visibleColumns[columnIndex - 1]
+          column = table.bodyColumns[columnIndex - 1]
           if (column) {
             table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
           }
