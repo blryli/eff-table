@@ -28,7 +28,7 @@
     <edit
       v-if="edit"
       ref="edit"
-      :columns="visibleColumns"
+      :columns="bodyColumns"
       @columnLast="handleColumnLast"
       @rowLast="handleRowLast"
       @validate="handleValidate"

@@ -179,10 +179,9 @@ export default {
       return skip
     },
 
-    handleEditCell({ row, column, cell }) {
+    handleEditCell({ column, cell }) {
       this.handleType = 'click'
-      const { prop } = column
-      prop && this.editCell(this.columns.find(d => d.prop === prop), cell)
+      this.editCell(column, cell)
     },
     editCell(column, cell) {
       const { prop } = column || {}

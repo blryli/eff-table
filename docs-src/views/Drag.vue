@@ -120,7 +120,11 @@ export default {
           prop: 'spec',
           title: '规格',
           children: [
-            { prop: 'long', title: '长', width: 100 },
+            { prop: 'long', title: '长', width: 100, edit: {
+              render: (h, { row, rowIndex }) => {
+                return <el-input value={row.long} on-input={val => (row.long = val)} />
+              }
+            }},
             { prop: 'width', title: '宽', width: 100 },
             { prop: 'height', title: '高', width: 100 }
           ]
@@ -181,7 +185,8 @@ export default {
             'email': '@email',
             'city': '@city',
             'datetime': '@datetime',
-            'index|+1': 1
+            'index|+1': 1,
+            long: ''
           }
         ]
       }).array
