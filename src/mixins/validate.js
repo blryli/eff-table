@@ -39,13 +39,14 @@ export default {
       // 异步校验
       if (this.getType(result) === 'Promise') {
         const cellIndex = this.columns.findIndex(d => d.prop && d.prop === prop)
-        const cell = this.tableBody.childNodes[rowIndex].childNodes[cellIndex]
-        cell.classList.add('is-async-validator')
+        const childNodes = this.tableBody.childNodes[rowIndex]
+        const cell = childNodes ? childNodes.childNodes[cellIndex] : null
+        cell && cell.classList.add('is-async-validator')
         return result.then(res => {
-          cell.classList.remove('is-async-validator')
+          cell && cell.classList.remove('is-async-validator')
           return validate(res)
         }).catch(err => {
-          cell.classList.remove('is-async-validator')
+          cell && cell.classList.remove('is-async-validator')
           console.error(err)
         })
       }

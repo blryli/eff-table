@@ -385,4 +385,28 @@ export default {
   height: 100%;
 }
 
+.is-async-validator{
+  position: relative;
+  &:after{
+    content: '';
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    font-size: 20px;
+    left: 3px;
+    top: 3px;
+    border: 1px solid #666;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: rotate linear .5s infinite;
+  }
+}
+@keyframes rotate {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
+}
 </style>

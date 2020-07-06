@@ -72,7 +72,9 @@ export default {
           title: '邮箱',
           width: 100,
           validator: {
-            rule: val => val.length > 10 && '邮箱长度不能大于10'
+            rule: val => new Promise(resolve => setTimeout(() => {
+              resolve(val.length > 10 && '邮箱长度不能大于10')
+            }, 1000))
           }
         },
         {

@@ -59,7 +59,7 @@ export default {
       this.bodyHeightChange()
       this.$nextTick(() => {
         this.bodyOverflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
-        this.tableBody = this.$refs.tableBody
+        this.tableBody = this.$el.querySelector('.eff-table__body')
       })
     },
     bodyHeightChange() {
