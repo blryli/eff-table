@@ -351,6 +351,7 @@ export default {
   }
 }
 
+.is-border  .eff-table__header-group + .eff-table__header-group,
 .is-border  .eff-table__header-group + .eff-table__column,
 .is-border .eff-table__column + .eff-table__header-group,
 .is-border .eff-table__column + .eff-table__column{

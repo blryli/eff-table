@@ -27,19 +27,23 @@ export default {
         left: left + width - 8 + 'px'
       }
     },
+    // 获取columns嵌套层级
     ranked() {
-      let num = 1
-      const ranked = arr => {
-        arr.forEach(d => {
-          const { children = [] } = d
-          if (children.length) {
-            num++
-            ranked(children)
-          }
-        })
+      function getDeepth(array) {
+        function sum(arr, flag) {
+          return arr.reduce((acc, cur) => {
+            let accDeepth
+            const { children } = cur
+            if (Array.isArray(children)) {
+              accDeepth = sum(children, flag + 1)
+            }
+            return accDeepth > acc ? accDeepth : acc
+          }, flag)
+        }
+        return sum(array, 1)
       }
-      ranked(this.table.visibleColumns)
-      return num
+
+      return getDeepth(this.table.visibleColumns)
     }
   },
   inject: ['table'],
