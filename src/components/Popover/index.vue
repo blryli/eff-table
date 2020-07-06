@@ -7,7 +7,7 @@
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"
   >
-    <VSlot :content="content" />
+    <div v-for="(d, i) in message" :key="i" :class="`v-popover-item is--${d.type}`">{{ d.message }}</div>
     <div ref="arrow" class="v-popover__arrow" />
   </div>
   <!-- </transition> -->
@@ -18,24 +18,16 @@ import { removeBody, getDomClientRect } from 'utils/dom'
 
 export default {
   name: 'Popover',
-  components: {
-    VSlot: {
-      props: ['content'],
-      render(h) {
-        return h('div', {}, [this.content])
-      }
-    }
-  },
   props: {
     show: { type: Boolean, default: true },
-    effect: { type: [String, Object], default: 'dark' },
+    effect: { type: [String, Object], default: 'light' },
     // popover消息提示
     data: { type: [String, Object, Array], default: '' },
     placement: { type: String, default: 'top' },
     borderColor: { type: String, default: '#ccc' },
     popoverClass: { type: String, default: '' },
     reference: null,
-    content: { type: [String, Array], default: () => {} }
+    message: { type: [String, Array], default: '' }
   },
   data() {
     return {
@@ -191,6 +183,16 @@ export default {
   background-color: var(--bgColor);
   border-color: var(--borderColor);
   color: var(--color);
+
+  &-item{
+    + .v-popover-item{
+      margin-top: 10px;
+    }
+  }
+
+  .is--error{
+    color: red;
+  }
 }
 
 .v-popover--visible {

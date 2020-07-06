@@ -27,13 +27,12 @@ export default {
       // 校验处理函数
       const validate = params => {
         const message = typeof params === 'string' ? params : params.message || ''
-        const validator = { prop: `/${rowIndex}/${prop}`, message }
+        const validator = { prop, success: !message, message, rowIndex }
         const index = this.validators.findIndex(d => d.prop === `/${rowIndex}/${prop}`)
         index === -1 ? this.validators.push(validator) : this.validators.splice(index, 1, validator)
-        const obj = { prop, success: !message, message, rowIndex }
-        this.$emit('validate', obj, this.validators)
+        this.$emit('validate', validator, this.validators)
 
-        return obj
+        return validator
       }
 
       const result = rule(value, row, rowIndex)

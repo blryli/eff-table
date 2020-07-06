@@ -3,7 +3,13 @@
     <div class="eff-table__body--x-space" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div class="eff-table__body" :style="{ marginTop }">
-      <TableBodyRow v-for="(row, index) in renderData" :key="index + currentIndex" :row="row" :row-index="index + currentIndex" />
+      <TableBodyRow
+        v-for="(row, index) in renderData"
+        :key="index + currentIndex"
+        :row="row"
+        :row-index="index + currentIndex"
+        :messages="formatValidators[index + currentIndex]"
+      />
       <div v-if="!data.length" class="empty-text" :style="{height: table.rowHeight + 'px'}">{{ table.emptyText }}</div>
     </div>
   </div>
@@ -22,6 +28,10 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    validators: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -34,6 +44,14 @@ export default {
   },
   inject: ['table'],
   computed: {
+    formatValidators() {
+      return (this.validators || []).reduce((acc, cur, index) => {
+        const rowIndex = `${cur.rowIndex}`
+        if (!acc[rowIndex]) acc[rowIndex] = []
+        acc[rowIndex].push(cur)
+        return acc
+      }, {})
+    },
     style() {
       const style = {}
       const { table, bodyHeight } = this

@@ -6,7 +6,8 @@ export default {
     row: { type: Object, default: () => {} },
     rowIndex: { type: Number, default: 0 },
     column: { type: Object, default: () => {} },
-    columnIndex: { type: Number, default: 0 }
+    columnIndex: { type: Number, default: 0 },
+    message: { type: Object, default: () => {} }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -39,6 +40,7 @@ export default {
       let classes = `eff-table__column`
       const { fixed, className } = this.column
       const { cellClassName } = this.table
+      if (this.message.prop) classes += ' is--message'
       if (fixed) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
@@ -76,10 +78,18 @@ export default {
       range.setEnd(cell, cell.childNodes.length)
       const rangeWidth = range.getBoundingClientRect().width
       const padding = parseInt(this.getStyle(cell, 'paddingLeft')) + parseInt(this.getStyle(cell, 'paddingRight'))
+
+      const popover = []
       if (padding + rangeWidth > this.width) {
+        popover.push({ type: 'info', message: cell.innerText })
+      }
+      if (this.message && this.message.message) {
+        popover.push({ type: 'error', message: this.message.message })
+      }
+      if (popover.length) {
         this.table.show = true
-        this.table.reference = cell
-        this.table.popoverSlot = slot
+        this.table.reference = cell.parentNode
+        this.table.message = popover
       }
     },
     getStyle(elem, prop) {

@@ -13,6 +13,7 @@
         >
           <template slot="toolbar">
             <button @click="() => $refs.table.validate(val => val)">校验</button>
+            <button @click="() => $refs.table.clearValidate()">清除校验</button>
           </template>
         </eff-table>
       </div>
@@ -62,28 +63,31 @@ export default {
         {
           show: true,
           type: 'index',
-          label: '序号',
+          title: '序号',
           width: 80
         },
         {
           show: true,
           prop: 'email',
-          label: '邮箱',
-          width: 100
+          title: '邮箱',
+          width: 100,
+          validator: {
+            rule: val => val.length > 10 && '邮箱长度不能大于10'
+          }
         },
         {
           show: true,
           prop: 'city',
-          label: '城市',
+          title: '城市',
           width: 100,
           validator: {
-            rule: val => !val && '校验字段不能为空'
+            rule: val => !val && '城市不能为空'
           }
         },
         {
           show: true,
           prop: 'datetime',
-          label: '时间',
+          title: '时间',
           width: 100
         }
       ]

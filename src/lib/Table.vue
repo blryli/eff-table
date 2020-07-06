@@ -7,7 +7,7 @@
       <!-- header -->
       <TableHeader ref="header" @dragend="handleDragend" />
       <!-- body -->
-      <TableBody ref="TableBody" :data="data" />
+      <TableBody ref="TableBody" :data="data" :validators="validators" />
       <!-- footer -->
       <TableFooter v-if="$slots.footer" ref="TableFooter">
         <slot name="footer" />
@@ -41,7 +41,7 @@
     <p>bodyOverflowY{{ bodyOverflowY }}</p>
     <p>bodyOverflowX{{ bodyOverflowX }}</p> -->
     <!-- 气泡 -->
-    <Popover :show="show" :reference="reference" :content="popoverSlot" />
+    <Popover :show="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
   </div>
 </template>
@@ -95,7 +95,7 @@ export default {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       show: false,
-      popoverSlot: null,
+      message: null,
       reference: null,
       currentRow: null,
       lineShow: false,
@@ -328,6 +328,12 @@ export default {
   .eff-table__column{
     background-color: #fff;
     border-bottom: 1px solid #ddd;
+    &.is--message{
+      background-color: #fda1a1;
+      &:hover{
+        background-color: #fda1a1;
+      }
+    }
   }
   &:last-child{
     .eff-table__column{
@@ -339,6 +345,9 @@ export default {
   }
   &:hover .eff-table__column{
     background-color: #f1f3f5;
+    &.is--message{
+      background-color: #fda1a1;
+    }
   }
 }
 
@@ -374,4 +383,5 @@ export default {
   width: 100%;
   height: 100%;
 }
+
 </style>

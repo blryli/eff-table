@@ -6,6 +6,7 @@ export default {
   components: { TableBodyColumn },
   props: {
     row: { type: Object, default: () => {} },
+    messages: { type: Array, default: () => [] },
     rowIndex: Number
   },
   inject: ['table'],
@@ -22,12 +23,14 @@ export default {
         {
           bodyColumns.map((column, columnIndex) => {
             const colid = `${this.rowIndex + 1}-${columnIndex + 1}`
+            const message = this.messages.find(d => d.prop === column.prop) || {}
             return <TableBodyColumn
               data-colid={colid}
               row={this.row}
               rowIndex={this.rowIndex}
               column={column}
               columnIndex={columnIndex}
+              message={message}
             />
           })
         }
