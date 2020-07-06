@@ -123,8 +123,8 @@ export default {
       let columns = []
       let column = {}
       const filterColumns = columns => columns.filter(d => {
-        const { prop, fixed } = d
-        return prop && !fixed && !this.skip(d)
+        const { prop, fixed, edit: { render } = {}} = d
+        return prop && !fixed && render && !this.skip(d)
       })
       if (placement === 'right') {
         cellIndex = this.cellIndex + 1
