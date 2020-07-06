@@ -122,7 +122,7 @@ export default {
         },
         {
           show: true,
-          prop: 'name',
+          prop: 'spec',
           title: '规格',
           children: [
             { prop: 'long', title: '长', width: 100 },

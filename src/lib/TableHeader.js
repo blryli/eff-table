@@ -50,7 +50,7 @@ export default {
         <div
           class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
-          style={{ ...{ rowStyle }, ...{ height: rowHeight * this.ranked + 'px' }}}
+          style={{ ...rowStyle, ...{ height: rowHeight * this.ranked + 'px' }}}
           on-click={this.handleClick}
           on-mousemove={this.handleMousemove}
           on-mouseleave={this.handleMouseleave}
@@ -81,7 +81,7 @@ export default {
       const { children = [] } = column
       if (!colid) colid = `${columnIndex + 1}`
       if (column.prop && children.length) {
-        const width = children.reduce((acc, cur) => acc + cur.width, 0)
+        const width = children.reduce((acc, cur) => acc + (cur.width || 40), 0)
         return <div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
           <div class='header-title' style={{ height: this.table.rowHeight + 'px' }}>
             {column.title}
@@ -178,14 +178,14 @@ export default {
           if (idx === 0) {
             return this.table.visibleColumns[num]
           } else {
-            console.log(acc)
             return acc.children[num]
           }
         }, {})
       } else {
-        obj = this.table.visibleColumns[start]
+        obj = this.table.visibleColumns[start - 1]
       }
       obj.width = width
+      console.log(obj)
       this.$emit('dragend', this.table.visibleColumns[start])
 
       setTimeout(() => {

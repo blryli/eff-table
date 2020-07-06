@@ -110,7 +110,7 @@ export default {
       const plat = arr => {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur
-          return children.length ? acc.concat(children) : acc.concat(cur)
+          return children.length ? acc.concat(plat(children)) : acc.concat(cur)
         }, [])
       }
       return plat(this.visibleColumns)
@@ -147,14 +147,12 @@ export default {
     },
     handleDragend(column) {
       const { columns } = this
-      const index = columns.findIndex(d => {
-        const { title = '', type = '', prop = '' } = column
-        const { title: dTitle = '', type: dType = '', prop: dProp = '' } = d
-        return title + type + prop === dTitle + dType + dProp
-      })
-      columns[index] = column
-      this.columns = [...columns]
-      this.change()
+      const index = columns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      if (index > -1) {
+        columns[index] = column
+        this.columns = [...columns]
+        this.change()
+      }
     },
     change() {
       this.$emit('input', this.columns)

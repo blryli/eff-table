@@ -143,8 +143,7 @@ export default {
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) => {
-        const { children = [] } = column
-        const { innerText } = children.length ? el.querySelector('.header-title') : el
+        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.header-title') : el
         return column.title && column.title.trim() === innerText.trim()
       }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
