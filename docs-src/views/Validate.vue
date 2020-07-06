@@ -69,16 +69,16 @@ export default {
           show: true,
           prop: 'email',
           label: '邮箱',
-          width: 100,
-          validator: {
-            rule: val => !val && '校验字段不能为空'
-          }
+          width: 100
         },
         {
           show: true,
           prop: 'city',
           label: '城市',
-          width: 100
+          width: 100,
+          validator: {
+            rule: val => !val && '校验字段不能为空'
+          }
         },
         {
           show: true,
@@ -95,7 +95,7 @@ export default {
         'array|100': [
           {
             'email': '@email',
-            'city': '@city',
+            'city': '',
             'datetime': '@datetime',
             'index|+1': 1
           }

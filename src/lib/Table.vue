@@ -99,7 +99,8 @@ export default {
       reference: null,
       currentRow: null,
       lineShow: false,
-      isScreenfull: false
+      isScreenfull: false,
+      tableBody: null
     }
   },
   computed: {

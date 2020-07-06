@@ -59,6 +59,7 @@ export default {
       this.bodyHeightChange()
       this.$nextTick(() => {
         this.bodyOverflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
+        this.tableBody = this.$refs.tableBody
       })
     },
     bodyHeightChange() {
