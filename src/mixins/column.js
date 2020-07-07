@@ -40,7 +40,7 @@ export default {
       if (column.fixed === 'right') {
         if (bodyOverflowX) {
           if (!isScrollRightEnd) {
-            const firstRightFixedIndex = this.visibleColumns.findIndex(d => d.fixed === 'right')
+            const firstRightFixedIndex = this.bodyColumns.findIndex(d => d.fixed === 'right')
             columnIndex === firstRightFixedIndex && (style.borderLeftColor = 'transparent')
           }
         }

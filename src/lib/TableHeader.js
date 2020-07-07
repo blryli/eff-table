@@ -81,46 +81,56 @@ export default {
     )
   },
   methods: {
-    renderColumns(columns, colid = '') {
+    renderColumns(columns) {
       let index = 0
-      return columns.reduce((acc, column, columnIndex) => {
-        const { children = [] } = column
-        const parent = colid ? `${colid}-${columnIndex + 1}` : `${index + 1}`
-        if (column.prop && children.length) {
-          const width = children.reduce((acc, cur) => acc + (cur.width || 40), 0)
-          acc.push(<div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
-            <div class='header-title' style={{ height: this.table.rowHeight + 'px' }}>
-              {column.title}
-            </div>
-            <div class='header-children'>
-              {
-                this.renderColumns(children, parent)
-              }
-            </div>
-          </div>)
-          index += children.length
-        } else {
-          acc.push(<TableHeaderColumn
-            colid={parent}
-            column={column}
-            columnIndex={index}
-          />)
-          index += 1
-        }
-        return acc
-      }, [])
+      const { rowHeight } = this.table
+      function render(columns, colid = '') {
+        return columns.reduce((acc, column, columnIndex) => {
+          const { children = [] } = column
+          const parent = colid ? `${colid}-${columnIndex + 1}` : `${index + 1}`
+          if (column.prop && children.length) {
+            const plat = arr => {
+              return arr.reduce((acc, cur) => {
+                const { children = [] } = cur
+                return children.length ? acc.concat(plat(children)) : acc.concat(cur)
+              }, [])
+            }
+            const width = plat(children).reduce((acc, cur) => acc + (cur.width || 40), 0)
+            acc.push(<div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
+              <div class='header-title' style={{ maxHeight: rowHeight + 'px' }}>
+                {column.title}
+              </div>
+              <div class='header-children'>
+                {
+                  render(children, parent)
+                }
+              </div>
+            </div>)
+          } else {
+            acc.push(<TableHeaderColumn
+              colid={parent}
+              column={column}
+              columnIndex={index}
+            />)
+            index += 1
+          }
+          return acc
+        }, [])
+      }
+      return render(columns)
     },
     handleScroll(e) {
       this.table.bodyScrollLeft = e.target.scrollLeft
     },
     handleClick(event) {
-      const table = this.table
+      const { table } = this
       const cell = getCell(event)
       let column
       if (cell) {
-        const columnIndex = cell.getAttribute('data-colid')
-        column = table.visibleColumns[columnIndex]
+        const columnIndex = cell.getAttribute('data-colidx')
+        column = table.bodyColumns[columnIndex]
         if (column) {
+          console.log(column)
           table.$emit(`header-click`, { column, columnIndex, cell, event })
         }
       }

@@ -35,6 +35,7 @@ export default {
       <div
         class={this.columnClass}
         data-colid={this.colid}
+        data-colidx={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
         <div class='eff-cell'>{slot}</div>
