@@ -48,7 +48,7 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, visibleColumns, showSpace, rowHeight, search } = this.table
+    const { rowStyle, visibleColumns, bodyColumns, showSpace, rowHeight, search } = this.table
     return (
       <div class='eff-table__header-wrapper'>
         <div
@@ -60,7 +60,7 @@ export default {
           on-mouseleave={this.handleMouseleave}
         >
           {
-            visibleColumns.map((column, columnIndex) => this.renderColumns(column, columnIndex))
+            this.renderColumns(visibleColumns)
           }
           {
             showSpace ? <div class='eff-table__column is--space' /> : ''
@@ -75,34 +75,40 @@ export default {
           }
         </div>
         {
-          search ? <Search styles={rowStyle} columns={visibleColumns} showSpace={showSpace} /> : ''
+          search ? <Search styles={rowStyle} columns={bodyColumns} showSpace={showSpace} /> : ''
         }
       </div>
     )
   },
   methods: {
-    renderColumns(column, columnIndex, colid) {
-      const { children = [] } = column
-      if (!colid) colid = `${columnIndex + 1}`
-      if (column.prop && children.length) {
-        const width = children.reduce((acc, cur) => acc + (cur.width || 40), 0)
-        return <div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
-          <div class='header-title' style={{ height: this.table.rowHeight + 'px' }}>
-            {column.title}
-          </div>
-          <div class='header-children'>
-            {
-              children.map((col, idx) => this.renderColumns(col, idx, `${colid}-${idx + 1}`))
-            }
-          </div>
-        </div>
-      } else {
-        return <TableHeaderColumn
-          colid={colid}
-          column={column}
-          columnIndex={columnIndex}
-        />
-      }
+    renderColumns(columns, colid = '') {
+      let index = 0
+      return columns.reduce((acc, column, columnIndex) => {
+        const { children = [] } = column
+        const parent = colid ? `${colid}-${columnIndex + 1}` : `${index + 1}`
+        if (column.prop && children.length) {
+          const width = children.reduce((acc, cur) => acc + (cur.width || 40), 0)
+          acc.push(<div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
+            <div class='header-title' style={{ height: this.table.rowHeight + 'px' }}>
+              {column.title}
+            </div>
+            <div class='header-children'>
+              {
+                this.renderColumns(children, parent)
+              }
+            </div>
+          </div>)
+          index += children.length
+        } else {
+          acc.push(<TableHeaderColumn
+            colid={parent}
+            column={column}
+            columnIndex={index}
+          />)
+          index += 1
+        }
+        return acc
+      }, [])
     },
     handleScroll(e) {
       this.table.bodyScrollLeft = e.target.scrollLeft

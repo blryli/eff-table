@@ -13,7 +13,7 @@
           column-control
           fullscreen
           border
-          :height="400"
+          :max-height="400"
           :data="data"
         >
           <div slot="footer">121</div>
@@ -133,7 +133,7 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
-          width: 100,
+          width: 120,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.name} on-input={val => (row.name = val)} />
@@ -144,6 +144,7 @@ export default {
           show: true,
           prop: 'email',
           title: '邮箱',
+          width: 120,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.email} on-input={val => (row.email = val)} />
@@ -154,7 +155,7 @@ export default {
           show: true,
           prop: 'city',
           title: '城市',
-          width: 100,
+          width: 120,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.city} on-input={val => (row.city = val)} />
@@ -165,7 +166,8 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 100,
+          fixed: 'right',
+          width: 120,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />

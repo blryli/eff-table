@@ -40,6 +40,7 @@
     <p>showSpace{{ showSpace }}</p>
     <p>bodyOverflowY{{ bodyOverflowY }}</p>
     <p>bodyOverflowX{{ bodyOverflowX }}</p> -->
+    <!-- <p>columnsWidth{{ columnsWidth }}</p> -->
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
