@@ -127,6 +127,7 @@ export default {
       }
       if (val === last) {
         this.marginTop = this.scrollTop + 'px'
+        this.currentIndex = last
       }
     }
   },
@@ -142,8 +143,8 @@ export default {
     forceUpdate() {
       this.$el.forceUpdate()
     },
-    handleScroll(e) {
-      const { scrollLeft, scrollTop } = e.target
+    handleScroll() {
+      const { scrollLeft, scrollTop } = this.$el
       this.table.bodyScrollLeft = scrollLeft
       const last = this.totalHeight - this.pageSize * this.table.rowHeight
       this.scrollTop = scrollTop < last ? scrollTop : last
