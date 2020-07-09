@@ -294,11 +294,9 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
-      rowIndex -= 1
-      this.table.toScroll(rowIndex, () => {
+      this.table.toScroll(+rowIndex, () => {
         setTimeout(() => {
-          const { column, cell } = this.getColumn(prop, rowIndex)
-          console.log({ column, cell })
+          const { column, cell } = this.getColumn(prop, +rowIndex)
           this.handleType = 'to'
           this.editCell(column, cell)
         }, 100)
@@ -309,7 +307,8 @@ export default {
       const colid = columnIndex + 1
       return this.body.querySelector(`.eff-table__body-row[data-rowid='${rowIndex + 1}'] .eff-table__column[data-colid='${rowid}-${colid}']`)
     },
-    getColumn(prop, rowIndex = this.rowIndex) {
+    getColumn(prop, rowIndex) {
+      if (rowIndex === undefined) rowIndex = this.rowIndex
       const columnIndex = this.getColumnIndex(prop)
       const cell = this.getRow(rowIndex, columnIndex)
       const column = this.columns[columnIndex]

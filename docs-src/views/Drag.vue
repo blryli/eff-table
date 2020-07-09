@@ -3,6 +3,13 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
+        <el-button type="primary" @click="add">add</el-button>
+        <el-button type="primary" @click="deleted">delete</el-button>
+        <el-button type="primary" @click="focus">focus</el-button>
+        <el-input v-model="value" placeholder="" />
+
+        <p>{{ data.length }}</p>
+
         <eff-table
           ref="table"
           v-model="columns"
@@ -58,6 +65,7 @@ export default {
 
   data() {
     return {
+      value: 2,
       mainSnippet,
       componentSnippet,
       data: [],
@@ -77,7 +85,6 @@ export default {
         value: '选项5',
         label: '北京烤鸭'
       }],
-      value: '',
       editStop: false,
       columns: [
         {
@@ -196,7 +203,24 @@ export default {
     }, 500)
   },
   methods: {
-
+    add() {
+      this.data.push(mock.mock({
+        'message': '@email',
+        'name': '@cname',
+        'email': '@email',
+        'city': '@city',
+        'datetime': '@datetime',
+        'index|+1': 1,
+        long: ''
+      }))
+      this.$refs.table.focus(this.data.length - 1)
+    },
+    deleted() {
+      this.data.splice(this.data.length - 1, 1)
+    },
+    focus() {
+      this.$refs.table.focus(this.value)
+    }
   }
 }
 </script>
