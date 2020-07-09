@@ -7,7 +7,12 @@
       <!-- header -->
       <TableHeader ref="header" @dragend="handleDragend" />
       <!-- body -->
-      <TableBody ref="TableBody" :data="data" :validators="validators" />
+      <TableBody
+        ref="TableBody"
+        :data="data"
+        :validators="validators"
+        :row-render-index.sync="rowRenderIndex"
+      />
       <!-- footer -->
       <TableFooter v-if="$slots.footer" ref="TableFooter">
         <slot name="footer" />
@@ -101,7 +106,8 @@ export default {
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
-      tableBody: null
+      tableBody: null,
+      rowRenderIndex: 0
     }
   },
   computed: {
@@ -138,6 +144,9 @@ export default {
     this.$off('screenfullChange', this.screenfullChange)
   },
   methods: {
+    handleRowRenderIndex(val) {
+      this.rowRenderIndex = val
+    },
     screenfullChange(val) {
       this.isScreenfull = val
     },
@@ -146,6 +155,9 @@ export default {
     },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
+    },
+    toScroll(rowIndex, cb) {
+      this.$refs.TableBody.toScroll(rowIndex, cb)
     },
     handleDragend(column) {
       const { columns } = this

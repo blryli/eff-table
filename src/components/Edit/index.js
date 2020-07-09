@@ -293,10 +293,16 @@ export default {
     close() {
       this.show = false
     },
-    focus(rowIndex, prop) {
-      const { column, cell, columnIndex } = this.getColumn(prop, rowIndex)
-      this.handleType = 'to'
-      this.editCell(column, cell, columnIndex)
+    focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
+      rowIndex -= 1
+      this.table.toScroll(rowIndex, () => {
+        setTimeout(() => {
+          const { column, cell } = this.getColumn(prop, rowIndex)
+          console.log({ column, cell })
+          this.handleType = 'to'
+          this.editCell(column, cell)
+        }, 100)
+      })
     },
     getRow(rowIndex, columnIndex) {
       const rowid = rowIndex + 1

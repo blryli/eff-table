@@ -5,10 +5,10 @@
     <div class="eff-table__body" :style="{ marginTop }">
       <TableBodyRow
         v-for="(row, index) in renderData"
-        :key="index + currentIndex"
+        :key="index + rowRenderIndex"
         :row="row"
-        :row-index="index + currentIndex"
-        :messages="formatValidators[index + currentIndex]"
+        :row-index="index + rowRenderIndex"
+        :messages="formatValidators[index + rowRenderIndex]"
       />
       <div v-if="!data.length" class="empty-text" :style="{height: table.rowHeight + 'px'}">{{ table.emptyText }}</div>
     </div>
@@ -38,7 +38,7 @@ export default {
     return {
       scrollTop: 0,
       scrollIndex: 0,
-      currentIndex: 0,
+      rowRenderIndex: 0,
       marginTop: 0
     }
   },
@@ -67,7 +67,7 @@ export default {
       return style
     },
     renderData() {
-      return this.isVirtual ? this.data.slice(this.currentIndex, this.pageSize + this.currentIndex) : this.data
+      return this.isVirtual ? this.data.slice(this.rowRenderIndex, this.pageSize + this.rowRenderIndex) : this.data
     },
     pageSize() {
       return parseInt(this.bodyHeight / this.table.rowHeight + 4)
@@ -109,14 +109,14 @@ export default {
     scrollIndex(val) {
       const last = this.data.length - this.pageSize
       val > last - 2 && (val = last)
-      const offset = Math.abs(val - this.currentIndex)
+      const offset = Math.abs(val - this.rowRenderIndex)
       const { rowHeight } = this.table
 
       if (val < 2) {
-        this.currentIndex = 0
+        this.rowRenderIndex = 0
         this.marginTop = 0
       } else if (offset > 1) {
-        this.currentIndex = val
+        this.rowRenderIndex = val
         const top = val === 2 ? rowHeight : rowHeight * 2
         if (this.scrollTop > top) {
           this.marginTop = this.scrollTop - top + 'px'
@@ -127,8 +127,9 @@ export default {
       }
       if (val === last) {
         this.marginTop = this.scrollTop + 'px'
-        this.currentIndex = last
+        this.rowRenderIndex = last
       }
+      this.$emit('row-render-index', this.rowRenderIndex)
     }
   },
   mounted() {
@@ -153,6 +154,18 @@ export default {
         this.scrollIndex = parseInt(this.scrollTop / this.table.rowHeight)
         scrollTop === 0 && (this.marginTop = '0')
       }
+    },
+    toScroll(rowIndex, cb) {
+      setTimeout(() => {
+        if (rowIndex < this.pageSize / 2) {
+          this.$el.scrollTop = 0
+        } else {
+          this.$el.scrollTop = (rowIndex - this.pageSize / 2) * this.table.rowHeight
+        }
+        setTimeout(() => {
+          cb && cb()
+        }, 50)
+      })
     }
   }
 }
