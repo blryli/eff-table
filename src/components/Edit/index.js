@@ -294,13 +294,17 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
-      this.table.toScroll(+rowIndex, () => {
-        setTimeout(() => {
-          const { column, cell } = this.getColumn(prop, +rowIndex)
-          this.handleType = 'to'
-          this.editCell(column, cell)
-        }, 100)
-      })
+      const { column, cell } = this.getColumn(prop, +rowIndex)
+      if (cell) {
+        this.editCell(column, cell)
+      } else {
+        this.table.toScroll(+rowIndex, () => {
+          setTimeout(() => {
+            this.handleType = 'to'
+            this.editCell(column, cell)
+          }, 100)
+        })
+      }
     },
     getRow(rowIndex, columnIndex) {
       const rowid = rowIndex + 1

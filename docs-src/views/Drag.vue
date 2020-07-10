@@ -101,24 +101,24 @@ export default {
           width: 100,
           edit: {
             render: (h, { row, rowIndex }) => {
-              return <el-input value={row.message} on-input={val => (row.message = val)} />
-              // return <el-select
-              //   value={row['message']}
-              //   placeholder='请选择'
-              //   automatic-dropdown
-              //   on-visible-change={val => (this.editStop = val)}
-              //   on-input={val => (row['message'] = val)}
-              // >
-              //   {
-              //     this.options.map(item => {
-              //       return <el-option
-              //         key={item.value}
-              //         title={item.title}
-              //         value={item.value}>
-              //       </el-option>
-              //     })
-              //   }
-              // </el-select>
+              // return <el-input value={row.message} on-input={val => (row.message = val)} />
+              return <el-select
+                value={row['message']}
+                placeholder='请选择'
+                automatic-dropdown
+                on-visible-change={val => (this.editStop = val)}
+                on-input={val => (row['message'] = val)}
+              >
+                {
+                  this.options.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
             }
           }
         },
@@ -142,8 +142,22 @@ export default {
           title: '名字',
           width: 120,
           edit: {
+            stop: true,
             render: (h, { row, rowIndex }) => {
-              return <el-input value={row.name} on-input={val => (row.name = val)} />
+              return h('el-input', {
+                attrs: {
+                  value: row.name
+                },
+                on: {
+                  input: (val) => {
+                    row.name = val
+                  }
+                },
+                nativeOn: {
+                  keyup: () => this.$refs.table.focus(12)
+                }
+              })
+              // return <el-input value={row.name} on-input={val => (row.name = val)}  />
             }
           }
         },
@@ -173,7 +187,6 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          fixed: 'right',
           width: 120,
           edit: {
             render: (h, { row, rowIndex }) => {
