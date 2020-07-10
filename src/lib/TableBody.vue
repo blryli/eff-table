@@ -164,7 +164,7 @@ export default {
         }
         setTimeout(() => {
           cb && cb()
-        }, 50)
+        }, 100)
       })
     }
   }
