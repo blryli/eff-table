@@ -106,6 +106,12 @@ export default {
       const { bodyWrapperWidth, scrollYwidth } = this.table
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
     },
+    isVirtual(val) {
+      if (!val) {
+        this.rowRenderIndex = 0
+        this.marginTop = 0
+      }
+    },
     scrollIndex(val) {
       const last = this.data.length - this.pageSize
       val > last - 2 && (val = last)
@@ -124,6 +130,7 @@ export default {
       }
       if (val === last - 1) {
         this.marginTop = this.scrollTop - rowHeight + 'px'
+        this.rowRenderIndex = last - 1
       }
       if (val === last) {
         this.marginTop = this.scrollTop + 'px'
@@ -152,7 +159,10 @@ export default {
 
       if (this.isVirtual) {
         this.scrollIndex = parseInt(this.scrollTop / this.table.rowHeight)
-        scrollTop === 0 && (this.marginTop = '0')
+        if (scrollTop < this.table.rowHeight) {
+          this.marginTop = 0
+          this.rowRenderIndex = 0
+        }
       }
     },
     toScroll(rowIndex, cb) {

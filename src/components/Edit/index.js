@@ -300,6 +300,7 @@ export default {
       } else {
         this.table.toScroll(+rowIndex, () => {
           setTimeout(() => {
+            const { column, cell } = this.getColumn(prop, +rowIndex)
             this.handleType = 'to'
             this.editCell(column, cell)
           }, 100)
