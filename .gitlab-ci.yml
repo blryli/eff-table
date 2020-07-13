@@ -8,6 +8,7 @@ publish:
     paths:
       - node_modules/
   script:
+    - 'export SASS_BINARY_SITE=https://npm.taobao.org/mirrors/node-sass'
     - npm install
     - npm run build
     - 'echo export default $CI_PIPELINE_ID > version.js'
