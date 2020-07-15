@@ -61,7 +61,7 @@ export default {
       } else {
         if (height) style.height = height + 'px'
         if (maxHeight) style.maxHeight = maxHeight + 'px'
-        if (!height && !maxHeight) style.height = bodyHeight + 'px'
+        if (!height && !maxHeight) style.maxHeight = bodyHeight + 'px'
       }
 
       return style
@@ -95,7 +95,7 @@ export default {
       return surHeight
     },
     isVirtual() {
-      return this.table.overflowYHeight > this.table.rowHeight * 5
+      return this.data.length > this.pageSize
     }
   },
   watch: {

@@ -163,6 +163,10 @@ export const getCell = (event) => {
   return null
 }
 
+/**
+ * * 计算鼠标移动距离
+ * @param {object} functions
+ */
 export const onMousemove = function(fns) {
   const { start, moveing, end } = fns
   start && start()
@@ -216,3 +220,21 @@ export const getKeysStr = function(event) {
   keys.add(key)
   return Array.from(keys).sort().toString()
 }
+
+/**
+ * * 获取节点文本宽度
+ * @param {node} node
+ */
+export const getTextWidth = function(node) {
+  function getStyle(elem, prop) {
+    if (prop) prop = prop.replace(/([A-Z])/g, str => '-' + str.toLowerCase())
+    return window.getComputedStyle(elem, null).getPropertyValue(prop)
+  }
+  const range = document.createRange()
+  range.setStart(node, 0)
+  range.setEnd(node, node.childNodes.length)
+  const rangeWidth = range.getBoundingClientRect().width
+  const padding = parseInt(getStyle(node, 'paddingLeft')) + parseInt(getStyle(node, 'paddingRight'))
+  return padding + rangeWidth
+}
+

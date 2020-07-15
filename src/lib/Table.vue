@@ -184,6 +184,14 @@ export default {
     },
     handleValidate(val, validators) {
       this.$emit('validate', val, validators)
+    },
+    tipShow({ reference, message }) {
+      this.show = true
+      this.reference = reference
+      this.message = message
+    },
+    tipClose() {
+      this.show = false
     }
   }
 }

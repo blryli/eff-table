@@ -42,6 +42,6 @@ export default {
     }
   },
   render(h) {
-    return h('div', {}, [])
+    return <div />
   }
 }

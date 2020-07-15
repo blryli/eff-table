@@ -1,4 +1,5 @@
 import VCheckbox from '../components/Checkbox'
+import { getTextWidth } from '../utils/dom'
 
 export default {
   name: 'TableHeaderColumn',
@@ -37,24 +38,37 @@ export default {
         data-colid={this.colid}
         data-colidx={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
+        on-mouseenter={event => this.handleMouseenter(event, slot)}
+        on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
-        <div class='eff-cell'>{slot}</div>
+        <div ref='cell' class='eff-cell'>{slot}</div>
       </div>
     )
   },
   methods: {
     renderSelection(h) {
-      return h('v-checkbox', {
-        attrs: {
-          value: this.table.selectionAll,
-          key: this.columnIndex,
-          indeterminate: this.table.indeterminate
-        },
-        on: { change: this.selectionChange }
-      })
+      return <v-checkbox
+        value={this.table.selectionAll}
+        key={this.columnIndex}
+        indeterminate={this.table.indeterminate}
+        on-change={this.selectionChange}
+      />
     },
     selectionChange(val) {
       this.table.$emit('all.selection.change', val)
+    },
+    handleMouseenter() {
+      const { cell } = this.$refs
+      if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
+        return
+      }
+
+      if (getTextWidth(cell) > this.width) {
+        this.table.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
+      }
+    },
+    handleMouseleave() {
+      this.table.tipClose()
     }
   }
 }

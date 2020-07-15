@@ -3,28 +3,16 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
-        <el-button type="primary" @click="add">add</el-button>
-        <el-button type="primary" @click="deleted">delete</el-button>
-        <el-button type="primary" @click="focus">focus</el-button>
-        <el-input v-model="value" placeholder="" />
-
-        <p>{{ data.length }}</p>
-
         <eff-table
           ref="table"
           v-model="columns"
-          draggable="false"
-          drag
-          edit
-          :edit-stop="editStop"
-          column-control
-          fullscreen
-          border
-          :max-height="400"
           :data="data"
-        >
-          <div slot="footer">121</div>
-        </eff-table>
+          :max-height="400"
+          drag
+          column-control
+          border
+          fullscreen
+        />
       </div>
     </section>
 
@@ -54,7 +42,16 @@ data () {
 `
 
 const componentSnippet = `
-<v-component :msg="msg" />
+<eff-table
+  ref="table"
+  v-model="columns"
+  :data="data"
+  :max-height="400"
+  drag
+  column-control
+  border
+  fullscreen
+/>
 `
 export default {
   name: '',
@@ -68,7 +65,7 @@ export default {
       value: 2,
       mainSnippet,
       componentSnippet,
-      data: [],
+      data: Object.freeze([]),
       options: [{
         value: '选项1',
         label: '黄金糕'
@@ -98,68 +95,13 @@ export default {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 100,
-          edit: {
-            render: (h, { row, rowIndex }) => {
-              // return <el-input value={row.message} on-input={val => (row.message = val)} />
-              return <el-select
-                value={row['message']}
-                placeholder='请选择'
-                automatic-dropdown
-                on-visible-change={val => (this.editStop = val)}
-                on-input={val => (row['message'] = val)}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'spec',
-          title: '规格',
-          children: [
-            { prop: 'long', title: '长', width: 100, edit: {
-              render: (h, { row, rowIndex }) => {
-                return <el-input value={row.long} on-input={val => (row.long = val)} />
-              }
-            }},
-            { prop: 'width', title: '宽', width: 100 },
-            { prop: 'height', title: '高', width: 100 }
-          ]
+          width: 100
         },
         {
           show: true,
           prop: 'name',
           title: '名字',
-          width: 120,
-          edit: {
-            stop: true,
-            render: (h, { row, rowIndex }) => {
-              return h('el-input', {
-                attrs: {
-                  value: row.name
-                },
-                on: {
-                  input: (val) => {
-                    row.name = val
-                  }
-                },
-                nativeOn: {
-                  keyup: () => this.$refs.table.focus(12)
-                }
-              })
-              // return <el-input value={row.name} on-input={val => (row.name = val)}  />
-            }
-          }
+          width: 120
         },
         {
           show: true,
@@ -187,7 +129,7 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 120,
+          width: 150,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />
@@ -199,7 +141,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.data = mock.mock({
+      this.data = Object.freeze(mock.mock({
         'array|100': [
           {
             'message': '@email',
@@ -211,29 +153,9 @@ export default {
             long: ''
           }
         ]
-      }).array
+      }).array)
       console.log(this.data)
     }, 500)
-  },
-  methods: {
-    add() {
-      this.data.push(mock.mock({
-        'message': '@email',
-        'name': '@cname',
-        'email': '@email',
-        'city': '@city',
-        'datetime': '@datetime',
-        'index|+1': 1,
-        long: ''
-      }))
-      this.$refs.table.focus(this.data.length - 1)
-    },
-    deleted() {
-      this.data.splice(this.data.length - 1, 1)
-    },
-    focus() {
-      this.$refs.table.focus(this.value)
-    }
   }
 }
 </script>

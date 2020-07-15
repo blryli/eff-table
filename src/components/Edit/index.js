@@ -105,8 +105,6 @@ export default {
     to() {
       this.handleType = 'to'
       const { placement = 'right' } = this
-      // 处理 stop 字段
-      if (this.stop()) return
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX(placement)
@@ -122,13 +120,13 @@ export default {
       let cellIndex = 0
       let columns = []
       let column = {}
-      const filterColumns = columns => columns.filter(d => {
-        const { prop, fixed, edit: { render } = {}} = d
-        return prop && !fixed && render && !this.skip(d)
+      const filterColumns = columns => columns.filter(column => {
+        const { prop, fixed, edit: { render } = {}} = column
+        return prop && !fixed && render && !this.skip(column)
       })
       if (placement === 'right') {
         cellIndex = this.cellIndex + 1
-        columns = filterColumns(this.columns.slice(cellIndex, this.columns.length - 1))
+        columns = filterColumns(this.columns.slice(cellIndex))
         column = columns[0] || false
       } else {
         cellIndex = this.cellIndex
@@ -154,29 +152,17 @@ export default {
         this.$emit('rowLast', placement)
       }
     },
-    stop() {
-      const { edit: { stop } = {}} = this.column || {}
-      if (stop === undefined) return false
-
-      if (typeof stop === 'function') {
-        return stop(this.rowIndex)
-      }
-      if (typeof stop !== 'boolean') {
-        console.error(`${this.column.prop} 字段，stop类型必须是 function/boolean`)
-      }
-      return stop || false
-    },
     skip(column) {
       const { edit: { skip } = {}} = column || {}
       if (skip === undefined) return false
 
       if (typeof skip === 'function') {
-        return skip(this.rowIndex)
+        return skip({ row: this.table.data[this.rowIndex], rowIndex: this.rowIndex })
       }
       if (typeof skip !== 'boolean') {
         console.error(`${this.column.prop} 字段，skip类型必须是 function/boolean`)
       }
-      return skip
+      return skip || false
     },
 
     handleEditCell({ column, cell }) {
@@ -294,6 +280,7 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
+      this.table.editStop = false
       const { column, cell } = this.getColumn(prop, +rowIndex)
       if (cell) {
         this.editCell(column, cell)
@@ -331,6 +318,6 @@ export default {
     const classes = `eff-table-edit${this.show ? ' is-show' : ' is-hide'}`
     const style = { '--height': this.table.rowHeight - 2 + 'px' }
     const input = this.$createElement('input', { class: 'eff-table-edit-input', ref: 'editInput' })
-    return h('div', { class: classes, style }, [this.editRender, input])
+    return <div class={classes} style={style}>{[this.editRender, input]}</div>
   }
 }

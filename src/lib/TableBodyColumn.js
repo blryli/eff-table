@@ -1,4 +1,5 @@
 import VCheckbox from '../components/Checkbox'
+import { getTextWidth } from '../utils/dom'
 
 export default {
   name: 'TableBodyColumn',
@@ -60,53 +61,42 @@ export default {
   },
   methods: {
     renderSelection(h) {
-      return h('v-checkbox', {
-        attrs: { value: this.table.isChecked(this.rowIndex), key: this.rowIndex },
-        on: { change: this.selectionRowChange }
-      })
+      return <v-checkbox
+        value={this.table.isChecked(this.rowIndex)}
+        key={this.rowIndex}
+        on-change={this.selectionChange}
+      />
+    },
+    selectionChange(selected) {
+      this.table.$emit('row.selection.change', this.rowIndex, selected)
+    },
+    cellRender(h) {
+      return this.column.cellRender && this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
     },
     handleMouseenter(event, slot) {
-      const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
+      const { row, column, rowIndex, columnIndex } = this
       this.table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
-      // 如果文本溢出 显示tooltip
-      const range = document.createRange()
-      range.setStart(cell, 0)
-      range.setEnd(cell, cell.childNodes.length)
-      const rangeWidth = range.getBoundingClientRect().width
-      const padding = parseInt(this.getStyle(cell, 'paddingLeft')) + parseInt(this.getStyle(cell, 'paddingRight'))
 
-      const popover = []
-      if (padding + rangeWidth > this.width) {
-        popover.push({ type: 'info', message: cell.innerText })
+      const messages = []
+      if (getTextWidth(cell) > this.width) {
+        messages.push({ type: 'info', message: cell.innerText })
       }
       if (this.message && this.message.message) {
-        popover.push({ type: 'error', message: this.message.message })
+        messages.push({ type: 'error', message: this.message.message })
       }
-      if (popover.length) {
-        this.table.show = true
-        this.table.reference = cell.parentNode
-        this.table.message = popover
+      if (messages.length) {
+        this.table.tipShow({ reference: cell.parentNode, message: messages })
       }
-    },
-    getStyle(elem, prop) {
-      if (prop) prop = prop.replace(/([A-Z])/g, str => '-' + str.toLowerCase())
-      return window.getComputedStyle(elem, null).getPropertyValue(prop)
     },
     handleMouseleave(event, slot) {
       const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
       this.table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
-      this.table.show = false
-    },
-    cellRender(h) {
-      return this.column.cellRender && this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
-    },
-    selectionRowChange(selected) {
-      this.table.$emit('row.selection.change', this.rowIndex, selected)
+      this.table.tipClose()
     }
   }
 }

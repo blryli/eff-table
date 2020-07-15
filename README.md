@@ -111,13 +111,12 @@ value: [
       render(h, {row, rowIndex}) {
         return <your-component vModel={value} on-change={this.change} />
       },
-      skip: false, // boolean | function(rowIndex){} 若为true就死也进不来
-      stop: false // boolean | function(rowIndex){} 若为true进来就别想再切出去
+      skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
     }
 
     // 校验
     validator: {
-      rule: (val, row, rowIndex) => !val && '不能为空', // 校验规则
+      rule: ({value, row, rowIndex}) => !val && '不能为空', // 校验规则
       field: '' // 指定校验字段( 默认为prop )
     }
 

@@ -205,8 +205,7 @@ export default {
         obj = this.table.visibleColumns[start - 1]
       }
       obj.width = width
-      console.log(obj)
-      this.$emit('dragend', this.table.visibleColumns[start])
+      this.$emit('dragend', obj)
 
       setTimeout(() => {
         if (this.dragingTarget) {

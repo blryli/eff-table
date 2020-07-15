@@ -35,7 +35,7 @@ export default {
         return validator
       }
 
-      const result = rule(value, row, rowIndex)
+      const result = rule({ value, row, rowIndex })
       // 异步校验
       if (this.getType(result) === 'Promise') {
         const cellIndex = this.columns.findIndex(d => d.prop && d.prop === prop)
