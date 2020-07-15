@@ -143,8 +143,9 @@ export default {
           width: 100,
           edit: {
             render: (h, { row, rowIndex }) => {
-              return <el-input disabled={true} value={row.skip} on-input={val => (row.skip = val)} />
-            }
+              return <el-input value={row.skip} on-input={val => (row.skip = val)} />
+            },
+            skip: true
           }
         },
         {
@@ -152,6 +153,9 @@ export default {
           prop: 'switch',
           title: '开关',
           width: 100,
+          // titleRender: (h, { row, rowIndex }) => {
+          //   return ['开关', '?']
+          // },
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.switch} on-input={val => (row.switch = val)} />

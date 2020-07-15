@@ -176,12 +176,6 @@ export default {
     handleCardClose() {
       this.$emit('dragCardClose')
     },
-    handleColumnLast(placement) {
-      this.$emit('editColumnLastToNext', placement)
-    },
-    handleRowLast(placement) {
-      this.$emit('editRowLast', placement)
-    },
     handleValidate(val, validators) {
       this.$emit('validate', val, validators)
     },

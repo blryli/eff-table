@@ -139,7 +139,7 @@ export default {
         this.editCell(column, cell)
       } else {
         shake(this.$el, 'x')
-        this.$emit('columnLast', placement)
+        this.table.$emit('editColumnLastToNext', placement)
       }
     },
     toY() {
@@ -149,7 +149,6 @@ export default {
         this.editCell(column, cell)
       } else {
         shake(this.$el, 'y')
-        this.$emit('rowLast', placement)
       }
     },
     skip(column) {

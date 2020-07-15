@@ -70,13 +70,6 @@ export default {
       columns: [
         {
           show: true,
-          type: 'selection',
-          title: '序号',
-          width: 80,
-          fixed: 'left'
-        },
-        {
-          show: true,
           type: 'index',
           title: '序号',
           width: 80,

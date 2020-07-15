@@ -44,6 +44,7 @@ export default {
     rowSelectionChange(index, selected) {
       this.toggleSelection(index, !selected)
       this.$emit('select', this.selecteds, this.data[index])
+      this.$emit('selection-change', this.selecteds)
     },
     allselectionChange(selected) {
       this.selectionAll = selected
@@ -51,6 +52,7 @@ export default {
       selected ? this.data.forEach((d, i) => checkeds.add(i)) : checkeds.clear()
       this.updateSelected()
       this.$emit('select-all', this.selecteds)
+      this.$emit('selection-change', this.selecteds)
     },
     isSame(obj1, obj2) {
       return JSON.stringify(obj1) === JSON.stringify(obj2)

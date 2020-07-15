@@ -158,7 +158,6 @@ value: [
 | dragChange | 列拖动或表头宽度调整后触发 | 返回新的tableColumns数组 |
 | searchChange | 搜索条件变化后出发 | 返回搜索条件数组集合 |
 | editColumnLastToNext | 在列的最后一个可聚焦元素键入跳下一个指令是触发 | placement: string |
-| editRowLast | 在行的最后一个可聚焦元素键入跳下一个指令是触发 | placement: string |
 | validate | 任一表单项被校验后触发 | val: {prop: string success: boolean, message: string}, validators: array |
 |row-click|当某一行被点击时会触发该事件|{ row, column, rowIndex, event }|
 |row-dblclick|当某一行被双击时会触发该事件|{ row, column, rowIndex, event }|

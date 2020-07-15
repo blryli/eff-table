@@ -71,7 +71,14 @@ export default {
       this.table.$emit('row.selection.change', this.rowIndex, selected)
     },
     cellRender(h) {
-      return this.column.cellRender && this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
+      if (this.column.cellRender) {
+        if (typeof this.column.cellRender === 'function') {
+          return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
+        } else {
+          console.error('cellRender 必须是函数')
+        }
+      }
+      return false
     },
     handleMouseenter(event, slot) {
       const { cell } = this.$refs
