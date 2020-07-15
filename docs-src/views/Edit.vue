@@ -203,12 +203,10 @@ export default {
           }
         ]
       }).array
-      console.log(this.data)
     }, 500)
   },
   methods: {
     visibleChange(val) {
-      console.log('visibleChange', val)
       this.editStop = val
     },
     add() {

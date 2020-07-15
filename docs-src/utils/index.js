@@ -1,7 +1,6 @@
 const formatNumber = n => ('0' + n.toString()).slice(-2)
 
 export const formatDate = function(date, format = 'yyyy-MM-dd hh:mm:ss') {
-  console.log(date)
   if (!date) return
   const Y = date.getFullYear()
   const M = date.getMonth() + 1

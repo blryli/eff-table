@@ -24,7 +24,6 @@ export default {
     const { renderSlot } = this
     this.columnConfig = Object.keys(this.$options.props).reduce((acc, cur) => {
       this.$watch(cur, (newVal) => {
-        console.log({ cur, newVal })
         this.columnConfig[cur] = newVal
       })
       acc[cur] = this[cur]

@@ -137,7 +137,6 @@ export default {
           }
         ]
       }).array
-      console.log(this.data)
     }, 50)
   },
   methods: {

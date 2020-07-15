@@ -65,25 +65,16 @@ export default {
       value: 2,
       mainSnippet,
       componentSnippet,
-      data: Object.freeze([]),
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      data: [],
       editStop: false,
       columns: [
+        {
+          show: true,
+          type: 'selection',
+          title: '序号',
+          width: 80,
+          fixed: 'left'
+        },
         {
           show: true,
           type: 'index',
@@ -141,7 +132,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.data = Object.freeze(mock.mock({
+      this.data = mock.mock({
         'array|100': [
           {
             'message': '@email',
@@ -153,8 +144,7 @@ export default {
             long: ''
           }
         ]
-      }).array)
-      console.log(this.data)
+      }).array
     }, 500)
   }
 }

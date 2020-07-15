@@ -130,7 +130,6 @@ export default {
         const columnIndex = cell.getAttribute('data-colidx')
         column = table.bodyColumns[columnIndex]
         if (column) {
-          console.log(column)
           table.$emit(`header-click`, { column, columnIndex, cell, event })
         }
       }

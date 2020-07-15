@@ -29,7 +29,6 @@ export default {
       console.error('search render必须是函数！')
     }
     const slot = render && render(h, { column, columnIndex }) || ''
-    console.log(slot)
 
     return (
       <div

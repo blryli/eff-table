@@ -42,8 +42,6 @@ export default {
       this.allselectionChange(this.selectionAll)
     },
     rowSelectionChange(index, selected) {
-      console.log('index', index)
-      console.log('selected', selected)
       this.toggleSelection(index, !selected)
       this.$emit('select', this.selecteds, this.data[index])
     },
