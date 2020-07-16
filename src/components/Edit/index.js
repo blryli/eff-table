@@ -116,7 +116,7 @@ export default {
       return column && !column.fixed && column.type !== 'selection' && cell && !cell.classList.contains('is-hidden')
     },
     toX() {
-      const { placement } = this
+      const { placement, rowIndex } = this
       let cellIndex = 0
       let columns = []
       let column = {}
@@ -139,7 +139,7 @@ export default {
         this.editCell(column, cell)
       } else {
         shake(this.$el, 'x')
-        this.table.$emit('editColumnLastToNext', placement)
+        this.table.$emit('editColumnLastToNext', { placement, rowIndex, cellIndex: this.cellIndex })
       }
     },
     toY() {

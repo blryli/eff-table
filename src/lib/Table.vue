@@ -3,7 +3,7 @@
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
-    <div ref="table" :class="tableClass">
+    <div ref="table" :class="tableClass" :style="{'--rowHeight': rowHeight + 'px'}">
       <!-- header -->
       <TableHeader ref="header" @dragend="handleDragend" />
       <!-- body -->
@@ -34,8 +34,6 @@
       v-if="edit"
       ref="edit"
       :columns="bodyColumns"
-      @columnLast="handleColumnLast"
-      @rowLast="handleRowLast"
       @validate="handleValidate"
     />
     <!-- <p>minWidth{{ minWidth }}</p>
@@ -275,17 +273,32 @@ export default {
 }
 .eff-table__search{
   border-top: 1px solid #ddd;
+  &-item{
+    height: 100%;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    &:hover{
+      z-index: 1;
+    }
+  }
   input{
+    height: var(--rowHeight);
     border-radius: 0;
     padding: 0 5px;
+    background-color: transparent;
     border-color: transparent;
     box-sizing: border-box;
     &:focus, &:active{
       border-color: #1177E8;
+      z-index: 1;
     }
   }
 }
 .eff-table__column{
+  position: relative;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -398,6 +411,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: #fff;
 }
 
 .is-async-validator{

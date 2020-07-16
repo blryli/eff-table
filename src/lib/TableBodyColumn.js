@@ -18,7 +18,7 @@ export default {
     }
   },
   render(h) {
-    const slot = this.cellRender(h) || (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.rowIndex + 1 : this.column.prop ? this.row[this.column.prop] : '')
+    const slot = this.column.cellRender ? this.cellRender(h) : (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.rowIndex + 1 : this.column.prop ? this.row[this.column.prop] : '')
     return (
       <div
         class={this.columnClass}
@@ -71,14 +71,11 @@ export default {
       this.table.$emit('row.selection.change', this.rowIndex, selected)
     },
     cellRender(h) {
-      if (this.column.cellRender) {
-        if (typeof this.column.cellRender === 'function') {
-          return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
-        } else {
-          console.error('cellRender 必须是函数')
-        }
+      if (typeof this.column.cellRender === 'function') {
+        return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
+      } else {
+        console.error('cellRender 必须是函数')
       }
-      return false
     },
     handleMouseenter(event, slot) {
       const { cell } = this.$refs

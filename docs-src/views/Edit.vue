@@ -12,7 +12,13 @@
           :edit-stop="editStop"
           fullscreen
           border
-        />
+          @editColumnLastToNext="editColumnLastToNext"
+        >
+          <div slot="toolbar">
+            <el-button @click="add">新增</el-button>
+            <el-button @click="focus">聚焦第三行</el-button>
+          </div>
+        </eff-table>
       </div>
     </section>
 
@@ -153,9 +159,11 @@ export default {
           prop: 'switch',
           title: '开关',
           width: 100,
-          // titleRender: (h, { row, rowIndex }) => {
-          //   return ['开关', '?']
-          // },
+          titleRender: (h, { row, rowIndex }) => {
+            return ['开关', <el-tooltip class='item' effect='dark' content='控制动态禁用字段：有值打开，没值禁用' placement='top'>
+              <i class='el-icon el-icon-question' />
+            </el-tooltip>]
+          },
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.switch} on-input={val => (row.switch = val)} />
@@ -182,11 +190,19 @@ export default {
           show: true,
           prop: 'end',
           title: '回车编辑下一行',
-          width: 100,
+          width: 130,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.end} on-input={val => (row.end = val)} />
             }
+          }
+        },
+        {
+          show: true,
+          fixed: 'right',
+          title: '操作',
+          cellRender: (h, { row, rowIndex }) => {
+            return <el-button size='mini' type='text' title='删除' icon='el-icon-delete' on-click={() => this.deleted(rowIndex)}/>
           }
         }
       ]
@@ -225,11 +241,16 @@ export default {
       }))
       this.$refs.table.focus(this.data.length - 1)
     },
-    deleted() {
-      this.data = []
+    editColumnLastToNext({ placement, rowIndex, columnIndex }) {
+      if (placement === 'right') {
+        this.$refs.table.focus(rowIndex + 1)
+      }
+    },
+    deleted(rowIndex) {
+      this.data.splice(rowIndex, 1)
     },
     focus() {
-      this.$refs.table.focus(this.value)
+      this.$refs.table.focus(2)
     }
   }
 }

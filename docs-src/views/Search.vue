@@ -6,11 +6,11 @@
         <eff-table
           ref="table"
           v-model="columns"
+          :data="data"
+          :max-height="400"
           search
           fullscreen
           border
-          :height="400"
-          :data="data"
         />
         <!-- <p>columns {{ columns }}</p> -->
       </div>

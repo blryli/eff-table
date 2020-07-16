@@ -82,12 +82,17 @@ export default {
       const { $el, isScreenfull } = table
       let surHeight = window.screen.height
       if (isScreenfull && $el) {
-        const { toolbar, header } = table.$refs
-        if (toolbar) {
-          surHeight -= toolbar.$el.offsetHeight
-        }
-        if (header) {
-          surHeight -= header.$el.offsetHeight
+        const bodyHeight = this.$el.offsetHeight
+        if (bodyHeight < surHeight) {
+          surHeight = bodyHeight
+        } else {
+          const { toolbar, header } = table.$refs
+          if (toolbar) {
+            surHeight -= toolbar.$el.offsetHeight
+          }
+          if (header) {
+            surHeight -= header.$el.offsetHeight
+          }
         }
       } else {
         surHeight = Math.max(height, maxHeight) || 400

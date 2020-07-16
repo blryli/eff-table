@@ -31,9 +31,7 @@ export default {
   render(h) {
     const { column, columnIndex } = this
 
-    const slot = this.titleRender(h, { column, columnIndex }) || column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
-    console.log(column.titleRender && column.titleRender(h, { column, columnIndex }))
-    console.log(column.title, slot)
+    const slot = column.titleRender ? this.titleRender(h, { column, columnIndex }) : column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
 
     return (
       <div
@@ -61,15 +59,11 @@ export default {
       this.table.$emit('all.selection.change', val)
     },
     titleRender(h, { column, columnIndex }) {
-      if (column.titleRender) {
-        if (typeof column.titleRender === 'function') {
-          return column.titleRender(h, { column, columnIndex })
-        } else {
-          console.error('titleRender 必须是函数')
-          return false
-        }
+      if (typeof column.titleRender === 'function') {
+        return column.titleRender(h, { column, columnIndex })
+      } else {
+        console.error('titleRender 必须是函数')
       }
-      return false
     },
     handleMouseenter() {
       const { cell } = this.$refs
