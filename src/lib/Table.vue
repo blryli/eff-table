@@ -11,6 +11,7 @@
         ref="TableBody"
         :data="data"
         :validators="validators"
+        :messages="messages"
         :row-render-index.sync="rowRenderIndex"
       />
       <!-- footer -->
@@ -91,7 +92,8 @@ export default {
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
     showOverflowTooltip: Boolean,
-    cellClassName: { type: [String, Function], default: '' }
+    cellClassName: { type: [String, Function], default: '' },
+    messages: { type: Array, default: () => [] }
   },
   data() {
     return {

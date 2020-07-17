@@ -68,8 +68,12 @@ export default {
         if (!body) return
         const { scrollHeight, clientHeight } = body
         this.overflowYHeight = scrollHeight - clientHeight
-        this.bodyOverflowY = scrollHeight > clientHeight
+        this.bodyOverflowY = this.data.length > (this.maxHeight || this.height || 400) / this.rowHeight
       })
+    },
+    doLayout() {
+      this.resize()
+      this.bodyHeightChange()
     }
   },
   mounted() {

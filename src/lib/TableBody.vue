@@ -32,6 +32,10 @@ export default {
     validators: {
       type: Array,
       default: () => []
+    },
+    messages: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -45,7 +49,7 @@ export default {
   inject: ['table'],
   computed: {
     formatValidators() {
-      return (this.validators || []).reduce((acc, cur, index) => {
+      return (this.validators.concat(this.messages) || []).reduce((acc, cur, index) => {
         const rowIndex = `${cur.rowIndex}`
         if (!acc[rowIndex]) acc[rowIndex] = []
         acc[rowIndex].push(cur)

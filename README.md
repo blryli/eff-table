@@ -85,7 +85,7 @@ export default {
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | editStop               | 是否暂停编辑               | Boolean      |            | false      |
-| message                | 提示消息，跟校验结果并存    | Boolean      |            | false      |
+| messages                | 提示消息，跟校验结果并存    | [{ prop, message, rowIndex }]      |            | array      |
 
 ```js
 value: [
