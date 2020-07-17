@@ -8,6 +8,7 @@
           v-model="columns"
           :data="data"
           :max-height="400"
+          drag
           search
           fullscreen
           border
@@ -61,6 +62,13 @@ export default {
         city: '',
         datetime: ''
       },
+      options: [{
+        value: '选项1',
+        label: '1'
+      }, {
+        value: '选项2',
+        label: '2'
+      }],
       data: [],
       forData: [
         { prop: 'city', label: '标题5' },
@@ -99,10 +107,20 @@ export default {
           width: 100,
           search: {
             render: (h, { column, columnIndex }) => {
-              return <el-input
+              return <el-select
                 value={this.form.city}
                 on-input={val => (this.form.city = val)}
-              />
+              >
+                {
+                  this.options.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
             },
             position: 'table'
           }
@@ -114,9 +132,11 @@ export default {
           width: 100,
           search: {
             render: (h, { column, columnIndex }) => {
-              return <el-input
+              return <el-date-picker
                 value={this.form.datetime}
+                class='search-item'
                 on-input={val => (this.form.datetime = val)}
+                type='daterange'
               />
             },
             position: 'all'

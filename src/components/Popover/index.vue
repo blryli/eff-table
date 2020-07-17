@@ -1,18 +1,3 @@
-<template>
-  <!-- <transition name="fade"> -->
-  <div
-    class="v-popover"
-    :class="pClass"
-    :style="popoverStyle"
-    @mouseenter="mouseenter"
-    @mouseleave="mouseleave"
-  >
-    <div v-for="(d, i) in message" :key="i" :class="`v-popover-item is--${d.type}`">{{ d.message }}</div>
-    <div ref="arrow" class="v-popover__arrow" />
-  </div>
-  <!-- </transition> -->
-</template>
-
 <script>
 import { removeBody, getDomClientRect } from 'utils/dom'
 
@@ -163,6 +148,21 @@ export default {
           break
       }
     }
+  },
+  render(h) {
+    return <transition name='fade'>
+      <div
+        class={'v-popover ' + this.pClass}
+        style={this.popoverStyle}
+        on-mouseenter={this.mouseenter}
+        on-mouseleave={this.mouseleave}
+      >
+        {
+          (this.message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
+        }
+        <div ref='arrow' class='v-popover__arrow' />
+      </div>
+    </transition>
   }
 }
 </script>
@@ -270,5 +270,12 @@ export default {
   right: -3px;
   margin-top: -5px;
   border-left: 5px solid var(--bgColor);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

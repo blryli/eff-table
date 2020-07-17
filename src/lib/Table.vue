@@ -280,19 +280,20 @@ export default {
     position: absolute;
     left: -1px;
     top: -1px;
-    right: -1px;
-    bottom: -1px;
-    &:hover{
-      z-index: 1;
-    }
+    right: 0;
+    bottom: -2px;
   }
-  input{
+  input, .search-item{
     height: var(--rowHeight);
     border-radius: 0;
     padding: 0 5px;
     background-color: transparent;
     border-color: transparent;
     box-sizing: border-box;
+    &:hover{
+      border-color: #1177E8;
+      z-index: 1;
+    }
     &:focus, &:active{
       border-color: #1177E8;
       z-index: 1;
@@ -381,11 +382,17 @@ export default {
   }
 }
 
-.is-border  .eff-table__header-group + .eff-table__header-group,
-.is-border  .eff-table__header-group + .eff-table__column,
-.is-border .eff-table__column + .eff-table__header-group,
-.is-border .eff-table__column + .eff-table__column{
-  border-left: 1px solid #ddd;
+// .is-border  .eff-table__header-group + .eff-table__header-group,
+// .is-border  .eff-table__header-group + .eff-table__column,
+// .is-border .eff-table__column + .eff-table__header-group,
+// .is-border .eff-table__column + .eff-table__column{
+//   border-left: 1px solid #ddd;
+// }
+.is-border {
+  .eff-table__column,
+  .eff-table__header-group{
+    border-right: 1px solid #ddd;
+  }
 }
 .is--fixed {
   position: absolute;
