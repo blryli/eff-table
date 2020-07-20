@@ -276,12 +276,25 @@ export default {
 .eff-table__search{
   border-top: 1px solid #ddd;
   &-item{
+    display: flex;
     height: 100%;
     position: absolute;
     left: -1px;
     top: -1px;
     right: 0;
     bottom: -2px;
+  }
+  &-dropdown{
+    position: relative;
+    height: var(--rowHeight);
+    line-height: var(--rowHeight);
+    padding: 0 5px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    &:hover{
+      border-color: #ccc;
+      z-index: 1;
+    }
   }
   input, .search-item{
     height: var(--rowHeight);
@@ -382,16 +395,28 @@ export default {
   }
 }
 
-// .is-border  .eff-table__header-group + .eff-table__header-group,
-// .is-border  .eff-table__header-group + .eff-table__column,
-// .is-border .eff-table__column + .eff-table__header-group,
-// .is-border .eff-table__column + .eff-table__column{
-//   border-left: 1px solid #ddd;
+.is-border  .eff-table__header-group + .eff-table__header-group,
+.is-border  .eff-table__header-group + .eff-table__column,
+.is-border .eff-table__column + .eff-table__header-group,
+.is-border .eff-table__column + .eff-table__column{
+  border-left: 1px solid #ddd;
+}
+// .is-border {
+//   .eff-table__column,
+//   .eff-table__header-group{
+//     border-right: 1px solid #ddd;
+//   }
 // }
-.is-border {
-  .eff-table__column,
-  .eff-table__header-group{
-    border-right: 1px solid #ddd;
+.eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: 1px solid #ddd;
+    }
+  }
+.is-overflow--y{
+  .eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: none;
+    }
   }
 }
 .is--fixed {

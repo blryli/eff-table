@@ -129,7 +129,7 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 100,
+          width: 220,
           search: {
             render: (h, { column, columnIndex }) => {
               return <el-date-picker
@@ -139,7 +139,8 @@ export default {
                 type='daterange'
               />
             },
-            position: 'all'
+            operator: true,
+            operatorValue: 'like'
           }
         }
       ]
