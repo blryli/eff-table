@@ -1,5 +1,5 @@
 <template>
-  <div class="eff-table__body-wrapper" :style="style">
+  <div class="eff-table__body-wrapper" :style="{height: bodyHeight + 'px'}">
     <div class="eff-table__body--x-space" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div class="eff-table__body" :style="{ marginTop }">
@@ -56,22 +56,11 @@ export default {
         return acc
       }, {})
     },
-    style() {
-      const style = {}
-      const { table, bodyHeight } = this
-      const { maxHeight, height, isScreenfull } = table
-      if (isScreenfull) {
-        style.height = bodyHeight + 'px'
-      } else {
-        if (height) style.height = height + 'px'
-        if (maxHeight) style.maxHeight = maxHeight + 'px'
-        if (!height && !maxHeight) style.maxHeight = bodyHeight + 'px'
-      }
-
-      return style
-    },
     renderData() {
       return this.isVirtual ? this.data.slice(this.rowRenderIndex, this.pageSize + this.rowRenderIndex) : this.data
+    },
+    bodyHeight() {
+      return this.table.heights.bodyHeight
     },
     pageSize() {
       return parseInt(this.bodyHeight / this.table.rowHeight + 4)
@@ -79,29 +68,6 @@ export default {
     totalHeight() {
       const { rowHeight } = this.table
       return this.data.length * rowHeight
-    },
-    bodyHeight() {
-      const { table } = this
-      const { height, maxHeight } = table
-      const { $el, isScreenfull } = table
-      let surHeight = window.screen.height
-      if (isScreenfull && $el) {
-        const bodyHeight = this.$el.offsetHeight
-        if (bodyHeight < surHeight) {
-          surHeight = bodyHeight
-        } else {
-          const { toolbar, header } = table.$refs
-          if (toolbar) {
-            surHeight -= toolbar.$el.offsetHeight
-          }
-          if (header) {
-            surHeight -= header.$el.offsetHeight
-          }
-        }
-      } else {
-        surHeight = Math.max(height, maxHeight) || 400
-      }
-      return surHeight
     },
     isVirtual() {
       return this.data.length > this.pageSize
@@ -149,6 +115,7 @@ export default {
     }
   },
   mounted() {
+    this.table.bodyLoad = true
     this.$nextTick(() => {
       on(this.$el, 'scroll', this.handleScroll)
     })
@@ -162,13 +129,14 @@ export default {
     },
     handleScroll() {
       const { scrollLeft, scrollTop } = this.$el
+      const { rowHeight } = this.table
       this.table.bodyScrollLeft = scrollLeft
-      const last = this.totalHeight - this.pageSize * this.table.rowHeight
+      const last = this.totalHeight - this.pageSize * rowHeight
       this.scrollTop = scrollTop < last ? scrollTop : last
 
       if (this.isVirtual) {
-        this.scrollIndex = parseInt(this.scrollTop / this.table.rowHeight)
-        if (scrollTop < this.table.rowHeight) {
+        this.scrollIndex = parseInt(this.scrollTop / rowHeight)
+        if (scrollTop < rowHeight) {
           this.marginTop = 0
           this.rowRenderIndex = 0
         }

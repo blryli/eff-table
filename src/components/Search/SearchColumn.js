@@ -1,45 +1,5 @@
 import Icon from './components/icon.vue'
-const operatorConfig = [
-  {
-    type: 'equals',
-    label: '等于',
-    icon: '='
-  },
-  {
-    type: 'unequals',
-    label: '不等于',
-    icon: '='
-  },
-  {
-    type: 'less',
-    label: '小于',
-    icon: '<'
-  },
-  {
-    type: 'greater',
-    label: '大于',
-    icon: '>'
-  },
-  {
-    type: 'lessthan',
-    label: '小于等于',
-    icon: '<'
-  },
-  {
-    type: 'greaterthan',
-    label: '大于等于',
-    icon: '>'
-  },
-  {
-    type: 'range',
-    label: '之间',
-    icon: '~'
-  },
-  {
-    type: 'like',
-    label: '重置'
-  }
-]
+
 export default {
   name: 'TableSearchColumn',
   components: {
@@ -47,7 +7,14 @@ export default {
   },
   props: {
     column: { type: Object, default: () => {} },
-    columnIndex: { type: Number, default: 0 }
+    columnIndex: { type: Number, default: 0 },
+    popover: { type: Object, default: () => {} },
+    config: { type: Array, default: () => [] }
+  },
+  data() {
+    return {
+      form: { value: '', type: '' }
+    }
   },
   inject: ['table'],
   computed: {
@@ -81,13 +48,13 @@ export default {
         data-colid={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
-        <div class='eff-table__search-item'>
+        <div ref='item' class='eff-table__search-item'>
           {
             operator ? <div class='eff-table__search-dropdown'
               on-mouseenter={this.handleMouseenter}
-              on-mouseenter={this.handleMouseleave}
+              on-mouseleave={this.handleMouseleave}
             >
-              <icon icon={operatorValue} operator={operatorConfig} />
+              <icon icon={operatorValue} operator={this.config} />
             </div> : ''
           }
           {slot}
@@ -96,7 +63,12 @@ export default {
     )
   },
   methods: {
-    handleMouseenter() {},
-    handleMouseleave() {}
+    handleMouseenter(e) {
+      console.log('mouseenter', e.target)
+      this.$emit('update:popover', { show: true, reference: e.target, prop: this.column.prop })
+    },
+    handleMouseleave() {
+      this.$emit('update:popover', { show: false, reference: null })
+    }
   }
 }

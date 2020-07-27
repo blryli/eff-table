@@ -1,11 +1,11 @@
 <template>
-  <div class="table-wrapper" :class="{'is--screenfull': isScreenfull}">
+  <div class="table-wrapper" :class="{'is--screenfull': isScreenfull}" :style="style">
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
-    <div ref="table" :class="tableClass" :style="{'--rowHeight': rowHeight + 'px'}">
+    <div ref="table" :class="tableClass">
       <!-- header -->
-      <TableHeader ref="header" @dragend="handleDragend" />
+      <TableHeader v-if="showHeader" ref="header" @dragend="handleDragend" />
       <!-- body -->
       <TableBody
         ref="TableBody"
@@ -15,7 +15,7 @@
         :row-render-index.sync="rowRenderIndex"
       />
       <!-- footer -->
-      <TableFooter v-if="$slots.footer" ref="TableFooter">
+      <TableFooter v-if="$slots.footer" ref="footer">
         <slot name="footer" />
       </TableFooter>
       <!-- 左侧 fixed 投影 -->
@@ -42,7 +42,7 @@
     <p>spaceWidth{{ spaceWidth }}</p>
     <p>bodyWrapperWidth{{ bodyWrapperWidth }}</p>
     <p>showSpace{{ showSpace }}</p>
-    <p>bodyOverflowY{{ bodyOverflowY }}</p>
+    <p>bodyOverflowY{{ heights.bodyOverflowY }}</p>
     <p>bodyOverflowX{{ bodyOverflowX }}</p> -->
     <!-- <p>columnsWidth{{ columnsWidth }}</p> -->
     <!-- 气泡 -->
@@ -91,6 +91,7 @@ export default {
     maxHeight: { type: Number, default: 0 },
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
+    showHeader: { type: Boolean, default: true },
     showOverflowTooltip: Boolean,
     cellClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] }
@@ -122,6 +123,21 @@ export default {
         }, [])
       }
       return plat(this.visibleColumns)
+    },
+    style() {
+      const style = {}
+      const { isScreenfull, height, maxHeight } = this
+      const screenHeight = window.screen.height
+      style['--rowHeight'] = this.rowHeight + 'px'
+      if (isScreenfull) {
+        style.height = screenHeight + 'px'
+      } else {
+        if (height) style.height = height + 'px'
+        if (maxHeight) style.maxHeight = maxHeight + 'px'
+        if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
+      }
+
+      return style
     }
   },
   watch: {
@@ -236,7 +252,6 @@ export default {
 .eff-table__header-wrapper {
   position: relative;
   overflow: hidden;
-  border-bottom: 1px solid #ddd;
   background-color: #f6f7f8;
   box-sizing: border-box;
 }
@@ -251,6 +266,7 @@ export default {
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid #ddd;
+    font-weight: bold;
     box-sizing: border-box;
   }
   .header-children{
@@ -274,7 +290,6 @@ export default {
   box-sizing: border-box;
 }
 .eff-table__search{
-  border-top: 1px solid #ddd;
   &-item{
     display: flex;
     height: 100%;
@@ -317,6 +332,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid #ddd;
   box-sizing: border-box;
 }
 .eff-table__header{
@@ -447,6 +463,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #fff;
+  z-index: 999;
 }
 
 .is-async-validator{

@@ -6,18 +6,26 @@
       :key="columnIndex"
       :column="column"
       :column-index="columnIndex"
+      :popover.sync="popover"
+      :config="operatorConfig"
     />
+    <Popover placement="bottom" :show="popover.show" :reference="popover.reference">
+      <div v-for="(d, i) in operatorConfig" :key="i" :class="{'is-active': d.type === d.type && d.type !== 'like'}" @click="typeChange(d.type)">
+        <div class="dropdown-icon">{{ d.label }}</div>
+      </div>
+    </Popover>
     <div v-if="showSpace" class="eff-table__column is--space" />
   </div>
 </template>
 
 <script>
 import SearchColumn from './SearchColumn'
+import Popover from '../Popover'
 
 export default {
   name: 'TableSearch',
   components: {
-    SearchColumn
+    SearchColumn, Popover
   },
   props: {
     columns: { type: Array, default: () => [] },
@@ -28,7 +36,53 @@ export default {
     return {
       tableSearchRange: {},
       searchData: [],
-      filters: []
+      filters: [],
+      popover: {
+        show: false,
+        reference: null,
+        prop: ''
+      },
+      operatorConfig: [
+        {
+          type: 'equals',
+          label: '等于',
+          icon: '='
+        },
+        {
+          type: 'unequals',
+          label: '不等于',
+          icon: '='
+        },
+        {
+          type: 'less',
+          label: '小于',
+          icon: '<'
+        },
+        {
+          type: 'greater',
+          label: '大于',
+          icon: '>'
+        },
+        {
+          type: 'lessthan',
+          label: '小于等于',
+          icon: '<'
+        },
+        {
+          type: 'greaterthan',
+          label: '大于等于',
+          icon: '>'
+        },
+        {
+          type: 'range',
+          label: '之间',
+          icon: '~'
+        },
+        {
+          type: 'like',
+          label: '重置'
+        }
+      ]
     }
   },
   inject: ['table'],
@@ -67,6 +121,9 @@ export default {
     },
     handleClose(val) {
       this.table.$emit('rangeClose', val)
+    },
+    typeChange(type) {
+      console.log(type)
     }
   }
 }

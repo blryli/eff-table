@@ -17,6 +17,7 @@
           <div slot="toolbar">
             <el-button @click="add">新增</el-button>
             <el-button @click="focus">聚焦第三行</el-button>
+            <el-button @click="data = []">删除所有</el-button>
           </div>
         </eff-table>
       </div>

@@ -22,39 +22,23 @@ export default {
       const { top, left, width } = this.dragingTarget && this.dragingTarget.getBoundingClientRect() || {}
       return {
         display: this.dragingTarget ? 'block' : 'none',
-        height: this.height + 'px',
+        height: this.table.heights.headerHeight + 'px',
         top: top + 'px',
         left: left + width - 8 + 'px'
       }
-    },
-    // 获取columns嵌套层级
-    ranked() {
-      function getDeepth(array) {
-        function sum(arr, flag) {
-          return arr.reduce((acc, cur) => {
-            let accDeepth
-            const { children } = cur
-            if (Array.isArray(children)) {
-              accDeepth = sum(children, flag + 1)
-            }
-            return accDeepth > acc ? accDeepth : acc
-          }, flag)
-        }
-        return sum(array, 1)
-      }
-
-      return getDeepth(this.table.visibleColumns)
     }
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, visibleColumns, bodyColumns, showSpace, rowHeight, search } = this.table
+    const { rowStyle, visibleColumns, bodyColumns, showSpace, search, heights } = this.table
+    const height = heights.headerHeight + 'px'
+
     return (
       <div class='eff-table__header-wrapper'>
         <div
           class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
-          style={{ ...rowStyle, ...{ height: rowHeight * this.ranked + 'px' }}}
+          style={{ ...rowStyle, ...{ height }}}
           on-click={this.handleClick}
           on-mousemove={this.handleMousemove}
           on-mouseleave={this.handleMouseleave}
@@ -63,7 +47,7 @@ export default {
             this.renderColumns(visibleColumns)
           }
           {
-            showSpace ? <div class='eff-table__column is--space' /> : ''
+            showSpace ? <div class='eff-table__column is--space' style={height} /> : ''
           }
           {
             <div
@@ -110,7 +94,7 @@ export default {
             acc.push(<TableHeaderColumn
               colid={parent}
               column={column}
-              columnIndex={index}
+              columnIndex={columnIndex}
             />)
             index += 1
           }
@@ -187,10 +171,11 @@ export default {
       this.isDraging = false
 
       const colid = this.dragingTarget.getAttribute('data-colid')
+      const colidx = this.dragingTarget.getAttribute('data-colidx')
       const width = this.dragingTarget.offsetWidth + this.moveX
       let obj = {}
-      const ids = colid.split('-')
-      const [start, next] = ids
+      const ids = colid.split('-').map(d => +d)
+      const [, next] = ids
       if (next) {
         obj = ids.reduce((acc, cur, idx) => {
           const num = +cur - 1
@@ -201,7 +186,7 @@ export default {
           }
         }, {})
       } else {
-        obj = this.table.visibleColumns[start - 1]
+        obj = this.table.visibleColumns[colidx]
       }
       obj.width = width
       this.$emit('dragend', obj)
@@ -217,6 +202,7 @@ export default {
     }
   },
   mounted() {
+    this.table.headerLoad = true
     on(this.$el, 'scroll', this.handleScroll)
     this.$nextTick(() => {
       this.height = this.$refs.header.offsetHeight

@@ -16,8 +16,8 @@ export default {
       return this.bodyColumns.filter(d => !d.width).length
     },
     spaceWidth() {
-      const { spaceNum } = this
-      return spaceNum ? (this.bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - this.minWidth - this.scrollYwidth) / spaceNum : 0
+      const { spaceNum, bodyWrapperWidth, minWidth, scrollYwidth } = this
+      return spaceNum ? (bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - minWidth - scrollYwidth) / spaceNum : 0
     },
     showSpace() {
       const { minWidth, bodyWrapperWidth, spaceWidth, spaceNum } = this
@@ -25,10 +25,14 @@ export default {
     }
   },
   methods: {
-    setColumnStyle(column, columnIndex, width) {
+    setColumnStyle(column, columnIndex) {
       const style = {}
-      style.minWidth = width + 'px'
-      style.maxWidth = width + 'px'
+      let { width = 0 } = column
+      const { spaceWidth } = this
+      !width && (width = spaceWidth)
+      const columnWidth = Math.max(width, 40)
+      style.minWidth = columnWidth + 'px'
+      style.maxWidth = columnWidth + 'px'
 
       const { bodyOverflowX, columnsWidth, isScrollRightEnd, bodyWidth, bodyWrapperWidth, bodyScrollLeft } = this
 

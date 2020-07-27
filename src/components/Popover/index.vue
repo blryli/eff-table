@@ -158,7 +158,7 @@ export default {
         on-mouseleave={this.mouseleave}
       >
         {
-          (this.message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
+          this.$slots.default || (this.message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='v-popover__arrow' />
       </div>

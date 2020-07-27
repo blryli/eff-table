@@ -22,7 +22,7 @@ export default {
     return (
       <div
         class={this.columnClass}
-        style={this.table.setColumnStyle(this.column, this.columnIndex, this.width)}
+        style={this.table.setColumnStyle(this.column, this.columnIndex)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
@@ -31,12 +31,6 @@ export default {
     )
   },
   computed: {
-    width() {
-      let { width = 0 } = this.column
-      !width && (width = this.table.spaceWidth)
-      const columnWidth = Math.max(width, 40)
-      return columnWidth
-    },
     columnClass() {
       let classes = `eff-table__column`
       const { fixed, className } = this.column

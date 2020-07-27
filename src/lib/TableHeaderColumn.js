@@ -11,12 +11,6 @@ export default {
   components: { VCheckbox },
   inject: ['table'],
   computed: {
-    width() {
-      let { width = 0 } = this.column
-      !width && (width = this.table.spaceWidth)
-      const columnWidth = Math.max(width, 40)
-      return columnWidth
-    },
     columnClass() {
       const { fixed, drag, titleClassName } = this.column
       let classes = `eff-table__column`
@@ -38,7 +32,7 @@ export default {
         class={this.columnClass}
         data-colid={this.colid}
         data-colidx={this.columnIndex}
-        style={this.table.setColumnStyle(column, columnIndex, this.width)}
+        style={this.table.setColumnStyle(column, columnIndex)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >

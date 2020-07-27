@@ -27,7 +27,8 @@ export default {
   },
   methods: {
     clearSelection() {
-      this.selecteds = []
+      checkeds.clear()
+      this.change()
     },
     toggleRowSelection(row, selected) {
       const rowIndex = this.data.findIndex(d => this.isSame(d, row))
@@ -44,28 +45,25 @@ export default {
     rowSelectionChange(index, selected) {
       this.toggleSelection(index, !selected)
       this.$emit('select', this.selecteds, this.data[index])
-      this.$emit('selection-change', this.selecteds)
+      this.change()
     },
     allselectionChange(selected) {
       this.selectionAll = selected
       this.indeterminate = false
       selected ? this.data.forEach((d, i) => checkeds.add(i)) : checkeds.clear()
-      this.updateSelected()
+      this.change()
       this.$emit('select-all', this.selecteds)
-      this.$emit('selection-change', this.selecteds)
     },
     isSame(obj1, obj2) {
       return JSON.stringify(obj1) === JSON.stringify(obj2)
     },
     toggleSelection(index, has, selected) {
       selected ? checkeds.add(index) : has ? checkeds.delete(index) : checkeds.add(index)
-      this.updateSelected()
+      this.change()
     },
-    updateSelected() {
+    change() {
       this.selecteds = [...checkeds]
-    },
-    isChecked(index) {
-      return this.selecteds.includes(index)
+      this.$emit('selection-change', this.selecteds)
     }
   }
 }
