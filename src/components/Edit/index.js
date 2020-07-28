@@ -279,7 +279,6 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
-      this.table.editStop = false
       const { column, cell } = this.getColumn(prop, +rowIndex)
       if (cell) {
         this.editCell(column, cell)
