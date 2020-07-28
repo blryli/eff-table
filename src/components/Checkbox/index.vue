@@ -23,8 +23,7 @@ export default {
   },
   data() {
     return {
-      isChecked: false,
-      focus: false
+      isChecked: this.value
     }
   },
   watch: {

@@ -70,6 +70,13 @@ export default {
       columns: [
         {
           show: true,
+          type: 'selection',
+          title: '序号',
+          width: 80,
+          fixed: 'left'
+        },
+        {
+          show: true,
           type: 'index',
           title: '序号',
           width: 80,
@@ -79,19 +86,19 @@ export default {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 100
+          width: 150
         },
         {
           show: true,
           prop: 'name',
           title: '名字',
-          width: 120
+          width: 150
         },
         {
           show: true,
           prop: 'email',
           title: '邮箱',
-          width: 120,
+          width: 150,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.email} on-input={val => (row.email = val)} />
@@ -102,7 +109,7 @@ export default {
           show: true,
           prop: 'city',
           title: '城市',
-          width: 120,
+          width: 150,
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.city} on-input={val => (row.city = val)} />
@@ -113,6 +120,18 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
+          width: 150,
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'datetime',
+          title: '操作',
+          fixed: 'right',
           width: 150,
           edit: {
             render: (h, { row, rowIndex }) => {
