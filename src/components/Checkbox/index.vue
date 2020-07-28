@@ -30,18 +30,13 @@ export default {
   watch: {
     value(val) {
       this.isChecked = val
-    },
-    isChecked(val) {
-      this.change(val)
     }
   },
   methods: {
     handleChange() {
       this.isChecked = !this.isChecked
-    },
-    change(val) {
-      this.$emit('input', val)
-      this.$emit('change', val)
+      this.$emit('input', this.isChecked)
+      this.$emit('change', this.isChecked)
     }
   }
 }
