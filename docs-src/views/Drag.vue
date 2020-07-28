@@ -71,7 +71,6 @@ export default {
         {
           show: true,
           type: 'selection',
-          title: '序号',
           width: 80,
           fixed: 'left'
         },
@@ -92,7 +91,18 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
-          width: 150
+          width: 150,
+          children: [{
+            show: true,
+            prop: 'xing',
+            title: '姓',
+            width: 150
+          }, {
+            show: true,
+            prop: 'ming',
+            title: '名',
+            width: 150
+          }]
         },
         {
           show: true,
@@ -103,7 +113,18 @@ export default {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.email} on-input={val => (row.email = val)} />
             }
-          }
+          },
+          children: [{
+            show: true,
+            prop: 'xing',
+            title: '姓',
+            width: 150
+          }, {
+            show: true,
+            prop: 'ming',
+            title: '名',
+            width: 150
+          }]
         },
         {
           show: true,

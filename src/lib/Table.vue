@@ -38,12 +38,8 @@
       @validate="handleValidate"
     />
     <!-- <p>minWidth{{ minWidth }}</p>
-    <p>bodyWidth{{ bodyWidth }}</p>
-    <p>spaceWidth{{ spaceWidth }}</p>
-    <p>bodyWrapperWidth{{ bodyWrapperWidth }}</p>
-    <p>showSpace{{ showSpace }}</p>
-    <p>bodyOverflowY{{ heights.bodyOverflowY }}</p>
-    <p>bodyOverflowX{{ bodyOverflowX }}</p> -->
+    <p>columnsWidth{{ columnsWidth }}</p>
+    <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>columnsWidth{{ columnsWidth }}</p> -->
     <!-- 气泡 -->
     <Popover :show="show" :reference="reference" :message="message" />
@@ -178,6 +174,7 @@ export default {
     handleDragend(column) {
       const { columns } = this
       const index = columns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      console.log(column)
       if (index > -1) {
         columns[index] = column
         this.columns = [...columns]
@@ -352,6 +349,7 @@ export default {
   .header-drag-move{
     position: fixed;
     width: 8px;
+    z-index: 3;
     &:hover{
       cursor: col-resize;
     }
@@ -411,18 +409,12 @@ export default {
   }
 }
 
-.is-border  .eff-table__header-group + .eff-table__header-group,
-.is-border  .eff-table__header-group + .eff-table__column,
-.is-border .eff-table__column + .eff-table__header-group,
-.is-border .eff-table__column + .eff-table__column{
-  border-left: 1px solid #ddd;
+.is-border {
+  .eff-table__column,
+  .header-title{
+    border-left: 1px solid #ddd;
+  }
 }
-// .is-border {
-//   .eff-table__column,
-//   .eff-table__header-group{
-//     border-right: 1px solid #ddd;
-//   }
-// }
 .eff-table__body-row:last-child{
     .eff-table__column{
       border-bottom: 1px solid #ddd;
@@ -449,6 +441,7 @@ export default {
   width: 1px;
   height: 100%;
   background-color: #ddd;
+  z-index: 3;
 }
 .is--space{
   flex: 1;

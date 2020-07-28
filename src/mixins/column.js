@@ -34,6 +34,10 @@ export default {
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
 
+      if (columnIndex === 0) {
+        style.borderLeft = 0
+      }
+
       const { bodyOverflowX, columnsWidth, isScrollRightEnd, bodyWidth, bodyWrapperWidth, bodyScrollLeft } = this
 
       // 如果有横向滚动条 设置左右定位元素的位置

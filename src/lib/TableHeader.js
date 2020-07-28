@@ -71,7 +71,7 @@ export default {
       function render(columns, colid = '') {
         return columns.reduce((acc, column, columnIndex) => {
           const { children = [] } = column
-          const parent = colid ? `${colid}-${columnIndex + 1}` : `${index + 1}`
+          const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
           if (column.prop && children.length) {
             const plat = arr => {
               return arr.reduce((acc, cur) => {
@@ -95,6 +95,7 @@ export default {
               colid={parent}
               column={column}
               columnIndex={columnIndex}
+              bodyColumnIndex={index}
             />)
             index += 1
           }
@@ -177,18 +178,20 @@ export default {
       const ids = colid.split('-').map(d => +d)
       const [, next] = ids
       if (next) {
-        obj = ids.reduce((acc, cur, idx) => {
+        const child = ids.reduce((acc, cur, idx) => {
           const num = +cur - 1
           if (idx === 0) {
-            return this.table.visibleColumns[num]
+            obj = this.table.visibleColumns[num]
+            return obj
           } else {
             return acc.children[num]
           }
         }, {})
+        child.width = width
       } else {
         obj = this.table.visibleColumns[colidx]
+        obj.width = width
       }
-      obj.width = width
       this.$emit('dragend', obj)
 
       setTimeout(() => {

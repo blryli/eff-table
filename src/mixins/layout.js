@@ -38,7 +38,7 @@ export default {
       style.height = this.rowHeight + 'px'
       const { leftWidth, rightWidth } = this
       if (this.bodyOverflowX) {
-        style.width = this.bodyWidth + 'px'
+        style.maxWidth = this.bodyWidth + 'px'
         leftWidth && (style.paddingLeft = `${leftWidth}px`)
         rightWidth && (style.paddingRight = `${rightWidth}px`)
       }
