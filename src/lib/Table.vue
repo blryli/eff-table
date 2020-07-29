@@ -15,7 +15,14 @@
         :row-render-index.sync="rowRenderIndex"
       />
       <!-- footer -->
-      <TableFooter v-if="$slots.footer" ref="footer">
+      <TableFooter v-if="$slots.footer || showSummary" ref="footer">
+        <Summary
+          v-if="showSummary"
+          :data="data"
+          :columns="bodyColumns"
+          :sum-text="sumText"
+          :summary-method="summaryMethod"
+        />
         <slot name="footer" />
       </TableFooter>
       <!-- 左侧 fixed 投影 -->
@@ -59,6 +66,7 @@ import Popover from '../components/Popover'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import Edit from '../components/Edit'
+import Summary from '../components/Summary'
 
 export default {
   name: 'EffTable',
@@ -69,7 +77,8 @@ export default {
     Popover,
     Drag,
     Toolbar,
-    Edit
+    Edit,
+    Summary
   },
   mixins: [Column, Layout, Selection, validate],
   props: {
@@ -82,6 +91,9 @@ export default {
     editStop: Boolean,
     columnControl: Boolean,
     fullscreen: Boolean,
+    showSummary: Boolean,
+    summaryMethod: { type: Function, default: null },
+    sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
     height: { type: Number, default: 0 },
     maxHeight: { type: Number, default: 0 },
@@ -218,7 +230,7 @@ export default {
 .eff-table__shadow-left, .eff-table__shadow-right{
   position: absolute;
   top: 0;
-  bottom: 17px;
+  bottom: 0;
   width: 1px;
 }
 .eff-table__shadow-left{
@@ -246,7 +258,7 @@ export default {
 }
 
 /** header */
-.eff-table__header-wrapper {
+.eff-table__header-wrapper, .eff-table--summary {
   position: relative;
   overflow: hidden;
   background-color: #f6f7f8;
@@ -271,13 +283,25 @@ export default {
     display: flex;
   }
 }
-.eff-table__header-wrapper{
-  &::-webkit-scrollbar {
-    border-left: 1px solid #ddd;
+.eff-table--summary{
+  .eff-table__body-row{
+    .eff-table__column{
+      background-color: #f6f7f8;
+    }
+    &:hover .eff-table__column{
+      background-color: #f6f7f8;
+    }
   }
 }
-.is-overflow--y .eff-table__header-wrapper{
-  overflow-y: scroll;
+.is-overflow--y {
+  .eff-table__header-wrapper, .eff-table--summary{
+    &::-webkit-scrollbar {
+      border-left: 1px solid #ddd;
+    }
+  }
+  .eff-table__header-wrapper, .eff-table--summary{
+    overflow-y: scroll;
+  }
 }
 .eff-table__header, .eff-table__search, .eff-table__body-row {
   position: relative;

@@ -166,7 +166,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|100': [
+        'array|1000': [
           {
             'message': '@email',
             'name': '@cname',

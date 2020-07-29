@@ -85,7 +85,10 @@ export default {
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | editStop               | 是否暂停编辑               | Boolean      |            | false      |
-| messages                | 提示消息，跟校验结果并存    | [{ prop, message, rowIndex }]      |            | array      |
+| messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
+| show-summary            | 是否在表尾显示合计行       | Boolean      |            | false      |
+| sum-text            | 合计行第一列的文本       | String      |            | 总计      |
+| summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
 
 ```js
 value: [

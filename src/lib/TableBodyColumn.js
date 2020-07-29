@@ -18,7 +18,8 @@ export default {
     }
   },
   render(h) {
-    const slot = this.column.cellRender ? this.cellRender(h) : (this.column.type === 'selection' ? this.renderSelection(h) : this.column.type === 'index' ? this.rowIndex + 1 : this.column.prop ? this.row[this.column.prop] : '')
+    const { cellRender, type, prop } = this.column
+    const slot = this.row[this.columnIndex] !== undefined ? this.row[this.columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? this.rowIndex + 1 : prop ? this.row[prop] : '')
     return (
       <div
         class={this.columnClass}
@@ -35,7 +36,8 @@ export default {
       let classes = `eff-table__column`
       const { fixed, className } = this.column
       const { cellClassName } = this.table
-      if (this.message.prop) classes += ' is--message'
+      const { prop } = this.message || {}
+      if (prop) classes += ' is--message'
       if (fixed) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
