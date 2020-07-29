@@ -75,14 +75,16 @@ export default {
       const toolbarHeight = toolbar ? rowHeight : 0
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const footerHeight = footer ? rowHeight : 0
-      const bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight : 0
-      const bodyOverflowY = data.length > bodyHeight / rowHeight
+      const dataHeight = data.length * rowHeight
+      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight : 0
+      if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.bodyOverflowX ? 17 : 0)
+      const bodyOverflowY = bodyHeight && dataHeight > bodyHeight
       return {
         tableHeight,
         toolbarHeight,
         headerHeight,
         footerHeight,
-        bodyHeight,
+        bodyHeight: Math.max(bodyHeight, rowHeight),
         bodyOverflowY
       }
     }
