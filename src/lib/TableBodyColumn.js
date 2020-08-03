@@ -67,13 +67,17 @@ export default {
       this.table.$emit('row.selection.change', this.rowIndex, selected)
     },
     cellRender(h) {
-      if (typeof this.column.cellRender === 'function') {
-        return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
-      } else {
-        console.error('cellRender 必须是函数')
+      if (this.column.cellRender) {
+        if (typeof this.column.cellRender === 'function') {
+          return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
+        } else {
+          console.error('cellRender 必须是函数')
+        }
       }
+      return false
     },
     handleMouseenter(event, slot) {
+      if (this.$parent.summary) return
       const { cell } = this.$refs
       const { row, column, rowIndex, columnIndex } = this
       this.table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
@@ -93,6 +97,7 @@ export default {
       }
     },
     handleMouseleave(event, slot) {
+      if (this.$parent.summary) return
       const { row, column, rowIndex, columnIndex } = this
       const { cell } = this.$refs
       this.table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })

@@ -7,7 +7,8 @@ export default {
   props: {
     row: { type: Object, default: () => {} },
     messages: { type: Array, default: () => [] },
-    rowIndex: Number
+    rowIndex: Number,
+    summary: Boolean
   },
   inject: ['table'],
   render(h) {
@@ -42,10 +43,12 @@ export default {
   },
   methods: {
     handleClick(event) {
+      if (this.summary) return
       this.table.highlightCurrentRow && (this.table.currentRow = this.rowIndex)
       this.handleEvent(event, 'click')
     },
     handleDoubleClick(event) {
+      if (this.summary) return
       this.handleEvent(event, 'dblclick')
     },
     handleEvent(event, name) {

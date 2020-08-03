@@ -68,15 +68,16 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, headerLoad, bodyLoad } = this
+      const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad } = this
       const { toolbar, header, footer } = this.$refs
 
       const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || 400
       const toolbarHeight = toolbar ? rowHeight : 0
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
+      const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
       const dataHeight = data.length * rowHeight
-      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight : 0
+      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
       if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.bodyOverflowX ? 17 : 0)
       const bodyOverflowY = bodyHeight && dataHeight > bodyHeight
       return {

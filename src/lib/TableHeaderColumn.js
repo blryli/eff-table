@@ -54,11 +54,14 @@ export default {
       this.table.$emit('all.selection.change', val)
     },
     titleRender(h, { column, columnIndex }) {
-      if (typeof column.titleRender === 'function') {
-        return column.titleRender(h, { column, columnIndex })
-      } else {
-        console.error('titleRender 必须是函数')
+      if (column.titleRender) {
+        if (typeof column.titleRender === 'function') {
+          return column.titleRender(h, { column, columnIndex })
+        } else {
+          console.error('titleRender 必须是函数')
+        }
       }
+      return false
     },
     handleMouseenter() {
       const { cell } = this.$refs

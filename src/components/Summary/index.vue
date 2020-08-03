@@ -3,6 +3,7 @@
     <TableBodyRow
       :row="row"
       :row-index="1"
+      summary
     />
   </div>
 </template>

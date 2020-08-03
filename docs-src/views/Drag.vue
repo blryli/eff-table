@@ -9,9 +9,11 @@
           :data="data"
           :max-height="400"
           drag
+          edit
           column-control
           border
           fullscreen
+          show-summary
         />
       </div>
     </section>
@@ -104,59 +106,17 @@ export default {
             width: 150
           }]
         },
+
         {
           show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150,
-          edit: {
-            render: (h, { row, rowIndex }) => {
-              return <el-input value={row.email} on-input={val => (row.email = val)} />
-            }
-          },
-          children: [{
-            show: true,
-            prop: 'xing',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'ming',
-            title: '名',
-            width: 150
-          }]
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 150,
-          edit: {
-            render: (h, { row, rowIndex }) => {
-              return <el-input value={row.city} on-input={val => (row.city = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '时间',
-          width: 150,
-          edit: {
-            render: (h, { row, rowIndex }) => {
-              return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'datetime',
           title: '操作',
           fixed: 'right',
           width: 150,
-          edit: {
+          cellRender: {
             render: (h, { row, rowIndex }) => {
-              return <el-input value={row.datetime} on-input={val => (row.datetime = val)} />
+              return <div>
+                aaaaa
+              </div>
             }
           }
         }
