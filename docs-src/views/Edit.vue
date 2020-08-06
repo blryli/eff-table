@@ -157,6 +157,12 @@ export default {
         },
         {
           show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 100
+        },
+        {
+          show: true,
           prop: 'switch',
           title: '开关',
           width: 100,
@@ -201,6 +207,7 @@ export default {
         {
           show: true,
           fixed: 'right',
+          width: 60,
           title: '操作',
           cellRender: (h, { row, rowIndex }) => {
             return <el-button size='mini' type='text' title='删除' icon='el-icon-delete' on-click={() => this.deleted(rowIndex)}/>

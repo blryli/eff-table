@@ -113,7 +113,9 @@ export default {
       }
     },
     canFocus(column, cell) {
-      return column && !column.fixed && column.type !== 'selection' && cell && !cell.classList.contains('is-hidden')
+      const { type, edit: { render } = {}} = column
+      const types = ['selection', 'index']
+      return column && render && typeof render === 'function' && types.indexOf(type) === -1 && cell && !cell.classList.contains('is-hidden')
     },
     toX() {
       const { placement, rowIndex } = this
@@ -121,8 +123,8 @@ export default {
       let columns = []
       let column = {}
       const filterColumns = columns => columns.filter(column => {
-        const { prop, fixed, edit: { render } = {}} = column
-        return prop && !fixed && render && !this.skip(column)
+        const { prop, edit: { render } = {}} = column
+        return prop && render && !this.skip(column)
       })
       if (placement === 'right') {
         cellIndex = this.cellIndex + 1

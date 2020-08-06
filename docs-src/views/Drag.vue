@@ -112,12 +112,10 @@ export default {
           title: '操作',
           fixed: 'right',
           width: 150,
-          cellRender: {
-            render: (h, { row, rowIndex }) => {
-              return <div>
+          cellRender: (h, { row, rowIndex }) => {
+            return <div>
                 aaaaa
-              </div>
-            }
+            </div>
           }
         }
       ]

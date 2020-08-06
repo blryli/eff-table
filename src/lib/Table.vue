@@ -499,6 +499,19 @@ export default {
     animation: rotate linear .5s infinite;
   }
 }
+
+.eff-edit{
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border: 5px solid;
+  border-color: transparent #ddd transparent transparent;
+  transform: rotate(45deg);
+}
+
 @keyframes rotate {
   from{
     transform: rotate(0deg);

@@ -25,6 +25,7 @@ export default {
   },
   render(h) {
     const { column, columnIndex, bodyColumnIndex } = this
+    const { edit: { render } = {}} = column
 
     const slot = column.titleRender ? this.titleRender(h, { column, columnIndex }) : column.type === 'selection' ? this.renderSelection(h) : column.type === 'index' ? (column.title || '#') : column.title
 
@@ -38,6 +39,9 @@ export default {
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
         <div ref='cell' class='eff-cell'>{slot}</div>
+        {
+          render && typeof render === 'function' ? <span class='eff-edit' title='可编辑列'></span> : ''
+        }
       </div>
     )
   },
