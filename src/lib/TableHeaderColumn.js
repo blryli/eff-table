@@ -73,7 +73,7 @@ export default {
         return
       }
 
-      if (getTextWidth(cell) > this.width) {
+      if (getTextWidth(cell) > Math.max(this.column.width, 40)) {
         this.table.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
       }
     },
