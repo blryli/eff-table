@@ -115,17 +115,14 @@ export default {
     canFocus(column, cell) {
       const { type, edit: { render } = {}} = column
       const types = ['selection', 'index']
-      return column && render && typeof render === 'function' && types.indexOf(type) === -1 && cell && !cell.classList.contains('is-hidden')
+      return column && render && typeof render === 'function' && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
       const { placement, rowIndex } = this
       let cellIndex = 0
       let columns = []
       let column = {}
-      const filterColumns = columns => columns.filter(column => {
-        const { prop, edit: { render } = {}} = column
-        return prop && render && !this.skip(column)
-      })
+      const filterColumns = columns => columns.filter(column => this.canFocus(column) && !this.skip(column))
       if (placement === 'right') {
         cellIndex = this.cellIndex + 1
         columns = filterColumns(this.columns.slice(cellIndex))

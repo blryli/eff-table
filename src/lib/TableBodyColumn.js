@@ -36,8 +36,8 @@ export default {
       let classes = `eff-table__column`
       const { fixed, className } = this.column
       const { cellClassName } = this.table
-      const { prop } = this.message || {}
-      if (prop) classes += ' is--message'
+      const { message } = this.message || {}
+      if (message) classes += ' is--message'
       if (fixed) {
         classes += ' is-drag--filter'
         if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'

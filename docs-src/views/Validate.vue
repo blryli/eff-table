@@ -72,8 +72,8 @@ export default {
           title: '邮箱',
           width: 100,
           validator: {
-            rule: val => new Promise(resolve => setTimeout(() => {
-              resolve(val.length > 10 && '邮箱长度不能大于10')
+            rule: ({ value }) => new Promise(resolve => setTimeout(() => {
+              resolve(value.length > 10 && '邮箱长度不能大于10')
             }, 1000))
           }
         },
@@ -83,7 +83,7 @@ export default {
           title: '城市',
           width: 100,
           validator: {
-            rule: val => !val && '城市不能为空'
+            rule: ({ value }) => !value && '城市不能为空'
           }
         },
         {

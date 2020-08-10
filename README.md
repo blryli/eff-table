@@ -119,7 +119,7 @@ value: [
 
     // 校验
     validator: {
-      rule: ({value, row, rowIndex}) => !val && '不能为空', // 校验规则
+      rule: ({value, row, rowIndex}) => !value && '不能为空', // 校验规则
       field: '' // 指定校验字段( 默认为prop )
     }
 
