@@ -68,10 +68,9 @@ export default {
     },
     setCurrentRow(row) {
       const rowIndex = this.data.findIndex(d => this.isSame(d, row))
+      checkeds.clear()
       if (rowIndex !== -1) {
         checkeds.add(rowIndex)
-      } else {
-        checkeds.clear()
       }
       this.selectionChange()
     },
