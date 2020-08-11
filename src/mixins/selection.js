@@ -66,6 +66,15 @@ export default {
       selected ? checkeds.add(index) : has ? checkeds.delete(index) : checkeds.add(index)
       this.selectionChange()
     },
+    setCurrentRow(row) {
+      const rowIndex = this.data.findIndex(d => this.isSame(d, row))
+      if (rowIndex !== -1) {
+        checkeds.add(rowIndex)
+      } else {
+        checkeds.clear()
+      }
+      this.selectionChange()
+    },
     selectionChange() {
       this.selecteds = [...checkeds]
     },
