@@ -227,14 +227,13 @@ export const getKeysStr = function(event) {
  */
 export const getTextWidth = function(node) {
   function getStyle(elem, prop) {
-    if (prop) prop = prop.replace(/([A-Z])/g, str => '-' + str.toLowerCase())
     return window.getComputedStyle(elem, null).getPropertyValue(prop)
   }
   const range = document.createRange()
   range.setStart(node, 0)
   range.setEnd(node, node.childNodes.length)
   const rangeWidth = range.getBoundingClientRect().width
-  const padding = parseInt(getStyle(node, 'paddingLeft')) + parseInt(getStyle(node, 'paddingRight'))
+  const padding = parseInt(getStyle(node, 'padding-left')) + parseInt(getStyle(node, 'padding-right'))
   return padding + rangeWidth
 }
 
