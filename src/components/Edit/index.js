@@ -37,6 +37,7 @@ export default {
       } else {
         this.component && this.component.close && this.component.close()
         this.handleValidate()
+        this.table.clearSelection()
         this.placement = ''
         this.column = null
         this.cell = null

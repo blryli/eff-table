@@ -87,7 +87,19 @@ export default {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 150
+          width: 150,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
         },
         {
           show: true,
