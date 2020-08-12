@@ -22,7 +22,13 @@ export default {
     }
   },
   watch: {
-    selecteds(val) {
+    data: {
+      handler() {
+        this.clearSelection()
+      },
+      deep: true
+    },
+    selecteds() {
       this.$emit('selection-change', this.checkeds)
       const selectedsLength = this.selecteds.length
       const dataLength = this.data.length
