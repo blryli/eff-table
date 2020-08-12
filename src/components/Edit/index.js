@@ -33,7 +33,7 @@ export default {
   watch: {
     show(val) {
       if (val) {
-        this.$emit('editOpen')
+        this.table.$emit('editOpen')
       } else {
         this.component && this.component.close && this.component.close()
         this.handleValidate()
@@ -41,7 +41,8 @@ export default {
         this.placement = ''
         this.column = null
         this.cell = null
-        this.$emit('editClose')
+        this.table.$emit('editClose')
+        this.table.$emit('blur')
       }
     },
     cell(val, oldVal) {
