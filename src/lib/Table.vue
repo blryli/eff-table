@@ -42,14 +42,13 @@
       v-if="edit"
       ref="edit"
       :columns="bodyColumns"
-      @validate="handleValidate"
     />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>columnsWidth{{ columnsWidth }}</p> -->
+    <p>validators {{ validators }}</p>
     <!-- 气泡 -->
-    <Popover :show="show" :reference="reference" :message="message" />
+    <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
   </div>
 </template>
@@ -84,6 +83,7 @@ export default {
   props: {
     value: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
+    form: { type: Object, default: () => {} },
     border: Boolean,
     drag: Boolean,
     search: Boolean,
@@ -201,16 +201,13 @@ export default {
     handleCardClose() {
       this.$emit('dragCardClose')
     },
-    handleValidate(val, validators) {
-      this.$emit('validate', val, validators)
-    },
     tipShow({ reference, message }) {
-      this.show = true
+      this.$refs.popover.doShow()
       this.reference = reference
       this.message = message
     },
     tipClose() {
-      this.show = false
+      this.$refs.popover.doHide()
     }
   }
 }

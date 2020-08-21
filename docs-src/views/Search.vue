@@ -7,13 +7,16 @@
           ref="table"
           v-model="columns"
           :data="data"
+          :form.sync="form"
           :max-height="400"
           drag
           search
           fullscreen
           border
+          @search-change="searchChange"
         />
-        <!-- <p>columns {{ columns }}</p> -->
+        <p>searchData {{ searchData }}</p>
+        <p>form {{ form }}</p>
       </div>
     </section>
 
@@ -56,6 +59,7 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
+      searchData: [],
       radio: null,
       form: {
         email: '',
@@ -91,13 +95,7 @@ export default {
           title: '邮箱',
           width: 100,
           search: {
-            render: (h, { column, columnIndex }) => {
-              return <el-input
-                value={this.form.email}
-                on-input={val => (this.form.email = val)}
-              />
-            },
-            position: 'form'
+
           }
         },
         {
@@ -121,8 +119,7 @@ export default {
                   })
                 }
               </el-select>
-            },
-            position: 'table'
+            }
           }
         },
         {
@@ -136,11 +133,19 @@ export default {
                 value={this.form.datetime}
                 class='search-item'
                 on-input={val => (this.form.datetime = val)}
+                type='date'
+              />
+            },
+            rangeRender: (h, { column, columnIndex }) => {
+              return <el-date-picker
+                value={this.form.datetime}
+                class='search-item'
+                on-input={val => (this.form.datetime = val)}
                 type='daterange'
               />
             },
             operator: true,
-            operatorValue: 'like'
+            operatorDefalut: 'equals'
           }
         }
       ]
@@ -161,7 +166,10 @@ export default {
     }, 50)
   },
   methods: {
-
+    searchChange(val) {
+      console.log(JSON.stringify(val, null, 2))
+      this.searchData = val
+    }
   }
 }
 </script>

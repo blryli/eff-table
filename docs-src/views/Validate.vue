@@ -7,6 +7,7 @@
           ref="table"
           v-model="columns"
           fullscreen
+          edit
           border
           :height="400"
           :data="data"
@@ -71,6 +72,11 @@ export default {
           prop: 'email',
           title: '邮箱',
           width: 100,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input value={row.email} on-input={val => (row.email = val)} />
+            }
+          },
           validator: {
             rule: ({ value }) => new Promise(resolve => setTimeout(() => {
               resolve(value.length > 10 && '邮箱长度不能大于10')
@@ -82,6 +88,11 @@ export default {
           prop: 'city',
           title: '城市',
           width: 100,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input value={row.city} on-input={val => (row.city = val)} />
+            }
+          },
           validator: {
             rule: ({ value }) => !value && '城市不能为空'
           }

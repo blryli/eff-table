@@ -42,9 +42,6 @@
     "vue": "^2.6.10"
   },
   "devDependencies": {
-    "sortablejs": "^1.10.2",
-    "@popperjs/core": "^2.3.1",
-    "element-ui": "^2.13.2",
     "@babel/core": "^7.7.4",
     "@babel/polyfill": "^7.7.0",
     "@babel/preset-env": "^7.7.4",
@@ -63,6 +60,7 @@
     "clean-css": "^4.2.1",
     "core-js": "^3.4.3",
     "cross-env": "^6.0.3",
+    "element-ui": "^2.13.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "highlight.js": "^9.17.1",
@@ -78,6 +76,7 @@
     "rollup-plugin-vue": "^5.0.0",
     "sass-loader": "^8.0.0",
     "screenfull": "^5.0.0",
+    "sortablejs": "^1.10.2",
     "vue-router": "^3.1.3",
     "vue-template-compiler": "^2.6.10"
   },

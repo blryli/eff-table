@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import Icon from './icon.vue'
+import Icon from './Icon.vue'
 import { debounce } from '@/utils/dom'
 
 export default {

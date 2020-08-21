@@ -59,7 +59,12 @@ export default {
           }
         </div>
         {
-          search ? <Search styles={rowStyle} columns={bodyColumns} showSpace={showSpace} /> : ''
+          search ? <Search
+            styles={rowStyle}
+            columns={bodyColumns}
+            showSpace={showSpace}
+            on-change={val => this.table.$emit('search-change', val)}
+          /> : ''
         }
       </div>
     )

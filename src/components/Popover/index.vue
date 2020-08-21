@@ -4,18 +4,21 @@ import { removeBody, getDomClientRect } from 'utils/dom'
 export default {
   name: 'Popover',
   props: {
-    show: { type: Boolean, default: true },
     effect: { type: [String, Object], default: 'light' },
     // popover消息提示
     data: { type: [String, Object, Array], default: '' },
     placement: { type: String, default: 'top' },
     borderColor: { type: String, default: '#ccc' },
     popoverClass: { type: String, default: '' },
+    trigger: { type: String, default: 'hover' },
     reference: null,
-    message: { type: [String, Array], default: '' }
+    message: { type: [String, Array], default: '' },
+    enterable: Boolean,
+    hideDelay: { type: Number, default: 200 }
   },
   data() {
     return {
+      show: false,
       addedBody: false,
       momentPlacement: this.placement
     }
@@ -81,26 +84,55 @@ export default {
   },
   watch: {
     show(val) {
-      val && setTimeout(() => {
-        this.calculateCoordinate()
-      }, 0)
+      if (val) {
+        setTimeout(() => {
+          this.popoverAddedBody()
+          this.calculateCoordinate()
+        }, 0)
+      }
     }
   },
   mounted() {
   },
   beforeDestroy() {
-    removeBody(this, 'popover')
+    this.addedBody && removeBody(this, 'popover')
+  },
+  deactivated() {
+    this.$options.beforeDestroy[0].call(this)
   },
   methods: {
     popoverAddedBody() {
-      document.body.appendChild(this.$el)
-      this.addedBody = true
+      if (!this.addedBody && this.show) {
+        document.body.appendChild(this.$el)
+        this.addedBody = true
+      }
     },
-    mouseenter() {
-      this.$emit('mouseenter')
+    doShow() {
+      if (this.timeoutPending) {
+        clearTimeout(this.timeoutPending)
+        this.show = true
+      } else {
+        this.show = true
+      }
     },
-    mouseleave() {
-      this.$emit('mouseleave')
+    doHide() {
+      if (this.enterable) {
+        this.timeoutPending = setTimeout(() => {
+          this.show = false
+        }, this.hideDelay)
+      } else {
+        this.show = false
+      }
+    },
+    mouseenterWrap() {
+      this.enterable && clearTimeout(this.timeoutPending)
+    },
+    mouseleaveWrap() {
+      if (this.enterable) {
+        this.timeoutPending = setTimeout(() => {
+          this.show = false
+        }, 200)
+      }
     },
     calculateCoordinate() {
       !this.addedBody && this.popoverAddedBody()
@@ -154,8 +186,8 @@ export default {
       <div
         class={'v-popover ' + this.pClass}
         style={this.popoverStyle}
-        on-mouseenter={this.mouseenter}
-        on-mouseleave={this.mouseleave}
+        on-mouseenter={this.mouseenterWrap}
+        on-mouseleave={this.mouseleaveWrap}
       >
         {
           this.$slots.default || (this.message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)

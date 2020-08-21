@@ -8,6 +8,7 @@
           v-model="columns"
           :data="data"
           :max-height="400"
+          drag
           edit
           :edit-stop="editStop"
           fullscreen
