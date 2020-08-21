@@ -46,7 +46,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>validators {{ validators }}</p>
+    <!-- <p>validators {{ validators }}</p> -->
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />

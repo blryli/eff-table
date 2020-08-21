@@ -15,8 +15,8 @@
           border
           @search-change="searchChange"
         />
-        <p>searchData {{ searchData }}</p>
-        <p>form {{ form }}</p>
+        <!-- <p>searchData {{ searchData }}</p>
+        <p>form {{ form }}</p> -->
       </div>
     </section>
 
