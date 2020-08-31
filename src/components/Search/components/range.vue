@@ -1,17 +1,17 @@
 <template>
   <!-- 范围选择 -->
   <div v-show="show" ref="range" class="table-search-range" :style="style">
-    <el-input
+    <input
       ref="first"
       v-model="form.start"
       placeholder="开始"
       style="display: flex;padding: 0;height:28px"
-    />
-    <el-input
+    >
+    <input
       v-model="form.end"
       placeholder="结束"
       style="display: flex;padding: 0;height:28px"
-    />
+    >
   </div>
 </template>
 

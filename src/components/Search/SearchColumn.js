@@ -8,6 +8,7 @@ export default {
     Icon, Popover, Operator
   },
   props: {
+    value: { type: Object, default: () => {} },
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
     operators: { type: Array, default: () => [] }
@@ -20,6 +21,11 @@ export default {
     }
   },
   inject: ['table'],
+  watch: {
+    value() {
+      this.init()
+    }
+  },
   computed: {
     width() {
       let { width = 0 } = this.column
@@ -37,15 +43,9 @@ export default {
       return classes
     }
   },
-  created() {
-    console.log('created')
-  },
   mounted() {
+    this.init()
     this.unwatch && this.unwatch()
-    const value = this.table.form[this.column.prop]
-    const { search: { operatorDefalut } = {}} = this.column
-    this.form.value = value || ''
-    this.form.type = operatorDefalut || 'like'
 
     const { operator } = this.column.search || {}
     this.$nextTick(() => {
@@ -60,7 +60,6 @@ export default {
     this.unwatch()
   },
   render(h) {
-    console.log('render')
     const { column, columnIndex } = this
     const { operator, render, rangeRender } = column.search || {}
     const { type } = this.form
@@ -107,6 +106,12 @@ export default {
     )
   },
   methods: {
+    init() {
+      const value = this.table.form[this.column.prop]
+      const { search: { operatorDefalut } = {}} = this.column
+      this.form.value = value || ''
+      this.form.type = this.value.type || operatorDefalut || 'like'
+    },
     handleMouseenter(e) {
       this.$refs.popover.doShow()
     },

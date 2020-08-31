@@ -32,7 +32,7 @@ export default {
       this.$emit('selection-change', this.checkeds)
       const selectedsLength = this.selecteds.length
       const dataLength = this.data.length
-      this.selectionAll = selectedsLength === dataLength
+      this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
     }
   },

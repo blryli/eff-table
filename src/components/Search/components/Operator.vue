@@ -21,6 +21,11 @@ export default {
       active: this.type
     }
   },
+  watch: {
+    type(val) {
+      this.active = val
+    }
+  },
   methods: {
     typeChange(type) {
       this.active = type

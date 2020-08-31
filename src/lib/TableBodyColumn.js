@@ -86,7 +86,7 @@ export default {
       }
 
       const messages = []
-      if (getTextWidth(cell) > Math.max(column.width, 40)) {
+      if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > this.table.spaceWidth) {
         messages.push({ type: 'info', message: cell.innerText })
       }
       if (this.message && this.message.message) {

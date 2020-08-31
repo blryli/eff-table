@@ -101,7 +101,7 @@ export default {
         {
           show: true,
           prop: 'city',
-          title: '城市',
+          title: '城市城市城市城市',
           width: 100,
           search: {
             render: (h, { column, columnIndex }) => {

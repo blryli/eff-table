@@ -73,7 +73,7 @@ export default {
         return
       }
 
-      if (getTextWidth(cell) > Math.max(this.column.width, 40)) {
+      if (this.column.width && getTextWidth(cell) > Math.max(this.column.width, 40) || !this.column.width && getTextWidth(cell) > this.table.spaceWidth) {
         this.table.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
       }
     },

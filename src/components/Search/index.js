@@ -6,6 +6,7 @@ export default {
     SearchColumn
   },
   props: {
+    value: { type: Array, default: () => [] },
     columns: { type: Array, default: () => [] },
     styles: { type: Object, default: () => {} },
     showSpace: Boolean
@@ -61,6 +62,14 @@ export default {
   provide() {
     return { tableSearch: this }
   },
+  watch: {
+    value(val) {
+      this.searchData = val
+    }
+  },
+  created() {
+    this.searchData = this.value
+  },
   methods: {
     change(val) {
       const { prop, value } = val
@@ -69,9 +78,10 @@ export default {
       if (value) {
         index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
       } else {
-        this.searchData.splice(index, 1)
+        index > -1 && this.searchData.splice(index, 1)
       }
       // console.log('handleSearchChange', JSON.stringify(this.searchData, null, 2))
+      this.$emit('input', this.searchData)
       this.$emit('change', this.searchData)
     },
     handleShow(val) {
@@ -83,11 +93,13 @@ export default {
   },
   render(h) {
     // <Range ref="tableRange" :range="tableSearchRange" @show="handleShow" @close="handleClose" />
+
     return <div class='eff-table__search' style={this.styles}>
       {
         this.columns.map((column, columnIndex) => {
           return <SearchColumn
             key={columnIndex}
+            value={this.searchData.find(d => d.prop === column.prop) || { value: '', type: '' }}
             column={column}
             column-index={columnIndex}
             operators={this.operators}

@@ -36,7 +36,7 @@
       v-model="columns"
       :column-control="columnControl"
       @cardClose="handleCardClose"
-      @change="change"
+      @change="dargChange"
     />
     <edit
       v-if="edit"
@@ -46,7 +46,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>validators {{ validators }}</p> -->
+    <!-- <p>spaceWidth {{ spaceWidth }}</p> -->
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -193,7 +193,7 @@ export default {
         this.change()
       }
     },
-    change() {
+    dargChange() {
       this.$emit('input', this.columns)
       this.$emit('dragChange', this.columns)
       this.resize()

@@ -9,7 +9,9 @@ export default {
     return {
       dragingTarget: null,
       height: 0,
-      isDraging: false
+      isDraging: false,
+      isTableDrag: false,
+      searchData: []
     }
   },
   watch: {
@@ -59,10 +61,12 @@ export default {
           }
         </div>
         {
-          search ? <Search
+          search && !this.isTableDrag ? <Search
+            value={this.searchData}
             styles={rowStyle}
             columns={bodyColumns}
             showSpace={showSpace}
+            on-input={val => (this.searchData = val)}
             on-change={val => this.table.$emit('search-change', val)}
           /> : ''
         }
@@ -207,10 +211,18 @@ export default {
           this.dragingTarget = null
         }
       }, 100)
+    },
+    tableDrag() {
+      // 表头拖动之后重新渲染搜索组件
+      this.isTableDrag = true
+      this.$nextTick(() => {
+        this.isTableDrag = false
+      })
     }
   },
   mounted() {
     this.table.headerLoad = true
+    this.table.$on('dragChange', this.tableDrag)
     on(this.$el, 'scroll', this.handleScroll)
     this.$nextTick(() => {
       this.height = this.$refs.header.offsetHeight
@@ -218,6 +230,7 @@ export default {
   },
   beforeDestroy() {
     off(this.$el, 'scroll', this.handleScroll)
+    this.table.$off('dragChange', this.tableDrag)
   }
 }
 
