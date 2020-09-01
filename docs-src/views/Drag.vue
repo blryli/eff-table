@@ -14,7 +14,6 @@
           border
           fullscreen
           show-summary
-          @selection-change="handleSelectionChange"
         />
       </div>
     </section>
@@ -124,6 +123,7 @@ export default {
           show: true,
           title: '操作',
           fixed: 'right',
+          width: 150,
           cellRender: (h, { row, rowIndex }) => {
             return <div>
                 aaaaa
@@ -136,7 +136,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|100': [
+        'array|1000': [
           {
             'message': '@email',
             'name': '@cname',
@@ -149,11 +149,6 @@ export default {
         ]
       }).array
     }, 1000)
-  },
-  methods: {
-    handleSelectionChange(val) {
-      console.log(val)
-    }
   }
 }
 </script>

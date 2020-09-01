@@ -27,7 +27,7 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table'
-      this.bodyOverflowX && (tClass += ' is-overflow-x')
+      this.bodyOverflowX && (tClass += ' is-overflow--x')
       this.heights.bodyOverflowY && (tClass += ' is-overflow--y')
       this.border && (tClass += ' is-border')
       return tClass

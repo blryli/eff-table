@@ -160,7 +160,17 @@ export default {
 
 <style lang="scss" scoped>
 .eff-table__body-wrapper{
-  overflow: auto;
+  overflow: hidden;
+}
+.is-overflow--y {
+  .eff-table__body-wrapper{
+    overflow-y: auto;
+  }
+}
+.is-overflow--x {
+  .eff-table__body-wrapper{
+    overflow-x: auto;
+  }
 }
 .empty-text{
   display: flex;
