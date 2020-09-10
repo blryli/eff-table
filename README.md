@@ -137,10 +137,10 @@ value: [
 
     drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
 
-    // 未开发
+    // 排序
     sortable: false, // 对应列是否可以排序
 
-    sortMethod: false, // 排序的时候使用的方法
+    sortMethod: null, // 排序的时候使用的方法 function(a, b)
 
     remoteSort: false, // 服务端排序，需要监听 sort-change 事件
   }
