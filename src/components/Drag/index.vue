@@ -26,7 +26,6 @@ export default {
   data() {
     return {
       columns: this.value,
-      sortable: null,
       show: false,
       dradingTarget: null
     }
@@ -51,24 +50,34 @@ export default {
       }
     }
   },
+  inject: ['table'],
   mounted() {
     this.$parent.$on('header-dragend', this.elDragendChange)
 
     this.$nextTick(() => {
       this.id = Math.floor(Math.random() * 100000)
-      this.sortable = new Sortable({
-        el: this.$parent.$el.querySelector('.eff-table__header'),
-        group: this.id,
-        filter: 'is-drag--filter',
-        dragImage: {
-          height: 30
-        },
-        drag: this.handleDrag,
-        dragstart: this.handleDragstart,
-        dragend: this.handleDragend,
-        dragenter: this.handleDragenter,
-        onEnd: this.handleEnd
-      })
+      if (this.table.drag) {
+        this.columnSortable = new Sortable({
+          el: this.$parent.$el.querySelector('.eff-table__header'),
+          group: this.id,
+          filter: 'is-drag--filter',
+          dragImage: {
+            height: 30
+          },
+          dragend: this.handleDragend,
+          dragenter: this.handleDragenter,
+          onEnd: this.handleEnd
+        })
+        this.rowSortable = new Sortable({
+          el: this.$parent.$el.querySelector('.eff-table__body'),
+          group: this.id,
+          filter: 'is-drag--filter',
+          dragImage: {
+            height: 30
+          },
+          onEnd: this.handleRowEnd
+        })
+      }
       if (this.columnControl) {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
@@ -77,8 +86,6 @@ export default {
             dragImage: {
               height: 30
             },
-            drag: this.handleDrag,
-            dragstart: this.handleDragstart,
             dragend: this.handleDragend,
             dragenter: this.handleDragenter,
             onEnd: this.handleEnd
@@ -88,7 +95,7 @@ export default {
     })
   },
   beforeDestroy() {
-    this.sortable = null
+    this.columnSortable = null
     this.cradsSortable = null
     this.$parent.$off('header-dragend', this.elDragendChange)
   },
@@ -108,8 +115,12 @@ export default {
         this.$emit('change', this.columns)
       }
     },
-    handleDrag({ enterTo }) {},
-    handleDragstart() {},
+    handleRowEnd({ fromEl, toEl }) {
+      const fromRowId = fromEl.getAttribute('data-rowid')
+      const toRowId = toEl.getAttribute('data-rowid')
+      this.$emit('row-change', +fromRowId - 1, +toRowId - 1)
+      console.log({ fromRowId, toRowId })
+    },
     handleDragend(target) {
       removeClass(this.dradingTarget, 'is-draging')
       this.dradingTarget = null

@@ -1,6 +1,9 @@
 <template>
   <div class="page-home page">
     <h2>Description</h2>
+    <el-button @click="$refs.table.sort('city', 'asc')">城市升序</el-button>
+    <el-button @click="$refs.table.sort('city', 'desc')">城市降序</el-button>
+    <el-button @click="$refs.table.clearSort()">清除排序</el-button>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -8,8 +11,6 @@
           v-model="columns"
           :data="data"
           :max-height="400"
-          drag
-          column-control
           border
           fullscreen
         />
@@ -54,7 +55,7 @@ const componentSnippet = `
 />
 `
 export default {
-  name: '',
+  name: 'Sort',
   components: {
     CodeSnippet,
     Collapse
@@ -80,45 +81,20 @@ export default {
           prop: 'index',
           title: '序号',
           width: 80,
-          fixed: 'left'
+          fixed: 'left',
+          sortable: true
         },
         {
           show: true,
           prop: 'city',
           title: '城市',
-          width: 120
+          sortable: true
         },
         {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 150,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          children: [{
-            show: true,
-            prop: 'xing',
-            title: '姓'
-          }, {
-            show: true,
-            prop: 'ming',
-            title: '名'
-          }]
+          sortable: true
         }
       ]
     }

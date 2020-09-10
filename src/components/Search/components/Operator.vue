@@ -1,6 +1,6 @@
 <template>
   <div class="operator">
-    <div v-for="(d, i) in data" :key="i" class="operator-item" :class="{'is-active': d.type === active && d.type !== 'like'}" @click="typeChange(d.type)">
+    <div v-for="(d, i) in data" :key="i" class="operator-item" :class="{'is--active': d.type === active && d.type !== 'like'}" @click="typeChange(d.type)">
       <div class="dropdown-icon">{{ d.label }}</div>
     </div>
   </div>
@@ -45,7 +45,7 @@ export default {
     }
   }
 
-  .is-active{
+  .is--active{
     .dropdown-icon{
       color: #1177e8;
     }

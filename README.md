@@ -97,6 +97,10 @@ value: [
 
     type: 'selection', // string
 
+    width: 80, // number
+
+    fixed: '', // string left/right
+
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
     titleRender: (h, {column, columnIndex}) => {
@@ -133,12 +137,12 @@ value: [
 
     drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
 
-    width: 80, // number
-
-    fixed: '', // string left/right
-
     // 未开发
-    sortable: '', // string
+    sortable: false, // 对应列是否可以排序
+
+    sortMethod: false, // 排序的时候使用的方法
+
+    remoteSort: false, // 服务端排序，需要监听 sort-change 事件
   }
 ]
 ```
@@ -153,6 +157,8 @@ value: [
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateCell | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
+| sort       | 对 Table 进行排序 | prop: string, order: string|
+| clearSort       | 清空排序 | -|
 
 ### Events
 
@@ -172,3 +178,4 @@ value: [
 |cell-mouse-enter|当单元格 hover 进入时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
+|sort-change|表格排序条件发生变化的时候会触发该事件|{ column, prop, order }|

@@ -1,16 +1,16 @@
 export default {
   computed: {
     columnsWidth() {
-      return this.bodyColumns.reduce((acc, cur) => acc.concat(cur.width), [])
+      return this.bodyColumns.reduce((acc, cur) => acc.concat(cur.width || this.spaceWidth), [])
     },
     leftWidth() {
-      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + cur.width : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + (cur.width || this.spaceWidth) : acc, 0)
     },
     rightWidth() {
-      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + cur.width : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + (cur.width || this.spaceWidth) : acc, 0)
     },
     minWidth() {
-      return this.bodyColumns.reduce((acc, cur) => acc + cur.width, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.width ? acc + cur.width : acc, 0)
     },
     spaceNum() {
       return this.bodyColumns.filter(d => !d.width).length

@@ -74,12 +74,12 @@ export default {
     change(val) {
       const { prop, value } = val
       const index = this.searchData.findIndex(d => d.prop === prop)
-
-      if (value) {
+      if (Array.isArray(value) && value.length || !Array.isArray(value) && value) {
         index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
       } else {
         index > -1 && this.searchData.splice(index, 1)
       }
+
       // console.log('handleSearchChange', JSON.stringify(this.searchData, null, 2))
       this.$emit('input', this.searchData)
       this.$emit('change', this.searchData)

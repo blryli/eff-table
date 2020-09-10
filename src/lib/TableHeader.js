@@ -74,10 +74,13 @@ export default {
     )
   },
   methods: {
+    sortChange(sort) {
+      this.$emit('sort-change', sort)
+    },
     renderColumns(columns) {
       let index = 0
-      const { rowHeight } = this.table
-      function render(columns, colid = '') {
+      const { rowHeight, spaceWidth } = this.table
+      const render = (columns, colid = '') => {
         return columns.reduce((acc, column, columnIndex) => {
           const { children = [] } = column
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
@@ -88,7 +91,7 @@ export default {
                 return children.length ? acc.concat(plat(children)) : acc.concat(cur)
               }, [])
             }
-            const width = plat(children).reduce((acc, cur) => acc + (cur.width || 40), 0)
+            const width = plat(children).reduce((acc, cur) => acc + (cur.width || spaceWidth || 40), 0)
             acc.push(<div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
               <div class='header-title' style={{ maxHeight: rowHeight + 'px' }}>
                 {column.title}
@@ -100,11 +103,17 @@ export default {
               </div>
             </div>)
           } else {
-            acc.push(<TableHeaderColumn
-              colid={parent}
-              column={column}
-              columnIndex={columnIndex}
-              bodyColumnIndex={index}
+            acc.push(<TableHeaderColumn {...{
+              attrs: {
+                colid: parent,
+                column,
+                columnIndex,
+                bodyColumnIndex: index
+              },
+              on: {
+                'sort-change': this.sortChange
+              }
+            }}
             />)
             index += 1
           }

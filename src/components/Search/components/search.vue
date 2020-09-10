@@ -38,7 +38,7 @@
         <icon :icon="data.type" :operator="operator" />
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="(d, i) in operator" :key="i" :class="{'is-active': data.type === d.type && d.type !== 'like'}" @click.native="typeChange(d.type)">
+        <el-dropdown-item v-for="(d, i) in operator" :key="i" :class="{'is--active': data.type === d.type && d.type !== 'like'}" @click.native="typeChange(d.type)">
           <div class="dropdown-icon">{{ d.label }}</div>
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -218,7 +218,7 @@ export default {
   height: 28px;
   background-color: #fff;
 }
-.is-active{
+.is--active{
   .dropdown-icon{
     color: #1177e8;
   }

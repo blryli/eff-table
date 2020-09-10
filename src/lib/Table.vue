@@ -5,11 +5,16 @@
     </Toolbar>
     <div ref="table" :class="tableClass">
       <!-- header -->
-      <TableHeader v-if="showHeader" ref="header" @dragend="handleDragend" />
+      <TableHeader
+        v-if="showHeader"
+        ref="header"
+        @dragend="handleDragend"
+        @sort-change="sortChange"
+      />
       <!-- body -->
       <TableBody
         ref="TableBody"
-        :data="data"
+        :data="tableData"
         :validators="validators"
         :messages="messages"
         :row-render-index.sync="rowRenderIndex"
@@ -37,6 +42,7 @@
       :column-control="columnControl"
       @cardClose="handleCardClose"
       @change="dargChange"
+      @row-change="dragRowChange"
     />
     <edit
       v-if="edit"
@@ -58,6 +64,7 @@ import Column from 'mixins/column'
 import Selection from 'mixins/selection'
 import Layout from 'mixins/layout'
 import validate from 'mixins/validate'
+import sort from 'mixins/sort'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
@@ -79,7 +86,7 @@ export default {
     Edit,
     Summary
   },
-  mixins: [Column, Layout, Selection, validate],
+  mixins: [Column, Layout, Selection, validate, sort],
   props: {
     value: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
@@ -92,6 +99,7 @@ export default {
     columnControl: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean,
+    sortConfig: { type: Object, default: () => {} },
     summaryMethod: { type: Function, default: null },
     sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
@@ -116,7 +124,8 @@ export default {
       lineShow: false,
       isScreenfull: false,
       tableBody: null,
-      rowRenderIndex: 0
+      rowRenderIndex: 0,
+      tableData: [...this.data]
     }
   },
   computed: {
@@ -150,7 +159,7 @@ export default {
   },
   watch: {
     data(val) {
-
+      this.tableData = [...val]
     },
     value(val) {
       this.columns = val
@@ -198,6 +207,13 @@ export default {
       this.$emit('dragChange', this.columns)
       this.resize()
     },
+    dragRowChange(fromIndex, toIndex) {
+      const data = this.data
+      const from = data[fromIndex]
+      const to = data[toIndex]
+      data.splice(toIndex, 1, from)
+      data.splice(fromIndex, 1, to)
+    },
     handleCardClose() {
       this.$emit('dragCardClose')
     },
@@ -241,6 +257,8 @@ export default {
 <style lang="scss">
 .eff-table {
   .eff-cell{
+    display: flex;
+    align-items: center;
     box-sizing: border-box;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -332,7 +350,6 @@ export default {
   input, .search-item{
     height: var(--rowHeight);
     border-radius: 0;
-    padding: 0 5px;
     background-color: transparent;
     border-color: transparent;
     box-sizing: border-box;
@@ -355,6 +372,8 @@ export default {
 }
 .eff-table__header{
   .eff-table__column{
+    display: flex;
+    align-items: center;
     color: #666;
     font-weight: bold;
     user-select: none;
@@ -507,6 +526,42 @@ export default {
   border: 5px solid;
   border-color: transparent #ddd transparent transparent;
   transform: rotate(45deg);
+}
+
+.eff-cell--sort{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 20px;
+  height: 20px;
+  [class*=eff-cell--sort-]{
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    position: absolute;
+    left: 5px;
+    cursor: pointer;
+  }
+  .eff-cell--sort-asc{
+    border-bottom-color: #c0c4cc;
+    top: -3.5px;
+    &:hover{
+      border-bottom-color: #a0a1a5;
+    }
+    &.is--active{
+      border-bottom-color: #409eff;
+    }
+  }
+  .eff-cell--sort-desc{
+    border-top-color: #c0c4cc;
+    bottom: -3.5px;
+    &:hover{
+      border-top-color: #a0a1a5;
+    }
+    &.is--active{
+      border-top-color: #409eff;
+    }
+  }
 }
 
 @keyframes rotate {

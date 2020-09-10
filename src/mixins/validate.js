@@ -1,7 +1,4 @@
 export default {
-  props: {
-    data: { type: Array, default: () => [] }
-  },
   data() {
     return {
       validators: []

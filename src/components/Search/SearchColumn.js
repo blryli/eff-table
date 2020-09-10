@@ -129,9 +129,8 @@ export default {
         this.updateForm()
       }
       this.form.type = type === 'like' && this.column.search.operatorDefalut || type
+      console.log(type, this.form.type)
       this.$refs.popover.doHide()
-
-      this.change()
     },
     updateForm() {
       const form = { ...this.table.form }
@@ -140,6 +139,7 @@ export default {
       this.table.$emit('update:form', form)
     },
     change() {
+      console.log('search change')
       this.$emit('change', { prop: this.column.prop, ...this.form })
     }
   }
