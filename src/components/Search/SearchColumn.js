@@ -33,9 +33,16 @@ export default {
     },
     columnClass() {
       const { fixed, titleClassName } = this.column
+      const { bodyOverflowX, isScrollRightEnd, bodyColumns } = this.table
       let classes = `eff-table__column`
       if (fixed) {
         if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
+      }
+      if (bodyOverflowX) {
+        if (!isScrollRightEnd) {
+          const firstRightFixedIndex = bodyColumns.findIndex(d => d.fixed === 'right')
+          this.columnIndex === firstRightFixedIndex && (classes += ' is-first-right-fixed')
+        }
       }
       titleClassName && (classes += ` ${titleClassName}`)
       return classes

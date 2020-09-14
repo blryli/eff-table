@@ -30,7 +30,7 @@ export default {
       this.bodyOverflowX && (tClass += ' is-overflow--x')
       this.heights.bodyOverflowY && (tClass += ' is-overflow--y')
       this.border && (tClass += ' is-border')
-      this.isScrollRightEnd && (tClass += ' is-scroll--y-end')
+      // this.isScrollRightEnd && (tClass += ' is-scroll--y-end')
       return tClass
     },
     rowStyle() {

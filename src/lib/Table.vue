@@ -482,8 +482,14 @@ export default {
 
 .is-border {
   .eff-table__column,
+  .eff-table__search-empty,
   .header-title{
     border-left: 1px solid #ddd;
+  }
+  .is-first-right-fixed {
+    .eff-table__search-empty{
+      border-left-color: transparent;
+    }
   }
 }
 .eff-table__body-row:last-child{
@@ -597,9 +603,7 @@ export default {
 }
 
 .is-scroll--y-end{
-  .eff-table__search-empty{
-    border-left: 1px solid #ddd;
-  }
+
 }
 
 @keyframes rotate {

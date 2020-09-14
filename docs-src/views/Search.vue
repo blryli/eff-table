@@ -104,26 +104,8 @@ export default {
           prop: 'city',
           title: '城市城市城市城市',
           width: 300,
-          sortable: true,
-          search: {
-            render: (h, { column, columnIndex }) => {
-              const { prop } = column
-              return <el-select
-                value={this.form[prop]}
-                on-input={val => (this.form[prop] = val)}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          }
+          sortable: true
+
         },
         {
           show: true,
