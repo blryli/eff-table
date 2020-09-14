@@ -148,7 +148,7 @@ export default {
               />
             },
             operator: true,
-            operatorDefalut: 'equals',
+            operatorDefault: 'equals',
             type: 'dates'
           }
         },

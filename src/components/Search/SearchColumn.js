@@ -66,9 +66,9 @@ export default {
     },
     init() {
       const value = this.table.form[this.column.prop]
-      const { search: { operatorDefalut } = {}} = this.column
+      const { search: { operatorDefault } = {}} = this.column
       this.form.value = value || ''
-      this.form.type = this.value.type || operatorDefalut || 'like'
+      this.form.type = this.value.type || operatorDefault || 'like'
     },
     handleMouseenter(e) {
       this.$refs.popover.doShow()
@@ -89,7 +89,7 @@ export default {
         this.updateForm()
         isChange = true
       }
-      this.form.type = !type && this.column.search.operatorDefalut || type
+      this.form.type = !type && this.column.search.operatorDefault || type
       if (isChange || this.form.value) this.change()
       this.$refs.popover.doHide()
     },
