@@ -204,7 +204,7 @@ export default {
     },
     dargChange() {
       this.$emit('input', this.columns)
-      this.$emit('dragChange', this.columns)
+      this.$emit('drag-change', this.columns)
       this.resize()
     },
     dragRowChange(fromIndex, toIndex) {

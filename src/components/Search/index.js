@@ -72,9 +72,9 @@ export default {
   },
   methods: {
     change(val) {
-      const { prop, value } = val
-      const index = this.searchData.findIndex(d => d.prop === prop)
-      if (Array.isArray(value) && value.length || !Array.isArray(value) && value) {
+      const { field, content } = val
+      const index = this.searchData.findIndex(d => d.field === field)
+      if (Array.isArray(content) && content.length || !Array.isArray(content) && content) {
         index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
       } else {
         index > -1 && this.searchData.splice(index, 1)

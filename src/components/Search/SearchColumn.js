@@ -3,6 +3,7 @@ import Popover from '../Popover/index.vue'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'
 import RangeInput from './components/RangeInput.vue'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableSearchColumn',
@@ -99,7 +100,17 @@ export default {
       this.table.$emit('update:form', form)
     },
     change() {
-      this.$emit('change', { prop: this.column.prop, ...this.form })
+      const operator = this.form.type.toUpperCase()
+      let content = this.form.value
+      if (Array.isArray(content) && XEUtils.isDate(content[0])) {
+        content = content.map(d => new Date(d).getTime())
+      } else if (XEUtils.isDate(content)) {
+        content = new Date(content).getTime()
+      }
+      const isDate = XEUtils.isDate(this.form.value)
+      console.log(isDate)
+      const type = this.column.search.type || null
+      this.$emit('change', { field: this.column.prop, operator, content, type })
     }
   },
   render(h) {

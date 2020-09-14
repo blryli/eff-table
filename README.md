@@ -115,7 +115,7 @@ value: [
 
     // 编辑
     edit: { // object
-      render(h, {row, rowIndex}) {
+      render: (h, {row, rowIndex}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
@@ -129,10 +129,11 @@ value: [
 
     // 搜索
     search: {
-      render(h, {row, rowIndex}) {
+      render: (h, {row, rowIndex}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
       operator: false // boolean 搜索范围
+      operatorDefault: 'like' // string 默认类型
     }
 
     drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
@@ -167,8 +168,8 @@ value: [
 | select | 当用户手动勾选数据行的 Checkbox 时触发的事件 | selection, row |
 | select-all | 当用户手动勾选全选 Checkbox 时触发的事件 | selection |
 | selection-change | 当选择项发生变化时会触发该事件 | selection |
-| dragChange | 列拖动或表头宽度调整后触发 | 返回新的tableColumns数组 |
-| searchChange | 搜索条件变化后出发 | 返回搜索条件数组集合 |
+| drag-change | 列拖动或表头宽度调整后触发 | 返回新的tableColumns数组 |
+| search-change | 搜索条件变化后出发 | 返回搜索条件数组集合 |
 | editColumnLastToNext | 在列的最后一个可聚焦元素键入跳下一个指令是触发 | { placement, rowIndex, columnIndex } |
 | validate | 任一表单项被校验后触发 | val: {prop: string success: boolean, message: string}, validators: array |
 |row-click|当某一行被点击时会触发该事件|{ row, column, rowIndex, event }|

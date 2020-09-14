@@ -231,7 +231,7 @@ export default {
   },
   mounted() {
     this.table.headerLoad = true
-    this.table.$on('dragChange', this.tableDrag)
+    this.table.$on('drag-change', this.tableDrag)
     on(this.$el, 'scroll', this.handleScroll)
     this.$nextTick(() => {
       this.height = this.$refs.header.offsetHeight
@@ -239,7 +239,7 @@ export default {
   },
   beforeDestroy() {
     off(this.$el, 'scroll', this.handleScroll)
-    this.table.$off('dragChange', this.tableDrag)
+    this.table.$off('drag-change', this.tableDrag)
   }
 }
 
