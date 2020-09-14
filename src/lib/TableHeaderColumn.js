@@ -39,7 +39,7 @@ export default {
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
-          {slot}
+          <span class='eff-cell--title'>{slot}</span>
           {
             sortable ? <span class='eff-cell--sort'>
               <i

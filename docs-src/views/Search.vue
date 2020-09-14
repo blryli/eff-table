@@ -85,7 +85,7 @@ export default {
       columns: [
         {
           show: true,
-          type: 'index',
+          prop: 'index',
           title: '序号',
           width: 80
         },
@@ -95,7 +95,7 @@ export default {
           title: '邮箱',
           width: 100,
           search: {
-
+            operator: true
           }
         },
         {
@@ -103,11 +103,13 @@ export default {
           prop: 'city',
           title: '城市城市城市城市',
           width: 100,
+          sortable: true,
           search: {
             render: (h, { column, columnIndex }) => {
+              const { prop } = column
               return <el-select
-                value={this.form.city}
-                on-input={val => (this.form.city = val)}
+                value={this.form[prop]}
+                on-input={val => (this.form[prop] = val)}
               >
                 {
                   this.options.map(item => {
@@ -129,19 +131,19 @@ export default {
           width: 220,
           search: {
             render: (h, { column, columnIndex }) => {
+              const { prop } = column
               return <el-date-picker
-                value={this.form.datetime}
-                class='search-item'
-                on-input={val => (this.form.datetime = val)}
+                value={this.form[prop]}
                 type='date'
+                on-input={val => (this.form[prop] = val)}
               />
             },
             rangeRender: (h, { column, columnIndex }) => {
+              const { prop } = column
               return <el-date-picker
-                value={this.form.datetime}
-                class='search-item'
-                on-input={val => (this.form.datetime = val)}
+                value={this.form[prop]}
                 type='daterange'
+                on-input={val => (this.form[prop] = val)}
               />
             },
             operator: true,
