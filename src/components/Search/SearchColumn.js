@@ -89,7 +89,7 @@ export default {
         this.updateForm()
         isChange = true
       }
-      this.form.type = type === 'like' && this.column.search.operatorDefalut || type
+      this.form.type = !type && this.column.search.operatorDefalut || type
       if (isChange || this.form.value) this.change()
       this.$refs.popover.doHide()
     },
@@ -107,8 +107,6 @@ export default {
       } else if (XEUtils.isDate(content)) {
         content = new Date(content).getTime()
       }
-      const isDate = XEUtils.isDate(this.form.value)
-      console.log(isDate)
       const type = this.column.search.type || null
       this.$emit('change', { field: this.column.prop, operator, content, type })
     }
@@ -158,6 +156,9 @@ export default {
           }
           {
             rangeSlot ? <div class='eff-table__search-element' hidden={this.form.type !== 'range'}>{rangeSlot}</div> : ''
+          }
+          {
+            this.table.search && !column.search && <div class='eff-table__search-empty' /> || ''
           }
         </div>
       </div>

@@ -87,13 +87,14 @@ export default {
           show: true,
           prop: 'index',
           title: '序号',
+          fixed: 'left',
           width: 80
         },
         {
           show: true,
           prop: 'email',
           title: '邮箱',
-          width: 100,
+          width: 300,
           search: {
             operator: true
           }
@@ -102,7 +103,7 @@ export default {
           show: true,
           prop: 'city',
           title: '城市城市城市城市',
-          width: 100,
+          width: 300,
           sortable: true,
           search: {
             render: (h, { column, columnIndex }) => {
@@ -128,7 +129,7 @@ export default {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 220,
+          width: 300,
           search: {
             render: (h, { column, columnIndex }) => {
               const { prop } = column
@@ -150,6 +151,12 @@ export default {
             operatorDefalut: 'equals',
             type: 'dates'
           }
+        },
+        {
+          show: true,
+          title: '操作',
+          width: 60,
+          fixed: 'right'
         }
       ]
     }

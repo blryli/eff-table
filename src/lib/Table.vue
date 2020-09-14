@@ -354,6 +354,13 @@ export default {
   &-element{
     flex: 1;
   }
+  &-empty{
+    width: 100%;
+    height: var(--rowHeight);
+    background-color: #f5f6f7;
+    border-top: 1px solid #ddd;
+    box-sizing: border-box;
+  }
   input ,&-element > *{
     width: 100%;
     height: var(--rowHeight);
@@ -586,6 +593,12 @@ export default {
     &.is--active{
       border-top-color: #409eff;
     }
+  }
+}
+
+.is-scroll--y-end{
+  .eff-table__search-empty{
+    border-left: 1px solid #ddd;
   }
 }
 
