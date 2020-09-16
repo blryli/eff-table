@@ -68,15 +68,17 @@ export default {
           dragenter: this.handleDragenter,
           onEnd: this.handleEnd
         })
-        this.rowSortable = new Sortable({
-          el: this.$parent.$el.querySelector('.eff-table__body'),
-          group: this.id,
-          filter: 'is-drag--filter',
-          dragImage: {
-            height: 30
-          },
-          onEnd: this.handleRowEnd
-        })
+        if (this.table.rowDrag) {
+          this.rowSortable = new Sortable({
+            el: this.$parent.$el.querySelector('.eff-table__body'),
+            group: this.id,
+            filter: 'is-drag--filter',
+            dragImage: {
+              height: 30
+            },
+            onEnd: this.handleRowEnd
+          })
+        }
       }
       if (this.columnControl) {
         setTimeout(() => {
@@ -119,7 +121,6 @@ export default {
       const fromRowId = fromEl.getAttribute('data-rowid')
       const toRowId = toEl.getAttribute('data-rowid')
       this.$emit('row-change', +fromRowId - 1, +toRowId - 1)
-      console.log({ fromRowId, toRowId })
     },
     handleDragend(target) {
       removeClass(this.dradingTarget, 'is-draging')

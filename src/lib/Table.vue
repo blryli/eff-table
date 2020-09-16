@@ -97,6 +97,7 @@ export default {
     edit: Boolean,
     editStop: Boolean,
     columnControl: Boolean,
+    rowDrag: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean,
     sortConfig: { type: Object, default: () => {} },
