@@ -86,13 +86,13 @@ export default {
           show: true,
           prop: 'city',
           title: '城市',
-          width: 120
+          width: 250
         },
         {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 150,
+          width: 250,
           edit: {
             render: (h, { row }) => {
               return <el-input {...{
@@ -113,11 +113,13 @@ export default {
           children: [{
             show: true,
             prop: 'xing',
-            title: '姓'
+            title: '姓',
+            width: 150
           }, {
             show: true,
             prop: 'ming',
-            title: '名'
+            title: '名',
+            width: 150
           }]
         }
       ]

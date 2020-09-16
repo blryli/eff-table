@@ -40,9 +40,8 @@ export default {
       const { cellClassName } = this.table
       const { message } = this.message || {}
       if (message) classes += ' is--message'
-      if (fixed) {
-        classes += ' is-drag--filter'
-        if (this.table.bodyOverflowX || fixed === 'right') classes += ' is--fixed'
+      if (fixed && this.table.bodyOverflowX) {
+        classes += ' is--fixed'
       }
       className && (classes += ` ${className}`)
       if (cellClassName) {
