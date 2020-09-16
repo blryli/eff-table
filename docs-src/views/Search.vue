@@ -6,10 +6,11 @@
         <eff-table
           ref="table"
           v-model="columns"
-          :data="data"
+          :data="list"
           :form.sync="form"
           :max-height="400"
           drag
+          column-control
           search
           fullscreen
           border
@@ -74,6 +75,7 @@ export default {
         label: '2'
       }],
       data: [],
+      list: [],
       forData: [
         { prop: 'city', label: '标题5' },
         { prop: 'name', label: '标题6' },
@@ -155,12 +157,20 @@ export default {
           }
         ]
       }).array
+      this.list = [...this.data]
     }, 50)
   },
   methods: {
     searchChange(val) {
       console.log(JSON.stringify(val, null, 2))
       this.searchData = val
+      if (val.length) {
+        val.forEach(d => {
+          this.list = [...this.data.filter(da => da[d.field].indexOf(d.content) > -1)]
+        })
+      } else {
+        this.list = [...this.data]
+      }
     }
   }
 }

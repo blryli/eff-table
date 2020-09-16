@@ -54,7 +54,7 @@ export default {
 
     const { operator } = this.column.search || {}
     this.$nextTick(() => {
-      this.unwatch = this.$watch(`table.form.${this.column.prop}`, this.renderChange)
+      this.unwatch = this.$watch(`table.form.${this.column.prop}`, this.formChange)
       operator && (this.reference = this.$refs.dropdown)
     })
   },
@@ -62,14 +62,13 @@ export default {
     this.unwatch()
   },
   methods: {
-    renderChange(val) {
+    formChange(val) {
       this.form.value = val
       this.change()
     },
     valueChange(val) {
       this.form.value = val
       this.updateForm()
-      this.change()
     },
     init() {
       const value = this.table.form[this.column.prop]

@@ -77,7 +77,7 @@ export default {
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
-      const dataHeight = data.length * rowHeight
+      const dataHeight = data.length ? data.length * rowHeight : rowHeight
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
       if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.bodyOverflowX ? 17 : 0)
       const bodyOverflowY = bodyHeight && dataHeight > bodyHeight

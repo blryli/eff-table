@@ -10,7 +10,7 @@
         :row-index="index + rowRenderIndex"
         :messages="formatValidators[index + rowRenderIndex]"
       />
-      <div v-if="!data.length" class="empty-text" :style="{height: table.rowHeight + 'px'}">{{ table.emptyText }}</div>
+      <div v-if="!data.length" class="empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
     </div>
   </div>
 </template>
@@ -71,6 +71,13 @@ export default {
     },
     isVirtual() {
       return this.data.length > this.pageSize
+    },
+    emptyStyle() {
+      const { bodyWidth, rowHeight } = this.table
+      return {
+        width: bodyWidth + 'px',
+        height: rowHeight + 'px'
+      }
     }
   },
   watch: {

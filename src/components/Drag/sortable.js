@@ -111,7 +111,7 @@ export default class Sortable {
   /* 放置目标元素时触发事件 */
   on_dragover(e) {
     // 阻止默认动作以启用drop
-    event.preventDefault()
+    e.preventDefault()
     this._emit('dragover', e)
   }
 
@@ -169,7 +169,7 @@ export default class Sortable {
 
   isFilter(target) {
     const { filter } = this.options
-    const filters = [filter, 'is--space', 'drag-target']
+    const filters = [filter, 'is--space', 'drag-target', 'empty-text']
     return filters.find(d => target.classList.contains(d))
   }
 
