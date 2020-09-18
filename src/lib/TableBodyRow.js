@@ -12,10 +12,10 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { currentRow, rowStyle, bodyColumns, showSpace } = this.table
+    const { rowStyle, bodyColumns, showSpace } = this.table
     return (
       <div
-        class={`eff-table__body-row${currentRow === this.rowIndex ? ' current-row' : ''}`}
+        class={this.rowClassName}
         style={rowStyle}
         data-rowid={this.rowIndex + 1}
         on-click={event => this.handleClick(event)}
@@ -40,6 +40,17 @@ export default {
         }
       </div>
     )
+  },
+  computed: {
+    rowClassName() {
+      const { currentRow, rowClassName } = this.table
+      const { row, rowIndex } = this
+      let classes = `eff-table__body-row${currentRow === this.rowIndex ? ' current-row' : ''}`
+      if (rowClassName) {
+        classes += ' ' + (typeof rowClassName === 'function' ? rowClassName({ row, rowIndex }) : rowClassName)
+      }
+      return classes
+    }
   },
   methods: {
     handleClick(event) {

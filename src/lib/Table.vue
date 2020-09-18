@@ -111,6 +111,7 @@ export default {
     showHeader: { type: Boolean, default: true },
     showOverflowTooltip: Boolean,
     cellClassName: { type: [String, Function], default: '' },
+    rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] }
   },
   data() {
