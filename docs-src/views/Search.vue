@@ -93,7 +93,7 @@ export default {
           width: 80
         },
         {
-          show: true,
+          show: false,
           prop: 'email',
           title: '邮箱',
           width: 300,
@@ -147,6 +147,65 @@ export default {
   },
   mounted() {
     setTimeout(() => {
+      this.columns = [
+        {
+          show: true,
+          prop: 'index',
+          title: '序号',
+          fixed: 'left',
+          width: 80
+        },
+        {
+          show: true,
+          prop: 'email',
+          title: '邮箱',
+          width: 300,
+          search: {
+            operator: true
+          }
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市城市城市城市',
+          width: 300,
+          sortable: true
+
+        },
+        {
+          show: true,
+          prop: 'datetime',
+          title: '时间',
+          width: 300,
+          search: {
+            render: (h, { column, columnIndex }) => {
+              const { prop } = column
+              return <el-date-picker
+                value={this.form[prop]}
+                type='date'
+                on-input={val => (this.form[prop] = val)}
+              />
+            },
+            rangeRender: (h, { column, columnIndex }) => {
+              const { prop } = column
+              return <el-date-picker
+                value={this.form[prop]}
+                type='daterange'
+                on-input={val => (this.form[prop] = val)}
+              />
+            },
+            operator: true,
+            operatorDefault: 'equals',
+            type: 'dates'
+          }
+        },
+        {
+          show: true,
+          title: '操作',
+          width: 60,
+          fixed: 'right'
+        }
+      ]
       this.data = mock.mock({
         'array|100': [
           {

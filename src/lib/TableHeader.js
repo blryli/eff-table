@@ -10,13 +10,20 @@ export default {
       dragingTarget: null,
       height: 0,
       isDraging: false,
-      isTableDrag: false,
+      isColumnsChange: false,
       searchData: []
     }
   },
   watch: {
-    '$parent.bodyScrollLeft'(val) {
+    'table.bodyScrollLeft'(val) {
       this.$el.scrollLeft = val
+    },
+    'table.columns'() {
+      // columns 变化之后重新渲染搜索组件
+      this.isColumnsChange = true
+      this.$nextTick(() => {
+        this.isColumnsChange = false
+      })
     }
   },
   computed: {
@@ -61,7 +68,7 @@ export default {
           }
         </div>
         {
-          search && !this.isTableDrag ? <Search
+          search && !this.isColumnsChange ? <Search
             value={this.searchData}
             styles={rowStyle}
             columns={bodyColumns}
@@ -174,10 +181,10 @@ export default {
       this.isDraging = true
       this.moveX = moveX
 
-      const { $parent } = this
-      const line = $parent.$refs.line
+      const { table } = this
+      const line = table.$refs.line
 
-      const tableEl = $parent.$refs.table
+      const tableEl = table.$refs.table
       const { left: tableLeft, height: tableHeight, top: tableTop } = tableEl.getBoundingClientRect()
       const { left: columnLeft } = this.dragingTarget.getBoundingClientRect()
       const minLeft = columnLeft + 40
@@ -220,18 +227,10 @@ export default {
           this.dragingTarget = null
         }
       }, 100)
-    },
-    tableDrag() {
-      // 表头拖动之后重新渲染搜索组件
-      this.isTableDrag = true
-      this.$nextTick(() => {
-        this.isTableDrag = false
-      })
     }
   },
   mounted() {
     this.table.headerLoad = true
-    this.table.$on('drag-change', this.tableDrag)
     on(this.$el, 'scroll', this.handleScroll)
     this.$nextTick(() => {
       this.height = this.$refs.header.offsetHeight
@@ -239,7 +238,6 @@ export default {
   },
   beforeDestroy() {
     off(this.$el, 'scroll', this.handleScroll)
-    this.table.$off('drag-change', this.tableDrag)
   }
 }
 

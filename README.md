@@ -146,6 +146,9 @@ value: [
       render: (h, {row, rowIndex}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
+      rangeRender: (h, {row, rowIndex}) => {
+        return <your-range-component vModel={value} on-change={this.change} />
+      },
       operator: false // boolean 搜索范围
       operatorDefault: 'like' // string 默认类型
     }
