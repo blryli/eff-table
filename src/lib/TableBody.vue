@@ -130,6 +130,9 @@ export default {
   beforeDestroy() {
     off(this.$el, 'scroll', this.handleScroll)
   },
+  activated() {
+    this.handleScroll()
+  },
   methods: {
     forceUpdate() {
       this.$el.forceUpdate()
