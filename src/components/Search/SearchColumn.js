@@ -83,6 +83,8 @@ export default {
       this.$refs.popover.doHide()
     },
     operatorChange(type) {
+      const operatorDefault = this.column.search.operatorDefault
+      if (type === 'like' && operatorDefault) type = operatorDefault
       if (this.form.type === type) return
       let isChange = false
 
