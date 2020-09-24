@@ -71,10 +71,11 @@ export default {
       this.updateForm()
     },
     init() {
+      if (!this.column.prop) return
       const value = this.table.form[this.column.prop]
       const { search: { operatorDefault } = {}} = this.column
       this.form.value = value || ''
-      this.form.type = this.value.type || operatorDefault || 'like'
+      this.form.type = this.value.operator || operatorDefault || 'like'
     },
     handleMouseenter(e) {
       this.$refs.popover.doShow()
@@ -108,7 +109,7 @@ export default {
       this.table.$emit('update:form', form)
     },
     change() {
-      const operator = this.form.type.toUpperCase()
+      const operator = this.form.type
       let content = this.form.value
       if (Array.isArray(content) && XEUtils.isDate(content[0])) {
         content = content.map(d => new Date(d).getTime())

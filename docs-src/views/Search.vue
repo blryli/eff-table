@@ -3,6 +3,7 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
+        {{ form }}
         <eff-table
           ref="table"
           v-model="columns"

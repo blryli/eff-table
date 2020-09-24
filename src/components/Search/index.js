@@ -72,17 +72,13 @@ export default {
   },
   methods: {
     change(val) {
-      const { field, content } = val
+      const { field } = val
       const index = this.searchData.findIndex(d => d.field === field)
-      if (Array.isArray(content) && content.length || !Array.isArray(content) && content) {
-        index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
-      } else {
-        index > -1 && this.searchData.splice(index, 1)
-      }
+      index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
 
       // console.log('handleSearchChange', JSON.stringify(this.searchData, null, 2))
       this.$emit('input', this.searchData)
-      this.$emit('change', this.searchData)
+      this.$emit('change', this.searchData.filter(d => d.content))
     },
     handleShow(val) {
       this.table.$emit('rangeShow', val)
@@ -92,14 +88,12 @@ export default {
     }
   },
   render(h) {
-    // <Range ref="tableRange" :range="tableSearchRange" @show="handleShow" @close="handleClose" />
-
     return <div class='eff-table__search' style={this.styles}>
       {
         this.columns.map((column, columnIndex) => {
           return <SearchColumn
             key={columnIndex}
-            value={this.searchData.find(d => d.prop === column.prop) || { value: '', type: '' }}
+            value={this.searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
             column={column}
             column-index={columnIndex}
             operators={this.operators}
