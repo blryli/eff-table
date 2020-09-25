@@ -108,6 +108,11 @@ export default {
       this.resize()
     }
   },
+  activated() {
+    setTimeout(() => {
+      this.resize()
+    }, 300)
+  },
   mounted() {
     this.resize()
     let num = 0
