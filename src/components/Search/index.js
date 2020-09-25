@@ -78,7 +78,14 @@ export default {
 
       // console.log('handleSearchChange', JSON.stringify(this.searchData, null, 2))
       this.$emit('input', this.searchData)
-      this.$emit('change', this.searchData.filter(d => d.content))
+      this.$emit('change', this.searchData.filter(d => {
+        const { content } = d
+        if (Array.isArray(content)) {
+          return Boolean(content.length)
+        } else {
+          return Boolean(content)
+        }
+      }))
     },
     handleShow(val) {
       this.table.$emit('rangeShow', val)
