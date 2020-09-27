@@ -111,6 +111,9 @@ export default {
   activated() {
     setTimeout(() => {
       this.resize()
+      setTimeout(() => {
+        this.resize()
+      }, 300)
     }, 300)
   },
   mounted() {
