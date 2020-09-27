@@ -19,8 +19,8 @@ export default {
       if (fixed && this.table.bodyOverflowX) {
         classes += ' is--fixed'
       }
-      if (drag === false) {
-        classes += ' is-drag--filter'
+      if (this.table.drag) {
+        if (fixed || drag === false) classes += ' is-drag--filter'
       }
       titleClassName && (classes += ` ${titleClassName}`)
       return classes
