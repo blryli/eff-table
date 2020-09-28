@@ -5,35 +5,112 @@
     </Toolbar>
     <div ref="table" :class="tableClass">
       <!-- header -->
-      <TableHeader
-        v-if="showHeader"
-        ref="header"
-        @dragend="handleDragend"
-        @sort-change="sortChange"
-      />
-      <!-- body -->
-      <TableBody
-        ref="TableBody"
-        :data="tableData"
-        :validators="validators"
-        :messages="messages"
-        :row-render-index.sync="rowRenderIndex"
-      />
-      <!-- footer -->
-      <TableFooter v-if="$slots.footer || showSummary" ref="footer">
-        <Summary
-          v-if="showSummary"
-          :data="data"
-          :columns="bodyColumns"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
+      <div>
+        <TableHeader
+          v-if="showHeader"
+          ref="header"
+          :visible-columns="visibleColumns"
+          :body-columns="bodyColumns"
+          @dragend="handleDragend"
+          @sort-change="sortChange"
         />
-        <slot name="footer" />
-      </TableFooter>
-      <!-- 左侧 fixed 投影 -->
-      <div v-show="bodyOverflowX && bodyScrollLeft && leftWidth" class="eff-table__shadow-left" :style="{left: `${leftWidth - 2}px`}" />
-      <!-- 右侧 fixed 投影 -->
-      <div v-show="bodyOverflowX && rightWidth && !isScrollRightEnd" class="eff-table__shadow-right" :style="{right: `${rightWidth + scrollYwidth}px`}" />
+        <!-- body -->
+        <TableBody
+          ref="TableBody"
+          :body-columns="bodyColumns"
+          :data="tableData"
+          :validators="validators"
+          :messages="messages"
+        />
+        <!-- footer -->
+        <TableFooter v-if="$slots.footer || showSummary" ref="footer">
+          <Summary
+            v-if="showSummary"
+            :data="data"
+            :columns="bodyColumns"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+          />
+          <slot name="footer" />
+        </TableFooter>
+      </div>
+      <!-- bodyOverflowX &&  -->
+      <div
+        v-if="leftWidth"
+        :class="['eff-table__fixed-left', bodyScrollLeft ? 'is-scroll--start' : '']"
+        :style="{width: leftWidth + 'px', height: fixedHeight}"
+      >
+        <TableHeader
+          v-if="showHeader"
+          ref="header"
+          :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
+          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
+          fixed
+          @dragend="handleDragend"
+          @sort-change="sortChange"
+        />
+        <!-- body -->
+        <TableBody
+          ref="TableBody"
+          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
+          :data="tableData"
+          fixed
+          :validators="validators"
+          :messages="messages"
+        />
+        <!-- footer -->
+        <TableFooter
+          v-if="$slots.footer || showSummary"
+          ref="footer"
+        >
+          <Summary
+            v-if="showSummary"
+            :data="data"
+            :columns="bodyColumns.filter(d => d.fixed === 'left')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+          />
+          <slot name="footer" />
+        </TableFooter>
+      </div>
+      <div
+        v-if="rightWidth"
+        :class="['eff-table__fixed-right', bodyOverflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
+        :style="{width: rightWidth + (heights.bodyOverflowY ? 17 : 0) + 'px', height: fixedHeight}"
+      >
+        <TableHeader
+          v-if="showHeader"
+          ref="header"
+          :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
+          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+          fixed
+          @dragend="handleDragend"
+          @sort-change="sortChange"
+        />
+        <!-- body -->
+        <TableBody
+          ref="TableBody"
+          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+          :data="tableData"
+          :validators="validators"
+          :messages="messages"
+          fixed
+        />
+        <!-- footer -->
+        <TableFooter
+          v-if="$slots.footer || showSummary"
+          ref="footer"
+        >
+          <Summary
+            v-if="showSummary"
+            :data="data"
+            :columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+          />
+          <slot name="footer" />
+        </TableFooter>
+      </div>
     </div>
     <drag
       v-if="border && drag"
@@ -52,7 +129,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>spaceWidth {{ spaceWidth }}</p> -->
+    <!-- <p>validators{{ validators }}</p> -->
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -126,8 +203,8 @@ export default {
       lineShow: false,
       isScreenfull: false,
       tableBody: null,
-      rowRenderIndex: 0,
-      tableData: [...this.data]
+      tableData: [...this.data],
+      rowHoverIndex: null
     }
   },
   computed: {
@@ -179,14 +256,8 @@ export default {
     this.$off('screenfullChange', this.screenfullChange)
   },
   methods: {
-    handleRowRenderIndex(val) {
-      this.rowRenderIndex = val
-    },
     screenfullChange(val) {
       this.isScreenfull = val
-    },
-    forceUpdate() {
-      this.$refs.TableBody.forceUpdate()
     },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
@@ -231,32 +302,41 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import '../components/Edit/index.scss';
+<style lang="scss" scoped>
 
 .eff-table {
   font-size: 14px;
   position: relative;
   color: #606266;
+  overflow: hidden;
   border: 1px solid #ddd;
   box-sizing: border-box;
-  overflow: hidden;
 }
-.eff-table__shadow-left, .eff-table__shadow-right{
+.eff-table__fixed-left, .eff-table__fixed-right {
   position: absolute;
   top: 0;
-  bottom: 0;
-  width: 1px;
+  overflow: hidden;
+  background-color: #fff;
 }
-.eff-table__shadow-left{
-  box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.5);
+.eff-table__fixed-left{
+  left: 0;
+  &.is-scroll--start{
+    box-shadow: 4px 3px 4px rgba(0, 0, 0, 0.12);
+  }
 }
-.eff-table__shadow-right{
-  box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.5);
+.eff-table__fixed-right {
+  right: 0;
+  box-shadow: -4px 3px 4px rgba(0, 0, 0, 0.12);
+  &.is-scroll--end{
+    border-left: 1px solid #ddd;
+    box-shadow: none;
+  }
 }
 </style>
 
 <style lang="scss">
+@import '../components/Edit/index.scss';
+
 .eff-table {
   .eff-cell{
     display: flex;
@@ -280,7 +360,7 @@ export default {
 /** header */
 .eff-table__header-wrapper, .eff-table--summary {
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   background-color: #f6f7f8;
   box-sizing: border-box;
 }
@@ -321,6 +401,11 @@ export default {
   }
   .eff-table__header-wrapper, .eff-table--summary{
     overflow-y: scroll;
+  }
+  .eff-table__fixed-left {
+    .eff-table__header-wrapper, .eff-table--summary{
+      overflow-y: hidden;
+    }
   }
 }
 .eff-table__header, .eff-table__search, .eff-table__body-row {
@@ -442,70 +527,6 @@ export default {
   }
 }
 
-.eff-table__body{
-  box-sizing: border-box;
-
-  &--x-space{
-    width: 100%;
-    height: 1px;
-    margin-bottom: -1px;
-  }
-  &--y-space{
-    width: 0;
-    float: left;
-  }
-}
-.eff-table__body-row{
-  .eff-table__column{
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    &.is--message{
-      background-color: #fda1a1;
-      &:hover{
-        background-color: #fda1a1;
-      }
-    }
-  }
-  &:last-child{
-    .eff-table__column{
-      border-bottom: 1px solid transparent;
-    }
-  }
-  &.current-row .eff-table__column {
-    background-color: #e8f4ff;
-  }
-  &:hover .eff-table__column{
-    background-color: #f1f3f5;
-    &.is--message{
-      background-color: #fda1a1;
-    }
-  }
-}
-
-.is-border {
-  .eff-table__column,
-  .eff-table__search-empty,
-  .header-title{
-    border-left: 1px solid #ddd;
-  }
-  .is-first-right-fixed {
-    .eff-table__search-empty{
-      border-left-color: transparent;
-    }
-  }
-}
-.eff-table__body-row:last-child{
-    .eff-table__column{
-      border-bottom: 1px solid #ddd;
-    }
-  }
-.is-overflow--y{
-  .eff-table__body-row:last-child{
-    .eff-table__column{
-      border-bottom: none;
-    }
-  }
-}
 .is--fixed {
   position: absolute;
   top: 0;
@@ -602,10 +623,6 @@ export default {
       border-top-color: #409eff;
     }
   }
-}
-
-.is-scroll--y-end{
-
 }
 
 @keyframes rotate {

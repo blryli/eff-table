@@ -4,6 +4,11 @@ import { on, off, hasClass, onMousemove, getCell } from 'utils/dom'
 
 export default {
   name: 'TableHeader',
+  props: {
+    visibleColumns: { type: Array, default: () => [] },
+    bodyColumns: { type: Array, default: () => [] },
+    fixed: Boolean
+  },
   components: { TableHeaderColumn, Search },
   data() {
     return {
@@ -16,6 +21,7 @@ export default {
   },
   watch: {
     'table.bodyScrollLeft'(val) {
+      if (this.fixed) return
       this.$el.scrollLeft = val
     },
     'table.columns'() {
@@ -39,7 +45,8 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, visibleColumns, bodyColumns, showSpace, search, heights } = this.table
+    const { rowStyle, showSpace, search, heights } = this.table
+    const { visibleColumns, bodyColumns } = this
     const height = heights.headerHeight + 'px'
 
     return (
@@ -195,6 +202,7 @@ export default {
     end() {
       this.table.lineShow = false
       this.isDraging = false
+      const { visibleColumns } = this
 
       const colid = this.dragingTarget.getAttribute('data-colid')
       const colidx = this.dragingTarget.getAttribute('data-colidx')
@@ -206,7 +214,7 @@ export default {
         const child = ids.reduce((acc, cur, idx) => {
           const num = +cur - 1
           if (idx === 0) {
-            obj = this.table.visibleColumns[num]
+            obj = visibleColumns[num]
             return obj
           } else {
             return acc.children[num]
@@ -214,7 +222,7 @@ export default {
         }, {})
         child.width = width
       } else {
-        obj = this.table.visibleColumns[colidx]
+        obj = visibleColumns[colidx]
         obj.width = width
       }
       this.$emit('dragend', obj)

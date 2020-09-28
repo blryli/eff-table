@@ -16,8 +16,8 @@ export default {
       const { fixed, drag, titleClassName } = this.column
 
       let classes = `eff-table__column`
-      if (fixed && this.table.bodyOverflowX) {
-        classes += ' is--fixed'
+      if (fixed) {
+        // classes += ' is--fixed'
       }
       if (this.table.drag) {
         if (fixed || drag === false) classes += ' is-drag--filter'

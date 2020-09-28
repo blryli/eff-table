@@ -8,6 +8,7 @@
         :key="index + rowRenderIndex"
         :row="row"
         :row-index="index + rowRenderIndex"
+        :body-columns="bodyColumns"
         :messages="formatValidators[index + rowRenderIndex]"
       />
       <div v-if="!data.length" class="empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
@@ -25,18 +26,11 @@ export default {
     TableBodyRow
   },
   props: {
-    data: {
-      type: Array,
-      default: () => []
-    },
-    validators: {
-      type: Array,
-      default: () => []
-    },
-    messages: {
-      type: Array,
-      default: () => []
-    }
+    data: { type: Array, default: () => [] },
+    bodyColumns: { type: Array, default: () => [] },
+    validators: { type: Array, default: () => [] },
+    messages: { type: Array, default: () => [] },
+    fixed: Boolean
   },
   data() {
     return {
@@ -82,7 +76,11 @@ export default {
   },
   watch: {
     'table.bodyScrollLeft'(val) {
+      if (this.fixed) return
       this.$el.scrollLeft = val
+    },
+    'table.bodyScrollTop'(val) {
+      this.$el.scrollTop = val
     },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
@@ -114,17 +112,19 @@ export default {
         this.marginTop = this.scrollTop - rowHeight + 'px'
         this.rowRenderIndex = last - 1
       }
+      this.table.rowScrollEnd = false
       if (val === last) {
         this.marginTop = this.scrollTop + 'px'
         this.rowRenderIndex = last
+        this.table.rowScrollEnd = true
       }
-      this.$emit('row-render-index', this.rowRenderIndex)
     }
   },
   mounted() {
     this.table.bodyLoad = true
     this.$nextTick(() => {
       on(this.$el, 'scroll', this.handleScroll)
+      on(document, 'mousewheel', this.handleScroll, { passive: false })
     })
   },
   beforeDestroy() {
@@ -134,15 +134,22 @@ export default {
     this.handleScroll()
   },
   methods: {
-    forceUpdate() {
-      this.$el.forceUpdate()
-    },
-    handleScroll() {
+    handleScroll(e) {
+      // 模拟 Y 滚轮动效
+      if (e.deltaY && document.querySelector('.eff-table').contains(e.target) && this.table.heights.bodyOverflowY) {
+        e.preventDefault()
+        let num = 0
+        const timer = setInterval(() => {
+          num += 1
+          this.$el.scrollTop = this.$el.scrollTop + (e.deltaY > 0 ? num : -num)
+          if (num === 10) clearInterval(timer)
+        }, 16.5)
+      }
       const { scrollLeft, scrollTop } = this.$el
       const { rowHeight } = this.table
-      this.table.bodyScrollLeft = scrollLeft
       const last = this.totalHeight - this.pageSize * rowHeight
-      this.scrollTop = scrollTop < last ? scrollTop : last
+      this.table.bodyScrollLeft = scrollLeft
+      this.table.bodyScrollTop = this.scrollTop = scrollTop < last - rowHeight ? scrollTop : last
 
       if (this.isVirtual) {
         this.scrollIndex = parseInt(this.scrollTop / rowHeight)
@@ -168,13 +175,81 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.eff-table__body{
+  box-sizing: border-box;
+
+  &--x-space{
+    width: 100%;
+    height: 1px;
+    margin-bottom: -1px;
+  }
+  &--y-space{
+    width: 0;
+    float: left;
+  }
+}
+.eff-table__body-row{
+  &:last-child{
+    .eff-table__column{
+      border-bottom: 1px solid transparent;
+    }
+  }
+  &.is--hover{
+    .eff-table__column {
+      background-color: #f1f3f5;
+    }
+  }
+  &.current-row .eff-table__column {
+    background-color: #e8f4ff;
+  }
+  .eff-table__column{
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    &.is--message{
+      background-color: #fda1a1;
+      &:hover{
+        background-color: #fda1a1;
+      }
+    }
+  }
+}
+
+.is-border {
+  .eff-table__column,
+  .eff-table__search-empty,
+  .header-title{
+    border-left: 1px solid #ddd;
+  }
+  .is-first-right-fixed {
+    .eff-table__search-empty{
+      border-left-color: transparent;
+    }
+  }
+}
+.eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: 1px solid #ddd;
+    }
+  }
+.is-overflow--y{
+  .eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: none;
+    }
+  }
+}
 .eff-table__body-wrapper{
-  overflow: hidden;
+  // overflow: hidden;
 }
 .is-overflow--y {
   .eff-table__body-wrapper{
     overflow-y: auto;
+  }
+  .eff-table__fixed-left{
+    .eff-table__body-wrapper{
+      overflow-y: hidden;
+    }
   }
 }
 .is-overflow--x {

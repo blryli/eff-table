@@ -7,11 +7,12 @@
           ref="table"
           v-model="columns"
           :data="data"
-          :max-height="400"
+          :max-height="300"
           drag
           column-control
           border
           fullscreen
+          highlight-current-row
         />
       </div>
     </section>
@@ -121,6 +122,12 @@ export default {
             title: '名',
             width: 150
           }]
+        },
+        {
+          show: true,
+          fixed: 'right',
+          title: '操作',
+          width: 250
         }
       ]
     }
@@ -128,7 +135,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|1000': [
+        'array|50': [
           {
             'message': '@email',
             'name': '@cname',
@@ -140,7 +147,7 @@ export default {
           }
         ]
       }).array
-    }, 1000)
+    }, 100)
   }
 }
 </script>

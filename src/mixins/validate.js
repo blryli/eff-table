@@ -25,7 +25,7 @@ export default {
       const validate = params => {
         const message = typeof params === 'string' ? params : params.message || ''
         const validator = { prop, success: !message, message, rowIndex }
-        const index = this.validators.findIndex(d => d.prop === prop)
+        const index = this.validators.findIndex(d => d.prop === prop && d.rowIndex === rowIndex)
         index === -1 ? this.validators.push(validator) : this.validators.splice(index, 1, validator)
         this.$emit('validate', validator, this.validators)
 

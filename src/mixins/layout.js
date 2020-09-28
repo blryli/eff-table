@@ -7,6 +7,7 @@ export default {
       offset: 0,
       bodyOverflowX: false,
       bodyScrollLeft: 0,
+      bodyScrollTop: 0,
       headerLoad: false,
       bodyLoad: false
     }
@@ -30,20 +31,23 @@ export default {
       this.bodyOverflowX && (tClass += ' is-overflow--x')
       this.heights.bodyOverflowY && (tClass += ' is-overflow--y')
       this.border && (tClass += ' is-border')
-      // this.isScrollRightEnd && (tClass += ' is-scroll--y-end')
       return tClass
     },
     rowStyle() {
       const style = {}
       style.minWidth = this.minWidth + 'px'
       style.height = this.rowHeight + 'px'
-      const { leftWidth, rightWidth } = this
       if (this.bodyOverflowX) {
         style.maxWidth = this.bodyWidth + 'px'
-        leftWidth && (style.paddingLeft = `${leftWidth}px`)
-        rightWidth && (style.paddingRight = `${rightWidth}px`)
       }
       return style
+    },
+    fixedHeight() {
+      const { headerHeight, bodyHeight, searchHeight } = this.heights
+      let height = headerHeight + bodyHeight + searchHeight
+      this.bodyOverflowX && (height -= 17)
+      console.log({ headerHeight, bodyHeight, searchHeight })
+      return height + 'px'
     },
     scrollYwidth() {
       return this.heights.bodyOverflowY ? 17 : 0
@@ -85,6 +89,7 @@ export default {
         tableHeight,
         toolbarHeight,
         headerHeight,
+        searchHeight,
         footerHeight,
         bodyHeight: Math.max(bodyHeight, rowHeight),
         bodyOverflowY
@@ -111,9 +116,6 @@ export default {
   activated() {
     setTimeout(() => {
       this.resize()
-      setTimeout(() => {
-        this.resize()
-      }, 300)
     }, 300)
   },
   mounted() {
