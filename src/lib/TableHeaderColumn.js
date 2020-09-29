@@ -13,15 +13,9 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { fixed, drag, titleClassName } = this.column
+      const { titleClassName } = this.column
 
       let classes = `eff-table__column`
-      if (fixed) {
-        // classes += ' is--fixed'
-      }
-      if (this.table.drag) {
-        if (fixed || drag === false) classes += ' is-drag--filter'
-      }
       titleClassName && (classes += ` ${titleClassName}`)
       return classes
     }

@@ -34,8 +34,6 @@ export default {
   },
   data() {
     return {
-      scrollTop: 0,
-      scrollIndex: 0,
       rowRenderIndex: 0,
       marginTop: 0
     }
@@ -57,14 +55,14 @@ export default {
       return this.table.heights.bodyHeight
     },
     pageSize() {
-      return parseInt(this.bodyHeight / this.table.rowHeight + 4)
+      return parseInt(this.bodyHeight / this.table.rowHeight + 6)
     },
     totalHeight() {
       const { rowHeight } = this.table
       return this.data.length * rowHeight
     },
     isVirtual() {
-      return this.data.length > this.pageSize
+      return this.data.length > this.pageSize + 5
     },
     emptyStyle() {
       const { bodyWidth, rowHeight } = this.table
@@ -92,7 +90,7 @@ export default {
         this.marginTop = 0
       }
     },
-    scrollIndex(val) {
+    'table.scrollIndex'(val) {
       const last = this.data.length - this.pageSize
       val > last - 2 && (val = last)
       const offset = Math.abs(val - this.rowRenderIndex)
@@ -103,20 +101,19 @@ export default {
         this.marginTop = 0
       } else if (offset > 1) {
         this.rowRenderIndex = val
-        const top = val === 2 ? rowHeight : rowHeight * 2
-        if (this.scrollTop > top) {
-          this.marginTop = this.scrollTop - top + 'px'
+        const top = val === 2 ? rowHeight : rowHeight * 3
+        if (this.table.bodyScrollTop > top) {
+          this.marginTop = this.table.bodyScrollTop - top + 'px'
         }
       }
       if (val === last - 1) {
-        this.marginTop = this.scrollTop - rowHeight + 'px'
+        this.marginTop = this.table.bodyScrollTop - rowHeight + 'px'
         this.rowRenderIndex = last - 1
       }
-      this.table.rowScrollEnd = false
       if (val === last) {
-        this.marginTop = this.scrollTop + 'px'
+        console.log('last')
+        this.marginTop = this.totalHeight - this.pageSize * rowHeight + 'px'
         this.rowRenderIndex = last
-        this.table.rowScrollEnd = true
       }
     }
   },
@@ -145,14 +142,14 @@ export default {
           if (num === 10) clearInterval(timer)
         }, 16.5)
       }
-      const { scrollLeft, scrollTop } = this.$el
+      const { scrollLeft } = document.querySelector('.eff-table__body-wrapper')
+      const { scrollTop } = this.$el
       const { rowHeight } = this.table
-      const last = this.totalHeight - this.pageSize * rowHeight
       this.table.bodyScrollLeft = scrollLeft
-      this.table.bodyScrollTop = this.scrollTop = scrollTop < last - rowHeight ? scrollTop : last
+      this.table.bodyScrollTop = scrollTop
 
       if (this.isVirtual) {
-        this.scrollIndex = parseInt(this.scrollTop / rowHeight)
+        this.table.scrollIndex = parseInt(this.table.bodyScrollTop / rowHeight)
         if (scrollTop < rowHeight) {
           this.marginTop = 0
           this.rowRenderIndex = 0
@@ -238,11 +235,6 @@ export default {
       border-bottom: none;
     }
   }
-}
-.eff-table__body-wrapper{
-  // overflow: hidden;
-}
-.is-overflow--y {
   .eff-table__body-wrapper{
     overflow-y: auto;
   }

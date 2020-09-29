@@ -130,6 +130,7 @@
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
+    <!-- <p>showSpace {{ showSpace }}</p> -->
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -204,7 +205,8 @@ export default {
       isScreenfull: false,
       tableBody: null,
       tableData: [...this.data],
-      rowHoverIndex: null
+      rowHoverIndex: null,
+      scrollIndex: 0
     }
   },
   computed: {
@@ -525,13 +527,6 @@ export default {
       cursor: default;
     }
   }
-}
-
-.is--fixed {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 2;
 }
 
 .eff-table-line{

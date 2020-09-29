@@ -36,13 +36,10 @@ export default {
   computed: {
     columnClass() {
       let classes = `eff-table__column`
-      const { fixed, className } = this.column
+      const { className } = this.column
       const { cellClassName } = this.table
       const { message } = this.message || {}
       if (message) classes += ' is--message'
-      if (fixed) {
-        // classes += ' is--fixed'
-      }
       className && (classes += ` ${className}`)
       if (cellClassName) {
         if (typeof cellClassName === 'function') {
