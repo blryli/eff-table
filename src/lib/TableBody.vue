@@ -225,24 +225,30 @@ export default {
   }
 }
 .eff-table__body-row:last-child{
-    .eff-table__column{
-      border-bottom: 1px solid #ddd;
-    }
+  .eff-table__column{
+    border-bottom: 1px solid #ddd;
   }
+}
+
 .is-overflow--y{
   .eff-table__body-row:last-child{
     .eff-table__column{
       border-bottom: none;
     }
   }
+}
+.eff-table__body-wrapper{
+  overflow-y: auto;
+}
+
+.eff-table__fixed-left{
   .eff-table__body-wrapper{
-    overflow-y: auto;
+    overflow-y: hidden;
   }
-  .eff-table__fixed-left{
-    .eff-table__body-wrapper{
-      overflow-y: hidden;
-    }
-  }
+}
+
+.eff-table__body-wrapper{
+  overflow-x: hidden;
 }
 .is-overflow--x {
   .eff-table__body-wrapper{

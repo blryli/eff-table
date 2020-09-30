@@ -63,6 +63,7 @@ export default {
       columns: [
         {
           show: true,
+          fixed: 'left',
           type: 'index',
           title: '序号',
           width: 80
@@ -98,6 +99,7 @@ export default {
           }
         },
         {
+          fixed: 'right',
           show: true,
           prop: 'datetime',
           title: '时间',
