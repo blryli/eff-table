@@ -111,7 +111,6 @@ export default {
         this.rowRenderIndex = last - 1
       }
       if (val === last) {
-        console.log('last')
         this.marginTop = this.totalHeight - this.pageSize * rowHeight + 'px'
         this.rowRenderIndex = last
       }
@@ -121,11 +120,12 @@ export default {
     this.table.bodyLoad = true
     this.$nextTick(() => {
       on(this.$el, 'scroll', this.handleScroll)
-      on(document, 'mousewheel', this.handleScroll, { passive: false })
+      on(this.$el, 'mousewheel', this.handleScroll, { passive: false })
     })
   },
   beforeDestroy() {
     off(this.$el, 'scroll', this.handleScroll)
+    off(this.$el, 'mousewheel', this.handleScroll, { passive: false })
   },
   activated() {
     this.handleScroll()
@@ -133,7 +133,7 @@ export default {
   methods: {
     handleScroll(e) {
       // 模拟 Y 滚轮动效
-      if (e.deltaY && document.querySelector('.eff-table').contains(e.target) && this.table.heights.bodyOverflowY) {
+      if (e && e.deltaY && this.table.heights.bodyOverflowY) {
         e.preventDefault()
         let num = 0
         const timer = setInterval(() => {
@@ -142,7 +142,7 @@ export default {
           if (num === 10) clearInterval(timer)
         }, 16.5)
       }
-      const { scrollLeft } = document.querySelector('.eff-table__body-wrapper')
+      const { scrollLeft } = this.table.$el.querySelector('.eff-table__body-wrapper')
       const { scrollTop } = this.$el
       const { rowHeight } = this.table
       this.table.bodyScrollLeft = scrollLeft

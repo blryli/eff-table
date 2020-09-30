@@ -98,7 +98,8 @@ export default {
     this.addedBody && removeBody(this, 'popover')
   },
   deactivated() {
-    this.$options.beforeDestroy[0].call(this)
+    this.addedBody && removeBody(this, 'popover')
+    this.addedBody = false
   },
   methods: {
     popoverAddedBody() {
@@ -184,6 +185,7 @@ export default {
   render(h) {
     return <transition name='fade'>
       <div
+        ref='popover'
         class={'v-popover ' + this.pClass}
         style={this.popoverStyle}
         on-mouseenter={this.mouseenterWrap}

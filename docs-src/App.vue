@@ -10,7 +10,9 @@
       </section>
     </header>
 
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
 
     <section class="more">
       <div class="section-content">

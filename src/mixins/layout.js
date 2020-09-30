@@ -46,7 +46,6 @@ export default {
       const { headerHeight, bodyHeight, searchHeight } = this.heights
       let height = headerHeight + bodyHeight + searchHeight
       this.bodyOverflowX && (height -= 17)
-      console.log({ headerHeight, bodyHeight, searchHeight })
       return height + 'px'
     },
     scrollYwidth() {
