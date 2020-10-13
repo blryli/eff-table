@@ -62,7 +62,7 @@ export default {
       return this.data.length * rowHeight
     },
     isVirtual() {
-      return this.data.length > this.pageSize + 5
+      return this.data.length > this.pageSize
     },
     emptyStyle() {
       const { bodyWidth, rowHeight } = this.table
@@ -159,9 +159,9 @@ export default {
     toScroll(rowIndex, cb) {
       setTimeout(() => {
         if (rowIndex < this.pageSize / 2) {
-          this.$el.scrollTop = 0
+          this.table.bodyScrollTop = 0
         } else {
-          this.$el.scrollTop = (rowIndex - this.pageSize / 2) * this.table.rowHeight
+          this.table.bodyScrollTop = (rowIndex - this.pageSize / 2) * this.table.rowHeight
         }
         setTimeout(() => {
           cb && cb()

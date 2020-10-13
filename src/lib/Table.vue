@@ -36,13 +36,12 @@
       </div>
       <!-- bodyOverflowX &&  -->
       <div
-        v-if="leftWidth"
+        v-if="leftWidth && bodyOverflowX"
         :class="['eff-table__fixed-left', bodyScrollLeft ? 'is-scroll--start' : '']"
         :style="{width: leftWidth + 'px', height: fixedHeight}"
       >
         <TableHeader
           v-if="showHeader"
-          ref="header"
           :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
           :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
           fixed
@@ -51,7 +50,6 @@
         />
         <!-- body -->
         <TableBody
-          ref="TableBody"
           :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
           :data="tableData"
           fixed
@@ -61,7 +59,6 @@
         <!-- footer -->
         <TableFooter
           v-if="$slots.footer || showSummary"
-          ref="footer"
         >
           <Summary
             v-if="showSummary"
@@ -74,13 +71,12 @@
         </TableFooter>
       </div>
       <div
-        v-if="rightWidth"
+        v-if="rightWidth && bodyOverflowX"
         :class="['eff-table__fixed-right', bodyOverflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
         :style="{width: rightWidth + (heights.bodyOverflowY ? 17 : 0) + 'px', height: fixedHeight}"
       >
         <TableHeader
           v-if="showHeader"
-          ref="header"
           :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
           fixed
@@ -89,7 +85,6 @@
         />
         <!-- body -->
         <TableBody
-          ref="TableBody"
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
           :data="tableData"
           :validators="validators"
@@ -99,7 +94,6 @@
         <!-- footer -->
         <TableFooter
           v-if="$slots.footer || showSummary"
-          ref="footer"
         >
           <Summary
             v-if="showSummary"
@@ -130,7 +124,8 @@
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>showSpace {{ showSpace }}</p> -->
+    <p>showSpace {{ showSpace }}</p>
+    <p>spaceWidth {{ spaceWidth }}</p>
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />

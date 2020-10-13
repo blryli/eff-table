@@ -143,7 +143,6 @@ export const getDomClientRect = function(target) {
  */
 export const removeBody = function(self, ref) {
   const pos = self.$refs[ref]
-  console.log(pos)
   if (pos && pos.$el && pos.$el.parentNode === document.body) {
     document.body.removeChild(pos.$el)
   } else if (pos && pos.parentNode === document.body) {

@@ -220,7 +220,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|5': [
+        'array|50': [
           {
             'input': '',
             'select': '',
@@ -259,7 +259,7 @@ export default {
       this.data.splice(rowIndex, 1)
     },
     focus() {
-      this.$refs.table.focus(2)
+      this.$refs.table.focus(12)
     }
   }
 }
