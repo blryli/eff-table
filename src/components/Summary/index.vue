@@ -3,6 +3,7 @@
     <TableBodyRow
       :row="row"
       :row-index="1"
+      :body-columns="bodyColumns"
       summary
     />
   </div>
@@ -18,17 +19,17 @@ export default {
   },
   props: {
     data: { type: Array, default: () => [] },
-    columns: { type: Array, default: () => [] },
+    bodyColumns: { type: Array, default: () => [] },
     sumText: { type: String, default: '总计' },
     summaryMethod: { type: Function, default: null }
   },
   computed: {
     row() {
-      const { columns, data } = this
+      const { bodyColumns, data } = this
       if (typeof this.summaryMethod === 'function') {
-        return this.summaryMethod({ columns, data })
+        return this.summaryMethod({ bodyColumns, data })
       }
-      return columns.reduce((acc, column, index) => {
+      return bodyColumns.reduce((acc, column, index) => {
         if (index === 0) {
           acc[index] = this.sumText
           return acc

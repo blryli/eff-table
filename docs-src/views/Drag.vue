@@ -14,6 +14,7 @@
           border
           fullscreen
           highlight-current-row
+          show-summary
         />
       </div>
     </section>

@@ -27,7 +27,7 @@
           <Summary
             v-if="showSummary"
             :data="data"
-            :columns="bodyColumns"
+            :body-columns="bodyColumns"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />
@@ -63,7 +63,7 @@
           <Summary
             v-if="showSummary"
             :data="data"
-            :columns="bodyColumns.filter(d => d.fixed === 'left')"
+            :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />
@@ -98,7 +98,7 @@
           <Summary
             v-if="showSummary"
             :data="data"
-            :columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />
