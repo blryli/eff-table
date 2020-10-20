@@ -169,6 +169,7 @@ export default {
     edit: Boolean,
     editStop: Boolean,
     columnControl: Boolean,
+    columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean,
@@ -264,7 +265,6 @@ export default {
     handleDragend(column) {
       const { columns } = this
       const index = columns.findIndex(d => column.prop === d.prop && column.title === d.title)
-      console.log(column)
       if (index > -1) {
         columns[index] = column
         this.columns = [...columns]

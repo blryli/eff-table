@@ -72,7 +72,6 @@ export default {
           show: true,
           prop: 'email',
           title: '邮箱',
-          width: 100,
           edit: {
             render: (h, { row }) => {
               return <el-input value={row.email} on-input={val => (row.email = val)} />

@@ -6,6 +6,7 @@
         <eff-table
           ref="table"
           v-model="columns"
+          column-control-text="列控制"
           :data="data"
           :max-height="300"
           drag
@@ -127,7 +128,10 @@ export default {
           show: true,
           fixed: 'right',
           title: '操作',
-          width: 250
+          width: 250,
+          cellRender: (h, { row }) => {
+            return <el-button type='text' icon='el-icon-edit'></el-button>
+          }
         }
       ]
     }
