@@ -4,7 +4,7 @@
 
 - 虚拟滚动
 
-- 列管理(列拖动，列展示隐藏)
+- 列控制(列拖动，列展示隐藏)
 
 - 编辑
 
@@ -87,18 +87,19 @@ export default {
 | row-height    | 列高度    | number      |            | 36      |
 | border    | 是否带有纵向边框    | boolean      |            | false      |
 | show-header   | 是否显示表头   | Boolean    |            | true      |
-| empty-text   | 空数据时显示的文本内容   | String    |            | true      |
+| empty-text   | 空数据时显示的文本内容   | String    |            |       |
 | fullscreen| 是否显示全屏按钮 | boolean      |        | false      |
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
 | row-class-name| 行的 className     | Function({row, rowIndex})/String      |            | false      |
-| cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |          | false      |
+| cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |          |       |
 | show-summary| 是否在表尾显示合计行		 | Boolean  |          | false      |
 | sum-text| 合计行第一列的文本	 | String  |          | 合计      |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
-| column-control         | 是否启用列管理             | Boolean      |            | false      |
+| column-control         | 是否启用列控制             | Boolean      |            | false      |
+| column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| edit-stop    | 是否暂停编辑    | Boolean      |            | false      |
+| edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
@@ -117,19 +118,19 @@ value: [
 
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
-    titleRender: (h, {column, columnIndex}) => {
+    titleRender: (h, {column, columnIndex, prop}) => {
       return // jsx
     }
 
     // table单元格 (优先级 cellRender > type > prop)
     prop: '', // string
-    cellRender: (h, {row, rowIndex}) => {
+    cellRender: (h, {row, rowIndex, prop}) => {
       return // jsx
     }
 
     // 编辑
     edit: { // object
-      render: (h, {row, rowIndex}) => {
+      render: (h, {row, rowIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
@@ -143,10 +144,10 @@ value: [
 
     // 搜索
     search: {
-      render: (h, {row, rowIndex}) => {
+      render: (h, {row, rowIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
-      rangeRender: (h, {row, rowIndex}) => {
+      rangeRender: (h, {row, rowIndex, prop}) => {
         return <your-range-component vModel={value} on-change={this.change} />
       },
       operator: false // boolean 搜索范围

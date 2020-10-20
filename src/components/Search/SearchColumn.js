@@ -112,19 +112,20 @@ export default {
   },
   render(h) {
     const { column, columnIndex } = this
-    const { operator, render, rangeRender } = column.search || {}
+    const { search, prop } = column
+    const { operator, render, rangeRender } = search || {}
     const { type } = this.form
     let slot = ''
     let rangeSlot = ''
-    if (this.table.search && column.search) {
+    if (this.table.search && search) {
       if (render && typeof render !== 'function') {
         console.error('search render必须是函数！')
       }
       if (rangeRender && typeof rangeRender !== 'function') {
         console.error('search rangeRender必须是函数！')
       }
-      slot = render && render(h, { column, columnIndex }) || type !== 'range' && <Input value={this.form.value} on-change={this.valueChange}/> || ''
-      rangeSlot = rangeRender && rangeRender(h, { column, columnIndex }) || <RangeInput value={this.form.value} column={column} on-change={this.valueChange}/> || ''
+      slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={this.form.value} on-change={this.valueChange}/> || ''
+      rangeSlot = rangeRender && rangeRender(h, { prop, column, columnIndex }) || <RangeInput value={this.form.value} column={column} on-change={this.valueChange}/> || ''
     }
 
     return (

@@ -65,9 +65,11 @@ export default {
       this.table.$emit('row.selection.change', this.rowIndex, selected)
     },
     cellRender(h) {
-      if (this.column.cellRender) {
-        if (typeof this.column.cellRender === 'function') {
-          return this.column.cellRender(h, { row: this.row, rowIndex: this.rowIndex })
+      const { cellRender, prop } = this.column
+      const { row, rowIndex } = this
+      if (cellRender) {
+        if (typeof cellRender === 'function') {
+          return cellRender(h, { row, rowIndex, prop })
         } else {
           console.error('cellRender 必须是函数')
         }
