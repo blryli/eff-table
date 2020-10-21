@@ -3,7 +3,7 @@
     <TableBodyRow
       :row="row"
       :row-index="1"
-      :columns="columns"
+      :body-columns="columns"
       summary
     />
   </div>
