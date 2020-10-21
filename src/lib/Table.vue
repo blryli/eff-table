@@ -26,8 +26,8 @@
         <TableFooter v-if="$slots.footer || showSummary" ref="footer">
           <Summary
             v-if="showSummary"
-            :data="data"
-            :body-columns="bodyColumns"
+            :data="tableData"
+            :columns="bodyColumns"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />
@@ -62,8 +62,8 @@
         >
           <Summary
             v-if="showSummary"
-            :data="data"
-            :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
+            :data="tableData"
+            :columns="bodyColumns.filter(d => d.fixed === 'left')"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />
@@ -97,8 +97,8 @@
         >
           <Summary
             v-if="showSummary"
-            :data="data"
-            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :data="tableData"
+            :columns="bodyColumns.filter(d => d.fixed ==='right')"
             :sum-text="sumText"
             :summary-method="summaryMethod"
           />

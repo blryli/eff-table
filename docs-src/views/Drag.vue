@@ -295,7 +295,7 @@ export default {
           }
         ]
       }).array
-    }, 100)
+    }, 1000)
   }
 }
 </script>
