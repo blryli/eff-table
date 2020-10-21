@@ -20,7 +20,7 @@ export default {
     }
   },
   watch: {
-    'table.bodyScrollLeft'(val) {
+    'table.scrollLeft'(val) {
       if (this.fixed) return
       this.$el.scrollLeft = val
     },
@@ -137,7 +137,7 @@ export default {
       return render(columns)
     },
     handleScroll(e) {
-      this.table.bodyScrollLeft = e.target.scrollLeft
+      this.table.scrollLeft = e.target.scrollLeft
     },
     handleClick(event) {
       const { table } = this

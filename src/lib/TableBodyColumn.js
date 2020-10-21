@@ -65,11 +65,12 @@ export default {
       this.table.$emit('row.selection.change', this.rowIndex, selected)
     },
     cellRender(h) {
-      const { cellRender, prop } = this.column
       const { row, rowIndex } = this
+      const { column, columnIndex } = this
+      const { cellRender, prop } = column
       if (cellRender) {
         if (typeof cellRender === 'function') {
-          return cellRender(h, { row, rowIndex, prop })
+          return cellRender(h, { row, rowIndex, column, columnIndex, prop })
         } else {
           console.error('cellRender 必须是函数')
         }

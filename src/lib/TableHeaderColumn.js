@@ -78,7 +78,7 @@ export default {
     titleRender(h, { column, columnIndex }) {
       if (column.titleRender) {
         if (typeof column.titleRender === 'function') {
-          return column.titleRender(h, { prop: column.prop, column, columnIndex })
+          return column.titleRender(h, { title: column.title, column, columnIndex })
         } else {
           console.error('titleRender 必须是函数')
         }

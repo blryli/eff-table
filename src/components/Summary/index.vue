@@ -43,7 +43,7 @@ export default {
     }
   },
   watch: {
-    'table.bodyScrollLeft'(val) {
+    'table.scrollLeft'(val) {
       this.$el.scrollLeft = val
     }
   },

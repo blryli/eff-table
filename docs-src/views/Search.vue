@@ -115,16 +115,14 @@ export default {
           title: '时间',
           width: 300,
           search: {
-            render: (h, { column, columnIndex }) => {
-              const { prop } = column
+            render: (h, { prop }) => {
               return <el-date-picker
                 value={this.form[prop]}
                 type='date'
                 on-input={val => (this.form[prop] = val)}
               />
             },
-            rangeRender: (h, { column, columnIndex }) => {
-              const { prop } = column
+            rangeRender: (h, { prop }) => {
               return <el-date-picker
                 value={this.form[prop]}
                 type='daterange'

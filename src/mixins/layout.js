@@ -5,9 +5,9 @@ export default {
       bodyWidth: 0,
       bodyWrapperWidth: 0,
       offset: 0,
-      bodyOverflowX: false,
-      bodyScrollLeft: 0,
-      bodyScrollTop: 0,
+      overflowX: false,
+      scrollLeft: 0,
+      scrollTop: 0,
       headerLoad: false,
       bodyLoad: false
     }
@@ -28,8 +28,8 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table'
-      this.bodyOverflowX && (tClass += ' is-overflow--x')
-      this.heights.bodyOverflowY && (tClass += ' is-overflow--y')
+      this.overflowX && (tClass += ' is-overflow--x')
+      this.overflowY && (tClass += ' is-overflow--y')
       this.border && (tClass += ' is-border')
       return tClass
     },
@@ -37,7 +37,7 @@ export default {
       const style = {}
       style.minWidth = this.minWidth + 'px'
       style.height = this.rowHeight + 'px'
-      if (this.bodyOverflowX) {
+      if (this.overflowX) {
         style.maxWidth = this.bodyWidth + 'px'
       }
       return style
@@ -45,14 +45,14 @@ export default {
     fixedHeight() {
       const { headerHeight, bodyHeight, searchHeight } = this.heights
       let height = headerHeight + bodyHeight + searchHeight
-      this.bodyOverflowX && (height -= 17)
+      this.overflowX && (height -= 17)
       return height + 'px'
     },
     scrollYwidth() {
-      return this.heights.bodyOverflowY ? 17 : 0
+      return this.overflowY ? 17 : 0
     },
     isScrollRightEnd() {
-      return this.bodyWrapperWidth + this.bodyScrollLeft > this.bodyWidth + this.scrollYwidth
+      return this.bodyWrapperWidth + this.scrollLeft > this.bodyWidth + this.scrollYwidth
     },
     headerRanked() {
       function getDeepth(array) {
@@ -71,6 +71,10 @@ export default {
 
       return getDeepth(this.visibleColumns)
     },
+    overflowY() {
+      const { bodyHeight, dataHeight } = this.heights
+      return bodyHeight && dataHeight > bodyHeight
+    },
     heights() {
       const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad } = this
       const { toolbar, header, footer } = this.$refs
@@ -82,16 +86,15 @@ export default {
       const footerHeight = footer ? rowHeight : 0
       const dataHeight = data.length ? data.length * rowHeight : rowHeight
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
-      if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.bodyOverflowX ? 17 : 0)
-      const bodyOverflowY = bodyHeight && dataHeight > bodyHeight
+      if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.overflowX ? 17 : 0)
       return {
         tableHeight,
+        dataHeight,
         toolbarHeight,
         headerHeight,
         searchHeight,
         footerHeight,
-        bodyHeight: Math.max(bodyHeight, rowHeight),
-        bodyOverflowY
+        bodyHeight: Math.max(bodyHeight, rowHeight)
       }
     }
   },
@@ -99,14 +102,14 @@ export default {
     resize() {
       this.$nextTick(() => {
         this.bodyWrapperWidth = this.$el.getBoundingClientRect().width || this.minWidth
-        this.overflowX()
+        this.setOverflowX()
         this.tableBody = this.$el.querySelector('.eff-table__body')
       })
     },
-    overflowX() {
+    setOverflowX() {
       const { minWidth, bodyWrapperWidth } = this
       this.bodyWidth = Math.max(bodyWrapperWidth, minWidth)
-      this.bodyOverflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
+      this.overflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
     },
     doLayout() {
       this.resize()

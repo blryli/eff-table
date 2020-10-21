@@ -25,9 +25,9 @@ export default {
   inject: ['table'],
   computed: {
     editRender() {
-      const { rowIndex, table, column, $createElement } = this
-      const { edit: { render } = {}} = column || {}
-      return render && typeof render === 'function' && render($createElement, { row: table.data[rowIndex], rowIndex }) || ''
+      const { rowIndex, table, column = {}, $createElement } = this
+      const { edit: { render } = {}, prop } = column || {}
+      return render && typeof render === 'function' && render($createElement, { row: table.data[rowIndex], rowIndex, column, columnIndex: this.getColumnIndex(column.prop), prop }) || ''
     }
   },
   watch: {
@@ -284,7 +284,7 @@ export default {
       if (cell) {
         this.editCell(column, cell)
       } else {
-        this.table.toScroll(+rowIndex, () => {
+        this.toScroll(+rowIndex, () => {
           setTimeout(() => {
             const { column, cell } = this.getColumn(prop, +rowIndex)
             this.handleType = 'to'

@@ -8,7 +8,7 @@
           v-model="columns"
           column-control-text="列控制"
           :data="data"
-          :max-height="300"
+          :max-height="600"
           drag
           column-control
           border
@@ -112,6 +112,148 @@ export default {
         },
         {
           show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'message',
+          title: '消息',
+          width: 250,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'message',
+          title: '消息',
+          width: 250,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'message',
+          title: '消息',
+          width: 250,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'city',
+          title: '城市',
+          width: 250,
+          drag: false
+        },
+        {
+          show: true,
+          prop: 'message',
+          title: '消息',
+          width: 250,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
+        },
+        {
+          show: true,
           prop: 'name',
           title: '名字',
           children: [{
@@ -141,7 +283,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|50': [
+        'array|500': [
           {
             'message': '@email',
             'name': '@cname',

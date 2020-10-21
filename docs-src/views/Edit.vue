@@ -167,8 +167,8 @@ export default {
           prop: 'switch',
           title: '开关',
           width: 100,
-          titleRender: (h, { row, rowIndex }) => {
-            return ['开关', <el-tooltip class='item' effect='dark' content='控制动态禁用字段：有值打开，没值禁用' placement='top'>
+          titleRender: (h, { column }) => {
+            return [column.title, <el-tooltip class='item' effect='dark' content='控制动态禁用字段：有值打开，没值禁用' placement='top'>
               <i class='el-icon el-icon-question' />
             </el-tooltip>]
           },

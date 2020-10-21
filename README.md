@@ -118,19 +118,19 @@ value: [
 
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
-    titleRender: (h, {column, columnIndex, prop}) => {
+    titleRender: (h, {title, column, columnIndex}) => {
       return // jsx
     }
 
     // table单元格 (优先级 cellRender > type > prop)
     prop: '', // string
-    cellRender: (h, {row, rowIndex, prop}) => {
+    cellRender: (h, {row, rowIndex, column, columnIndex, prop}) => {
       return // jsx
     }
 
     // 编辑
     edit: { // object
-      render: (h, {row, rowIndex, prop}) => {
+      render: (h, {row, rowIndex, column, columnIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
@@ -144,10 +144,10 @@ value: [
 
     // 搜索
     search: {
-      render: (h, {row, rowIndex, prop}) => {
+      render: (h, {column, columnIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
-      rangeRender: (h, {row, rowIndex, prop}) => {
+      rangeRender: (h, {column, columnIndex, prop}) => {
         return <your-range-component vModel={value} on-change={this.change} />
       },
       operator: false // boolean 搜索范围

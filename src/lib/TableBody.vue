@@ -1,15 +1,15 @@
 <template>
-  <div class="eff-table__body-wrapper" :style="{height: bodyHeight + 'px'}">
+  <div class="eff-table__body-wrapper" :style="{height: table.heights.bodyHeight + 'px'}">
     <div class="eff-table__body--x-space" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
-    <div class="eff-table__body" :style="{ marginTop }">
+    <div class="eff-table__body" :style="{ marginTop: table.bodyMarginTop }">
       <TableBodyRow
-        v-for="(row, index) in renderData"
-        :key="index + rowRenderIndex"
+        v-for="(row, index) in table.renderData"
+        :key="index + table.renderIndex"
         :row="row"
-        :row-index="index + rowRenderIndex"
+        :row-index="index + table.renderIndex"
         :body-columns="bodyColumns"
-        :messages="formatValidators[index + rowRenderIndex]"
+        :messages="formatValidators[index + table.renderIndex]"
       />
       <div v-if="!data.length" class="empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
     </div>
@@ -32,12 +32,6 @@ export default {
     messages: { type: Array, default: () => [] },
     fixed: Boolean
   },
-  data() {
-    return {
-      rowRenderIndex: 0,
-      marginTop: 0
-    }
-  },
   inject: ['table'],
   computed: {
     formatValidators() {
@@ -48,21 +42,8 @@ export default {
         return acc
       }, {})
     },
-    renderData() {
-      return this.isVirtual ? this.data.slice(this.rowRenderIndex, this.pageSize + this.rowRenderIndex) : this.data
-    },
-    bodyHeight() {
-      return this.table.heights.bodyHeight
-    },
-    pageSize() {
-      return parseInt(this.bodyHeight / this.table.rowHeight + 6)
-    },
     totalHeight() {
-      const { rowHeight } = this.table
-      return this.data.length * rowHeight
-    },
-    isVirtual() {
-      return this.data.length > this.pageSize
+      return this.data.length * this.table.rowHeight
     },
     emptyStyle() {
       const { bodyWidth, rowHeight } = this.table
@@ -73,100 +54,33 @@ export default {
     }
   },
   watch: {
-    'table.bodyScrollLeft'(val) {
-      if (this.fixed) return
-      this.$el.scrollLeft = val
-    },
-    'table.bodyScrollTop'(val) {
+    'table.scrollTop'(val) {
       this.$el.scrollTop = val
     },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
-    },
-    isVirtual(val) {
-      if (!val) {
-        this.rowRenderIndex = 0
-        this.marginTop = 0
-      }
-    },
-    'table.scrollIndex'(val) {
-      const last = this.data.length - this.pageSize
-      val > last - 2 && (val = last)
-      const offset = Math.abs(val - this.rowRenderIndex)
-      const { rowHeight } = this.table
-
-      if (val < 2) {
-        this.rowRenderIndex = 0
-        this.marginTop = 0
-      } else if (offset > 1) {
-        this.rowRenderIndex = val
-        const top = val === 2 ? rowHeight : rowHeight * 3
-        if (this.table.bodyScrollTop > top) {
-          this.marginTop = this.table.bodyScrollTop - top + 'px'
-        }
-      }
-      if (val === last - 1) {
-        this.marginTop = this.table.bodyScrollTop - rowHeight + 'px'
-        this.rowRenderIndex = last - 1
-      }
-      if (val === last) {
-        this.marginTop = this.totalHeight - this.pageSize * rowHeight + 'px'
-        this.rowRenderIndex = last
-      }
     }
   },
   mounted() {
     this.table.bodyLoad = true
     this.$nextTick(() => {
-      on(this.$el, 'scroll', this.handleScroll)
-      on(this.$el, 'mousewheel', this.handleScroll, { passive: false })
+      on(this.$el, 'scroll', this.handleScroll, { passive: false })
     })
   },
   beforeDestroy() {
-    off(this.$el, 'scroll', this.handleScroll)
-    off(this.$el, 'mousewheel', this.handleScroll, { passive: false })
+    off(this.$el, 'scroll', this.handleScroll, { passive: false })
   },
   activated() {
     this.handleScroll()
   },
   methods: {
     handleScroll(e) {
-      // 模拟 Y 滚轮动效
-      if (e && e.deltaY && this.table.heights.bodyOverflowY) {
-        e.preventDefault()
-        let num = 0
-        const timer = setInterval(() => {
-          num += 1
-          this.$el.scrollTop = this.$el.scrollTop + (e.deltaY > 0 ? num : -num)
-          if (num === 10) clearInterval(timer)
-        }, 16.5)
+      if (!this.fixed) {
+        const { scrollLeft } = this.table.$el.querySelector('.eff-table__body-wrapper')
+        this.table.scrollLeft = scrollLeft
       }
-      const { scrollLeft } = this.table.$el.querySelector('.eff-table__body-wrapper')
-      const { scrollTop } = this.$el
-      const { rowHeight } = this.table
-      this.table.bodyScrollLeft = scrollLeft
-      this.table.bodyScrollTop = scrollTop
-
-      if (this.isVirtual) {
-        this.table.scrollIndex = parseInt(this.table.bodyScrollTop / rowHeight)
-        if (scrollTop < rowHeight) {
-          this.marginTop = 0
-          this.rowRenderIndex = 0
-        }
-      }
-    },
-    toScroll(rowIndex, cb) {
-      setTimeout(() => {
-        if (rowIndex < this.pageSize / 2) {
-          this.table.bodyScrollTop = 0
-        } else {
-          this.table.bodyScrollTop = (rowIndex - this.pageSize / 2) * this.table.rowHeight
-        }
-        setTimeout(() => {
-          cb && cb()
-        }, 100)
-      })
+      this.table.scrollTop = this.$el.scrollTop
     }
   }
 }
@@ -243,7 +157,7 @@ export default {
 
 .eff-table__fixed-left{
   .eff-table__body-wrapper{
-    overflow-y: hidden;
+    &::-webkit-scrollbar { width: 0 !important }
   }
 }
 

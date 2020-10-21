@@ -34,10 +34,10 @@
           <slot name="footer" />
         </TableFooter>
       </div>
-      <!-- bodyOverflowX &&  -->
+      <!-- overflowX &&  -->
       <div
-        v-if="leftWidth && bodyOverflowX"
-        :class="['eff-table__fixed-left', bodyScrollLeft ? 'is-scroll--start' : '']"
+        v-if="leftWidth && overflowX"
+        :class="['eff-table__fixed-left', scrollLeft ? 'is-scroll--start' : '']"
         :style="{width: leftWidth + 'px', height: fixedHeight}"
       >
         <TableHeader
@@ -71,9 +71,9 @@
         </TableFooter>
       </div>
       <div
-        v-if="rightWidth && bodyOverflowX"
-        :class="['eff-table__fixed-right', bodyOverflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-        :style="{width: rightWidth + (heights.bodyOverflowY ? 17 : 0) + 'px', height: fixedHeight}"
+        v-if="rightWidth && overflowX"
+        :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
+        :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
       >
         <TableHeader
           v-if="showHeader"
@@ -137,6 +137,7 @@ import Selection from 'mixins/selection'
 import Layout from 'mixins/layout'
 import validate from 'mixins/validate'
 import sort from 'mixins/sort'
+import virtual from 'mixins/virtual'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
@@ -158,7 +159,7 @@ export default {
     Edit,
     Summary
   },
-  mixins: [Column, Layout, Selection, validate, sort],
+  mixins: [Column, Layout, Selection, validate, sort, virtual],
   props: {
     value: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
@@ -200,8 +201,7 @@ export default {
       isScreenfull: false,
       tableBody: null,
       tableData: [...this.data],
-      rowHoverIndex: null,
-      scrollIndex: 0
+      rowHoverIndex: null
     }
   },
   computed: {
@@ -258,9 +258,6 @@ export default {
     },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
-    },
-    toScroll(rowIndex, cb) {
-      this.$refs.TableBody.toScroll(rowIndex, cb)
     },
     handleDragend(column) {
       const { columns } = this
