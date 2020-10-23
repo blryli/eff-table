@@ -7,7 +7,7 @@ export default {
   props: {
     visibleColumns: { type: Array, default: () => [] },
     bodyColumns: { type: Array, default: () => [] },
-    fixed: Boolean
+    fixed: { type: String, default: '' }
   },
   components: { TableHeaderColumn, Search },
   data() {

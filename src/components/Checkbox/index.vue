@@ -60,7 +60,6 @@ export default {
     width: 14px;
     height: 14px;
     background-color: #fff;
-    z-index: 1;
     transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
       background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
     &:after {

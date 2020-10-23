@@ -16,7 +16,7 @@
         />
         <!-- body -->
         <TableBody
-          ref="TableBody"
+          ref="body"
           :body-columns="bodyColumns"
           :data="tableData"
           :validators="validators"
@@ -44,15 +44,16 @@
           v-if="showHeader"
           :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
           :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
-          fixed
+          fixed="left"
           @dragend="handleDragend"
           @sort-change="sortChange"
         />
         <!-- body -->
         <TableBody
+          ref="leftBody"
           :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
           :data="tableData"
-          fixed
+          fixed="left"
           :validators="validators"
           :messages="messages"
         />
@@ -79,17 +80,18 @@
           v-if="showHeader"
           :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-          fixed
+          fixed="right"
           @dragend="handleDragend"
           @sort-change="sortChange"
         />
         <!-- body -->
         <TableBody
+          ref="rightBody"
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
           :data="tableData"
           :validators="validators"
           :messages="messages"
-          fixed
+          fixed="right"
         />
         <!-- footer -->
         <TableFooter
@@ -124,7 +126,7 @@
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>showSpace {{ showSpace }}</p> -->
+    <!-- <p>fixedType{{ fixedType }}</p> -->
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
     <div v-show="lineShow" ref="line" class="eff-table-line" />

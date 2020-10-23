@@ -3,7 +3,10 @@ export default {
     return {
       renderIndex: 0,
       scrollIndex: 0,
-      bodyMarginTop: 0
+      bodyMarginTop: 0,
+      fixedType: '',
+      scrollLeft: 0,
+      scrollTop: 0
     }
   },
   computed: {
@@ -14,7 +17,7 @@ export default {
       return this.isVirtual ? this.tableData.slice(this.renderIndex, this.pageSize + this.renderIndex) : this.tableData
     },
     pageSize() {
-      return parseInt(this.heights.bodyHeight / this.rowHeight + 8)
+      return parseInt(this.heights.bodyHeight / this.rowHeight + 4)
     }
   },
   watch: {
@@ -33,27 +36,27 @@ export default {
         this.scrollIndex = parseInt(scrollTop / this.rowHeight)
       }
     },
-    scrollIndex(val) {
+    scrollIndex(scrollIndex) {
       const { pageSize, scrollTop, rowHeight, tableData } = this
       const last = tableData.length - pageSize
-      val > last - 2 && (val = last)
-      const offset = Math.abs(val - this.renderIndex)
+      scrollIndex > last - 2 && (scrollIndex = last)
+      const offset = Math.abs(scrollIndex - this.renderIndex)
 
-      if (val < 2) {
+      if (scrollIndex < 2) {
         this.renderIndex = 0
         this.bodyMarginTop = 0
       } else if (offset > 1) {
-        this.renderIndex = val
-        const top = val === 2 ? rowHeight : rowHeight * 4
-        if (scrollTop > top) {
-          this.bodyMarginTop = scrollTop - top + 'px'
+        this.renderIndex = scrollIndex
+        const offsetTop = scrollIndex === 2 ? rowHeight : rowHeight * 2
+        if (scrollTop > offsetTop) {
+          this.bodyMarginTop = scrollTop - offsetTop + 'px'
         }
       }
-      if (val === last - 1) {
+      if (scrollIndex === last - 1) {
         this.bodyMarginTop = scrollTop - rowHeight + 'px'
         this.renderIndex = last - 1
       }
-      if (val === last) {
+      if (scrollIndex === last) {
         this.bodyMarginTop = this.tableData.length * rowHeight - pageSize * rowHeight + 'px'
         this.renderIndex = last
       }

@@ -8,7 +8,7 @@
           v-model="columns"
           column-control-text="列控制"
           :data="data"
-          :max-height="600"
+          :max-height="500"
           drag
           column-control
           border
@@ -84,56 +84,6 @@ export default {
           title: '序号',
           width: 80,
           fixed: 'left'
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'message',
-          title: '消息',
-          width: 250,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'message',
-          title: '消息',
-          width: 250,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
         },
         {
           show: true,

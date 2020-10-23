@@ -18,7 +18,6 @@
 
 <script>
 import TableBodyRow from 'lib/TableBodyRow'
-import { on, off } from 'utils/dom'
 
 export default {
   name: 'TableBody',
@@ -30,7 +29,7 @@ export default {
     bodyColumns: { type: Array, default: () => [] },
     validators: { type: Array, default: () => [] },
     messages: { type: Array, default: () => [] },
-    fixed: Boolean
+    fixed: { type: String, default: '' }
   },
   inject: ['table'],
   computed: {
@@ -54,8 +53,15 @@ export default {
     }
   },
   watch: {
-    'table.scrollTop'(val) {
-      this.$el.scrollTop = val
+    'table.scrollTop'(scrollTop) {
+      if (this.fixed !== this.table.fixedType) {
+        this.$el.onscroll = null
+        this.$el.scrollTop = scrollTop
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          this.$el.onscroll = this.$el._onscroll
+        }, 100)
+      }
     },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
@@ -64,23 +70,28 @@ export default {
   },
   mounted() {
     this.table.bodyLoad = true
-    this.$nextTick(() => {
-      on(this.$el, 'scroll', this.handleScroll, { passive: false })
-    })
+    this.$el.onscroll = this.scrollEvent
+    this.$el._onscroll = this.scrollEvent
   },
   beforeDestroy() {
-    off(this.$el, 'scroll', this.handleScroll, { passive: false })
+    this.$el._onscroll = null
+    this.$el.onscroll = null
   },
   activated() {
-    this.handleScroll()
+    this.scrollEvent()
   },
   methods: {
-    handleScroll(e) {
-      if (!this.fixed) {
-        const { scrollLeft } = this.table.$el.querySelector('.eff-table__body-wrapper')
+    scrollEvent(e) {
+      const { fixed, $el, table } = this
+      const { body } = table.$refs
+      const { scrollTop } = $el
+      if (!fixed) {
+        const { scrollLeft } = body.$el
         this.table.scrollLeft = scrollLeft
       }
-      this.table.scrollTop = this.$el.scrollTop
+      if (scrollTop === table.scrollTop) return
+      this.table.fixedType = fixed
+      this.table.scrollTop = scrollTop
     }
   }
 }

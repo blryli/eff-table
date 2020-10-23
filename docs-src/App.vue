@@ -58,7 +58,7 @@ body {
 
 header {
   background: $primary-color;
-  padding: 32px 20px 20px;
+  padding: 20px 20px 20px;
 
   .description {
     color: white;
@@ -75,14 +75,14 @@ header {
 section {
   .section-content {
     margin: 0 42px;
-    padding: 30px 0;
+    padding: 20px 0;
     box-sizing: border-box;
   }
 
   &.nav {
     text-align: center;
     background: $primary-color;
-    padding: 40px 20px 0;
+    padding: 20px 20px 0;
     @include h-box;
     @include box-center;
 
