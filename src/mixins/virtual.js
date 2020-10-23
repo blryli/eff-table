@@ -63,18 +63,14 @@ export default {
     }
   },
   methods: {
-    toScroll(rowIndex, cb) {
-      setTimeout(() => {
-        const { pageSize, rowHeight } = this
-        if (rowIndex < pageSize / 2) {
-          this.scrollTop = 0
-        } else {
-          this.scrollTop = (rowIndex - pageSize / 2) * rowHeight
-        }
-        setTimeout(() => {
-          cb && cb()
-        }, 100)
-      })
+    toScroll(rowIndex) {
+      const { pageSize, rowHeight } = this
+      if (rowIndex < pageSize / 2) {
+        this.scrollTop = 0
+      } else {
+        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - pageSize / 2) * rowHeight
+      }
+      return this.$nextTick()
     }
   }
 }

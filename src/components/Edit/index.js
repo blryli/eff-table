@@ -284,7 +284,7 @@ export default {
       if (cell) {
         this.editCell(column, cell)
       } else {
-        this.toScroll(+rowIndex, () => {
+        this.table.toScroll(+rowIndex).then(() => {
           setTimeout(() => {
             const { column, cell } = this.getColumn(prop, +rowIndex)
             this.handleType = 'to'
