@@ -6,8 +6,6 @@ export default {
       bodyWrapperWidth: 0,
       offset: 0,
       overflowX: false,
-      scrollLeft: 0,
-      scrollTop: 0,
       headerLoad: false,
       bodyLoad: false
     }

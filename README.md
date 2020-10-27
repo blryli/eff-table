@@ -96,6 +96,7 @@ export default {
 | sum-text| 合计行第一列的文本	 | String  |          | 合计      |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
 | column-control         | 是否启用列控制             | Boolean      |            | false      |
+| row-drag         | 是否启用行拖动             | Boolean      |            | false      |
 | column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
