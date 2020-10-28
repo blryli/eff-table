@@ -96,7 +96,6 @@ export default {
             const { prop, edit: { leaveTime } = {}} = column
             const { rowIndex, table } = this
             const row = table.tableData[rowIndex]
-            console.log({ row, rowIndex })
             if (leaveTime) {
               if (typeof leaveTime === 'number') {
                 setTimeout(() => {
