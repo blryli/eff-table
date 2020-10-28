@@ -1,4 +1,5 @@
-import { on, off, getKeysStr, debounce } from 'utils/dom'
+import { getKeysStr, getType } from 'utils'
+import { on, off, debounce } from 'utils/dom'
 import { getTableNode, isOverflow, shake } from './dom'
 
 export default {
@@ -89,7 +90,33 @@ export default {
             e.preventDefault()
             this.placement = placement
             this.handleValidate()
-            this.to()
+
+            // 跳下一个处理
+            const { column } = this
+            const { prop, edit: { leaveTime } = {}} = column
+            const { rowIndex, table } = this
+            const row = table.tableData[rowIndex]
+            console.log({ row, rowIndex })
+            if (leaveTime) {
+              if (typeof leaveTime === 'number') {
+                setTimeout(() => {
+                  this.to()
+                }, leaveTime)
+              } else if (typeof leaveTime === 'function') {
+                const leaveFn = leaveTime({ row, rowIndex })
+                if (getType(leaveFn) === 'Promise') {
+                  leaveFn.then(() => {
+                    this.to()
+                  })
+                } else {
+                  console.error(`[${prop}] leaveTime 函数返回值必须是promise`)
+                }
+              } else {
+                console.error(`[${prop}] leaveTime 参数类型必须是数字或函数`)
+              }
+            } else {
+              this.to()
+            }
             break
           }
         }
@@ -171,6 +198,7 @@ export default {
     },
     editCell(column, cell) {
       const { prop } = column || {}
+
       const cellIndex = this.getColumnIndex(prop)
       // console.log({ column, cell, cellIndex })
       if (cellIndex === -1 || !this.canFocus(column, cell)) return
@@ -193,7 +221,9 @@ export default {
         setTimeout(() => {
           this.setElPos() // 设置编辑框位置
 
-          this.handleFocus() // 处理聚焦
+          this.table.$emit('blur', prop, this.rowIndex)
+
+          this.handleFocus()// 处理聚焦
         }, 0)
       })
     },

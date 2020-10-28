@@ -90,7 +90,12 @@ export default {
           edit: {
             render: (h, { row, rowIndex }) => {
               return <el-input value={row.input} on-input={val => (row.input = val)} />
-            }
+            },
+            leaveTime: () => new Promise(res => {
+              setTimeout(() => {
+                res()
+              }, 1000)
+            })
           }
         },
         {

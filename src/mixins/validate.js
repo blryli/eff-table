@@ -1,3 +1,4 @@
+import { getType } from 'utils'
 export default {
   data() {
     return {
@@ -34,7 +35,7 @@ export default {
 
       const result = rule({ value, row, rowIndex })
       // 异步校验
-      if (this.getType(result) === 'Promise') {
+      if (getType(result) === 'Promise') {
         const cellIndex = this.columns.findIndex(d => d.prop && d.prop === prop)
         const childNodes = this.tableBody.childNodes[rowIndex]
         const cell = childNodes ? childNodes.childNodes[cellIndex] : null
@@ -85,9 +86,6 @@ export default {
       } else {
         clear(props)
       }
-    },
-    getType(params) {
-      return Object.prototype.toString.call(params).match(/ (\w+)]/)[1]
     }
   }
 }

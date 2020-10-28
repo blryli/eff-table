@@ -35,14 +35,14 @@ export default {
         },
         {
           prop: 'edit',
-          label: '编辑',
+          title: '编辑',
           width: 135,
           show: true,
           edit: {
             render: (h, { row, rowIndex }) => {
               return h('el-input', {
                 on: {
-                  input: val => row.skip = val
+                  input: val => (row.skip = val)
                 }
               })
             }
@@ -50,7 +50,7 @@ export default {
         },
         {
           prop: 'validator',
-          label: '校验',
+          title: '校验',
           width: 135,
           show: true,
           validator: {
@@ -64,7 +64,7 @@ export default {
         },
         {
           prop: 'handle',
-          label: '操作',
+          title: '操作',
           width: 90,
           fixed: 'right',
           show: true
@@ -101,6 +101,7 @@ export default {
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
+| edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
@@ -135,11 +136,12 @@ value: [
         return <your-component vModel={value} on-change={this.change} />
       },
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
+      leaveTime: 0 // number | function({ row, rowIndex }) {return Promise} 需要延时或异步处理完值再离开时使用，为函数时返回值必须是promise
     }
 
     // 校验
     validator: {
-      rule: ({value, row, rowIndex}) => !value && '不能为空', // 校验规则
+      rule: ({value, row, rowIndex}) => !value && '不能为空', // 校验规则，返回值为字符串或promise，为promise时作异步校验处理
       field: '' // 指定校验字段( 默认为prop )
     }
 

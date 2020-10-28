@@ -11,6 +11,7 @@
           :max-height="500"
           drag
           column-control
+          row-drag
           border
           fullscreen
           highlight-current-row
@@ -89,106 +90,13 @@ export default {
           show: true,
           prop: 'city',
           title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
+          width: 200
         },
         {
           show: true,
           prop: 'message',
           title: '消息',
-          width: 250,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'message',
-          title: '消息',
-          width: 250,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 250,
-          drag: false
-        },
-        {
-          show: true,
-          prop: 'message',
-          title: '消息',
-          width: 250,
+          width: 200,
           edit: {
             render: (h, { row }) => {
               return <el-input {...{
@@ -222,7 +130,7 @@ export default {
           show: true,
           fixed: 'right',
           title: '操作',
-          width: 250,
+          width: 100,
           cellRender: (h, { row }) => {
             return <el-button type='text' icon='el-icon-edit'></el-button>
           }
