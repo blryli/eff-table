@@ -149,6 +149,7 @@ export default {
     }
   }
 }
+
 .eff-table__body-row:last-child{
   .eff-table__column{
     border-bottom: 1px solid #ddd;
@@ -176,8 +177,10 @@ export default {
   overflow-x: hidden;
 }
 .is-overflow--x {
-  .eff-table__body-wrapper{
-    overflow-x: auto;
+  .eff-table__wrapper{
+    .eff-table__body-wrapper{
+      overflow-x: auto;
+    }
   }
 }
 .empty-text{

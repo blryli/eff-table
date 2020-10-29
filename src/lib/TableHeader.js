@@ -122,7 +122,8 @@ export default {
                 colid: parent,
                 column,
                 columnIndex,
-                bodyColumnIndex: index
+                bodyColumnIndex: index,
+                key: index
               },
               on: {
                 'sort-change': this.sortChange

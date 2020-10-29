@@ -31,6 +31,7 @@ export default {
             return <TableBodyColumn
               data-colid={colid}
               row={this.row}
+              key={this.rowIndex + '-' + columnIndex}
               rowIndex={this.rowIndex}
               column={column}
               columnIndex={columnIndex}

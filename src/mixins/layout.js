@@ -41,6 +41,9 @@ export default {
       return style
     },
     fixedHeight() {
+      if (this.showSummary) {
+        return ''
+      }
       const { headerHeight, bodyHeight, searchHeight } = this.heights
       let height = headerHeight + bodyHeight + searchHeight
       this.overflowX && (height -= 17)

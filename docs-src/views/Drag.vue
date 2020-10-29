@@ -88,7 +88,7 @@ export default {
         },
         {
           show: true,
-          prop: 'city',
+          prop: 'index',
           title: '城市',
           width: 200
         },

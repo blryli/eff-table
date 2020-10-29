@@ -1,7 +1,7 @@
 export default {
   computed: {
     columnsWidth() {
-      return this.bodyColumns.reduce((acc, cur) => acc.concat(cur.width || this.spaceWidth), [])
+      return this.bodyColumns.reduce((acc, cur) => acc.concat(Math.max((cur.width || this.spaceWidth), 40)), [])
     },
     leftWidth() {
       return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + (cur.width || this.spaceWidth) : acc, 0)
