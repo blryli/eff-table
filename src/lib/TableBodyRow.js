@@ -8,6 +8,7 @@ export default {
     bodyColumns: { type: Array, default: () => [] },
     row: { type: Object, default: () => {} },
     messages: { type: Array, default: () => [] },
+    fixed: { type: String, default: '' },
     rowIndex: Number,
     summary: Boolean
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="eff-table__body-wrapper" :style="{height: table.heights.bodyHeight + 'px'}">
-    <div class="eff-table__body--x-space" />
+    <div class="eff-table__body--x-space" :style="{width: table.bodyWidth + 'px'}" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div class="eff-table__body" :style="{ marginTop: table.bodyMarginTop }">
       <TableBodyRow
@@ -9,6 +9,7 @@
         :row="row"
         :row-index="index + table.renderIndex"
         :body-columns="bodyColumns"
+        :fixed="fixed"
         :messages="formatValidators[index + table.renderIndex]"
       />
       <div v-if="!data.length" class="empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
@@ -174,14 +175,7 @@ export default {
 }
 
 .eff-table__body-wrapper{
-  overflow-x: hidden;
-}
-.is-overflow--x {
-  .eff-table__wrapper{
-    .eff-table__body-wrapper{
-      overflow-x: auto;
-    }
-  }
+  overflow-x: auto;
 }
 .empty-text{
   display: flex;

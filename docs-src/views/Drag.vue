@@ -112,6 +112,30 @@ export default {
         },
         {
           show: true,
+          prop: 'index',
+          title: '城市',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'message',
+          title: '消息',
+          width: 200,
+          edit: {
+            render: (h, { row }) => {
+              return <el-input {...{
+                attrs: {
+                  value: row.message
+                },
+                on: {
+                  input: val => (row.message = val)
+                }
+              }} />
+            }
+          }
+        },
+        {
+          show: true,
           prop: 'name',
           title: '名字',
           children: [{
@@ -141,7 +165,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|500': [
+        'array|15': [
           {
             'message': '@email',
             'name': '@cname',

@@ -120,7 +120,9 @@
     <p>columnsWidth{{ columnsWidth }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>fixedType{{ fixedType }}</p> -->
+    <!-- <p>columnIsVirtual {{ columnIsVirtual }}</p>
+    <p>columnVisibleSize {{ columnVisibleSize }}</p>
+    <p>columnRenderIndex {{ columnRenderIndex }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />

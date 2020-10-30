@@ -2,6 +2,7 @@ export default {
   data() {
     return {
       renderIndex: 0,
+      columnRenderIndex: 0,
       scrollIndex: 0,
       bodyMarginTop: 0,
       fixedType: '',
@@ -11,16 +12,33 @@ export default {
   },
   computed: {
     isVirtual() {
-      return this.tableData.length > this.pageSize
+      const len = this.tableData.length
+      return len > 50 && len > this.renderSize
     },
     renderData() {
-      return this.isVirtual ? this.tableData.slice(this.renderIndex, this.pageSize + this.renderIndex) : this.tableData
+      return this.isVirtual ? this.tableData.slice(this.renderIndex, this.renderSize + this.renderIndex) : this.tableData
     },
-    pageSize() {
+    renderSize() {
       return parseInt(this.heights.bodyHeight / this.rowHeight + 4)
+    },
+    columnVisibleSize() {
+      return this.bodyWrapperWidth - this.leftWidth - this.rightWidth - (this.overflowY ? 17 : 0)
+    },
+    columnIsVirtual() {
+      return this.bodyWidth > this.bodyWrapperWidth + 200
+    },
+    columnRenderData() {
+      const { bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
+      return this.columnIsVirtual ? bodyColumns.slice(columnRenderIndex, getColumnEndRenderIndex()) : bodyColumns
+    },
+    columnRenderSize() {
+      return parseInt(this.bodyWidth / this.rowHeight + 4)
     }
   },
   watch: {
+    bodyColumns() {
+      this.setColumnRenderIndex()
+    },
     isVirtual(val) {
       if (!val) {
         this.renderIndex = 0
@@ -37,8 +55,8 @@ export default {
       }
     },
     scrollIndex(scrollIndex) {
-      const { pageSize, scrollTop, rowHeight, tableData } = this
-      const last = tableData.length - pageSize
+      const { renderSize, scrollTop, rowHeight, tableData } = this
+      const last = tableData.length - renderSize
       scrollIndex > last - 2 && (scrollIndex = last)
       const offset = Math.abs(scrollIndex - this.renderIndex)
 
@@ -57,18 +75,33 @@ export default {
         this.renderIndex = last - 1
       }
       if (scrollIndex === last) {
-        this.bodyMarginTop = this.tableData.length * rowHeight - pageSize * rowHeight + 'px'
+        this.bodyMarginTop = this.tableData.length * rowHeight - renderSize * rowHeight + 'px'
         this.renderIndex = last
       }
     }
   },
+  mounted() {
+    this.setColumnRenderIndex()
+  },
   methods: {
+    getColumnEndRenderIndex() {
+      const { bodyColumns, columnRenderIndex, spaceWidth } = this
+      bodyColumns.slice(columnRenderIndex).map(column => {
+        let { width = 0 } = column
+        !width && (width = spaceWidth)
+        return Math.max(width, 40)
+      })
+    },
+    setColumnRenderIndex() {
+      const leftFixed = this.bodyColumns.filter(d => d.fixed).length
+      this.columnRenderIndex = leftFixed ? leftFixed - 1 : 0
+    },
     toScroll(rowIndex) {
-      const { pageSize, rowHeight } = this
-      if (rowIndex < pageSize / 2) {
+      const { renderSize, rowHeight } = this
+      if (rowIndex < renderSize / 2) {
         this.scrollTop = 0
       } else {
-        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - pageSize / 2) * rowHeight
+        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * rowHeight
       }
       return this.$nextTick()
     }

@@ -33,8 +33,8 @@ export default {
     },
     rowStyle() {
       const style = {}
-      style.minWidth = this.minWidth + 'px'
       style.height = this.rowHeight + 'px'
+      style.minWidth = this.minWidth + 'px'
       if (this.overflowX) {
         style.maxWidth = this.bodyWidth + 'px'
       }
