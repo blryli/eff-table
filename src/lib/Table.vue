@@ -117,12 +117,14 @@
       :columns="bodyColumns"
     />
     <!-- <p>minWidth{{ minWidth }}</p>
-    <p>columnsWidth{{ columnsWidth }}</p>
+    <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
     <!-- <p>columnIsVirtual {{ columnIsVirtual }}</p>
-    <p>columnVisibleSize {{ columnVisibleSize }}</p>
-    <p>columnRenderIndex {{ columnRenderIndex }}</p> -->
+    <p>columnVisibleWidth {{ columnVisibleWidth }}</p>
+    <p>columnRenderIndex {{ columnRenderIndex }}</p>
+    <p>getColumnEndRenderIndex {{ getColumnEndRenderIndex() }}</p>
+    <p>xScrollIndex {{ xScrollIndex }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -472,6 +474,7 @@ export default {
   align-items: center;
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .eff-table__header{
   .eff-table__column{

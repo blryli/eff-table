@@ -118,6 +118,24 @@ export default {
         },
         {
           show: true,
+          prop: 'index',
+          title: '城市',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'index',
+          title: '城市',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'index',
+          title: '城市',
+          width: 200
+        },
+        {
+          show: true,
           prop: 'message',
           title: '消息',
           width: 200,
@@ -156,7 +174,7 @@ export default {
           title: '操作',
           width: 100,
           cellRender: (h, { row }) => {
-            return <el-button type='text' icon='el-icon-edit'></el-button>
+            return <el-button type='text' size='small' icon='el-icon-edit'></el-button>
           }
         }
       ]

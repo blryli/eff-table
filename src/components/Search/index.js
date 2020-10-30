@@ -99,7 +99,6 @@ export default {
       {
         this.columns.map((column, columnIndex) => {
           return <SearchColumn
-            key={columnIndex}
             value={this.searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
             column={column}
             column-index={columnIndex}

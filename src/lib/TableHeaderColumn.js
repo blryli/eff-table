@@ -34,6 +34,7 @@ export default {
         class={this.columnClass}
         data-colid={this.colid}
         data-colidx={this.columnIndex}
+        key={this.colid}
         style={this.table.setColumnStyle(column, bodyColumnIndex)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}

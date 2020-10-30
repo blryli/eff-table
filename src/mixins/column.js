@@ -1,6 +1,6 @@
 export default {
   computed: {
-    columnsWidth() {
+    columnWidths() {
       return this.bodyColumns.reduce((acc, cur) => acc.concat(Math.max((cur.width || this.spaceWidth), 40)), [])
     },
     leftWidth() {
@@ -25,7 +25,7 @@ export default {
     }
   },
   methods: {
-    setColumnStyle(column, columnIndex) {
+    setColumnStyle(column, columnIndex, fixed) {
       const style = {}
       let { width = 0 } = column
       const { spaceWidth } = this
@@ -34,7 +34,7 @@ export default {
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
 
-      if (columnIndex === 0) {
+      if (!fixed && !this.columnRenderIndex && columnIndex === 0) {
         style.borderLeft = 0
       }
       return style

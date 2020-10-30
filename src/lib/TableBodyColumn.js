@@ -8,7 +8,8 @@ export default {
     rowIndex: { type: Number, default: 0 },
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
-    message: { type: Object, default: () => {} }
+    message: { type: Object, default: () => {} },
+    fixed: { type: String, default: '' }
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -23,7 +24,8 @@ export default {
     return (
       <div
         class={this.columnClass}
-        style={this.table.setColumnStyle(this.column, this.columnIndex)}
+        key={this.rowIndex + '-' + this.columnIndex}
+        style={this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)}
         on-mouseenter={event => this.handleMouseenter(event, slot)}
         on-mouseleave={event => this.handleMouseleave(event, slot)}
       >

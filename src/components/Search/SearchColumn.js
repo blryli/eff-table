@@ -131,6 +131,7 @@ export default {
     return (
       <div
         class={this.columnClass}
+        key={this.columnIndex}
         data-colid={this.columnIndex}
         style={this.table.setColumnStyle(column, columnIndex, this.width)}
       >
