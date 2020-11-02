@@ -120,11 +120,7 @@
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>columnIsVirtual {{ columnIsVirtual }}</p>
-    <p>columnVisibleWidth {{ columnVisibleWidth }}</p>
-    <p>columnRenderIndex {{ columnRenderIndex }}</p>
-    <p>getColumnEndRenderIndex {{ getColumnEndRenderIndex() }}</p>
-    <p>xScrollIndex {{ xScrollIndex }}</p> -->
+    <!-- <p>leftScrollIndex {{ leftScrollIndex }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -239,6 +235,11 @@ export default {
   watch: {
     data(val) {
       this.tableData = [...val]
+      this.clearSelection()
+    },
+    'data.length'() {
+      this.scrollLeftEvent()
+      this.resize()
     },
     value(val) {
       this.columns = val
@@ -382,7 +383,7 @@ export default {
 
 .is-overflow--y {
   .eff-table__wrapper, .eff-table__fixed-right{
-    .eff-table__header-wrapper, .eff-table__summary{
+    .eff-table__header-wrapper, .eff-table__summary, .eff-table__footer{
       overflow-y: scroll;
       &::-webkit-scrollbar {
         border-left: 1px solid #ddd;

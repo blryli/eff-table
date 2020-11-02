@@ -1,17 +1,17 @@
 <template>
   <div class="eff-table__body-wrapper" :style="{height: table.heights.bodyHeight + 'px'}">
-    <div class="eff-table__body--x-space" />
+    <div class="eff-table__body--x-space" :style="{width: table.bodyWidth + 'px'}" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div
       class="eff-table__body"
-      :style="{ marginTop: table.bodyMarginTop }"
+      :style="{ marginTop: table.bodyMarginTop, marginLeft: fixed ? '' : table.bodyMarginLeft }"
     >
       <TableBodyRow
         v-for="(row, index) in table.renderData"
         :key="index + table.renderIndex"
         :row="row"
         :row-index="index + table.renderIndex"
-        :body-columns="bodyColumns"
+        :body-columns="fixed ? bodyColumns : table.renderColumn"
         :fixed="fixed"
         :messages="formatValidators[index + table.renderIndex]"
       />

@@ -14,9 +14,6 @@ export default {
     on(window, 'resize', this.resize, { passive: true })
   },
   watch: {
-    'data.length'() {
-      this.resize()
-    },
     isScreenfull() {
       setTimeout(() => {
         this.resize()
@@ -34,7 +31,6 @@ export default {
     rowStyle() {
       const style = {}
       style.height = this.rowHeight + 'px'
-      style.minWidth = this.minWidth + 'px'
       if (this.overflowX) {
         style.maxWidth = this.bodyWidth + 'px'
       }

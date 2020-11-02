@@ -1,11 +1,18 @@
 <template>
   <div class="eff-table__footer" :style="style">
-    <TableBodyRow
-      :row="row"
-      :row-index="1"
-      :body-columns="columns"
-      summary
-    />
+    <div class="eff-table__body--x-space" :style="{width: table.bodyWidth + 'px'}" />
+    <div
+      class="eff-table__body"
+      :style="{ marginLeft: fixed ? '' : table.bodyMarginLeft }"
+    >
+      <TableBodyRow
+        :row="row"
+        :row-index="1"
+        :body-columns="fixed ? columns : table.renderColumn"
+        :fixed="fixed"
+        summary
+      />
+    </div>
   </div>
 </template>
 
@@ -74,22 +81,6 @@ export default {
     }
     &:hover .eff-table__column{
       background-color: #f6f7f8;
-    }
-  }
-}
-.is-overflow--y{
-  .eff-table__wrapper, .eff-table__fixed-right{
-    .eff-table__footer{
-      &::after{
-        content:  '';
-        width: 1px;
-        position: absolute;
-        top: 0;
-        right: 16px;
-        bottom: 0;
-        background-color: #ddd;
-        box-sizing: border-box;
-      }
     }
   }
 }

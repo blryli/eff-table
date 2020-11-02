@@ -14,7 +14,7 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, showSpace } = this.table
+    const { rowStyle, showSpace, columnRenderIndex } = this.table
     return (
       <div
         class={this.rowClassName}
@@ -28,6 +28,7 @@ export default {
       >
         {
           this.bodyColumns.map((column, columnIndex) => {
+            columnIndex = this.fixed ? columnIndex : columnRenderIndex + columnIndex
             const colid = `${this.rowIndex + 1}-${columnIndex + 1}`
             const message = this.messages.find(d => d.prop === column.prop) || {}
             return <TableBodyColumn
@@ -67,6 +68,7 @@ export default {
       this.table.rowHoverIndex = null
     },
     handleClick(event) {
+      console.log('row click')
       if (this.summary) return
       this.table.highlightCurrentRow && (this.table.currentRow = this.rowIndex)
       this.handleEvent(event, 'click')
@@ -84,7 +86,7 @@ export default {
         const colid = cell.getAttribute('data-colid')
         if (colid) {
           const [, columnIndex] = colid.split('-')
-          column = this.bodyColumns[columnIndex - 1]
+          column = this.table.bodyColumns[columnIndex - 1]
           if (column) {
             table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
           }
