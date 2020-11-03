@@ -168,7 +168,6 @@ export default {
           title: '城市城市城市城市',
           width: 300,
           sortable: true
-
         },
         {
           show: true,

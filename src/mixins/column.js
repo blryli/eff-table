@@ -25,7 +25,7 @@ export default {
     }
   },
   methods: {
-    setColumnStyle(column, columnIndex, fixed) {
+    setColumnStyle(column, columnIndex) {
       const style = {}
       let { width = 0 } = column
       const { spaceWidth } = this
@@ -34,7 +34,7 @@ export default {
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
 
-      if (!fixed && !this.columnRenderIndex && columnIndex === 0) {
+      if (columnIndex === 0) {
         style.borderLeft = 0
       }
       return style
