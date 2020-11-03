@@ -100,6 +100,7 @@ export default {
       this.$nextTick(() => {
         this.bodyWrapperWidth = this.$el.getBoundingClientRect().width || this.minWidth
         this.setOverflowX()
+        this.scrollLeftEvent()
         this.tableBody = this.$el.querySelector('.eff-table__body')
       })
     },

@@ -151,6 +151,166 @@ export default {
         },
         {
           show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          width: 140,
+          cellRender: (h, { row, rowIndex }) => {
+            return formatDate(row.date, 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { row, rowIndex }) => {
+              return <el-date-picker
+                value={row.date}
+                on-input={val => (row.date = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
           prop: 'skip',
           title: '跳过',
           width: 100,

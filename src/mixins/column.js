@@ -4,10 +4,10 @@ export default {
       return this.bodyColumns.reduce((acc, cur) => acc.concat(Math.max((cur.width || this.spaceWidth), 40)), [])
     },
     leftWidth() {
-      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + (cur.width || this.spaceWidth) : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + Math.max((cur.width || this.spaceWidth), 40) : acc, 0)
     },
     rightWidth() {
-      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + (cur.width || this.spaceWidth) : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + Math.max((cur.width || this.spaceWidth), 40) : acc, 0)
     },
     minWidth() {
       return this.bodyColumns.reduce((acc, cur) => cur.width ? acc + cur.width : acc, 0)

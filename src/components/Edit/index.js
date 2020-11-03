@@ -199,7 +199,7 @@ export default {
       const { prop } = column || {}
 
       const cellIndex = this.getColumnIndex(prop)
-      // console.log({ column, cell, cellIndex })
+      console.log({ column, cell, cellIndex })
       if (cellIndex === -1 || !this.canFocus(column, cell)) return
       this.column = column
       this.cellIndex = cellIndex

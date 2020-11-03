@@ -93,7 +93,7 @@ export default {
           width: 80
         },
         {
-          show: false,
+          show: true,
           prop: 'email',
           title: '邮箱',
           width: 300,

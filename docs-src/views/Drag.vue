@@ -76,7 +76,7 @@ export default {
         {
           show: true,
           type: 'selection',
-          width: 80,
+          width: 30,
           fixed: 'left'
         },
         {
