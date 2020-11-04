@@ -120,7 +120,7 @@
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
     <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>leftScrollIndex {{ leftScrollIndex }}</p> -->
+    <!-- <p>scrollLeft {{ scrollLeft }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />

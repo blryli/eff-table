@@ -59,7 +59,7 @@ export default {
         this.scrollIndex = parseInt(scrollTop / this.rowHeight)
       }
     },
-    scrollIndex(scrollIndex) {
+    scrollIndex(scrollIndex, oldScrollIndex) {
       const { renderSize, scrollTop, rowHeight, tableData } = this
       const last = tableData.length - renderSize
       const offset = Math.abs(scrollIndex - this.renderIndex)
@@ -70,7 +70,7 @@ export default {
       } else if (scrollIndex > last - 2) {
         this.bodyMarginTop = last * rowHeight + 'px'
         this.renderIndex = last
-      } else if (offset > 2) {
+      } else if (offset > 2 || Math.abs(scrollIndex - oldScrollIndex) > 3) {
         this.renderIndex = scrollIndex
         const offsetTop = scrollIndex === 2 ? rowHeight : rowHeight * 3
         this.bodyMarginTop = scrollTop - offsetTop + 'px'
@@ -78,15 +78,24 @@ export default {
     },
     scrollLeft(scrollLeft) {
       this.columnIsVirtual && this.scrollLeftEvent(scrollLeft)
+    },
+    columnIsVirtual(val) {
+      if (val) {
+        this.scrollLeftEvent()
+      } else {
+        this.leftScrollIndex = 0
+        this.bodyMarginLeft = ''
+      }
     }
   },
   mounted() {
-    this.scrollLeftEvent()
+    this.columnIsVirtual && this.scrollLeftEvent()
   },
   methods: {
     scrollLeftEvent(scrollLeft = 0) {
       if (!this.columnIsVirtual) {
         this.leftScrollIndex = 0
+        this.bodyMarginLeft = ''
         return
       }
       let curWidth = 0

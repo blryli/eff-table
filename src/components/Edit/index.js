@@ -1,5 +1,5 @@
 import { getKeysStr, getType } from 'utils'
-import { on, off, debounce } from 'utils/dom'
+import { on, off } from 'utils/dom'
 import { getTableNode, isOverflow, shake } from './dom'
 
 export default {
@@ -13,14 +13,10 @@ export default {
       show: false,
       rowIndex: 0,
       cell: null,
-      oldCell: null,
       placement: '',
       component: null,
       handleType: null,
-      scroll: {
-        scrollLeft: 0,
-        scrollTop: 0
-      }
+      scrollNum: 0
     }
   },
   inject: ['table'],
@@ -40,14 +36,18 @@ export default {
         this.handleValidate()
         this.table.clearSelection()
         this.placement = ''
+        this.scrollNum = 0
         this.column = null
         this.cell = null
         this.table.$emit('editClose')
         this.table.$emit('blur')
       }
     },
-    cell(val, oldVal) {
-      this.oldCell = oldVal
+    'table.scrollTop'(scrollTop) {
+      this.wrapperScroll(scrollTop)
+    },
+    'table.scrollLeft'(scrollLeft) {
+      this.wrapperScroll(scrollLeft)
     }
   },
   mounted() {
@@ -60,7 +60,6 @@ export default {
 
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
       this.body = this.wrapper.querySelector('.eff-table__body')
-      on(this.wrapper, 'scroll', debounce(this.wrapperScroll, 50))
     })
   },
   beforeDestroy() {
@@ -69,7 +68,6 @@ export default {
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
     this.table.$off('cell-click', this.handleEditCell)
-    off(this.wrapper, 'scroll', debounce(this.wrapperScroll, 50))
   },
   methods: {
     handleValidate() {
@@ -121,14 +119,12 @@ export default {
         }
       }, 50)
     },
-    wrapperScroll(e) {
+    wrapperScroll(scroll) {
+      this.scroll = scroll
       if (!this.show) return
-      const { scrollLeft, scrollTop } = e.target
-      this.scroll = { ...{ scrollLeft, scrollTop }}
       // 滚动时取消编辑状态
-      this.scrollTimer = setTimeout(() => {
-        this.show = false
-      }, 100)
+      this.scrollNum = this.scrollNum + 1
+      if (this.scrollNum > 2) this.show = false
     },
     to() {
       this.handleType = 'to'
@@ -173,6 +169,9 @@ export default {
       const { placement, column } = this
       const cell = getTableNode(this.cell, placement)
       if (cell) {
+        const colid = cell.getAttribute('data-colid')
+        const [rowIndex] = colid.split('-')
+        this.rowIndex = +rowIndex - 1
         this.editCell(column, cell)
       } else {
         shake(this.$el, 'y')
@@ -191,69 +190,66 @@ export default {
       return skip || false
     },
 
-    handleEditCell({ column, cell }) {
+    handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
+      this.rowIndex = rowIndex
       this.editCell(column, cell)
     },
     editCell(column, cell) {
+      this.scrollNum = 0
       const { prop } = column || {}
-
       const cellIndex = this.getColumnIndex(prop)
-      console.log({ column, cell, cellIndex })
-      if (cellIndex === -1 || !this.canFocus(column, cell)) return
-      this.column = column
-      this.cellIndex = cellIndex
-      this.cell = cell
-      this.show = true
-      const colid = cell.getAttribute('data-colid')
-      const [rowIndex] = colid.split('-')
-      this.rowIndex = (+rowIndex) - 1
+      const editCell = (cell) => {
+        // console.log({ column, cell, cellIndex, index: this.cellIndex })
+        if (cellIndex === -1 || !this.canFocus(column, cell)) return
 
-      this.$nextTick(() => {
-        const overflows = this.fixOverflow() // 处理溢出
-        if (overflows) {
-          const unWatchScroll = this.$watch('scroll', () => {
-            clearTimeout(this.scrollTimer)
-            unWatchScroll && unWatchScroll()
-          })
-        }
-        setTimeout(() => {
+        // 处理溢出
+        this.fixOverflow(cell, cellIndex).then(() => {
+          this.column = column
+          this.cellIndex = cellIndex
+          this.cell = this.getColumn(prop).cell
+          this.show = true
           this.setElPos() // 设置编辑框位置
 
           this.table.$emit('blur', prop, this.rowIndex)
-
           this.handleFocus()// 处理聚焦
-        }, 0)
-      })
+        })
+      }
+      if (!cell) {
+        this.fixOverflowX(cellIndex).then(() => {
+          const { cell: getCell } = this.getColumn(prop)
+          editCell(cell || getCell)
+        })
+      } else {
+        editCell(cell)
+      }
     },
-    fixOverflow() {
-      const { cell, wrapper } = this
-      const { leftWidth, rightWidth } = this.table
+    fixOverflowX(cellIndex) {
+      const { columnWidths, bodyWrapperWidth } = this.table
+      const scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0) - bodyWrapperWidth / 2
+      this.table.scrollLeft = scrollLeft
+      return this.$nextTick()
+    },
+    fixOverflow(cell, cellIndex) {
+      const { wrapper } = this
+      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth } = this.table
       const overflow = isOverflow(cell, wrapper, { leftWidth, rightWidth })
-      const { width: wrapperWidth, height: wrapperHeight } = wrapper.getBoundingClientRect()
-      !this.oldCell && (this.oldCell = wrapper.querySelector('.eff-table__body-row').childNodes[0])
-      const keys = []
+      const { height: wrapperHeight } = wrapper.getBoundingClientRect()
+      const colid = cell.getAttribute('data-colid')
+      const [rowIndex] = colid.split('-')
+      let isOver = false
       for (const key in overflow) {
         if (overflow[key]) {
-          const { left, top, right, bottom } = cell.getBoundingClientRect()
-          const { left: oldLeft, top: oldTop, right: oldRight, bottom: oldBottom } = this.oldCell.getBoundingClientRect() || {}
-          if (key === 'left') {
-            const offset = this.handleType === 'to' ? oldLeft - right : 0 // 偏移量，用户点击时不计算
-            wrapper.scrollLeft = wrapper.scrollLeft - wrapperWidth / 2 - offset
-          } else if (key === 'right') {
-            const offset = this.handleType === 'to' ? left - oldRight : 0
-            wrapper.scrollLeft = wrapper.scrollLeft + wrapperWidth / 2 + offset
-          } else if (key === 'top') {
-            const offset = this.handleType === 'to' ? oldTop - bottom : 0
-            wrapper.scrollTop = wrapper.scrollTop - wrapperHeight / 2 - offset
-          } else if (key === 'bottom') {
-            const offset = this.handleType === 'to' ? top - oldBottom : 0
-            wrapper.scrollTop = wrapper.scrollTop + wrapperHeight / 2 + offset
+          const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
+          if (key === 'left' || key === 'right') {
+            this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
+          } else if (key === 'top' || key === 'bottom') {
+            this.table.scrollTop = rowIndex * rowHeight - wrapperHeight / 2
           }
-          keys.push(key)
+          isOver = true
         }
       }
-      return keys.length ? keys : false
+      return this.$nextTick().then(() => isOver)
     },
     handleFocus() {
       setTimeout(() => {
@@ -309,16 +305,19 @@ export default {
       this.show = false
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
-      const { column, cell } = this.getColumn(prop, +rowIndex)
+      this.rowIndex = +rowIndex
+      const { column, cell, columnIndex } = this.getColumn(prop, +rowIndex)
       if (cell) {
         this.editCell(column, cell)
       } else {
-        this.table.toScroll(+rowIndex).then(() => {
-          setTimeout(() => {
-            const { column, cell } = this.getColumn(prop, +rowIndex)
-            this.handleType = 'to'
-            this.editCell(column, cell)
-          }, 100)
+        this.fixOverflowX(columnIndex).then(() => {
+          this.table.toScroll(+rowIndex).then(() => {
+            setTimeout(() => {
+              const { column, cell } = this.getColumn(prop, +rowIndex)
+              this.handleType = 'to'
+              this.editCell(column, cell)
+            }, 100)
+          })
         })
       }
     },
@@ -335,8 +334,9 @@ export default {
       return { column, cell, columnIndex }
     },
     getColumnIndex(prop) {
-      const index = this.columns.findIndex(d => d.prop && d.prop === prop)
-      return index > -1 ? index : this.columns.findIndex(d => d.prop)
+      const { bodyColumns } = this.table
+      const index = bodyColumns.findIndex(d => d.prop && d.prop === prop)
+      return index > -1 ? index : bodyColumns.findIndex(d => d.prop)
     },
     inTable(target) {
       return target.nodeName === 'BODY' || this.table.$el.contains(target)

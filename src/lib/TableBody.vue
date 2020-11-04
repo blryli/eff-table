@@ -58,14 +58,17 @@ export default {
   },
   watch: {
     'table.scrollTop'(scrollTop) {
+      this.$el.scrollTop = scrollTop
       if (this.fixed !== this.table.fixedType) {
         this.$el.onscroll = null
-        this.$el.scrollTop = scrollTop
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
           this.$el.onscroll = this.$el._onscroll
         }, 100)
       }
+    },
+    'table.scrollLeft'(val) {
+      !this.fixed && (this.$el.scrollLeft = val)
     },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table

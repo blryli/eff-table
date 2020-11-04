@@ -68,7 +68,6 @@ export default {
       this.table.rowHoverIndex = null
     },
     handleClick(event) {
-      console.log('row click')
       if (this.summary) return
       this.table.highlightCurrentRow && (this.table.currentRow = this.rowIndex)
       this.handleEvent(event, 'click')
