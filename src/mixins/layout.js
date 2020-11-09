@@ -83,7 +83,7 @@ export default {
       const footerHeight = footer ? rowHeight : 0
       const dataHeight = data.length ? data.length * rowHeight : rowHeight
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
-      if (maxHeight && dataHeight < bodyHeight) bodyHeight = dataHeight + (this.overflowX ? 17 : 0)
+      if (maxHeight && dataHeight <= bodyHeight) bodyHeight = dataHeight + (this.overflowX ? 17 : 0)
       return {
         tableHeight,
         dataHeight,
