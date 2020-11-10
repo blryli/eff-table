@@ -30,7 +30,8 @@ export default {
       return this.bodyWrapperWidth - this.leftWidth - this.rightWidth - (this.overflowY ? 17 : 0)
     },
     columnIsVirtual() {
-      return this.bodyWidth - this.leftWidth - this.rightWidth > this.columnVisibleWidth + 600
+      return false
+      // return this.bodyWidth - this.leftWidth - this.rightWidth > this.columnVisibleWidth + 600
     },
     renderColumn() {
       const { bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
