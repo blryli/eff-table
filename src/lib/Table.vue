@@ -236,8 +236,6 @@ export default {
     data(val) {
       this.tableData = [...val]
       this.clearSelection()
-    },
-    'data.length'() {
       this.scrollLeftEvent()
       this.resize()
     },
