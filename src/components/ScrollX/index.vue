@@ -1,6 +1,6 @@
 <template>
   <div class="eff-table__scrollx" @scroll="scrollEvent">
-    <div class="eff-table__scrollx-content" :style="{width: table.bodyWidth + 'px', height: '1px'}" />
+    <div class="eff-table__scrollx-content" :style="{width: table.bodyWidth + 2 + 'px', height: '1px'}" />
   </div>
 </template>
 

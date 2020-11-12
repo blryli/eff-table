@@ -119,8 +119,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>validators{{ validators }}</p> -->
-    <!-- <p>scrollLeft {{ scrollLeft }}</p> -->
+    <p>overflowX{{ overflowX }}</p>
+    <p>heights {{ heights }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />

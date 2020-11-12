@@ -82,8 +82,11 @@ export default {
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
       const dataHeight = data.length ? data.length * rowHeight : rowHeight
-      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight + (overflowX ? 17 : 0) : 0
-      if (maxHeight && dataHeight <= maxHeight) bodyHeight = dataHeight + (overflowX ? 17 : 0)
+      const overflowXHeight = (overflowX ? 17 : 0)
+      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
+      if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
+        bodyHeight = dataHeight + overflowXHeight
+      }
       return {
         tableHeight,
         dataHeight,
