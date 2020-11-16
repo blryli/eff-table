@@ -70,7 +70,7 @@ export default {
     },
     overflowY() {
       const { bodyHeight, maxHeight, dataHeight } = this.heights
-      return bodyHeight && (maxHeight ? dataHeight > maxHeight && dataHeight > bodyHeight : dataHeight > bodyHeight)
+      return bodyHeight && (maxHeight ? dataHeight > maxHeight : dataHeight > bodyHeight)
     },
     heights() {
       const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
