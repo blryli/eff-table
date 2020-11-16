@@ -69,8 +69,8 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
-      const { bodyHeight, dataHeight } = this.heights
-      return bodyHeight && dataHeight > bodyHeight
+      const { bodyHeight, maxHeight, dataHeight } = this.heights
+      return bodyHeight && (maxHeight ? dataHeight > maxHeight && dataHeight > bodyHeight : dataHeight > bodyHeight)
     },
     heights() {
       const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
