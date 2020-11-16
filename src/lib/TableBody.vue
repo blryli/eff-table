@@ -15,7 +15,7 @@
         :fixed="fixed"
         :messages="formatValidators[index + table.renderIndex]"
       />
-      <div v-if="!data.length" class="empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
+      <div v-if="!data.length" class="eff-empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
     </div>
   </div>
 </template>
@@ -183,7 +183,7 @@ export default {
 .eff-table__body-wrapper{
   overflow-x: auto;
 }
-.empty-text{
+.eff-empty-text{
   display: flex;
   justify-content: center;
   align-items: center;

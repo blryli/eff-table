@@ -124,7 +124,7 @@ export default class Sortable {
     relation.toIndex = this.getToIndex(target)
 
     relation.toGroup = this.options.group
-    if (!this.isSameGroup() || ['drag-target'].find(d => target.classList.contains(d))) {
+    if (!this.isSameGroup()) {
       return false
     }
 
@@ -169,7 +169,7 @@ export default class Sortable {
 
   isFilter(target) {
     const { filter } = this.options
-    const filters = [filter, 'is--space', 'drag-target', 'empty-text']
+    const filters = [filter, 'is--space', 'eff-empty-text']
     return filters.find(d => target.classList.contains(d))
   }
 
