@@ -41,7 +41,15 @@ export default {
       const { className } = this.column
       const { cellClassName } = this.table
       const { message } = this.message || {}
-      className && (classes += ` ${className}`)
+      if (className) {
+        if (typeof className === 'function') {
+          const { row, column, rowIndex, columnIndex } = this
+          const c = className({ row, column, rowIndex, columnIndex })
+          c && (classes += ` ${c}`)
+        } else {
+          classes += ` ${className}`
+        }
+      }
       if (message) classes += ' is--message'
       if (cellClassName) {
         if (typeof cellClassName === 'function') {

@@ -123,14 +123,6 @@ export default {
   },
   mounted() {
     this.resize()
-    let num = 0
-    this.timer = setInterval(() => {
-      num++
-      this.bodyWrapperWidth = this.$el.getBoundingClientRect().width
-      if (this.bodyWrapperWidth || num === 30) {
-        clearInterval(this.timer)
-      }
-    }, 100)
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })
