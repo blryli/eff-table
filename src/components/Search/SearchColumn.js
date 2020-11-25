@@ -124,7 +124,7 @@ export default {
       if (rangeRender && typeof rangeRender !== 'function') {
         console.error('search rangeRender必须是函数！')
       }
-      slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={this.form.value} on-change={this.valueChange}/> || ''
+      slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={this.form.value} on-input={val => (this.form.value = val)} on-change={this.valueChange}/> || ''
       rangeSlot = rangeRender && rangeRender(h, { prop, column, columnIndex }) || <RangeInput value={this.form.value} column={column} on-change={this.valueChange}/> || ''
     }
 
