@@ -127,7 +127,6 @@ export default {
         clearInterval(this.timer)
       }
     }, 100)
-
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })
