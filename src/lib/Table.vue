@@ -119,7 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>overflowY {{ overflowY }}</p>
+    <!-- <p>overflowY {{ overflowY }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
