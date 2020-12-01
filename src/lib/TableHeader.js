@@ -45,16 +45,16 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, showSpace, search, heights } = this.table
+    const { showSpace, search, heights: { headerHeight }} = this.table
     const { visibleColumns, bodyColumns } = this
-    const height = heights.headerHeight + 'px'
+    const height = headerHeight + 'px'
 
     return (
       <div class='eff-table__header-wrapper'>
         <div
           class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
           ref= 'header'
-          style={{ ...rowStyle, ...{ height }}}
+          style={{ height }}
           on-click={this.handleClick}
           on-mousemove={this.handleMousemove}
           on-mouseleave={this.handleMouseleave}
@@ -77,7 +77,6 @@ export default {
         {
           search && !this.isColumnsChange ? <Search
             value={this.searchData}
-            styles={rowStyle}
             columns={bodyColumns}
             showSpace={showSpace}
             on-input={val => (this.searchData = val)}
@@ -93,20 +92,13 @@ export default {
     },
     renderColumns(columns) {
       let index = 0
-      const { rowHeight, spaceWidth } = this.table
+      const { rowHeight } = this.table
       const render = (columns, colid = '') => {
         return columns.reduce((acc, column, columnIndex) => {
           const { children = [] } = column
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
-          if (column.prop && children.length) {
-            const plat = arr => {
-              return arr.reduce((acc, cur) => {
-                const { children = [] } = cur
-                return children.length ? acc.concat(plat(children)) : acc.concat(cur)
-              }, [])
-            }
-            const width = plat(children).reduce((acc, cur) => acc + (cur.width || spaceWidth || 40), 0)
-            acc.push(<div class='eff-table__header-group' style={{ maxWidth: width + 'px', minWidth: width + 'px' }}>
+          if (children.length) {
+            acc.push(<div class='eff-table__header-group'>
               <div class='header-title' style={{ maxHeight: rowHeight + 'px' }}>
                 {column.title}
               </div>

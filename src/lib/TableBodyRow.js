@@ -14,31 +14,32 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { rowStyle, showSpace, columnRenderIndex } = this.table
+    const { showSpace, columnRenderIndex } = this.table
+    const { rowIndex, rowClassName, fixed, row, messages, rowStyle, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
     return (
       <div
-        class={this.rowClassName}
+        class={rowClassName}
         style={rowStyle}
-        data-rowid={this.rowIndex + 1}
-        key={this.rowIndex + 1}
-        on-click={this.handleClick}
-        on-dblclick={this.handleDoubleClick}
-        on-mouseenter={this.handleMouseenter}
-        on-mouseleave={this.handleMouseleave}
+        data-rowid={rowIndex + 1}
+        key={rowIndex + 1}
+        on-click={handleClick}
+        on-dblclick={handleDoubleClick}
+        on-mouseenter={handleMouseenter}
+        on-mouseleave={handleMouseleave}
       >
         {
-          this.bodyColumns.map((column, columnIndex) => {
-            columnIndex = this.fixed ? columnIndex : columnRenderIndex + columnIndex
-            const colid = `${this.rowIndex + 1}-${columnIndex + 1}`
-            const message = this.messages.find(d => d.prop === column.prop) || {}
+          bodyColumns.map((column, columnIndex) => {
+            columnIndex = fixed ? columnIndex : columnRenderIndex + columnIndex
+            const colid = `${rowIndex + 1}-${columnIndex + 1}`
+            const message = messages.find(d => d.prop === column.prop) || {}
             return <TableBodyColumn
               data-colid={colid}
-              row={this.row}
-              rowIndex={this.rowIndex}
+              row={row}
+              rowIndex={rowIndex}
               column={column}
               columnIndex={columnIndex}
               message={message}
-              fixed={this.fixed}
+              fixed={fixed}
             />
           })
         }
@@ -49,6 +50,15 @@ export default {
     )
   },
   computed: {
+    rowStyle() {
+      const style = {}
+      const { overflowX, columnIsVirtual, bodyRenderWidth, bodyWidth, rowHeight } = this.table
+      style.height = rowHeight + 'px'
+      if (overflowX && !this.fixed) {
+        style.width = (columnIsVirtual ? bodyRenderWidth : bodyWidth) + 'px'
+      }
+      return style
+    },
     rowClassName() {
       const { currentRow, rowClassName } = this.table
       const { row, rowIndex } = this

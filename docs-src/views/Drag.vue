@@ -130,7 +130,17 @@ export default {
           show: true,
           fixed: 'right',
           title: '操作',
-          width: 100,
+          children: [{
+            show: true,
+            prop: 'xing',
+            title: '姓',
+            width: 150
+          }, {
+            show: true,
+            prop: 'ming',
+            title: '名',
+            width: 150
+          }],
           cellRender: (h, { row }) => {
             return <el-button type='text' size='small' icon='el-icon-edit'></el-button>
           }

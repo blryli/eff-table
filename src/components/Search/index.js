@@ -8,7 +8,6 @@ export default {
   props: {
     value: { type: Array, default: () => [] },
     columns: { type: Array, default: () => [] },
-    styles: { type: Object, default: () => {} },
     showSpace: Boolean
   },
   data() {
@@ -95,7 +94,7 @@ export default {
     }
   },
   render(h) {
-    return <div class='eff-table__search' style={this.styles}>
+    return <div class='eff-table__search' style={{ height: this.table.rowHeight + 'px' }}>
       {
         this.columns.map((column, columnIndex) => {
           return <SearchColumn

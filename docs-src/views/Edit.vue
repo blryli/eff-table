@@ -19,6 +19,7 @@
             <el-button @click="add">新增</el-button>
             <el-button @click="focus">聚焦第三行</el-button>
             <el-button @click="data = []">删除所有</el-button>
+            <el-button @click="getData">更新数据</el-button>
           </div>
         </eff-table>
       </div>
@@ -160,6 +161,84 @@ export default {
           show: true,
           prop: 'noEdit',
           title: '无编辑',
+          width: 50
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 150
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 100
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 100
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 50
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 300
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 50
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 100
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 50
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 300
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 100
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
+          width: 50
+        },
+        {
+          show: true,
+          prop: 'noEdit',
+          title: '无编辑',
           width: 100
         },
         {
@@ -219,10 +298,19 @@ export default {
   },
   mounted() {
     setTimeout(() => {
+      this.getData()
+    }, 500)
+  },
+  methods: {
+    visibleChange(val) {
+      this.editStop = val
+    },
+    getData() {
       this.data = mock.mock({
-        'array|50': [
+        'array|500': [
           {
-            'input': '',
+            'input': '@name',
+            'noEdit': '@name',
             'select': '',
             'date': '',
             'skip': '',
@@ -232,11 +320,6 @@ export default {
           }
         ]
       }).array
-    }, 500)
-  },
-  methods: {
-    visibleChange(val) {
-      this.editStop = val
     },
     add() {
       this.data.push(mock.mock({

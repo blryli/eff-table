@@ -28,13 +28,8 @@ export default {
       this.border && (tClass += ' is-border')
       return tClass
     },
-    rowStyle() {
-      const style = {}
-      style.height = this.rowHeight + 'px'
-      if (this.overflowX) {
-        style.maxWidth = this.bodyWidth + 'px'
-      }
-      return style
+    bodyRenderWidth() {
+      return this.columnIsVirtual ? this.columnWidths.slice(this.columnRenderIndex, this.columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : this.bodyWidth
     },
     fixedHeight() {
       if (this.showSummary) {
@@ -70,7 +65,8 @@ export default {
     },
     overflowY() {
       const { bodyHeight, maxHeight, dataHeight } = this.heights
-      return bodyHeight && (maxHeight ? dataHeight > maxHeight : dataHeight > bodyHeight)
+      const overflowXHeight = (this.overflowX ? 17 : 0)
+      return bodyHeight && (maxHeight ? dataHeight > maxHeight : dataHeight > bodyHeight - overflowXHeight)
     },
     heights() {
       const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this

@@ -119,8 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>overflowX{{ overflowX }}</p>
-    <p>heights {{ heights }}</p> -->
+    <p>overflowY {{ overflowY }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -211,7 +210,11 @@ export default {
       const plat = arr => {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur
-          return children.length ? acc.concat(plat(children)) : acc.concat(cur)
+          if (children.length) {
+            children.forEach(d => cur.fixed && (d.fixed = cur.fixed))
+            return acc.concat(plat(children))
+          }
+          return acc.concat(cur)
         }, [])
       }
       return plat(this.visibleColumns)

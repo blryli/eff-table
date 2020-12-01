@@ -4,7 +4,7 @@
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div
       class="eff-table__body"
-      :style="{ marginTop: table.bodyMarginTop, marginLeft: fixed ? '' : table.bodyMarginLeft }"
+      :style="bodyStyle"
     >
       <TableBodyRow
         v-for="(row, index) in table.renderData"
@@ -37,6 +37,18 @@ export default {
   },
   inject: ['table'],
   computed: {
+    bodyStyle() {
+      const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth, columnIsVirtual } = this.table
+      const style = {}
+      style.marginTop = bodyMarginTop
+      if (!this.fixed) {
+        style.marginLeft = bodyMarginLeft
+        if (columnIsVirtual) {
+          style.width = bodyRenderWidth + 'px'
+        }
+      }
+      return style
+    },
     formatValidators() {
       return (this.validators.concat(this.messages) || []).reduce((acc, cur, index) => {
         const rowIndex = `${cur.rowIndex}`
