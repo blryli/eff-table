@@ -79,7 +79,7 @@ export default {
 
 | 参数                    | 说明                      | 类型         | 可选值         | 默认值 |
 | ---------------------- | ------------------------- | ------------| -------------- | ------ |
-| value   | tableColumns数组       | array        |              | -      |
+| value   | columns数组       | array        |              | []      |
 | data   | table 数据       | array        |              | []     |
 | form   | 搜索数据       | Object        |              | {}      |
 | height    | Table 的高度    | number      |            | 400      |
@@ -92,15 +92,12 @@ export default {
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
 | row-class-name| 行的 className     | Function({row, rowIndex})/String      |            | false      |
 | cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |          |       |
-| show-summary| 是否在表尾显示合计行		 | Boolean  |          | false      |
-| sum-text| 合计行第一列的文本	 | String  |          | 合计      |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
 | column-control         | 是否启用列控制             | Boolean      |            | false      |
 | row-drag         | 是否启用行拖动             | Boolean      |            | false      |
 | column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
 | search                 | 是否启用搜索               | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
 | edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
