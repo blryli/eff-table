@@ -52,18 +52,19 @@ export default {
   computed: {
     rowStyle() {
       const style = {}
-      const { overflowX, columnIsVirtual, bodyRenderWidth, bodyWidth, rowHeight } = this.table
+      const { table, fixed } = this
+      const { overflowX, columnIsVirtual, bodyRenderWidth, bodyWidth, rowHeight } = table
       style.height = rowHeight + 'px'
-      if (overflowX && !this.fixed) {
+      if (overflowX && !fixed) {
         style.width = (columnIsVirtual ? bodyRenderWidth : bodyWidth) + 'px'
       }
       return style
     },
     rowClassName() {
-      const { currentRow, rowClassName } = this.table
-      const { row, rowIndex } = this
-      let classes = `eff-table__body-row${currentRow === this.rowIndex ? ' current-row' : ''}`
-      this.table.rowHoverIndex === rowIndex && (classes += ' is--hover')
+      const { row, rowIndex, table } = this
+      const { currentRow, rowClassName } = table
+      let classes = `eff-table__body-row${currentRow === rowIndex ? ' current-row' : ''}`
+      table.rowHoverIndex === rowIndex && (classes += ' is--hover')
       if (rowClassName) {
         classes += ' ' + (typeof rowClassName === 'function' ? rowClassName({ row, rowIndex }) : rowClassName)
       }
@@ -79,15 +80,16 @@ export default {
     },
     handleClick(event) {
       if (this.summary) return
-      this.table.highlightCurrentRow && (this.table.currentRow = this.rowIndex)
-      this.handleEvent(event, 'click')
+      const { table, rowIndex, handleEvent } = this
+      this.table.highlightCurrentRow && (table.currentRow = rowIndex)
+      handleEvent(event, 'click')
     },
     handleDoubleClick(event) {
       if (this.summary) return
       this.handleEvent(event, 'dblclick')
     },
     handleEvent(event, name) {
-      const table = this.table
+      const { table } = this
       const cell = getCell(event)
       const { row, rowIndex } = this
       let column
@@ -95,7 +97,7 @@ export default {
         const colid = cell.getAttribute('data-colid')
         if (colid) {
           const [, columnIndex] = colid.split('-')
-          column = this.table.bodyColumns[columnIndex - 1]
+          column = table.bodyColumns[columnIndex - 1]
           if (column) {
             table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
           }

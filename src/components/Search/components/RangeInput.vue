@@ -59,13 +59,11 @@ export default {
   },
   methods: {
     handleFocus() {
-      const input = this.$refs.input.$el
-      const { left, top, width } = input.getBoundingClientRect()
+      const { input, start } = this.$refs
+      const { left, top, width } = input.$el.getBoundingClientRect()
       this.style = { left: left + 'px', top: top + 'px', width: width + 'px' }
       this.show = true
-      setTimeout(() => {
-        this.$refs.start.focus()
-      }, 10)
+      start.focus()
     },
     change() {
       let { start, end } = this.form

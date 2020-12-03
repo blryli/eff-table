@@ -24,32 +24,32 @@ export default {
     }
   },
   render(h) {
-    const { column, columnIndex, bodyColumnIndex } = this
+    const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
     const { edit: { render } = {}, sortable, title, type } = column
 
-    const slot = column.titleRender ? this.titleRender(h, { column, columnIndex }) : type === 'selection' ? this.renderSelection(h) : type === 'index' ? (title || '#') : title
+    const slot = column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
 
     return (
       <div
-        class={this.columnClass}
-        data-colid={this.colid}
-        data-colidx={this.columnIndex}
-        key={this.colid}
-        style={this.table.setColumnStyle(column, bodyColumnIndex)}
-        on-mouseenter={event => this.handleMouseenter(event, slot)}
-        on-mouseleave={event => this.handleMouseleave(event, slot)}
+        class={columnClass}
+        data-colid={colid}
+        data-colidx={columnIndex}
+        key={colid}
+        style={table.setColumnStyle(column, bodyColumnIndex)}
+        on-mouseenter={event => handleMouseenter(event, slot)}
+        on-mouseleave={event => handleMouseleave(event, slot)}
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
           <span class='eff-cell--title'>{slot}</span>
           {
             sortable ? <span class='eff-cell--sort'>
               <i
-                class={{ 'eff-cell--sort-asc': true, 'is--active': this.sortActive('asc') }}
-                on-click={() => this.sortClick('asc')}
+                class={{ 'eff-cell--sort-asc': true, 'is--active': sortActive('asc') }}
+                on-click={() => sortClick('asc')}
               ></i>
               <i
-                class={{ 'eff-cell--sort-desc': true, 'is--active': this.sortActive('desc') }}
-                on-click={() => this.sortClick('desc')}
+                class={{ 'eff-cell--sort-desc': true, 'is--active': sortActive('desc') }}
+                on-click={() => sortClick('desc')}
               ></i>
             </span> : ''
           }
@@ -62,15 +62,17 @@ export default {
   },
   methods: {
     sortActive(od) {
-      const { prop, order } = this.table.curSort
-      return prop === this.column.prop && order === od
+      const { table, column } = this
+      const { prop, order } = table.curSort
+      return prop === column.prop && order === od
     },
     renderSelection(h) {
+      const { table, columnIndex, selectionChange } = this
       return <v-checkbox
-        value={this.table.selectionAll}
-        key={this.columnIndex}
-        indeterminate={this.table.indeterminate}
-        on-change={this.selectionChange}
+        value={table.selectionAll}
+        key={columnIndex}
+        indeterminate={table.indeterminate}
+        on-change={selectionChange}
       />
     },
     selectionChange(val) {
@@ -87,13 +89,14 @@ export default {
       return false
     },
     handleMouseenter() {
-      const { cell } = this.$refs
+      const { table, column: { width }, $refs: { cell }} = this
+      const { tipShow, spaceWidth } = table
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
 
-      if (this.column.width && getTextWidth(cell) > Math.max(this.column.width, 40) || !this.column.width && getTextWidth(cell) > this.table.spaceWidth) {
-        this.table.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
+      if (width && getTextWidth(cell) > Math.max(width, 40) || !width && getTextWidth(cell) > spaceWidth) {
+        tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
       }
     },
     handleMouseleave() {

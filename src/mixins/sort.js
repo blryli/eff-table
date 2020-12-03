@@ -36,7 +36,7 @@ export default {
           }
         }
       }
-      this.tableData = tableData
+      this.tableData = Object.freeze(tableData)
       return tableData
     }
   }

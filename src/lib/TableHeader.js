@@ -34,10 +34,11 @@ export default {
   },
   computed: {
     dragStyle() {
-      const { top, left, width } = this.dragingTarget && this.dragingTarget.getBoundingClientRect() || {}
+      const { dragingTarget, table } = this
+      const { top, left, width } = dragingTarget && dragingTarget.getBoundingClientRect() || {}
       return {
-        display: this.dragingTarget ? 'block' : 'none',
-        height: this.table.heights.headerHeight + 'px',
+        display: dragingTarget ? 'block' : 'none',
+        height: table.heights.headerHeight + 'px',
         top: top + 'px',
         left: left + width - 8 + 'px'
       }
@@ -45,22 +46,22 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { showSpace, search, heights: { headerHeight }} = this.table
-    const { visibleColumns, bodyColumns } = this
+    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData } = this
+    const { showSpace, search, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
 
     return (
       <div class='eff-table__header-wrapper'>
         <div
-          class={{ 'eff-table__header': true, 'is--move': this.isDraging }}
+          class={{ 'eff-table__header': true, 'is--move': isDraging }}
           ref= 'header'
           style={{ height }}
-          on-click={this.handleClick}
-          on-mousemove={this.handleMousemove}
-          on-mouseleave={this.handleMouseleave}
+          on-click={handleClick}
+          on-mousemove={handleMousemove}
+          on-mouseleave={handleMouseleave}
         >
           {
-            this.renderColumns(visibleColumns)
+            renderColumns(visibleColumns)
           }
           {
             showSpace ? <div class='eff-table__column is--space' style={height} /> : ''
@@ -69,18 +70,18 @@ export default {
             <div
               ref='dragMove'
               class='header-drag-move'
-              style={this.dragStyle}
-              on-mousedown={this.moveMousedown}
+              style={dragStyle}
+              on-mousedown={moveMousedown}
             />
           }
         </div>
         {
-          search && !this.isColumnsChange ? <Search
-            value={this.searchData}
+          search && !isColumnsChange ? <Search
+            value={searchData}
             columns={bodyColumns}
             showSpace={showSpace}
             on-input={val => (this.searchData = val)}
-            on-change={val => this.table.$emit('search-change', val)}
+            on-change={val => table.$emit('search-change', val)}
           /> : ''
         }
       </div>
@@ -91,8 +92,9 @@ export default {
       this.$emit('sort-change', sort)
     },
     renderColumns(columns) {
+      const { table, sortChange } = this
+      const { rowHeight } = table
       let index = 0
-      const { rowHeight } = this.table
       const render = (columns, colid = '') => {
         return columns.reduce((acc, column, columnIndex) => {
           const { children = [] } = column
@@ -117,7 +119,7 @@ export default {
                 bodyColumnIndex: index
               },
               on: {
-                'sort-change': this.sortChange
+                'sort-change': sortChange
               }
             }}
             />)
@@ -144,15 +146,16 @@ export default {
       }
     },
     handleMousemove(e) {
-      if (!this.table.border) return
+      const { table, $refs, dragingTarget, isDraging } = this
+      if (!table.border) return
       let target = e.target
       while (target && !hasClass(target, 'eff-table__column')) {
         target = target.parentNode
       }
       if (!target) return
-      const header = this.$refs.header
-      const dragMove = this.$refs.dragMove
-      if (target.contains(header) || target === dragMove || this.dragingTarget === target || this.isDraging) return
+      const header = $refs.header
+      const dragMove = $refs.dragMove
+      if (target.contains(header) || target === dragMove || dragingTarget === target || isDraging) return
 
       this.dragingTarget = hasClass(target, 'is--space') ? null : target
     },
@@ -162,11 +165,8 @@ export default {
       }, 110)
     },
     moveMousedown() {
-      onMousemove({
-        start: this.start,
-        moveing: this.moveing,
-        end: this.end
-      })
+      const { start, moveing, end } = this
+      onMousemove({ start, moveing, end })
     },
     start(e) {
       if (!this.dragingTarget) return

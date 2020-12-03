@@ -55,42 +55,43 @@ export default {
     this.$parent.$on('header-dragend', this.elDragendChange)
 
     this.$nextTick(() => {
-      this.id = Math.floor(Math.random() * 100000)
-      if (this.table.drag) {
+      const { drag, rowDrag, $el } = this.table
+      const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
+      const id = Math.floor(Math.random() * 100000)
+      if (drag) {
         this.columnSortable = new Sortable({
-          el: this.$parent.$el.querySelector('.eff-table__header'),
-          group: this.id,
+          el: $el.querySelector('.eff-table__header'),
+          group: id,
           filter: 'is-drag--filter',
           dragImage: {
             height: 30
           },
-          dragend: this.handleDragend,
-          dragenter: this.handleDragenter,
-          onEnd: this.handleEnd
+          dragend: handleDragend,
+          dragenter: handleDragenter,
+          onEnd: handleEnd
         })
-        if (this.table.rowDrag) {
+        if (rowDrag) {
           this.rowSortable = new Sortable({
-            el: this.$parent.$el.querySelector('.eff-table__body'),
-            group: this.id,
+            el: $el.querySelector('.eff-table__body'),
             filter: 'is-drag--filter',
             dragImage: {
               height: 30
             },
-            onEnd: this.handleRowEnd
+            onEnd: handleRowEnd
           })
         }
       }
-      if (this.columnControl) {
+      if (columnControl) {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
-            el: this.$el.querySelector('.drag-card__body'),
-            group: this.id,
+            el: cardEl.querySelector('.drag-card__body'),
+            group: id,
             dragImage: {
               height: 30
             },
-            dragend: this.handleDragend,
-            dragenter: this.handleDragenter,
-            onEnd: this.handleEnd
+            dragend: handleDragend,
+            dragenter: handleDragenter,
+            onEnd: handleEnd
           })
         }, 500)
       }

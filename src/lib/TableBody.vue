@@ -58,7 +58,8 @@ export default {
       }, {})
     },
     totalHeight() {
-      return this.data.length * this.table.rowHeight
+      const { data, table } = this
+      return data.length * table.rowHeight
     },
     emptyStyle() {
       const { bodyWidth, rowHeight } = this.table
@@ -70,17 +71,19 @@ export default {
   },
   watch: {
     'table.scrollTop'(scrollTop) {
-      this.$el.scrollTop = scrollTop
-      if (this.fixed !== this.table.fixedType) {
-        this.$el.onscroll = null
+      const { $el, fixed, table } = this
+      $el.scrollTop = scrollTop
+      if (fixed !== table.fixedType) {
+        $el.onscroll = null
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
-          this.$el.onscroll = this.$el._onscroll
+          $el.onscroll = $el._onscroll
         }, 100)
       }
     },
     'table.scrollLeft'(val) {
-      !this.fixed && (this.$el.scrollLeft = val)
+      const { fixed, $el } = this
+      !fixed && ($el.scrollLeft = val)
     },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
@@ -88,13 +91,15 @@ export default {
     }
   },
   mounted() {
-    this.table.bodyLoad = true
-    this.$el.onscroll = this.scrollEvent
-    this.$el._onscroll = this.scrollEvent
+    const { table, $el, scrollEvent } = this
+    table.bodyLoad = true
+    $el.onscroll = scrollEvent
+    $el._onscroll = scrollEvent
   },
   beforeDestroy() {
-    this.$el._onscroll = null
-    this.$el.onscroll = null
+    const { $el } = this
+    $el._onscroll = null
+    $el.onscroll = null
   },
   activated() {
     this.scrollEvent()
@@ -106,11 +111,11 @@ export default {
       const { scrollTop } = $el
       if (!fixed) {
         const { scrollLeft } = body.$el
-        this.table.scrollLeft = scrollLeft
+        table.scrollLeft = scrollLeft
       }
       if (scrollTop === table.scrollTop) return
-      this.table.fixedType = fixed
-      this.table.scrollTop = scrollTop
+      table.fixedType = fixed
+      table.scrollTop = scrollTop
     }
   }
 }

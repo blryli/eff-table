@@ -25,19 +25,21 @@ export default {
   },
   computed: {
     pClass() {
-      return `${this.effect ? `is-${this.effect}` : 'is-light'}  v-popover__${this.momentPlacement} ${this.popoverClass} ${this.show ? 'v-popover--visible' : 'v-popover--hidden'}`
+      const { effect, show, momentPlacement, popoverClass } = this
+      return `${effect ? `is-${effect}` : 'is-light'}  v-popover__${momentPlacement} ${popoverClass} ${show ? 'v-popover--visible' : 'v-popover--hidden'}`
     },
     popoverStyle() {
+      const { effect } = this
       const style = {
         '--borderColor': '#ccc',
         '--bgColor': '#fff',
         '--color': '#303133'
       }
-      if (!this.effect) {
+      if (!effect) {
         return style
       }
-      if (typeof this.effect === 'string') {
-        switch (this.effect) {
+      if (typeof effect === 'string') {
+        switch (effect) {
           case 'light':
             style['--borderColor'] = '#ccc'
             style['--bgColor'] = '#fff'
@@ -59,22 +61,22 @@ export default {
             style['--color'] = '#fff'
             break
           default:
-            style['--borderColor'] = this.effect
-            style['--bgColor'] = this.effect
+            style['--borderColor'] = effect
+            style['--bgColor'] = effect
             style['--color'] = '#fff'
             break
         }
-      } else if (typeof this.effect === 'object') {
-        if (Array.isArray(this.effect)) {
+      } else if (typeof effect === 'object') {
+        if (Array.isArray(effect)) {
           console.error('effect 只能是对象或字符串')
         } else {
-          style['--borderColor'] = this.effect.borderColor
-            ? this.effect.borderColor
+          style['--borderColor'] = effect.borderColor
+            ? effect.borderColor
             : '#ccc'
-          style['--bgColor'] = this.effect.backgroundColor
-            ? this.effect.backgroundColor
+          style['--bgColor'] = effect.backgroundColor
+            ? effect.backgroundColor
             : '#fff'
-          style['--color'] = this.effect.olor ? this.effect.olor : '#303133'
+          style['--color'] = effect.color ? effect.color : '#303133'
         }
       } else {
         console.error('effect 只能是对象或字符串')
@@ -103,14 +105,16 @@ export default {
   },
   methods: {
     popoverAddedBody() {
-      if (!this.addedBody && this.show) {
-        document.body.appendChild(this.$el)
+      const { addedBody, show, $el } = this
+      if (!addedBody && show) {
+        document.body.appendChild($el)
         this.addedBody = true
       }
     },
     doShow() {
-      if (this.timeoutPending) {
-        clearTimeout(this.timeoutPending)
+      const { timeoutPending } = this
+      if (timeoutPending) {
+        clearTimeout(timeoutPending)
         this.show = true
       } else {
         this.show = true
@@ -126,7 +130,8 @@ export default {
       }
     },
     mouseenterWrap() {
-      this.enterable && clearTimeout(this.timeoutPending)
+      const { enterable, timeoutPending } = this
+      enterable && clearTimeout(timeoutPending)
     },
     mouseleaveWrap() {
       if (this.enterable) {
@@ -136,16 +141,17 @@ export default {
       }
     },
     calculateCoordinate() {
-      !this.addedBody && this.popoverAddedBody()
-      const popover = this.$el
-      const referenceRect = getDomClientRect(this.reference)
+      const { addedBody, $el, reference, momentPlacement, popoverAddedBody, changeDirection } = this
+      !addedBody && popoverAddedBody()
+      const popover = $el
+      const referenceRect = getDomClientRect(reference)
       const popoverRect = getDomClientRect(popover)
 
-      this.changeDirection(popoverRect, referenceRect)
+      changeDirection(popoverRect, referenceRect)
 
       let top
       const left = referenceRect.centerX - (popoverRect.width / 2)
-      switch (this.momentPlacement) {
+      switch (momentPlacement) {
         case 'top':
           top = referenceRect.top - popoverRect.height - 10
           break
@@ -183,16 +189,17 @@ export default {
     }
   },
   render(h) {
+    const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message } = this
     return <transition name='fade'>
       <div
         ref='popover'
-        class={'v-popover ' + this.pClass}
-        style={this.popoverStyle}
-        on-mouseenter={this.mouseenterWrap}
-        on-mouseleave={this.mouseleaveWrap}
+        class={'v-popover ' + pClass}
+        style={popoverStyle}
+        on-mouseenter={mouseenterWrap}
+        on-mouseleave={mouseleaveWrap}
       >
         {
-          this.$slots.default || (this.message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
+          $slots.default || (message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='v-popover__arrow' />
       </div>

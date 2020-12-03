@@ -23,28 +23,32 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table'
-      this.overflowX && (tClass += ' is-overflow--x')
-      this.overflowY && (tClass += ' is-overflow--y')
-      this.border && (tClass += ' is-border')
+      const { overflowX, overflowY, border } = this
+      overflowX && (tClass += ' is-overflow--x')
+      overflowY && (tClass += ' is-overflow--y')
+      border && (tClass += ' is-border')
       return tClass
     },
     bodyRenderWidth() {
-      return this.columnIsVirtual ? this.columnWidths.slice(this.columnRenderIndex, this.columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : this.bodyWidth
+      const { columnIsVirtual, columnWidths, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
+      return columnIsVirtual ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
     },
     fixedHeight() {
-      if (this.showSummary) {
+      const { showSummary, heights, overflowX } = this
+      if (showSummary) {
         return ''
       }
-      const { headerHeight, bodyHeight, searchHeight } = this.heights
+      const { headerHeight, bodyHeight, searchHeight } = heights
       let height = headerHeight + bodyHeight + searchHeight
-      this.overflowX && (height -= 17)
+      overflowX && (height -= 17)
       return height + 'px'
     },
     scrollYwidth() {
       return this.overflowY ? 17 : 0
     },
     isScrollRightEnd() {
-      return this.bodyWrapperWidth + this.scrollLeft > this.bodyWidth + this.scrollYwidth
+      const { bodyWrapperWidth, scrollLeft, bodyWidth, scrollYwidth } = this
+      return bodyWrapperWidth + scrollLeft > bodyWidth + scrollYwidth
     },
     headerRanked() {
       function getDeepth(array) {
@@ -97,16 +101,17 @@ export default {
   methods: {
     resize() {
       this.$nextTick(() => {
-        this.bodyWrapperWidth = this.$el.getBoundingClientRect().width || this.minWidth
-        this.setOverflowX()
-        this.scrollLeftEvent()
-        this.tableBody = this.$el.querySelector('.eff-table__body')
+        const { $el, minWidth, setOverflowX, scrollLeftEvent } = this
+        this.bodyWrapperWidth = $el.getBoundingClientRect().width || minWidth
+        setOverflowX()
+        scrollLeftEvent()
+        this.tableBody = $el.querySelector('.eff-table__body')
       })
     },
     setOverflowX() {
-      const { minWidth, bodyWrapperWidth } = this
-      this.bodyWidth = Math.max(bodyWrapperWidth, minWidth) - 2 - (this.overflowY ? 17 : 0)
-      this.overflowX = minWidth > bodyWrapperWidth - this.scrollYwidth
+      const { minWidth, bodyWrapperWidth, overflowY, scrollYwidth } = this
+      this.bodyWidth = Math.max(bodyWrapperWidth, minWidth) - 2 - (overflowY ? 17 : 0)
+      this.overflowX = minWidth > bodyWrapperWidth - scrollYwidth
     },
     doLayout() {
       this.resize()
@@ -122,8 +127,9 @@ export default {
     let num = 0
     this.timer = setInterval(() => {
       num++
-      this.bodyWrapperWidth = this.$el.getBoundingClientRect().width
-      if (this.bodyWrapperWidth || num === 30) {
+      const { $el, bodyWrapperWidth } = this
+      this.bodyWrapperWidth = $el.getBoundingClientRect().width
+      if (bodyWrapperWidth || num === 30) {
         clearInterval(this.timer)
       }
     }, 100)

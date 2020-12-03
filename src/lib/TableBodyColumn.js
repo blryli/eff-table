@@ -19,15 +19,17 @@ export default {
     }
   },
   render(h) {
-    const { cellRender, type, prop } = this.column
-    const slot = this.row[this.columnIndex] !== undefined ? this.row[this.columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? this.rowIndex + 1 : prop ? this.row[prop] : '')
+    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
+    const { cellRender, type, prop } = column
+    // row[columnIndex] summary合计列
+    const slot = row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
     return (
       <div
         class={this.columnClass}
-        key={this.rowIndex + '-' + this.columnIndex}
-        style={this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)}
-        on-mouseenter={event => this.handleMouseenter(event, slot)}
-        on-mouseleave={event => this.handleMouseleave(event, slot)}
+        key={rowIndex + '-' + columnIndex}
+        style={table.setColumnStyle(column, columnIndex, fixed)}
+        on-mouseenter={event => handleMouseenter(event, slot)}
+        on-mouseleave={event => handleMouseleave(event, slot)}
       >
         <div ref='cell' class='eff-cell'>
           <span class='eff-cell--label'>{slot}</span>
@@ -65,14 +67,16 @@ export default {
   },
   methods: {
     renderSelection(h) {
+      const { table, rowIndex, selectionChange } = this
       return <v-checkbox
-        value={this.table.isChecked(this.rowIndex)}
-        key={this.rowIndex}
-        on-change={this.selectionChange}
+        value={table.isChecked(rowIndex)}
+        key={rowIndex}
+        on-change={selectionChange}
       />
     },
     selectionChange(selected) {
-      this.table.$emit('row.selection.change', this.rowIndex, selected)
+      const { table, rowIndex } = this
+      table.$emit('row.selection.change', rowIndex, selected)
     },
     cellRender(h) {
       const { row, rowIndex } = this
@@ -89,30 +93,28 @@ export default {
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
-      const { cell } = this.$refs
-      const { row, column, rowIndex, columnIndex } = this
-      this.table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
+      const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
+      table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
 
       const messages = []
-      if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > this.table.spaceWidth) {
+      if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > table.spaceWidth) {
         messages.push({ type: 'info', message: cell.innerText })
       }
       if (this.message && this.message.message) {
         messages.push({ type: 'error', message: this.message.message })
       }
       if (messages.length) {
-        this.table.tipShow({ reference: cell.parentNode, message: messages })
+        table.tipShow({ reference: cell.parentNode, message: messages })
       }
     },
     handleMouseleave(event, slot) {
       if (this.$parent.summary) return
-      const { row, column, rowIndex, columnIndex } = this
-      const { cell } = this.$refs
-      this.table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
-      this.table.tipClose()
+      const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
+      table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
+      table.tipClose()
     }
   }
 }

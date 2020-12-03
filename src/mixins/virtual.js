@@ -18,26 +18,30 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const len = this.tableData.length
-      return len > 50 && len > this.renderSize
+      const { tableData: { length }, renderSize } = this
+      return length > 50 && length > renderSize
     },
     renderData() {
-      return this.isVirtual ? this.tableData.slice(this.renderIndex, this.renderSize + this.renderIndex) : this.tableData
+      const { isVirtual, tableData, renderIndex, renderSize } = this
+      return isVirtual ? tableData.slice(renderIndex, renderSize + renderIndex) : tableData
     },
     renderSize() {
-      return parseInt(this.heights.bodyHeight / this.rowHeight + 6)
+      const { heights: { bodyHeight }, rowHeight } = this
+      return parseInt(bodyHeight / rowHeight + 6)
     },
     // 列虚拟滚动
     columnVisibleWidth() {
-      return this.bodyWrapperWidth - this.leftWidth - this.rightWidth - (this.overflowY ? 17 : 0)
+      const { bodyWrapperWidth, leftWidth, rightWidth, overflowY } = this
+      return bodyWrapperWidth - leftWidth - rightWidth - (overflowY ? 17 : 0)
     },
     columnIsVirtual() {
       // return false
-      return this.bodyWidth - this.leftWidth - this.rightWidth > this.columnVisibleWidth + 600
+      const { bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
+      return bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
     },
     renderColumn() {
-      const { bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
-      return this.columnIsVirtual ? bodyColumns.slice(columnRenderIndex, getColumnEndRenderIndex()) : bodyColumns
+      const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
+      return columnIsVirtual ? bodyColumns.slice(columnRenderIndex, getColumnEndRenderIndex()) : bodyColumns
     },
     columnFirstIndex() {
       return this.bodyColumns.filter(d => d.fixed === 'left').length
@@ -55,17 +59,18 @@ export default {
       }
     },
     scrollTop(scrollTop) {
-      if (scrollTop < this.rowHeight) {
+      const { rowHeight } = this
+      if (scrollTop < rowHeight) {
         this.scrollIndex = 0
       }
       if (this.isVirtual) {
-        this.scrollIndex = parseInt(scrollTop / this.rowHeight)
+        this.scrollIndex = parseInt(scrollTop / rowHeight)
       }
     },
     scrollIndex(scrollIndex, oldScrollIndex) {
-      const { renderSize, scrollTop, rowHeight, tableData } = this
+      const { renderSize, scrollTop, rowHeight, tableData, renderIndex } = this
       const last = tableData.length - renderSize
-      const offset = Math.abs(scrollIndex - this.renderIndex)
+      const offset = Math.abs(scrollIndex - renderIndex)
 
       if (scrollIndex < 2) {
         this.renderIndex = 0
@@ -80,8 +85,9 @@ export default {
       }
     },
     scrollLeft(scrollLeft, oldScrollLeft) {
+      const { columnIsVirtual, scrollLeftEvent } = this
       this.scrollLeftDir = scrollLeft > oldScrollLeft ? 'right' : 'left'
-      this.columnIsVirtual && this.scrollLeftEvent(scrollLeft)
+      columnIsVirtual && scrollLeftEvent(scrollLeft)
     },
     columnIsVirtual(val) {
       if (val) {
@@ -93,20 +99,22 @@ export default {
     }
   },
   mounted() {
-    this.columnIsVirtual && this.scrollLeftEvent()
+    const { columnIsVirtual, scrollLeftEvent } = this
+    columnIsVirtual && scrollLeftEvent()
   },
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       this.scrollLeft = scrollLeft
-      if (!this.columnIsVirtual || scrollLeft === 0) {
+      const { columnIsVirtual, columnWidths } = this
+      if (!columnIsVirtual || scrollLeft === 0) {
         this.leftScrollIndex = 0
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
         return
       }
       let curWidth = 0
-      for (let i = 0; i < this.columnWidths.length; i++) {
-        const width = this.columnWidths[i]
+      for (let i = 0; i < columnWidths.length; i++) {
+        const width = columnWidths[i]
         curWidth += width
         if (scrollLeft < curWidth) {
           this.leftScrollIndex = i
@@ -116,11 +124,11 @@ export default {
       this.leftScrollIndexChange(this.leftScrollIndex)
     },
     leftScrollIndexChange(leftScrollIndex) {
-      const { columnFirstIndex, columnLastIndex, scrollLeft, getWidth } = this
+      const { columnFirstIndex, columnLastIndex, scrollLeft, columnRenderIndex, preScrollLeft, bodyWidth, getWidth } = this
 
       const last = columnLastIndex - 3
-      const offsetIndex = Math.abs(leftScrollIndex - this.columnRenderIndex)
-      const offsetScroll = Math.abs(this.preScrollLeft - scrollLeft)
+      const offsetIndex = Math.abs(leftScrollIndex - columnRenderIndex)
+      const offsetScroll = Math.abs(preScrollLeft - scrollLeft)
 
       if (leftScrollIndex <= 2) {
         this.columnRenderIndex = columnFirstIndex
@@ -129,7 +137,7 @@ export default {
       } else if (leftScrollIndex >= last) {
         this.columnRenderIndex = last
         this.bodyMarginLeft = getWidth(0, last) + 'px'
-        this.preScrollLeft = this.bodyWidth
+        this.preScrollLeft = bodyWidth
       } else if (offsetScroll > 200 || offsetScroll > getWidth(leftScrollIndex, leftScrollIndex + 2) || offsetIndex > 1) {
         this.preScrollLeft = scrollLeft
         this.columnRenderIndex = leftScrollIndex - 1

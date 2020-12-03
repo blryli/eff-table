@@ -29,18 +29,19 @@ export default {
   },
   watch: {
     show(val) {
+      const { table, component } = this
       if (val) {
-        this.table.$emit('editOpen')
+        table.$emit('editOpen')
       } else {
-        this.component && this.component.close && this.component.close()
+        component && component.close && component.close()
         this.handleValidate()
-        this.table.clearSelection()
+        table.clearSelection()
         this.placement = ''
         this.scrollNum = 0
         this.column = null
         this.cell = null
-        this.table.$emit('editClose')
-        this.table.$emit('blur')
+        table.$emit('editClose')
+        table.$emit('blur')
       }
     },
     'table.scrollTop'(scrollTop) {
@@ -142,31 +143,31 @@ export default {
       return column && render && typeof render === 'function' && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
-      const { placement, rowIndex } = this
-      let cellIndex = 0
-      let columns = []
+      const { placement, rowIndex, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
+      let toCellIndex = 0
+      let toColumns = []
       let column = {}
-      const filterColumns = columns => columns.filter(column => this.canFocus(column) && !this.skip(column))
+      const filterColumns = columns => columns.filter(column => canFocus(column) && !skip(column))
       if (placement === 'right') {
-        cellIndex = this.cellIndex + 1
-        columns = filterColumns(this.columns.slice(cellIndex))
-        column = columns[0] || false
+        toCellIndex = cellIndex + 1
+        toColumns = filterColumns(columns.slice(toCellIndex))
+        column = toColumns[0] || false
       } else {
-        cellIndex = this.cellIndex
-        columns = filterColumns(this.columns.slice(0, cellIndex))
-        column = columns[columns.length - 1] || false
+        toCellIndex = cellIndex
+        toColumns = filterColumns(columns.slice(0, toCellIndex))
+        column = toColumns[toColumns.length - 1] || false
       }
-      const { cell } = this.getColumn(column.prop)
+      const { cell } = getColumn(column.prop)
 
-      if (column && this.canFocus(column, cell)) {
-        this.editCell(column, cell)
+      if (column && canFocus(column, cell)) {
+        editCell(column, cell)
       } else {
-        shake(this.$el, 'x')
-        this.table.$emit('editColumnLastToNext', { placement, rowIndex, cellIndex: this.cellIndex })
+        shake($el, 'x')
+        table.$emit('editColumnLastToNext', { placement, rowIndex, cellIndex })
       }
     },
     toY() {
-      const { placement, column } = this
+      const { placement, column, $el } = this
       const cell = getTableNode(this.cell, placement)
       if (cell) {
         const colid = cell.getAttribute('data-colid')
@@ -174,18 +175,19 @@ export default {
         this.rowIndex = +rowIndex - 1
         this.editCell(column, cell)
       } else {
-        shake(this.$el, 'y')
+        shake($el, 'y')
       }
     },
     skip(column) {
-      const { edit: { skip } = {}} = column || {}
+      const { edit: { skip } = {}, prop = '' } = column || {}
+      const { table, rowIndex } = this
       if (skip === undefined) return false
 
       if (typeof skip === 'function') {
-        return skip({ row: this.table.data[this.rowIndex], rowIndex: this.rowIndex })
+        return skip({ row: table.data[rowIndex], rowIndex })
       }
       if (typeof skip !== 'boolean') {
-        console.error(`${this.column.prop} 字段，skip类型必须是 function/boolean`)
+        console.error(`${prop} 字段，skip类型必须是 function/boolean`)
       }
       return skip || false
     },
@@ -198,26 +200,27 @@ export default {
     editCell(column, cell) {
       this.scrollNum = 0
       const { prop } = column || {}
-      const cellIndex = this.getColumnIndex(prop)
+      const { rowIndex, getColumnIndex, canFocus, getColumn, fixOverflowX } = this
+      const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
         // console.log({ column, cell, cellIndex, index: this.cellIndex })
-        if (cellIndex === -1 || !this.canFocus(column, cell)) return
+        if (cellIndex === -1 || !canFocus(column, cell)) return
 
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
           this.cellIndex = cellIndex
-          this.cell = this.getColumn(prop).cell
+          this.cell = getColumn(prop).cell
           this.show = true
           this.setElPos() // 设置编辑框位置
 
-          this.table.$emit('blur', prop, this.rowIndex)
+          this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦
         })
       }
       if (!cell) {
-        this.fixOverflowX(cellIndex).then(() => {
-          const { cell: getCell } = this.getColumn(prop)
+        fixOverflowX(cellIndex).then(() => {
+          const { cell: getCell } = getColumn(prop)
           editCell(cell || getCell)
         })
       } else {
@@ -298,7 +301,8 @@ export default {
       this.$el.style.height = `${height + 1}px`
     },
     handleWindowMousedown(e) {
-      if (!this.show || this.$el.contains(e.target) || this.table.editStop) return
+      const { show, $el, table } = this
+      if (!show || $el.contains(e.target) || table.editStop) return
       this.show = false
     },
     close() {
@@ -306,16 +310,17 @@ export default {
     },
     focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
       this.rowIndex = +rowIndex
-      const { column, cell, columnIndex } = this.getColumn(prop, +rowIndex)
+      const { table, getColumn, editCell, fixOverflowX } = this
+      const { column, cell, columnIndex } = getColumn(prop, +rowIndex)
       if (cell) {
-        this.editCell(column, cell)
+        editCell(column, cell)
       } else {
-        this.fixOverflowX(columnIndex).then(() => {
-          this.table.toScroll(+rowIndex).then(() => {
+        fixOverflowX(columnIndex).then(() => {
+          table.toScroll(+rowIndex).then(() => {
             setTimeout(() => {
-              const { column, cell } = this.getColumn(prop, +rowIndex)
+              const { column, cell } = getColumn(prop, +rowIndex)
               this.handleType = 'to'
-              this.editCell(column, cell)
+              editCell(column, cell)
             }, 100)
           })
         })
@@ -327,10 +332,11 @@ export default {
       return this.body.querySelector(`.eff-table__body-row[data-rowid='${rowIndex + 1}'] .eff-table__column[data-colid='${rowid}-${colid}']`)
     },
     getColumn(prop, rowIndex) {
-      if (rowIndex === undefined) rowIndex = this.rowIndex
-      const columnIndex = this.getColumnIndex(prop)
-      const cell = this.getRow(rowIndex, columnIndex)
-      const column = this.columns[columnIndex]
+      const { rowIndex: index, columns, getColumnIndex, getRow } = this
+      if (rowIndex === undefined) rowIndex = index
+      const columnIndex = getColumnIndex(prop)
+      const cell = getRow(rowIndex, columnIndex)
+      const column = columns[columnIndex]
       return { column, cell, columnIndex }
     },
     getColumnIndex(prop) {
@@ -343,9 +349,10 @@ export default {
     }
   },
   render(h) {
-    const classes = `eff-table-edit${this.show ? ' is-show' : ' is-hide'}`
-    const style = { '--height': this.table.rowHeight - 2 + 'px' }
-    const input = this.$createElement('input', { class: 'eff-table-edit-input', ref: 'editInput' })
-    return <div class={classes} style={style}>{[this.editRender, input]}</div>
+    const { show, table, editRender, $createElement } = this
+    const classes = `eff-table-edit${show ? ' is-show' : ' is-hide'}`
+    const style = { '--height': table.rowHeight - 2 + 'px' }
+    const input = $createElement('input', { class: 'eff-table-edit-input', ref: 'editInput' })
+    return <div class={classes} style={style}>{[editRender, input]}</div>
   }
 }

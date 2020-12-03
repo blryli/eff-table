@@ -32,13 +32,14 @@ export default {
   },
   methods: {
     getValue() {
-      if (!this.value) return ''
-      if (Array.isArray(this.value)) {
-        const [start, end] = this.value
+      const { value } = this
+      if (!value) return ''
+      if (Array.isArray(value)) {
+        const [start, end] = value
         if (!start || !end) return []
         return `${start} - ${end}`
       } else {
-        return this.value
+        return value
       }
     },
     handleInput(e) {

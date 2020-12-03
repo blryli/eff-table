@@ -111,55 +111,55 @@ export default {
     }
   },
   render(h) {
-    const { column, columnIndex } = this
+    const { column, columnIndex, columnClass, width, table, form, operators, reference, valueChange, handleMouseenter, handleMouseleave, operatorChange } = this
     const { search, prop } = column
     const { operator, render, rangeRender } = search || {}
-    const { type } = this.form
+    const { type, value } = form
     let slot = ''
     let rangeSlot = ''
-    if (this.table.search && search) {
+    if (search && search) {
       if (render && typeof render !== 'function') {
         console.error('search render必须是函数！')
       }
       if (rangeRender && typeof rangeRender !== 'function') {
         console.error('search rangeRender必须是函数！')
       }
-      slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={this.form.value} on-input={val => (this.form.value = val)} on-change={this.valueChange}/> || ''
-      rangeSlot = rangeRender && rangeRender(h, { prop, column, columnIndex }) || <RangeInput value={this.form.value} column={column} on-change={this.valueChange}/> || ''
+      slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={value} on-input={val => (this.form.value = val)} on-change={valueChange}/> || ''
+      rangeSlot = rangeRender && rangeRender(h, { prop, column, columnIndex }) || <RangeInput value={value} column={column} on-change={valueChange}/> || ''
     }
 
     return (
       <div
-        class={this.columnClass}
-        key={this.columnIndex}
-        data-colid={this.columnIndex}
-        style={this.table.setColumnStyle(column, columnIndex, this.width)}
+        class={columnClass}
+        key={columnIndex}
+        data-colid={columnIndex}
+        style={table.setColumnStyle(column, columnIndex, width)}
       >
         <div ref='item' class='eff-table__search-item'>
           {
             operator ? <div ref='dropdown' class='eff-table__search-dropdown'
-              on-mouseenter={this.handleMouseenter}
-              on-mouseleave={this.handleMouseleave}
+              on-mouseenter={handleMouseenter}
+              on-mouseleave={handleMouseleave}
             >
-              <Icon icon={type} operator={this.operators} />
+              <Icon icon={type} operator={operators} />
               <Popover
                 ref='popover'
                 placement='bottom'
-                reference={this.reference}
+                reference={reference}
                 enterable
               >
-                <Operator data={this.operators} type={type} on-change={this.operatorChange} />
+                <Operator data={operators} type={type} on-change={operatorChange} />
               </Popover>
             </div> : ''
           }
           {
-            slot ? <div class='eff-table__search-element' hidden={this.form.type === 'range'}>{slot}</div> : ''
+            slot ? <div class='eff-table__search-element' hidden={type === 'range'}>{slot}</div> : ''
           }
           {
-            rangeSlot ? <div class='eff-table__search-element' hidden={this.form.type !== 'range'}>{rangeSlot}</div> : ''
+            rangeSlot ? <div class='eff-table__search-element' hidden={type !== 'range'}>{rangeSlot}</div> : ''
           }
           {
-            this.table.search && !column.search && <div class='eff-table__search-empty' /> || ''
+            table.search && !search && <div class='eff-table__search-empty' /> || ''
           }
         </div>
       </div>

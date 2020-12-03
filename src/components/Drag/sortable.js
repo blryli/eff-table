@@ -14,7 +14,6 @@ let relation = {
   clone: null,
   enterFrom: false,
   enterTo: false,
-  dragImageEl: null,
   fromGroup: null,
   toGroup: null
 }

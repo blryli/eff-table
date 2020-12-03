@@ -167,7 +167,8 @@ export default {
           prop: 'city',
           title: '城市城市城市城市',
           width: 300,
-          sortable: true
+          sortable: true,
+          search: true
         },
         {
           show: true,

@@ -72,18 +72,15 @@ export default {
   methods: {
     change(val) {
       const { field } = val
-      const index = this.searchData.findIndex(d => d.field === field)
-      index > -1 ? this.searchData.splice(index, 1, val) : this.searchData.push(val)
+      const { searchData } = this
+      const index = searchData.findIndex(d => d.field === field)
+      index > -1 ? searchData.splice(index, 1, val) : searchData.push(val)
 
-      // console.log('handleSearchChange', JSON.stringify(this.searchData, null, 2))
-      this.$emit('input', this.searchData)
-      this.$emit('change', this.searchData.filter(d => {
+      // console.log('handleSearchChange', JSON.stringify(searchData, null, 2))
+      this.$emit('input', searchData)
+      this.$emit('change', searchData.filter(d => {
         const { content } = d
-        if (Array.isArray(content)) {
-          return Boolean(content.length)
-        } else {
-          return Boolean(content)
-        }
+        return Boolean(Array.isArray(content) ? content.length : content)
       }))
     },
     handleShow(val) {
@@ -94,20 +91,21 @@ export default {
     }
   },
   render(h) {
-    return <div class='eff-table__search' style={{ height: this.table.rowHeight + 'px' }}>
+    const { table, columns, searchData, operators, change, showSpace } = this
+    return <div class='eff-table__search' style={{ height: table.rowHeight + 'px' }}>
       {
-        this.columns.map((column, columnIndex) => {
+        columns.map((column, columnIndex) => {
           return <SearchColumn
-            value={this.searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
+            value={searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
             column={column}
             column-index={columnIndex}
-            operators={this.operators}
-            on-change={this.change}
+            operators={operators}
+            on-change={change}
           />
         })
       }
       {
-        this.showSpace ? <div class='eff-table__column is--space' /> : ''
+        showSpace ? <div class='eff-table__column is--space' /> : ''
       }
     </div>
   }

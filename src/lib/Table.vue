@@ -198,7 +198,7 @@ export default {
       lineShow: false,
       isScreenfull: false,
       tableBody: null,
-      tableData: [...this.data],
+      tableData: Object.freeze([...this.data]),
       rowHoverIndex: null
     }
   },
@@ -237,7 +237,7 @@ export default {
   },
   watch: {
     data(val) {
-      this.tableData = [...val]
+      this.tableData = Object.freeze([...val])
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
