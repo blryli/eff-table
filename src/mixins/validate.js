@@ -53,18 +53,24 @@ export default {
       return validate(result)
     },
     validate(cb) {
-      if (typeof cb !== 'function') {
-        console.error('validate参数必须是函数')
-        return
-      }
-      const { data, validateRow } = this
-      const validators = data.reduce((acc, cur, idx) => {
-        return acc.concat(validateRow(idx))
-      }, [])
-      Promise.all(validators).then(res => {
-        cb(!res.find(re => re.message), res)
-      }).catch(err => {
-        console.error(err)
+      return new Promise(resolve => {
+        if (typeof cb !== 'function') {
+          console.error('validate参数必须是函数')
+          resolve()
+        }
+        const { data, validateRow } = this
+        const validators = data.reduce((acc, cur, idx) => {
+          return acc.concat(validateRow(idx))
+        }, [])
+        Promise.all(validators).then(res => {
+          const success = !res.find(re => re.message)
+          if (success) {
+            cb(success, res)
+          }
+          resolve({ success, data: res })
+        }).catch(err => {
+          resolve(err)
+        })
       })
     },
     validateRow(rowIndex) {

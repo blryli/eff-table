@@ -16,7 +16,7 @@ const mainSnippet = `
 import Vue from 'vue'
 import App from './App.vue'
 import ${upName} from '${config.name}'
-import '${config.name}.css'
+import '${config.name}/dist/${config.name}.css'
 
 Vue.use(${upName})
 

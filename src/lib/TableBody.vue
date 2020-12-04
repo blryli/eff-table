@@ -188,7 +188,12 @@ export default {
   }
 }
 .eff-table__body-wrapper{
-  overflow-y: auto;
+  overflow-x: hidden;
+}
+.is-overflow--x{
+  .eff-table__body-wrapper{
+    overflow-x: auto;
+  }
 }
 
 .eff-table__fixed-left{
@@ -197,9 +202,6 @@ export default {
   }
 }
 
-.eff-table__body-wrapper{
-  overflow-x: auto;
-}
 .eff-empty-text{
   display: flex;
   justify-content: center;

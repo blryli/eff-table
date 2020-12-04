@@ -13,11 +13,11 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag } = this.column
+      const { titleClassName, drag, fixed } = this.column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
-      if (drag === false) {
+      if (drag === false || fixed) {
         classes += ' is-drag--filter'
       }
       return classes

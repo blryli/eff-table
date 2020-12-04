@@ -101,7 +101,7 @@ export default {
                   this.to()
                 }, leaveTime)
               } else if (typeof leaveTime === 'function') {
-                const leaveFn = leaveTime({ row, rowIndex })
+                const leaveFn = leaveTime({ prop, row, rowIndex })
                 if (getType(leaveFn) === 'Promise') {
                   leaveFn.then(() => {
                     this.to()

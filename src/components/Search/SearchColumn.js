@@ -3,7 +3,9 @@ import Popover from '../Popover/index.vue'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'
 import RangeInput from './components/RangeInput.vue'
-import XEUtils from 'xe-utils'
+import { getType } from 'utils'
+
+const isDate = val => getType(val) === 'Date'
 
 export default {
   name: 'TableSearchColumn',
@@ -101,9 +103,9 @@ export default {
     change() {
       const operator = this.form.type
       let content = this.form.value
-      if (Array.isArray(content) && XEUtils.isDate(content[0])) {
+      if (Array.isArray(content) && isDate(content[0])) {
         content = content.map(d => new Date(d).getTime())
-      } else if (XEUtils.isDate(content)) {
+      } else if (isDate(content)) {
         content = new Date(content).getTime()
       }
       const type = this.column.search.type || null

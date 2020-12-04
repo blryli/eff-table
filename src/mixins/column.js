@@ -13,18 +13,18 @@ export default {
       return bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + Math.max((cur.width || spaceWidth), 40) : acc, 0)
     },
     minWidth() {
-      return this.bodyColumns.reduce((acc, cur) => cur.width ? acc + cur.width : acc, 0)
+      return this.bodyColumns.reduce((acc, cur) => cur.width ? acc + Math.max(cur.width, 40) : acc, 0)
     },
     spaceNum() {
       return this.bodyColumns.filter(d => !d.width).length
     },
     spaceWidth() {
       const { spaceNum, bodyWrapperWidth, minWidth, scrollYwidth } = this
-      return spaceNum ? (bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - minWidth - scrollYwidth) / spaceNum : 0
+      return spaceNum ? (bodyWrapperWidth - 2 - minWidth - scrollYwidth) / spaceNum : 0
     },
     showSpace() {
       const { minWidth, bodyWrapperWidth, spaceWidth, spaceNum, scrollYwidth } = this
-      return minWidth + spaceWidth * (spaceNum || 1) < bodyWrapperWidth - (spaceNum === 1 ? 2 : 2.5) - scrollYwidth
+      return minWidth + spaceWidth * (spaceNum || 1) < bodyWrapperWidth - 2 - scrollYwidth
     }
     // table
     // columnsNest() {

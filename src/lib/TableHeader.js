@@ -101,7 +101,7 @@ export default {
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
           if (children.length) {
             acc.push(<div class='eff-table__header-group'>
-              <div class='header-title' style={{ maxHeight: rowHeight + 'px' }}>
+              <div class='header-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='header-children'>
@@ -194,11 +194,11 @@ export default {
     end() {
       this.table.lineShow = false
       this.isDraging = false
-      const { visibleColumns } = this
+      const { visibleColumns, dragingTarget, moveX } = this
 
-      const colid = this.dragingTarget.getAttribute('data-colid')
-      const colidx = this.dragingTarget.getAttribute('data-colidx')
-      const width = this.dragingTarget.offsetWidth + this.moveX
+      const colid = dragingTarget.getAttribute('data-colid')
+      const colidx = dragingTarget.getAttribute('data-colidx')
+      const width = dragingTarget.offsetWidth + moveX
       let obj = {}
       const ids = colid.split('-').map(d => +d)
       const [, next] = ids
@@ -221,7 +221,7 @@ export default {
 
       setTimeout(() => {
         if (this.dragingTarget) {
-          const dragMove = this.$refs.dragMove
+          const { dragMove } = this.$refs
           const { right } = this.dragingTarget.getBoundingClientRect()
           dragMove.style.left = right - dragMove.offsetWidth + 'px'
           this.dragingTarget = null

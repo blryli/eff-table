@@ -119,7 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>overflowY {{ overflowY }}</p> -->
+    <!-- <p>minWidth {{ minWidth }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -476,7 +476,6 @@ export default {
   align-items: center;
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
-  overflow: hidden;
 }
 .eff-table__header{
   .eff-table__column{

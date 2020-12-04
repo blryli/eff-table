@@ -4,20 +4,14 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          ref="table"
           v-model="columns"
           :data="list"
           :form.sync="form"
-          :max-height="400"
-          drag
-          column-control
           search
           fullscreen
           border
           @search-change="searchChange"
         />
-        <!-- <p>searchData {{ searchData }}</p>
-        <p>form {{ form }}</p> -->
       </div>
     </section>
 
@@ -41,13 +35,153 @@ import mock from 'mockjs'
 const mainSnippet = `
 data () {
   return {
-    msg: 'vue component'
+    searchData: [],
+    form: {},
+    options: [{
+      value: '男',
+      label: '男'
+    }, {
+      value: '女',
+      label: '女'
+    }],
+    hobbys: [{
+      value: 'K歌',
+      label: 'K歌'
+    }, {
+      value: '游泳',
+      label: '游泳'
+    }, {
+      value: '篮球',
+      label: '篮球'
+    }],
+    data: [],
+    list: [],
+    columns: [
+      {
+        show: true,
+        prop: 'index',
+        title: '序号',
+        fixed: 'left',
+        width: 80
+      },
+      {
+        show: true,
+        prop: 'cname',
+        title: '名字',
+        search: true,
+        width: 120
+      },
+      {
+        show: true,
+        prop: 'sex',
+        title: '性别',
+        width: 100,
+        search: {
+          render: (h, { prop, row, rowIndex }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.options.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'age',
+        title: '年龄',
+        search: {
+          operator: true
+        },
+        width: 100
+      },
+      {
+        show: true,
+        prop: 'hobby',
+        title: '爱好',
+        search: {
+          render: (h, { prop, row, rowIndex }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              multiple={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.hobbys.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'datetime',
+        title: '时间',
+        search: {
+          render: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='date'
+              on-input={val => this.updateForm(prop, val)}
+            ></el-date-picker>
+          },
+          rangeRender: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='daterange'
+              on-input={val => this.updateForm(prop, val)}
+            ></el-date-picker>
+          },
+          operator: true,
+          operatorDefault: 'equals',
+          type: 'dates'
+        }
+      }
+    ]
+  },
+  updateForm(prop, val) {
+    this.$set(this.form, prop, val)
+  },
+  searchChange(val) {
+    this.searchData = val
+    let list = [...this.data]
+    if (val.length) {
+      val.forEach(d => {
+        list = list.filter(da => Array.isArray(d.content) ? d.content.includes(da[d.field]) : da[d.field].indexOf(d.content) > -1)
+      })
+    }
+    this.list = list
   }
 }
 `
 
 const componentSnippet = `
-<v-component :msg="msg" />
+<eff-table
+  v-model="columns"
+  :data="list"
+  :form.sync="form"
+  search
+  fullscreen
+  border
+  @search-change="searchChange"
+/>
 `
 export default {
   name: 'Search',
@@ -61,29 +195,26 @@ export default {
       mainSnippet,
       componentSnippet,
       searchData: [],
-      radio: null,
-      form: {
-        email: '',
-        city: '',
-        datetime: ''
-      },
+      form: {},
       options: [{
-        value: '选项1',
-        label: '1'
+        value: '男',
+        label: '男'
       }, {
-        value: '选项2',
-        label: '2'
+        value: '女',
+        label: '女'
+      }],
+      hobbys: [{
+        value: 'K歌',
+        label: 'K歌'
+      }, {
+        value: '游泳',
+        label: '游泳'
+      }, {
+        value: '篮球',
+        label: '篮球'
       }],
       data: [],
       list: [],
-      forData: [
-        { prop: 'city', label: '标题5' },
-        { prop: 'name', label: '标题6' },
-        { prop: 'message', label: '标题7' }
-      ],
-      showOverflowTooltip: true,
-      show: false,
-      sorts: [],
       columns: [
         {
           show: true,
@@ -94,121 +225,110 @@ export default {
         },
         {
           show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 300,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120
+        },
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别',
+          width: 100,
           search: {
-            operator: true
+            render: (h, { prop, row, rowIndex }) => {
+              return <el-select
+                value={this.form[prop]}
+                clearable={true}
+                on-change={val => this.updateForm(prop, val)}
+              >
+                {
+                  this.options.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
+            }
           }
         },
         {
           show: true,
-          prop: 'city',
-          title: '城市城市城市城市',
-          width: 300,
-          sortable: true
-
+          prop: 'age',
+          title: '年龄',
+          search: {
+            operator: true
+          },
+          width: 100
+        },
+        {
+          show: true,
+          prop: 'hobby',
+          title: '爱好',
+          search: {
+            render: (h, { prop, row, rowIndex }) => {
+              return <el-select
+                value={this.form[prop]}
+                clearable={true}
+                multiple={true}
+                on-change={val => this.updateForm(prop, val)}
+              >
+                {
+                  this.hobbys.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
+            }
+          }
         },
         {
           show: true,
           prop: 'datetime',
           title: '时间',
-          width: 300,
           search: {
             render: (h, { prop }) => {
               return <el-date-picker
                 value={this.form[prop]}
                 type='date'
-                on-input={val => (this.form[prop] = val)}
+                on-input={val => this.updateForm(prop, val)}
               />
             },
             rangeRender: (h, { prop }) => {
               return <el-date-picker
                 value={this.form[prop]}
                 type='daterange'
-                on-input={val => (this.form[prop] = val)}
+                on-input={val => this.updateForm(prop, val)}
               />
             },
             operator: true,
             operatorDefault: 'equals',
             type: 'dates'
           }
-        },
-        {
-          show: true,
-          title: '操作',
-          width: 60,
-          fixed: 'right'
         }
       ]
     }
   },
   mounted() {
     setTimeout(() => {
-      this.columns = [
-        {
-          show: true,
-          prop: 'index',
-          title: '序号',
-          fixed: 'left',
-          width: 80
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 300,
-          search: {
-            operator: true
-          }
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市城市城市城市',
-          width: 300,
-          sortable: true,
-          search: true
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '时间',
-          width: 300,
-          search: {
-            render: (h, { column, columnIndex }) => {
-              const { prop } = column
-              return <el-date-picker
-                value={this.form[prop]}
-                type='date'
-                on-input={val => (this.form[prop] = val)}
-              />
-            },
-            rangeRender: (h, { column, columnIndex }) => {
-              const { prop } = column
-              return <el-date-picker
-                value={this.form[prop]}
-                type='daterange'
-                on-input={val => (this.form[prop] = val)}
-              />
-            },
-            operator: true,
-            operatorDefault: 'equals',
-            type: 'dates'
-          }
-        },
-        {
-          show: true,
-          title: '操作',
-          width: 60,
-          fixed: 'right'
-        }
-      ]
       this.data = mock.mock({
-        'array|100': [
+        'array|500': [
           {
-            'email': '@email',
-            'city': '@city',
+            'age': /\d{2}/,
+            'cname': '@cname',
+            'sex': function name() {
+              return this.index % 2 === 0 ? '男' : '女'
+            },
+            'hobby': function name() {
+              return this.index % 2 === 0 ? '游泳' : this.index % 5 === 0 ? '篮球' : 'K歌'
+            },
             'datetime': '@datetime',
             'index|+1': 1
           }
@@ -218,16 +338,18 @@ export default {
     }, 50)
   },
   methods: {
+    updateForm(prop, val) {
+      this.$set(this.form, prop, val)
+    },
     searchChange(val) {
-      console.log(JSON.stringify(val, null, 2))
       this.searchData = val
+      let list = [...this.data]
       if (val.length) {
         val.forEach(d => {
-          this.list = [...this.data.filter(da => da[d.field].indexOf(d.content) > -1)]
+          list = list.filter(da => Array.isArray(d.content) ? d.content.includes(da[d.field]) : da[d.field].indexOf(d.content) > -1)
         })
-      } else {
-        this.list = [...this.data]
       }
+      this.list = list
     }
   }
 }

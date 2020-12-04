@@ -109,9 +109,9 @@ export default {
       })
     },
     setOverflowX() {
-      const { minWidth, bodyWrapperWidth, overflowY, scrollYwidth } = this
-      this.bodyWidth = Math.max(bodyWrapperWidth, minWidth) - 2 - (overflowY ? 17 : 0)
-      this.overflowX = minWidth > bodyWrapperWidth - scrollYwidth
+      const { minWidth, bodyWrapperWidth, scrollYwidth } = this
+      this.bodyWidth = Math.max(bodyWrapperWidth - 2, minWidth) - scrollYwidth
+      this.overflowX = minWidth > (bodyWrapperWidth - 2 - scrollYwidth)
     },
     doLayout() {
       this.resize()

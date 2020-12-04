@@ -150,8 +150,9 @@ value: [
       rangeRender: (h, {column, columnIndex, prop}) => {
         return <your-range-component vModel={value} on-change={this.change} />
       },
-      operator: false // boolean 搜索范围
-      operatorDefault: 'like' // string 默认类型
+      operator: false, // boolean 搜索范围
+      operatorDefault: 'like', // string 默认类型
+      type: '' // string 扩展字段
     }
 
     drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
@@ -168,7 +169,7 @@ value: [
 
 ### Methods
 
-| 方法名         | 说明                      | 参数                          |
+| 方法名         | 说明                | 参数                |
 | ------------- | ------------------------- | ----------------------------- |
 | focus         | 聚焦的方法                 | index(列索引), prop(字段) |
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
@@ -178,6 +179,10 @@ value: [
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|
+| clearSelection   | 用于多选表格，清空用户的选择 | -|
+| toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
+| toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
+| doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 
 ### Events
 
@@ -198,3 +203,9 @@ value: [
 |cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
 |sort-change|表格排序条件发生变化的时候会触发该事件|{ column, prop, order }|
+
+### Slot
+
+| name | 说明                   | 
+| -------- | ------------------- | 
+| toolbar | 工具栏区域 | 

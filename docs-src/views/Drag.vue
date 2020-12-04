@@ -6,16 +6,12 @@
         <eff-table
           ref="table"
           v-model="columns"
-          column-control-text="列控制"
           :data="data"
-          :max-height="500"
           drag
           column-control
           row-drag
           border
           fullscreen
-          highlight-current-row
-          show-summary
         />
       </div>
     </section>
@@ -38,21 +34,75 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
 const mainSnippet = `
-data () {
+data() {
   return {
-    msg: 'vue component'
+    data: [],
+    columns: [
+      {
+        show: true,
+        type: 'selection',
+        width: 40,
+        fixed: 'left'
+      },
+      {
+        show: true,
+        prop: 'index',
+        title: '序号',
+        width: 80,
+        fixed: 'left'
+      },
+      {
+        show: true,
+        prop: 'city',
+        title: '城市',
+        width: 140
+      },
+      {
+        show: true,
+        prop: 'name',
+        title: '名字',
+        children: [{
+          show: true,
+          prop: 'cfirst',
+          title: '姓',
+          width: 150
+        }, {
+          show: true,
+          prop: 'clast',
+          title: '名',
+          width: 150
+        }]
+      },
+      {
+        show: true,
+        prop: 'email',
+        title: '邮箱',
+        width: 150
+      },
+      {
+        show: true,
+        prop: 'phone',
+        title: '手机',
+        width: 150
+      },
+      {
+        show: true,
+        prop: 'datetime',
+        title: '核酸检测时间',
+        width: 150
+      }
+    ]
   }
 }
 `
 
 const componentSnippet = `
 <eff-table
-  ref="table"
   v-model="columns"
   :data="data"
-  :max-height="400"
   drag
   column-control
+  row-drag
   border
   fullscreen
 />
@@ -66,17 +116,14 @@ export default {
 
   data() {
     return {
-      value: 2,
       mainSnippet,
       componentSnippet,
       data: [],
-      editStop: false,
-      show: false,
       columns: [
         {
           show: true,
           type: 'selection',
-          width: 30,
+          width: 40,
           fixed: 'left'
         },
         {
@@ -88,27 +135,9 @@ export default {
         },
         {
           show: true,
-          prop: 'index',
+          prop: 'city',
           title: '城市',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'message',
-          title: '消息',
-          width: 200,
-          edit: {
-            render: (h, { row }) => {
-              return <el-input {...{
-                attrs: {
-                  value: row.message
-                },
-                on: {
-                  input: val => (row.message = val)
-                }
-              }} />
-            }
-          }
+          width: 140
         },
         {
           show: true,
@@ -116,34 +145,33 @@ export default {
           title: '名字',
           children: [{
             show: true,
-            prop: 'xing',
+            prop: 'cfirst',
             title: '姓',
             width: 150
           }, {
             show: true,
-            prop: 'ming',
+            prop: 'clast',
             title: '名',
             width: 150
           }]
         },
         {
           show: true,
-          fixed: 'right',
-          title: '操作',
-          children: [{
-            show: true,
-            prop: 'xing',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'ming',
-            title: '名',
-            width: 150
-          }],
-          cellRender: (h, { row }) => {
-            return <el-button type='text' size='small' icon='el-icon-edit'></el-button>
-          }
+          prop: 'email',
+          title: '邮箱',
+          width: 150
+        },
+        {
+          show: true,
+          prop: 'phone',
+          title: '手机',
+          width: 150
+        },
+        {
+          show: true,
+          prop: 'datetime',
+          title: '核酸检测时间',
+          width: 150
         }
       ]
     }
@@ -153,13 +181,13 @@ export default {
       this.data = mock.mock({
         'array|500': [
           {
-            'message': '@email',
-            'name': '@cname',
-            'email': '@email',
             'city': '@city',
+            'cfirst': '@cfirst',
+            'clast': '@clast',
+            'email': '@email',
             'datetime': '@datetime',
-            'index|+1': 1,
-            long: ''
+            'phone': '13888888888',
+            'index|+1': 1
           }
         ]
       }).array
