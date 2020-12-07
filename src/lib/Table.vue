@@ -119,7 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>minWidth {{ minWidth }}</p> -->
+    <!-- <p>validators {{ validators }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -167,11 +167,14 @@ export default {
     search: Boolean,
     edit: Boolean,
     editStop: Boolean,
+    loading: Boolean,
     columnControl: Boolean,
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean,
+    searchClear: { type: Boolean, default: true },
+    searchClearText: { type: String, default: '' },
     sortConfig: { type: Object, default: () => {} },
     summaryMethod: { type: Function, default: null },
     sumText: { type: String, default: '合计' },
@@ -347,6 +350,21 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       word-break: break-all;
+    }
+    &--required{
+      display: inline-block;
+      color: #f56c6c;
+      width: 10px;
+      height: 10px;
+      line-height: 10px;
+      font-weight: 400;
+      position: relative;
+      &:before {
+        content: "*";
+        position: absolute;
+        left: 0;
+        top: 4px;
+      }
     }
   }
 
@@ -558,7 +576,8 @@ export default {
   }
 }
 
-.eff-edit{
+.col-edit::before{
+  content: '';
   position: absolute;
   left: -5px;
   top: -5px;
@@ -604,6 +623,18 @@ export default {
     &.is--active{
       border-top-color: #409eff;
     }
+  }
+}
+
+.eff-toobar--text{
+  font-size: 12px;
+  padding: 2px 4px;
+  border: 1px solid #ddd;
+  color: #666;
+  &:hover{
+    cursor: pointer;
+    color: #333;
+    border-color: #bbb;
   }
 }
 

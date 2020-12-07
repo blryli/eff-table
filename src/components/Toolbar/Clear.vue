@@ -1,0 +1,116 @@
+<template>
+  <div
+    v-if="table.searchClearText"
+    class="eff-toobar--text"
+    @click="clear"
+  >{{ table.searchClearText }}</div>
+  <div v-else class="eff-clear" title="清空搜索" @click="clear">
+    <div class="eff-clear--top" />
+    <div class="eff-clear--center" />
+    <div class="eff-clear--bottom" />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Clear',
+  inject: ['table'],
+  methods: {
+    clear() {
+      this.table.$emit('update:form', {})
+      this.$nextTick(() => {
+        this.table.$emit('search-clear')
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.eff-clear{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  &:hover{
+    cursor: pointer;
+  }
+  &--top{
+    width: 4px;
+    height: 4px;
+    border: 2px solid #999;
+  }
+  &--center{
+    width: 100%;
+    height: 3px;
+    margin-top: -2px;
+    border: 2px solid #999;
+  }
+  &--bottom{
+    position: relative;
+    margin-top: -2px;
+    width: 12px;
+    height: 6px;
+    border: 2px solid #999;
+    &::before{
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 2px;
+      width: 2px;
+      height: 2px;
+      background-color: #999;
+    }
+    &::after{
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 5px;
+      width: 2px;
+      height: 3px;
+      background-color: #999;
+    }
+  }
+  &:hover{
+    animation: ismove .8s infinite;
+    .eff-clear--bottom{
+      animation: skewX .8s infinite;
+    }
+  }
+}
+@keyframes ismove {
+  0%{
+    transform: translateX(-2px);
+  }
+  25%{
+    transform: translateX(0);
+  }
+  50%{
+    transform: translateX(2px);
+  }
+  75%{
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(-2px);
+  }
+}
+@keyframes skewX {
+  0%{
+    transform: skewX(20deg);
+  }
+  25%{
+    transform: skewX(0deg);
+  }
+  50%{
+    transform: skewX(-20deg);
+  }
+  75%{
+    transform: skewX(0deg);
+  }
+  100%{
+    transform: skewX(20deg);
+  }
+}
+</style>

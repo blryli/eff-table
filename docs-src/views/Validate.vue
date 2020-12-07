@@ -14,8 +14,8 @@
         >
           <template slot="toolbar">
             <button @click="validate">校验</button>
-            <button @click="validateRow">校验第3行</button>
-            <button @click="() => $refs.table.clearValidate()">清除校验</button>
+            <button @click="validateChecked">校验选中行</button>
+            <button @click="clearValidate">清除校验</button>
           </template>
         </eff-table>
       </div>
@@ -39,15 +39,112 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
 const mainSnippet = `
-data () {
+data() {
   return {
-    msg: 'vue component'
+    data: [],
+    columns: [
+      {
+        show: true,
+        fixed: 'left',
+        type: 'selection',
+        width: 80
+      },
+      {
+        show: true,
+        fixed: 'left',
+        type: 'index',
+        title: '序号',
+        width: 80
+      },
+      {
+        show: true,
+        prop: 'name',
+        title: '名字 (空值校验)',
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
+          }
+        },
+        validator: {
+          rule: ({ value }) => !value && '名字不能为空'
+        }
+      },
+      {
+        show: true,
+        prop: 'age',
+        title: '年龄 (大小校验)',
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
+          }
+        },
+        validator: {
+          required: true,
+          rule: ({ value }) => value > 50 && '年龄不能大于50'
+        }
+      },
+      {
+        show: true,
+        prop: 'height',
+        title: '身高 (异步校验)',
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
+          }
+        },
+        validator: {
+          rule: ({ value }) => new Promise(resolve => setTimeout(() => {
+            resolve(value < 170 && '身高不能低于170')
+          }, 1000))
+        }
+      }
+    ]
+  }
+},
+methods: {
+  validate() {
+    this.$refs.table.validate().then(res => {
+      this.$message.success('校验通过!')
+    }).catch(data => {
+      this.$message.error('校验不通过!')
+      console.log(JSON.stringify(data, null, 2))
+    })
+  },
+  validateChecked() {
+    const rows = this.$refs.table.getCheckRows()
+    if (rows.length) {
+      this.$refs.table.validate(rows).then(res => {
+        this.$message.success('校验通过!')
+      }).catch(data => {
+        this.$message.error('校验不通过!')
+        console.log(JSON.stringify(data, null, 2))
+      })
+    } else {
+      this.$message.error('未选中行!')
+    }
+  },
+  clearValidate() {
+    this.$refs.table.clearValidate()
   }
 }
 `
 
 const componentSnippet = `
-<v-component :msg="msg" />
+<eff-table
+  ref="table"
+  v-model="columns"
+  fullscreen
+  edit
+  border
+  :max-height="400"
+  :data="data"
+>
+  <template slot="toolbar">
+    <button @click="validate">校验</button>
+    <button @click="validateChecked">校验选中行</button>
+    <button @click="clearValidate">清除校验</button>
+  </template>
+</eff-table>
 `
 export default {
   name: 'Validate',
@@ -62,6 +159,12 @@ export default {
       componentSnippet,
       data: [],
       columns: [
+        {
+          show: true,
+          fixed: 'left',
+          type: 'selection',
+          width: 80
+        },
         {
           show: true,
           fixed: 'left',
@@ -92,6 +195,7 @@ export default {
             }
           },
           validator: {
+            required: true,
             rule: ({ value }) => value > 50 && '年龄不能大于50'
           }
         },
@@ -132,11 +236,29 @@ export default {
   },
   methods: {
     validate() {
-      this.$refs.table.validate(val => {
-        val ? this.$message.success('校验通过!') : this.$message.error('校验不通过!')
+      this.$refs.table.validate().then(res => {
+        this.$message.success('校验通过!')
+      }).catch(data => {
+        this.$message.error('校验不通过!')
+        console.log(JSON.stringify(data, null, 2))
       })
     },
-    validateRow() {}
+    validateChecked() {
+      const rows = this.$refs.table.getCheckRows()
+      if (rows.length) {
+        this.$refs.table.validate(rows).then(res => {
+          this.$message.success('校验通过!')
+        }).catch(data => {
+          this.$message.error('校验不通过!')
+          console.log(JSON.stringify(data, null, 2))
+        })
+      } else {
+        this.$message.error('未选中行!')
+      }
+    },
+    clearValidate() {
+      this.$refs.table.clearValidate()
+    }
   }
 }
 </script>

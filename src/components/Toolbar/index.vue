@@ -4,6 +4,7 @@
       <slot />
     </div>
     <div class="table-toobar__right">
+      <Clear v-if="table.search && table.searchClear" />
       <ColumnCtrlBtn v-if="table.columnControl" @change="btnChange" />
       <Fullscreen v-if="table.fullscreen" />
     </div>
@@ -13,9 +14,10 @@
 <script>
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
+import Clear from './Clear'
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn },
+  components: { Fullscreen, ColumnCtrlBtn, Clear },
   inject: ['table'],
   methods: {
     btnChange() {

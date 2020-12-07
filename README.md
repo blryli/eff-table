@@ -93,10 +93,12 @@ export default {
 | row-class-name| 行的 className     | Function({row, rowIndex})/String      |            | false      |
 | cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |          |       |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
-| column-control         | 是否启用列控制             | Boolean      |            | false      |
 | row-drag         | 是否启用行拖动             | Boolean      |            | false      |
+| column-control         | 是否启用列控制             | Boolean      |            | false      |
 | column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
-| search                 | 是否启用搜索               | Boolean      |            | false      |
+| search      | 是否启用搜索      | Boolean      |            | false      |
+| searchClear | search为true时有效，是否展示清空搜索按钮   | Boolean   |           | true      |
+| searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
@@ -138,6 +140,7 @@ value: [
 
     // 校验
     validator: {
+      required: false, // boolean
       rule: ({value, row, rowIndex}) => !value && '不能为空', // 校验规则，返回值为字符串或promise，为promise时作异步校验处理
       field: '' // 指定校验字段( 默认为prop )
     }
@@ -173,7 +176,7 @@ value: [
 | ------------- | ------------------------- | ----------------------------- |
 | focus         | 聚焦的方法                 | index(列索引), prop(字段) |
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
-| validate      | 对整个表单进行校验的方法 |  Function(callback: Function(boolean, array)) |
+| validate      | 对整个表单进行校验的方法 | Array 需要校验的数组，不传参数校验所有 |
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateCell | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |

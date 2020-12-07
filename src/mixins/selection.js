@@ -32,6 +32,9 @@ export default {
     }
   },
   methods: {
+    getCheckRows() {
+      return this.checkeds
+    },
     clearSelection() {
       checkedsSet.clear()
       this.selectionChange()

@@ -13,10 +13,11 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag, fixed } = this.column
+      const { titleClassName, drag, fixed, edit: { render: editRender } = {}} = this.column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
+      editRender && (classes += ` col-edit`)
       if (drag === false || fixed) {
         classes += ' is-drag--filter'
       }
@@ -25,9 +26,10 @@ export default {
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { edit: { render } = {}, sortable, title, type } = column
+    const { sortable, title, type, validator } = column
 
     const slot = column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
+    const { required } = validator || {}
 
     return (
       <div
@@ -40,6 +42,9 @@ export default {
         on-mouseleave={event => handleMouseleave(event, slot)}
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
+          {
+            required ? <i class='eff-cell--required' /> : ''
+          }
           <span class='eff-cell--title'>{slot}</span>
           {
             sortable ? <span class='eff-cell--sort'>
@@ -54,9 +59,6 @@ export default {
             </span> : ''
           }
         </div>
-        {
-          render && typeof render === 'function' ? <span class='eff-edit' title='可编辑列'></span> : ''
-        }
       </div>
     )
   },

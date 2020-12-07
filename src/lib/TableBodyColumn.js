@@ -40,12 +40,12 @@ export default {
   computed: {
     columnClass() {
       let classes = `eff-table__column`
-      const { className } = this.column
-      const { cellClassName } = this.table
+      const { row, column, rowIndex, columnIndex, table } = this
+      const { className } = column
+      const { cellClassName } = table
       const { message } = this.message || {}
       if (className) {
         if (typeof className === 'function') {
-          const { row, column, rowIndex, columnIndex } = this
           const c = className({ row, column, rowIndex, columnIndex })
           c && (classes += ` ${c}`)
         } else {
@@ -55,7 +55,6 @@ export default {
       if (message) classes += ' is--message'
       if (cellClassName) {
         if (typeof cellClassName === 'function') {
-          const { row, column, rowIndex, columnIndex } = this
           const c = cellClassName({ row, column, rowIndex, columnIndex })
           c && (classes += ` ${c}`)
         } else {

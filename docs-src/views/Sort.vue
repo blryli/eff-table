@@ -10,8 +10,6 @@
           ref="table"
           v-model="columns"
           :data="data"
-          :max-height="400"
-          border
           fullscreen
         />
       </div>
@@ -37,7 +35,35 @@ import mock from 'mockjs'
 const mainSnippet = `
 data () {
   return {
-    msg: 'vue component'
+    data: [],
+    columns: [
+      {
+        show: true,
+        type: 'selection',
+        width: 80,
+        fixed: 'left'
+      },
+      {
+        show: true,
+        prop: 'index',
+        title: '序号',
+        width: 80,
+        fixed: 'left',
+        sortable: true
+      },
+      {
+        show: true,
+        prop: 'city',
+        title: '城市',
+        sortable: true
+      },
+      {
+        show: true,
+        prop: 'message',
+        title: '消息',
+        sortable: true
+      }
+    ]
   }
 }
 `
@@ -47,10 +73,6 @@ const componentSnippet = `
   ref="table"
   v-model="columns"
   :data="data"
-  :max-height="400"
-  drag
-  column-control
-  border
   fullscreen
 />
 `
@@ -67,8 +89,6 @@ export default {
       mainSnippet,
       componentSnippet,
       data: [],
-      editStop: false,
-      show: false,
       columns: [
         {
           show: true,

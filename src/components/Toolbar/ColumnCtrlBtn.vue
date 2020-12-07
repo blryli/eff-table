@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="table.columnControlText"
-    class="toobar-ctrl-text"
+    class="eff-toobar--text"
     @click="$emit('change')"
   >{{ table.columnControlText }}</div>
   <div
@@ -21,18 +21,6 @@ export default {
   inject: ['table']
 }
 </script>
-
-<style lang="scss">
-.toobar-ctrl-text{
-  font-size: 12px;
-  padding: 2px 4px;
-  border: 1px solid #ddd;
-  &:hover{
-    cursor: pointer;
-    border-color: #aaa;
-  }
-}
-</style>
 
 <style lang="scss" scoped>
 .column-ctrl-btn{
