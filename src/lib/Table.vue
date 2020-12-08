@@ -126,6 +126,8 @@
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
+
+    <Loading :visible="loading" />
   </div>
 </template>
 
@@ -144,6 +146,7 @@ import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import Edit from '../components/Edit'
 import ScrollX from '../components/ScrollX'
+import Loading from '../components/Loading'
 
 export default {
   name: 'EffTable',
@@ -155,7 +158,8 @@ export default {
     Drag,
     Toolbar,
     Edit,
-    ScrollX
+    ScrollX,
+    Loading
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual],
   props: {
@@ -304,7 +308,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.table-wrapper{
+  position: relative;
+}
 .eff-table {
   font-size: 14px;
   position: relative;

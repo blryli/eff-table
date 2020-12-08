@@ -7,6 +7,7 @@
           ref="table"
           v-model="columns"
           :data="data"
+          :loading="loading"
           drag
           column-control
           row-drag
@@ -118,6 +119,7 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
+      loading: false,
       data: [],
       columns: [
         {
@@ -177,6 +179,7 @@ export default {
     }
   },
   mounted() {
+    this.loading = true
     setTimeout(() => {
       this.data = mock.mock({
         'array|500': [
@@ -191,7 +194,8 @@ export default {
           }
         ]
       }).array
-    }, 1000)
+      this.loading = false
+    }, 5000)
   }
 }
 </script>
