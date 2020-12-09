@@ -31,28 +31,34 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 16px;
+  width: 18px;
   height: 16px;
+  box-sizing: border-box;
   &:hover{
     cursor: pointer;
   }
   &--top{
-    width: 4px;
-    height: 4px;
+    width: 8px;
+    height: 6px;
     border: 2px solid #999;
+    border-radius: 2px;
+    box-sizing: border-box;
   }
   &--center{
     width: 100%;
-    height: 3px;
+    height: 6px;
     margin-top: -2px;
     border: 2px solid #999;
+    border-radius: 2px;
+    box-sizing: border-box;
   }
   &--bottom{
     position: relative;
     margin-top: -2px;
-    width: 12px;
-    height: 6px;
+    width: 14px;
+    height: 8px;
     border: 2px solid #999;
+    box-sizing: border-box;
     &::before{
       content: '';
       position: absolute;

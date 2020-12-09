@@ -195,7 +195,7 @@ export default {
         ]
       }).array
       this.loading = false
-    }, 5000)
+    }, 1000)
   }
 }
 </script>
