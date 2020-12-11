@@ -15,6 +15,7 @@ export default {
       cell: null,
       placement: '',
       component: null,
+      componentValue: null,
       handleType: null,
       scrollNum: 0
     }
@@ -137,6 +138,13 @@ export default {
         this.toY(placement)
       }
     },
+    blurEvent() {
+      const { component, componentValue } = this
+      if (component) {
+        component && componentValue !== component.value && component.$emit('change', component.value)
+        component && component.$emit('blur')
+      }
+    },
     canFocus(column, cell) {
       const { type, edit: { render } = {}} = column
       const types = ['selection', 'index']
@@ -205,6 +213,7 @@ export default {
       const editCell = (cell) => {
         // console.log({ column, cell, cellIndex, index: this.cellIndex })
         if (cellIndex === -1 || !canFocus(column, cell)) return
+        this.blurEvent()
 
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
@@ -276,6 +285,7 @@ export default {
         }
         const component = componentInstance.getFocusComponent ? componentInstance.getFocusComponent() : componentInstance
         this.component = component
+        this.componentValue = component.value
 
         // 处理禁用
         if (componentInstance.disabled || component.disabled) {

@@ -283,7 +283,7 @@ export default {
           title: '名字',
           edit: {
             render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} on-change={this.change} on-blur={this.blur} />
             }
           }
         },
@@ -435,6 +435,12 @@ export default {
     },
     focus() {
       this.$refs.table.focus(9)
+    },
+    change(val) {
+      console.log({ change: val })
+    },
+    blur(val) {
+      console.log({ blur: val })
     }
   }
 }

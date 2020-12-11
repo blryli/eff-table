@@ -319,7 +319,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|500': [
+        'array|100': [
           {
             'age': /\d{2}/,
             'cname': '@cname',
@@ -342,6 +342,7 @@ export default {
       this.$set(this.form, prop, val)
     },
     searchChange(val) {
+      console.log(JSON.stringify(val, null, 2))
       this.searchData = val
       let list = [...this.data]
       if (val.length) {
