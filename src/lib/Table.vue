@@ -429,6 +429,9 @@ export default {
   box-sizing: border-box;
 }
 .eff-table__search{
+  .eff-table__column{
+    overflow: visible;
+  }
   &-item{
     display: flex;
     height: 100%;
@@ -501,12 +504,11 @@ export default {
   align-items: center;
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
+  border-bottom: 1px solid #ddd;
   overflow: hidden;
 }
 .eff-table__header{
   .eff-table__column{
-    display: flex;
-    align-items: center;
     color: #666;
     font-weight: bold;
     user-select: none;
