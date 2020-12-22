@@ -189,10 +189,16 @@ export default {
 }
 .eff-table__body-wrapper{
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 .is-overflow--x{
   .eff-table__body-wrapper{
     overflow-x: auto;
+  }
+}
+.is-overflow--y{
+  .eff-table__body-wrapper{
+    overflow-y: auto;
   }
 }
 

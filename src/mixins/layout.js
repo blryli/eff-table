@@ -96,12 +96,20 @@ export default {
         footerHeight,
         bodyHeight: Math.max(bodyHeight, rowHeight)
       }
+    },
+    bodyRect() {
+      const { columnIsVirtual, bodyWrapper } = this
+      if (!columnIsVirtual || !bodyWrapper) return {}
+      const { left, right } = bodyWrapper.getBoundingClientRect()
+      const { leftWidth, rightWidth } = this
+      return { bodyLeft: left + leftWidth, bodyRight: right + rightWidth }
     }
   },
   methods: {
     resize() {
       this.$nextTick(() => {
         const { $el, minWidth, setOverflowX, scrollLeftEvent } = this
+        this.bodyWrapper = this.$refs.body.$el
         this.bodyWrapperWidth = $el.getBoundingClientRect().width || minWidth
         setOverflowX()
         scrollLeftEvent()
