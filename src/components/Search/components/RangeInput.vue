@@ -20,6 +20,11 @@
         @change="change"
       />
     </div>
+    <i
+      v-if="form.start && form.end"
+      class="eff-icon--close"
+      @click="clear"
+    />
   </div>
 </template>
 
@@ -51,6 +56,7 @@ export default {
       this.curValue = val
     }
   },
+  inject: ['table'],
   mounted() {
     on(window, 'mousedown', this.windowHandleMousedown)
   },
@@ -80,6 +86,12 @@ export default {
     },
     reset() {
       this.form = { start: '', end: '' }
+      this.change()
+    },
+    clear() {
+      const { column, prop, table, reset } = this
+      table.$emit('search-clear-filed', { column, prop })
+      reset()
     }
   }
 }

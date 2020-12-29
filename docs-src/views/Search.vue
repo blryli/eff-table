@@ -274,6 +274,7 @@ export default {
                 value={this.form[prop]}
                 clearable={true}
                 multiple={true}
+                collapseTags={true}
                 on-change={val => this.updateForm(prop, val)}
               >
                 {
@@ -347,7 +348,42 @@ export default {
       let list = [...this.data]
       if (val.length) {
         val.forEach(d => {
-          list = list.filter(da => Array.isArray(d.content) ? d.content.includes(da[d.field]) : da[d.field].indexOf(d.content) > -1)
+          const { field, operator, content } = d
+          list = list.filter(da => {
+            if (Array.isArray(content)) {
+              if (operator === 'like') {
+                return content.includes(da[field])
+              } else {
+                const [start, end] = content
+                return +da[field] > +start && +da[field] < +end
+              }
+            } else {
+              const daValue = +da[field]
+              const value = +content
+              switch (operator) {
+                case 'equals':
+                  return daValue === value
+
+                case 'unequals':
+                  return daValue.indexOf(value) === -1
+
+                case 'less':
+                  return daValue < value
+
+                case 'greater':
+                  return daValue > value
+
+                case 'lessthan':
+                  return daValue <= value
+
+                case 'greaterthan':
+                  return daValue >= value
+
+                default:
+                  return daValue.indexOf(value) > -1
+              }
+            }
+          })
         })
       }
       this.list = list

@@ -434,12 +434,13 @@ export default {
   }
   &-item{
     display: flex;
-    height: 100%;
     position: absolute;
+    overflow: hidden;
     left: -1px;
     top: -1px;
     right: 0;
     bottom: -2px;
+    height: var(--rowHeight);
   }
   &-dropdown{
     flex: 0 0 26px;
@@ -471,6 +472,9 @@ export default {
     background-color: transparent;
     border-color: transparent;
     box-sizing: border-box;
+  }
+  input{
+    height: var(--rowHeight)!important;
   }
   .eff-search--input{
     padding: 0 5px;
@@ -645,6 +649,55 @@ export default {
     cursor: pointer;
     color: #333;
     border-color: #bbb;
+  }
+}
+
+.eff-icon--close{
+  position: relative;
+  width: 14px;
+  height: 14px;
+  color: #bbb;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+  &:hover{
+    cursor: pointer;
+    color: #888;
+  }
+  &::before{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 1px;
+    height: 8px;
+    background-color: currentColor;
+    transform: rotate(-45deg);
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 1px;
+    height: 8px;
+    background-color: currentColor;
+    transform: rotate(45deg);
+  }
+}
+
+.eff-search__range{
+  .eff-icon--close{
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+  }
+  &:hover{
+    .eff-icon--close{
+      display: block;
+    }
   }
 }
 

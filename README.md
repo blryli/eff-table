@@ -208,6 +208,8 @@ value: [
 |cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
 |sort-change|表格排序条件发生变化的时候会触发该事件|{ column, prop, order }|
+|search-clear|点击清空搜索图标后触发该事件|-|
+|search-clear-filed|使用默认range范围搜索时，点击清空按钮时触发该事件|{ column, prop }|
 
 ### Slot
 
