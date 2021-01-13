@@ -358,29 +358,28 @@ export default {
                 return +da[field] > +start && +da[field] < +end
               }
             } else {
-              const daValue = +da[field]
-              const value = +content
+              const daValue = da[field]
               switch (operator) {
                 case 'equals':
-                  return daValue === value
+                  return daValue === content
 
                 case 'unequals':
-                  return daValue.indexOf(value) === -1
+                  return daValue.indexOf(content) === -1
 
                 case 'less':
-                  return daValue < value
+                  return +daValue < +content
 
                 case 'greater':
-                  return daValue > value
+                  return +daValue > +content
 
                 case 'lessthan':
-                  return daValue <= value
+                  return +daValue <= +content
 
                 case 'greaterthan':
-                  return daValue >= value
+                  return +daValue >= +content
 
                 default:
-                  return daValue.indexOf(value) > -1
+                  return daValue.indexOf(content) > -1
               }
             }
           })
