@@ -103,6 +103,7 @@ export default {
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
+| edit-Lengthways    | 是否开启纵向快捷编辑    | Boolean      |            | true      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |

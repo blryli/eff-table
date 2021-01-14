@@ -130,12 +130,13 @@ export default {
     },
     to() {
       this.handleType = 'to'
-      const { placement = 'right' } = this
+      const { placement = 'right', table } = this
+      const { editLengthways } = table
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX(placement)
       } else {
-        this.toY(placement)
+        editLengthways && this.toY(placement)
       }
     },
     blurEvent() {

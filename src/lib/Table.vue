@@ -171,6 +171,7 @@ export default {
     search: Boolean,
     edit: Boolean,
     editStop: Boolean,
+    editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
     columnControlText: { type: String, default: '' },
