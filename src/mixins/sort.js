@@ -17,7 +17,6 @@ export default {
       const { prop: sortProp, order: sortOder } = this.curSort
       const { prop, order } = sort
       this.curSort = !method && sortProp === prop && sortOder === order ? {} : sort
-      this.$emit('sort-change', this.curSort)
       this.updateData()
     },
     updateData() {
@@ -35,6 +34,7 @@ export default {
         }
       }
       this.tableData = Object.freeze(tableData)
+      this.$emit('sort-change', this.curSort, tableData)
       return tableData
     },
     sortBy(data, prop, reverse) {
