@@ -9,7 +9,7 @@ publish:
       - node_modules/
   script:
     - 'export SASS_BINARY_SITE=https://npm.taobao.org/mirrors/node-sass'
-    - npm install
+    - npm install  --loglevel verbose
     - npm run build
     - 'echo export default $CI_PIPELINE_ID > version.js'
     - npm publish --registry=http://192.168.88.9:8081/repository/npmlocal/
