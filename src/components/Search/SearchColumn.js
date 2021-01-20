@@ -127,7 +127,8 @@ export default {
         console.error('search rangeRender必须是函数！')
       }
       slot = render && render(h, { prop, column, columnIndex }) || type !== 'range' && <Input value={value} on-input={val => (this.form.value = val)} on-change={valueChange}/> || ''
-      rangeSlot = rangeRender && rangeRender(h, { prop, column, columnIndex }) || operator ? <RangeInput value={value} column={column} on-change={valueChange}/> : ''
+      const range = rangeRender && rangeRender(h, { prop, column, columnIndex })
+      rangeSlot = range || (operator ? <RangeInput value={value} column={column} on-change={valueChange}/> : '')
     }
 
     return (
