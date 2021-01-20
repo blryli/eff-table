@@ -8,6 +8,8 @@ publish:
     paths:
       - node_modules/
   script:
+    - 'npm config set registry http://192.168.88.9:8081/repository/npmall/'
+    - 'npm config set disturl https://npm.taobao.org/dist –global'
     - 'export SASS_BINARY_SITE=https://npm.taobao.org/mirrors/node-sass'
     - npm install --loglevel verbose
     - npm run build
