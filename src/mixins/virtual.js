@@ -118,7 +118,9 @@ export default {
           break
         }
       }
-      const rowRect = document.querySelector('.eff-table__body-row').getBoundingClientRect()
+      const row = document.querySelector('.eff-table__body-row')
+      if (!row) return
+      const rowRect = row.getBoundingClientRect()
       const { left, right } = rowRect
       const { bodyLeft, bodyRight } = bodyRect
       if (right < bodyRight) {
