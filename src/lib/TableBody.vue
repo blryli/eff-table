@@ -197,7 +197,7 @@ export default {
 }
 .is-overflow--x{
   .eff-table__body-wrapper{
-    overflow-x: auto;
+    overflow-x: scroll;
   }
 }
 .is-overflow--y{
