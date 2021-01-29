@@ -1,6 +1,6 @@
 <template>
   <div class="eff-table__body-wrapper" :style="{height: table.heights.bodyHeight + 'px'}">
-    <div class="eff-table__body--x-space" :style="{width: table.bodyWidth + 'px'}" />
+    <div class="eff-table__body--x-space" :style="{width: xSpaceWidth + 'px'}" />
     <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
     <div
       class="eff-table__body"
@@ -67,6 +67,10 @@ export default {
         width: bodyWidth + 'px',
         height: rowHeight + 'px'
       }
+    },
+    xSpaceWidth() {
+      const { table: { leftWidth, rightWidth, bodyWidth }, fixed } = this
+      return fixed === 'left' ? leftWidth : fixed === 'right' ? rightWidth : bodyWidth
     }
   },
   watch: {

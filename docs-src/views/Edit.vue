@@ -291,7 +291,7 @@ export default {
           show: true,
           prop: 'async',
           titleRender: (h, { column }) => {
-            return ['异步处理', <el-tooltip class='item' effect='dark' content='当前单元格的值被后面的值依赖，且为异步取值时必用' placement='top'>
+            return ['异步处理', <el-tooltip class='item' effect='dark' content='当前单元格的值为异步取值，且被后面的值依赖时必用' placement='top'>
               <i class='el-icon el-icon-question' />
             </el-tooltip>]
           },

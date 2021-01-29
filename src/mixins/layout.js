@@ -126,23 +126,20 @@ export default {
     }
   },
   activated() {
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.resize()
+      clearTimeout(this.timer)
     }, 300)
   },
   mounted() {
     this.resize()
-    let num = 0
-    this.timer = setInterval(() => {
-      num++
-      const { $el, bodyWrapperWidth } = this
-      this.bodyWrapperWidth = $el.getBoundingClientRect().width
-      if (bodyWrapperWidth || num === 30) {
-        clearInterval(this.timer)
-      }
-    }, 100)
+    this.timer = setTimeout(() => {
+      this.resize()
+      clearTimeout(this.timer)
+    }, 300)
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })
+    clearTimeout(this.timer)
   }
 }

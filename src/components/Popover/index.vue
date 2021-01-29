@@ -11,7 +11,7 @@ export default {
     borderColor: { type: String, default: '#ccc' },
     popoverClass: { type: String, default: '' },
     trigger: { type: String, default: 'hover' },
-    reference: null,
+    reference: HTMLDivElement,
     message: { type: [String, Array], default: '' },
     enterable: Boolean,
     hideDelay: { type: Number, default: 200 }
