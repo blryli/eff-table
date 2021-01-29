@@ -292,9 +292,10 @@ export default {
       const to = data[toIndex]
       data.splice(toIndex, 1, from)
       data.splice(fromIndex, 1, to)
+      this.$emit('row-drag-change', fromIndex, toIndex)
     },
     handleCardClose() {
-      this.$emit('dragCardClose')
+      this.$emit('drag-card-close')
     },
     tipShow({ reference, message }) {
       this.$refs.popover.doShow()

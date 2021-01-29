@@ -191,13 +191,14 @@ value: [
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 
 ### Events
-
 | 事件名称 | 说明                   | 回调参数                    |
 | -------- | ---------------------- | --------------------------- |
 | select | 当用户手动勾选数据行的 Checkbox 时触发的事件 | selection, row |
 | select-all | 当用户手动勾选全选 Checkbox 时触发的事件 | selection |
 | selection-change | 当选择项发生变化时会触发该事件 | selection |
 | drag-change | 列拖动或表头宽度调整后触发 | 返回新的tableColumns数组 |
+| row-drag-change | 行拖动后触发 | fromIndex, toIndex |
+| drag-card-close | 列拖动弹框被关闭后触发 |- |
 | search-change | 搜索条件变化后出发 | 返回搜索条件数组集合 |
 | editColumnLastToNext | 在列的最后一个可聚焦元素键入跳下一个指令是触发 | { placement, rowIndex, columnIndex } |
 | validate | 任一表单项被校验后触发 | val: {prop: string success: boolean, message: string}, validators: array |
