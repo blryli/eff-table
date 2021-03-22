@@ -127,6 +127,8 @@
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
 
+    <slot v-if="false" name="expand" />
+
     <Loading :visible="loading" />
   </div>
 </template>
@@ -207,7 +209,8 @@ export default {
       isScreenfull: false,
       tableBody: null,
       tableData: Object.freeze([...this.data]),
-      rowHoverIndex: null
+      rowHoverIndex: null,
+      expands: []
     }
   },
   computed: {
@@ -261,6 +264,7 @@ export default {
   },
   created() {
     this.$on('screenfullChange', this.screenfullChange)
+    this.$on('expanded', this.expandChange)
   },
   beforeDestroy() {
     this.$off('screenfullChange', this.screenfullChange)
@@ -304,6 +308,11 @@ export default {
     },
     tipClose() {
       this.$refs.popover.doHide()
+    },
+    expandChange(obj) {
+      const { rowIndex } = obj
+      const index = this.expands.findIndex(d => d.rowIndex === rowIndex)
+      index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
     }
   }
 }
@@ -550,6 +559,99 @@ export default {
   }
 }
 
+.eff-table__body{
+  box-sizing: border-box;
+
+  &--x-space{
+    width: 100%;
+    height: 1px;
+    margin-bottom: -1px;
+  }
+  &--y-space{
+    width: 0;
+    float: left;
+  }
+}
+.eff-table__body-row{
+  &:last-child{
+    .eff-table__column{
+      border-bottom: 1px solid transparent;
+    }
+  }
+  &.is--hover{
+    .eff-table__column {
+      background-color: #f1f3f5;
+    }
+  }
+  &.current-row .eff-table__column {
+    background-color: #e8f4ff;
+  }
+  .eff-table__column{
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    &.is--message{
+      background-color: #fda1a1;
+      &:hover{
+        background-color: #fda1a1;
+      }
+    }
+  }
+}
+
+.is-border {
+  .eff-table__column,
+  .eff-table__search-empty,
+  .header-title{
+    border-left: 1px solid #ddd;
+  }
+  .is-first-right-fixed {
+    .eff-table__search-empty{
+      border-left-color: transparent;
+    }
+  }
+}
+
+.eff-table__body-row:last-child{
+  .eff-table__column{
+    border-bottom: 1px solid #ddd;
+  }
+}
+
+.is-overflow--y{
+  .eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: none;
+    }
+  }
+}
+.eff-table__body-wrapper{
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.is-overflow--x{
+  .eff-table__body-wrapper{
+    overflow-x: scroll;
+  }
+}
+.is-overflow--y{
+  .eff-table__body-wrapper{
+    overflow-y: auto;
+  }
+}
+
+.eff-table__fixed-left{
+  .eff-table__body-wrapper{
+    &::-webkit-scrollbar { width: 0 !important }
+  }
+}
+
+.eff-empty-text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+}
+
 .eff-table-line{
   position: fixed;
   left: 50px;
@@ -700,6 +802,39 @@ export default {
     .eff-icon--close{
       display: block;
     }
+  }
+}
+
+.eff-table__expanded{
+  display: inline-block;
+  width: 100%;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+.eff-icon-expand{
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  transition: all .2s;
+  &:hover{
+    cursor: pointer;
+  }
+  &::before{
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 5px;
+    width: 5px;
+    height: 5px;
+    border-right: 1px solid #666;
+    border-bottom: 1px solid #666;
+    transform: rotate(-45deg);
+  }
+  &.is-expanded{
+    transform: rotate(90deg);
   }
 }
 

@@ -1,26 +1,3 @@
-<template>
-  <div class="eff-table__body-wrapper" :style="{height: table.heights.bodyHeight + 'px'}">
-    <div class="eff-table__body--x-space" :style="{width: xSpaceWidth + 'px'}" />
-    <div class="eff-table__body--y-space" :style="{height:totalHeight + 'px'}" />
-    <div
-      class="eff-table__body"
-      :style="bodyStyle"
-    >
-      <TableBodyRow
-        v-for="(row, index) in table.renderData"
-        :key="index + table.renderIndex"
-        :row="row"
-        :row-index="index + table.renderIndex"
-        :body-columns="fixed ? bodyColumns : table.renderColumn"
-        :fixed="fixed"
-        :messages="formatValidators[index + table.renderIndex]"
-      />
-      <div v-if="!data.length" class="eff-empty-text" :style="emptyStyle">{{ table.emptyText }}</div>
-    </div>
-  </div>
-</template>
-
-<script>
 import TableBodyRow from 'lib/TableBodyRow'
 
 export default {
@@ -121,101 +98,38 @@ export default {
       table.fixedType = fixed
       table.scrollTop = scrollTop
     }
+  },
+  render(h) {
+    const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, $scopedSlots: { expand }} = table
+    return (
+      <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
+        <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
+        <div class='eff-table__body--y-space' style={{ height: totalHeight + 'px' }} />
+        <div
+          class='eff-table__body'
+          style={bodyStyle}
+        >
+          {
+            renderData.map((row, rowIndex) => {
+              const { expanded } = expands.find(d => d.rowIndex === rowIndex) || {}
+              const expandNode = expanded ? <div class='eff-table__expanded'>{expand({ row, rowIndex })}</div> : ''
+              const currentIndex = rowIndex + renderIndex
+              return [<TableBodyRow
+                key={currentIndex}
+                row={row}
+                row-index={currentIndex}
+                body-columns={fixed ? bodyColumns : renderColumn}
+                fixed={fixed}
+                messages={formatValidators[currentIndex]}
+              />, expandNode]
+            })
+          }
+          {
+            !data.length ? <div class='eff-empty-text' style={emptyStyle}>{ emptyText }</div> : ''
+          }
+        </div>
+      </div>
+    )
   }
 }
-</script>
-
-<style lang="scss">
-.eff-table__body{
-  box-sizing: border-box;
-
-  &--x-space{
-    width: 100%;
-    height: 1px;
-    margin-bottom: -1px;
-  }
-  &--y-space{
-    width: 0;
-    float: left;
-  }
-}
-.eff-table__body-row{
-  &:last-child{
-    .eff-table__column{
-      border-bottom: 1px solid transparent;
-    }
-  }
-  &.is--hover{
-    .eff-table__column {
-      background-color: #f1f3f5;
-    }
-  }
-  &.current-row .eff-table__column {
-    background-color: #e8f4ff;
-  }
-  .eff-table__column{
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    &.is--message{
-      background-color: #fda1a1;
-      &:hover{
-        background-color: #fda1a1;
-      }
-    }
-  }
-}
-
-.is-border {
-  .eff-table__column,
-  .eff-table__search-empty,
-  .header-title{
-    border-left: 1px solid #ddd;
-  }
-  .is-first-right-fixed {
-    .eff-table__search-empty{
-      border-left-color: transparent;
-    }
-  }
-}
-
-.eff-table__body-row:last-child{
-  .eff-table__column{
-    border-bottom: 1px solid #ddd;
-  }
-}
-
-.is-overflow--y{
-  .eff-table__body-row:last-child{
-    .eff-table__column{
-      border-bottom: none;
-    }
-  }
-}
-.eff-table__body-wrapper{
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-.is-overflow--x{
-  .eff-table__body-wrapper{
-    overflow-x: scroll;
-  }
-}
-.is-overflow--y{
-  .eff-table__body-wrapper{
-    overflow-y: auto;
-  }
-}
-
-.eff-table__fixed-left{
-  .eff-table__body-wrapper{
-    &::-webkit-scrollbar { width: 0 !important }
-  }
-}
-
-.eff-empty-text{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #888;
-}
-</style>

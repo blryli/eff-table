@@ -15,14 +15,15 @@ export default {
   inject: ['table'],
   data() {
     return {
-      checked: false
+      checked: false,
+      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false
     }
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
     const { cellRender, type, prop } = column
     // row[columnIndex] summary合计列
-    const slot = row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
+    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
     return (
       <div
         class={this.columnClass}
@@ -90,6 +91,10 @@ export default {
       }
       return false
     },
+    expandRender() {
+      const { expanded, expandClick } = this
+      return <span class={{ 'eff-icon-expand': true, 'is-expanded': expanded }} on-click={expandClick} />
+    },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
       const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
@@ -114,6 +119,11 @@ export default {
       const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.tipClose()
+    },
+    expandClick() {
+      const { rowIndex, expanded, table } = this
+      this.expanded = !expanded
+      table.$emit('expanded', { rowIndex, expanded: this.expanded })
     }
   }
 }

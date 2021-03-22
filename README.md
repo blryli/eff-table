@@ -17,9 +17,9 @@
 ```html
   <eff-table
     ref="table"
-    edit
     v-model="columns"
     :data="data"
+    edit
   />
 ```
 
@@ -27,6 +27,7 @@
 export default {
   data() {
     retrun {
+      data: [],
       columns: [
         {
           prop: 'selection',
@@ -41,14 +42,17 @@ export default {
           width: 135,
           show: true,
           edit: {
-            render: (h, { row, rowIndex }) => {
-              return h('el-input', {
-                on: {
-                  input: val => (row.skip = val)
-                }
-              })
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
+        },
+        {
+          prop: 'search',
+          title: '搜索',
+          width: 135,
+          show: true,
+          search: true,
         },
         {
           prop: 'validator',
@@ -63,13 +67,6 @@ export default {
               return ''
             }
           }
-        },
-        {
-          prop: 'handle',
-          title: '操作',
-          width: 90,
-          fixed: 'right',
-          show: true
         }
       ]
     }
@@ -93,7 +90,7 @@ export default {
 | fullscreen| 是否显示全屏按钮 | boolean      |        | false      |
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
 | row-class-name| 行的 className     | Function({row, rowIndex})/String      |            | false      |
-| cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |          |       |
+| cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |  |   |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
 | row-drag         | 是否启用行拖动             | Boolean      |            | false      |
 | column-control         | 是否启用列控制             | Boolean      |            | false      |
@@ -102,7 +99,7 @@ export default {
 | searchClear | search为true时有效，是否展示清空搜索按钮   | Boolean   |           | true      |
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| edit-stop    | 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false    | Boolean      |            | false      |
+| edit-stop| 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false| Boolean |     | false   |
 | edit-Lengthways    | 是否开启纵向快捷编辑    | Boolean      |            | true      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
@@ -217,4 +214,5 @@ value: [
 
 | name | 说明                   | 
 | -------- | ------------------- | 
-| toolbar | 工具栏区域 | 
+| toolbar | 工具栏区域左侧的内容 | 
+| expand | 展开行的内容. 参数为 { row, rowIndex } |

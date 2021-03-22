@@ -16,8 +16,8 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length }, renderSize } = this
-      return length > 50 && length > renderSize
+      const { tableData: { length }, renderSize, $scopedSlots: { expand }} = this
+      return !expand && length > 50 && length > renderSize
     },
     renderData() {
       const { isVirtual, tableData, renderIndex, renderSize } = this
@@ -34,8 +34,8 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
-      return bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
+      const { $scopedSlots: { expand }, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
+      return !expand && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
