@@ -20,6 +20,7 @@ import { addClass, removeClass, hasClass } from 'utils/dom'
 export default {
   name: 'TableDrag',
   components: { Card },
+  inject: ['table'],
   props: {
     value: { type: Array, default: () => [] },
     columnControl: Boolean
@@ -51,7 +52,6 @@ export default {
       }
     }
   },
-  inject: ['table'],
   mounted() {
     this.$parent.$on('header-dragend', this.elDragendChange)
 
