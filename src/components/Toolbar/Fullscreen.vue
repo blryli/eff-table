@@ -46,7 +46,7 @@ export default {
     },
     change() {
       this.isFullscreen = screenfull.isFullscreen
-      this.table.$emit('screenfullChange', this.isFullscreen)
+      this.table.isScreenfull = this.isFullscreen
     },
     init() {
       if (screenfull.isEnabled) {

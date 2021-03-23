@@ -76,7 +76,7 @@ export default {
     },
     selectionChange(selected) {
       const { table, rowIndex } = this
-      table.$emit('row.selection.change', rowIndex, selected)
+      table.rowSelectionChange(rowIndex, selected)
     },
     cellRender(h) {
       const { row, rowIndex } = this
@@ -123,7 +123,7 @@ export default {
     expandClick() {
       const { rowIndex, expanded, table } = this
       this.expanded = !expanded
-      table.$emit('expanded', { rowIndex, expanded: this.expanded })
+      table.expandChange({ rowIndex, expanded: this.expanded })
     }
   }
 }

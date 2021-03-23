@@ -58,8 +58,6 @@ export default {
     on(window, 'resize', this.close)
     on(document.getElementById('app-container'), 'scroll', this.close)
     this.$nextTick(() => {
-      this.table.$on('cell-click', this.handleEditCell)
-
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
       this.body = this.wrapper.querySelector('.eff-table__body')
     })
@@ -69,7 +67,6 @@ export default {
     off(window, 'keyup', this.handleWindowKeyup)
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
-    this.table.$off('cell-click', this.handleEditCell)
   },
   methods: {
     handleValidate() {

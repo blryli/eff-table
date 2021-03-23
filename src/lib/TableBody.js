@@ -101,7 +101,9 @@ export default {
   },
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, $scopedSlots: { expand }} = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands } = table
+    const { $scopedSlots, $slots } = table
+    const { expand } = $scopedSlots || $slots
     return (
       <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />

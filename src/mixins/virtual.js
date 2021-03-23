@@ -16,8 +16,8 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length }, renderSize, $scopedSlots: { expand }} = this
-      return !expand && length > 50 && length > renderSize
+      const { tableData: { length }, renderSize, useExpand } = this
+      return !useExpand && length > 50 && length > renderSize
     },
     renderData() {
       const { isVirtual, tableData, renderIndex, renderSize } = this
@@ -34,8 +34,8 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { $scopedSlots: { expand }, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
-      return !expand && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
+      const { useExpand, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
+      return !useExpand && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
@@ -160,7 +160,6 @@ export default {
         !width && (width = spaceWidth)
         const columnWidth = Math.max(width, 40)
         allWidth += columnWidth
-        console.log()
         if (allWidth > this.columnVisibleWidth + 400) {
           index = columnRenderIndex + i + 2
           break

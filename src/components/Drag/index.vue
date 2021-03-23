@@ -52,8 +52,6 @@ export default {
   },
   inject: ['table'],
   mounted() {
-    this.$parent.$on('header-dragend', this.elDragendChange)
-
     this.$nextTick(() => {
       const { drag, rowDrag, $el } = this.table
       const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
@@ -100,7 +98,6 @@ export default {
   beforeDestroy() {
     this.columnSortable = null
     this.cradsSortable = null
-    this.$parent.$off('header-dragend', this.elDragendChange)
   },
   methods: {
     close() {
@@ -109,14 +106,6 @@ export default {
     },
     toggleCardShow(val) {
       this.show = val === undefined ? !this.show : val
-    },
-    elDragendChange(newWidth, oldWidth, column, event) {
-      const index = this.columns.findIndex(d => d.title === column.title)
-      if (index > -1) {
-        this.columns[index].width = newWidth
-
-        this.$emit('change', this.columns)
-      }
     },
     handleRowEnd({ fromEl, toEl }) {
       const fromRowId = fromEl.getAttribute('data-rowid')
@@ -163,10 +152,9 @@ export default {
       if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
 
       if (hasClass(toEl, 'is-drag--filter')) {
-        this.$info('该列不能做拖动操作！')
+        console.log('该列不能做拖动操作！')
         return
       }
-
       // tr内元素拖动
       if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
         const oldItem = columns[oldIndex]

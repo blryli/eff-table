@@ -119,7 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>scrollLeft -  {{ scrollLeft }}</p> -->
+    <!-- <p>columns -  {{ value.map(d => d.width) }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -210,7 +210,8 @@ export default {
       tableBody: null,
       tableData: Object.freeze([...this.data]),
       rowHoverIndex: null,
-      expands: []
+      expands: [],
+      expand: null
     }
   },
   computed: {
@@ -244,6 +245,10 @@ export default {
       }
 
       return style
+    },
+    useExpand() {
+      const { value, expand } = this
+      return expand && value.find(d => d.type === 'expand')
     }
   },
   watch: {
@@ -262,17 +267,14 @@ export default {
       table: this
     }
   },
-  created() {
-    this.$on('screenfullChange', this.screenfullChange)
-    this.$on('expanded', this.expandChange)
-  },
-  beforeDestroy() {
-    this.$off('screenfullChange', this.screenfullChange)
+  mounted() {
+    this.$nextTick(() => {
+      const { $scopedSlots, $slots } = this
+      const { expand } = $scopedSlots || $slots
+      this.expand = expand
+    })
   },
   methods: {
-    screenfullChange(val) {
-      this.isScreenfull = val
-    },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
@@ -313,6 +315,7 @@ export default {
       const { rowIndex } = obj
       const index = this.expands.findIndex(d => d.rowIndex === rowIndex)
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
+      this.$emit('expand-change', this.expands)
     }
   }
 }
@@ -528,7 +531,8 @@ export default {
     font-weight: bold;
     user-select: none;
     background-color: #f6f7f8;
-
+  }
+  &-group, .eff-table__column{
     &.is-draging{
       background-color: #c7daf1;
     }
@@ -536,6 +540,12 @@ export default {
       background-color: #f3caca;
     }
   }
+  .is-draging, .is-draging--warning{
+    .eff-table__column{
+      background-color: transparent;
+    }
+  }
+
   .header-drag-move{
     position: fixed;
     width: 8px;

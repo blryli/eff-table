@@ -81,7 +81,7 @@ export default {
     handleClick(event) {
       if (this.summary) return
       const { table, rowIndex, handleEvent } = this
-      this.table.highlightCurrentRow && (table.currentRow = rowIndex)
+      table.highlightCurrentRow && (table.currentRow = rowIndex)
       handleEvent(event, 'click')
     },
     handleDoubleClick(event) {
@@ -89,9 +89,8 @@ export default {
       this.handleEvent(event, 'dblclick')
     },
     handleEvent(event, name) {
-      const { table } = this
+      const { table, row, rowIndex } = this
       const cell = getCell(event)
-      const { row, rowIndex } = this
       let column
       if (cell) {
         const colid = cell.getAttribute('data-colid')
@@ -99,7 +98,10 @@ export default {
           const [, columnIndex] = colid.split('-')
           column = table.bodyColumns[columnIndex - 1]
           if (column) {
-            table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
+            const obj = { row, column, rowIndex, columnIndex, cell, event }
+            const { edit } = table.$refs
+            name === 'click' && edit && edit.handleEditCell(obj)
+            table.$emit(`cell-${name}`, obj)
           }
         }
       }

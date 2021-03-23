@@ -8,14 +8,6 @@ export default {
       indeterminate: false
     }
   },
-  created() {
-    this.$on('row.selection.change', this.rowSelectionChange)
-    this.$on('all.selection.change', this.allselectionChange)
-  },
-  beforeDestroy() {
-    this.$off('row.selection.change', this.rowSelectionChange)
-    this.$off('all.selection.change', this.allselectionChange)
-  },
   computed: {
     checkeds() {
       return this.selecteds.map(v => this.data[v])

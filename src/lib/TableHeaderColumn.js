@@ -78,7 +78,7 @@ export default {
       />
     },
     selectionChange(val) {
-      this.table.$emit('all.selection.change', val)
+      this.table.allselectionChange(val)
     },
     titleRender(h, { column, columnIndex }) {
       if (column.titleRender) {
