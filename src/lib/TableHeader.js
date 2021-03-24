@@ -101,10 +101,10 @@ export default {
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
           if (children.length) {
             acc.push(<div class='eff-table__header-group'>
-              <div class='header-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
+              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
-              <div class='header-children'>
+              <div class='eff-table__header-group-children'>
                 {
                   render(children, parent)
                 }

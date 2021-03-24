@@ -16,7 +16,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .eff-table__scrollx{
   width: 100%;
   position: absolute;

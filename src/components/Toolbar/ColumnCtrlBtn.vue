@@ -6,12 +6,12 @@
   >{{ table.columnControlText }}</div>
   <div
     v-else
-    class="column-ctrl-btn"
-    title="列控制"
+    class="eff-table__column-ctrl"
+    title="列显示隐藏"
     @click="$emit('change')"
   >
-    <div class="column-ctrl-btn__front" />
-    <div class="column-ctrl-btn__end" />
+    <div class="eff-table__column-ctrl__front" />
+    <div class="eff-table__column-ctrl__end" />
   </div>
 </template>
 
@@ -22,8 +22,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.column-ctrl-btn{
+<style lang="scss">
+.eff-table__column-ctrl{
   position: relative;
   width: 16px;
   height: 16px;
@@ -71,7 +71,7 @@ export default {
   &:hover{
     cursor: pointer;
 
-    .column-ctrl-btn__front{
+    .eff-table__column-ctrl__front{
       &::before{
         animation: identifier 1s ease-in-out infinite;
       }

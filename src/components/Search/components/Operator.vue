@@ -1,7 +1,7 @@
 <template>
-  <div class="operator">
-    <div v-for="(d, i) in data" :key="i" class="operator-item" :class="{'is--active': d.type === active && d.type !== 'like'}" @click="typeChange(d.type)">
-      <div class="dropdown-icon">{{ d.label }}</div>
+  <div class="eff-operator">
+    <div v-for="(d, i) in data" :key="i" class="eff-operator-item" :class="{'is--active': d.type === active && d.type !== 'like'}" @click="typeChange(d.type)">
+      <div class="eff-operator-icon">{{ d.label }}</div>
     </div>
   </div>
 </template>
@@ -35,8 +35,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.operator{
+<style lang="scss">
+.eff-operator{
+  font-size: 12px;
   &-item{
     line-height: 24px;
     &:hover{
@@ -46,7 +47,7 @@ export default {
   }
 
   .is--active{
-    .dropdown-icon{
+    .eff-operator-icon{
       color: #1177e8;
     }
   }

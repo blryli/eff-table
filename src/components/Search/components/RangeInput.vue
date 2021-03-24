@@ -97,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .eff-search__range{
   height: auto;
   &-wrapper{

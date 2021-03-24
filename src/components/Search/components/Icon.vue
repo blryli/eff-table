@@ -1,5 +1,5 @@
 <template>
-  <i :class="[icon === 'like' ? 'el-icon-search' : 'search-icon-' + icon]">{{ content }}</i>
+  <i :class="'eff-icon-' + (icon === 'like' ? 'search' : icon)">{{ content }}</i>
 </template>
 <script>
 export default {
@@ -18,8 +18,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-[class^="search-icon-"]{
+<style lang="scss">
+[class^="eff-icon-"]{
   position: relative;
   width: 14px;
   text-transform: none;
@@ -29,7 +29,30 @@ export default {
   font-size: 16px;
   text-align: center;
 }
-.search-icon-unequals{
+.eff-icon-search{
+  position: relative;
+  width: 14px;
+  height: 14px;
+  &::before{
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #888;
+    border-radius: 50%;
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    transform: rotate(40deg);
+    width: 4px;
+    height: 1px;
+    background-color: #888;
+  }
+}
+.eff-icon-unequals{
   &::after{
     content: '';
     position: absolute;
@@ -41,7 +64,7 @@ export default {
     background-color: #888;
   }
 }
-.search-icon-lessthan, .search-icon-greaterthan{
+.eff-icon-lessthan, .eff-icon-greaterthan{
   font-size: 15px;
   &::after{
     content: '';
@@ -54,7 +77,7 @@ export default {
     background-color: #888;
   }
 }
-.search-icon-greaterthan{
+.eff-icon-greaterthan{
   &::after{
     left: 8px;
     transform: rotate(60deg);

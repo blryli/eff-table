@@ -82,7 +82,7 @@ export default {
       if (columnControl) {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
-            el: cardEl.querySelector('.drag-card__body'),
+            el: cardEl.querySelector('.eff-drag-card__body'),
             group: id,
             dragImage: {
               height: 30
@@ -130,12 +130,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
         this.dradingTarget = toEl
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
         this.dradingTarget = toEl
       }
     },
@@ -145,7 +145,7 @@ export default {
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) => {
-        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.header-title') : el
+        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.eff-table__header-group-title') : el
         return column.title && column.title.trim() === innerText.trim()
       }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
@@ -172,12 +172,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
         columns[oldIndex].show = false
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
         if (oldIndex > -1) {
           const oldItem = columns[oldIndex]
           oldItem.show = true

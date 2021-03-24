@@ -1,6 +1,6 @@
 <template>
   <div
-    class="checkbox"
+    class="eff-table__checkbox"
     :class="[
       { 'is-disabled': disabled },
       { 'is-checked': isChecked },
@@ -8,7 +8,7 @@
     ]"
     @click="handleChange"
   >
-    <span class="checkbox__icon" />
+    <span class="eff-table__checkbox-icon" />
   </div>
 </template>
 
@@ -41,8 +41,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.checkbox {
+<style lang="scss">
+.eff-table__checkbox {
   color: #606266;
   font-weight: 500;
   font-size: 14px;
@@ -51,7 +51,7 @@ export default {
   display: inline-block;
   white-space: nowrap;
   user-select: none;
-  .checkbox__icon {
+  .eff-table__checkbox-icon {
     display: inline-block;
     position: relative;
     border: 1px solid #dcdfe6;

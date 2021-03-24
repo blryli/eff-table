@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     tableClass() {
-      let tClass = 'eff-table'
+      let tClass = 'eff-table__container'
       const { overflowX, overflowY, border } = this
       overflowX && (tClass += ' is-overflow--x')
       overflowY && (tClass += ' is-overflow--y')

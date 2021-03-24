@@ -13,9 +13,9 @@
           :data="data"
         >
           <template slot="toolbar">
-            <button @click="validate">校验</button>
-            <button @click="validateChecked">校验选中行</button>
-            <button @click="clearValidate">清除校验</button>
+            <el-button @click="validate">校验</el-button>
+            <el-button @click="validateChecked">校验选中行</el-button>
+            <el-button @click="clearValidate">清除校验</el-button>
           </template>
         </eff-table>
       </div>

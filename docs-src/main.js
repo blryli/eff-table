@@ -7,7 +7,7 @@ import('../package.json').then(config => import(`../dist/${config.name}.css`))
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(Components)
-Vue.use(Element)
+Vue.use(Element, { size: 'mini' })
 
 new Vue({
   el: '#app',

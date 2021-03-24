@@ -1,5 +1,5 @@
 <template>
-  <div class="table-wrapper" :class="{'is--screenfull': isScreenfull}" :style="style">
+  <div class="eff-table" :class="{'is--screenfull': isScreenfull}" :style="style">
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
@@ -321,11 +321,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.table-wrapper{
+<style lang="scss">
+.eff-table{
   position: relative;
 }
-.eff-table {
+.eff-table__container {
   font-size: 14px;
   position: relative;
   color: #606266;
@@ -405,7 +405,7 @@ export default {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  .header-title{
+  &-title{
     flex: 1;
     display: flex;
     align-items: center;
@@ -414,7 +414,7 @@ export default {
     font-weight: bold;
     box-sizing: border-box;
   }
-  .header-children{
+  &-children{
     flex: 1;
     display: flex;
   }
@@ -611,7 +611,7 @@ export default {
 .is-border {
   .eff-table__column,
   .eff-table__search-empty,
-  .header-title{
+  .eff-table__header-group-title{
     border-left: 1px solid #ddd;
   }
   .is-first-right-fixed {
