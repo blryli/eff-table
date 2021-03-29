@@ -18,12 +18,14 @@
 
 <script>
 import TableBodyRow from './TableBodyRow'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'TableFooter',
   components: {
     TableBodyRow
   },
+  inject: ['table'],
   props: {
     data: { type: Array, default: () => [] },
     columns: { type: Array, default: () => [] },
@@ -31,7 +33,6 @@ export default {
     summaryMethod: { type: Function, default: null },
     fixed: { type: String, default: '' }
   },
-  inject: ['table'],
   computed: {
     style() {
       const { rowHeight } = this.table
@@ -64,7 +65,7 @@ export default {
       this.$el.scrollLeft = val
     }
   }
-}
+})
 </script>
 
 <style lang="scss">

@@ -1,4 +1,5 @@
 import SearchColumn from './SearchColumn'
+import { h } from 'vue'
 
 export default {
   name: 'TableSearch',
@@ -6,7 +7,7 @@ export default {
     SearchColumn
   },
   props: {
-    value: { type: Array, default: () => [] },
+    modelValue: { type: Array, default: () => [] },
     columns: { type: Array, default: () => [] },
     showSpace: Boolean
   },
@@ -61,23 +62,27 @@ export default {
   provide() {
     return { tableSearch: this }
   },
+  emits: ['update:modelValue', 'change'],
   watch: {
-    value(val) {
+    modelValue(val) {
+      console.log({ val })
       this.searchData = val
     }
   },
-  created() {
-    this.searchData = this.value
+  mounted() {
+    this.searchData = this.modelValue
   },
   methods: {
     change(val) {
+      console.log({ val })
       const { field } = val
       const { searchData } = this
+      console.log({ searchData })
       const index = searchData.findIndex(d => d.field === field)
       index > -1 ? searchData.splice(index, 1, val) : searchData.push(val)
 
       // console.log('handleSearchChange', JSON.stringify(searchData, null, 2))
-      this.$emit('input', searchData)
+      this.$emit('update:modelValue', searchData)
       this.$emit('change', searchData.filter(d => {
         const { content } = d
         return Boolean(Array.isArray(content) ? content.length : content)
@@ -90,23 +95,28 @@ export default {
       this.table.$emit('rangeClose', val)
     }
   },
-  render(h) {
+  render() {
     const { table, columns, searchData, operators, change, showSpace } = this
-    return <div class='eff-table__search' style={{ height: table.rowHeight + 'px' }}>
+    return h('div',
       {
+        class: 'eff-table__search',
+        style: { height: table.rowHeight + 'px' }
+      },
+      [
         columns.map((column, columnIndex) => {
-          return <SearchColumn
-            value={searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
-            column={column}
-            column-index={columnIndex}
-            operators={operators}
-            on-change={change}
-          />
-        })
-      }
-      {
-        showSpace ? <div class='eff-table__column is--space' /> : ''
-      }
-    </div>
+          return h(SearchColumn,
+            {
+              modelValue: searchData.find(d => d.field === column.prop) || { value: '', type: '' },
+              column: column,
+              columnIndex: columnIndex,
+              operators: operators,
+              onChange: change
+            }
+          )
+        }),
+        showSpace ? h('div', { class: 'eff-table__column is--space' }) : ''
+      ]
+
+    )
   }
 }

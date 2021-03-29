@@ -1,53 +1,18 @@
 import TableBodyColumn from './TableBodyColumn'
-import { getCell } from 'utils/dom'
+import { getCell } from '../utils/dom'
+import { defineComponent, h } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'TableBodyRow',
   components: { TableBodyColumn },
+  inject: ['table'],
   props: {
     bodyColumns: { type: Array, default: () => [] },
     row: { type: Object, default: () => {} },
     messages: { type: Array, default: () => [] },
     fixed: { type: String, default: '' },
-    rowIndex: Number,
+    rowIndex: { type: Number, default: 0 },
     summary: Boolean
-  },
-  inject: ['table'],
-  render(h) {
-    const { showSpace, columnRenderIndex } = this.table
-    const { rowIndex, rowClassName, fixed, row, messages, rowStyle, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
-    return (
-      <div
-        class={rowClassName}
-        style={rowStyle}
-        data-rowid={rowIndex + 1}
-        key={rowIndex + 1}
-        on-click={handleClick}
-        on-dblclick={handleDoubleClick}
-        on-mouseenter={handleMouseenter}
-        on-mouseleave={handleMouseleave}
-      >
-        {
-          bodyColumns.map((column, columnIndex) => {
-            columnIndex = fixed ? columnIndex : columnRenderIndex + columnIndex
-            const colid = `${rowIndex + 1}-${columnIndex + 1}`
-            const message = messages.find(d => d.prop === column.prop) || {}
-            return <TableBodyColumn
-              data-colid={colid}
-              row={row}
-              rowIndex={rowIndex}
-              column={column}
-              columnIndex={columnIndex}
-              message={message}
-              fixed={fixed}
-            />
-          })
-        }
-        {
-          showSpace ? <div class='eff-table__column is--space' /> : ''
-        }
-      </div>
-    )
   },
   computed: {
     rowStyle() {
@@ -81,7 +46,7 @@ export default {
     handleClick(event) {
       if (this.summary) return
       const { table, rowIndex, handleEvent } = this
-      this.table.highlightCurrentRow && (table.currentRow = rowIndex)
+      table.highlightCurrentRow && (table.currentRow = rowIndex)
       handleEvent(event, 'click')
     },
     handleDoubleClick(event) {
@@ -89,9 +54,8 @@ export default {
       this.handleEvent(event, 'dblclick')
     },
     handleEvent(event, name) {
-      const { table } = this
+      const { table, row, rowIndex } = this
       const cell = getCell(event)
-      const { row, rowIndex } = this
       let column
       if (cell) {
         const colid = cell.getAttribute('data-colid')
@@ -99,11 +63,51 @@ export default {
           const [, columnIndex] = colid.split('-')
           column = table.bodyColumns[columnIndex - 1]
           if (column) {
-            table.$emit(`cell-${name}`, { row, column, rowIndex, columnIndex, cell, event })
+            const obj = { row, column, rowIndex, columnIndex, cell, event }
+            const { edit } = table.$refs
+            name === 'click' && edit && edit.handleEditCell(obj)
+            table.$emit(`cell-${name}`, obj)
           }
         }
       }
       table.$emit(`row-${name}`, { row, column, rowIndex, event })
     }
+  },
+  render() {
+    const { showSpace, columnRenderIndex } = this.table
+    const { rowIndex, rowClassName, fixed, row, messages, rowStyle, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
+    return (
+      h('div',
+        {
+          class: rowClassName,
+          style: rowStyle,
+          'data-rowid': rowIndex + 1,
+          key: rowIndex + 1,
+          onClick: handleClick,
+          onDblclick: handleDoubleClick,
+          onMouseenter: handleMouseenter,
+          onMouseleave: handleMouseleave
+        },
+        [
+          bodyColumns.map((column, columnIndex) => {
+            columnIndex = fixed ? columnIndex : columnRenderIndex + columnIndex
+            const colid = `${rowIndex + 1}-${columnIndex + 1}`
+            const message = messages.find(d => d.prop === column.prop) || {}
+            return h(TableBodyColumn,
+              {
+                'data-colid': colid,
+                row: row,
+                rowIndex: rowIndex,
+                column: column,
+                columnIndex: columnIndex,
+                message: message,
+                fixed: fixed
+              }
+            )
+          }),
+          showSpace ? h('div', { class: 'eff-table__column is--space' }) : ''
+        ]
+      )
+    )
   }
-}
+})

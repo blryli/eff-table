@@ -1,15 +1,18 @@
 import TableHeaderColumn from './TableHeaderColumn'
-import Search from '../components/Search'
-import { on, off, hasClass, onMousemove, getCell } from 'utils/dom'
+import Search from '../components/Search/index'
+import { on, off, hasClass, onMousemove, getCell } from '../utils/dom'
+import { defineComponent, h } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'TableHeader',
+  components: { TableHeaderColumn, Search },
+  inject: ['table'],
   props: {
     visibleColumns: { type: Array, default: () => [] },
     bodyColumns: { type: Array, default: () => [] },
     fixed: { type: String, default: '' }
   },
-  components: { TableHeaderColumn, Search },
+  emits: ['search-change', 'dragend', 'sort-change'],
   data() {
     return {
       dragingTarget: null,
@@ -17,6 +20,18 @@ export default {
       isDraging: false,
       isColumnsChange: false,
       searchData: []
+    }
+  },
+  computed: {
+    dragStyle() {
+      const { dragingTarget, table } = this
+      const { top, left, width } = dragingTarget && dragingTarget.getBoundingClientRect() || {}
+      return {
+        display: dragingTarget ? 'block' : 'none',
+        height: table.heights.headerHeight + 'px',
+        top: top + 'px',
+        left: left + width - 8 + 'px'
+      }
     }
   },
   watch: {
@@ -32,60 +47,15 @@ export default {
       })
     }
   },
-  computed: {
-    dragStyle() {
-      const { dragingTarget, table } = this
-      const { top, left, width } = dragingTarget && dragingTarget.getBoundingClientRect() || {}
-      return {
-        display: dragingTarget ? 'block' : 'none',
-        height: table.heights.headerHeight + 'px',
-        top: top + 'px',
-        left: left + width - 8 + 'px'
-      }
-    }
+  mounted() {
+    this.table.headerLoad = true
+    on(this.$el, 'scroll', this.handleScroll)
+    this.$nextTick(() => {
+      this.height = this.$refs.header.offsetHeight
+    })
   },
-  inject: ['table'],
-  render(h) {
-    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData } = this
-    const { showSpace, search, heights: { headerHeight }} = table
-    const height = headerHeight + 'px'
-
-    return (
-      <div class='eff-table__header-wrapper'>
-        <div
-          class={{ 'eff-table__header': true, 'is--move': isDraging }}
-          ref= 'header'
-          style={{ height }}
-          on-click={handleClick}
-          on-mousemove={handleMousemove}
-          on-mouseleave={handleMouseleave}
-        >
-          {
-            renderColumns(visibleColumns)
-          }
-          {
-            showSpace ? <div class='eff-table__column is--space' style={height} /> : ''
-          }
-          {
-            <div
-              ref='dragMove'
-              class='header-drag-move'
-              style={dragStyle}
-              on-mousedown={moveMousedown}
-            />
-          }
-        </div>
-        {
-          search && !isColumnsChange ? <Search
-            value={searchData}
-            columns={bodyColumns}
-            showSpace={showSpace}
-            on-input={val => (this.searchData = val)}
-            on-change={val => table.$emit('search-change', val)}
-          /> : ''
-        }
-      </div>
-    )
+  beforeUnmount() {
+    off(this.$el, 'scroll', this.handleScroll)
   },
   methods: {
     sortChange(sort) {
@@ -100,29 +70,29 @@ export default {
           const { children = [] } = column
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
           if (children.length) {
-            acc.push(<div class='eff-table__header-group'>
-              <div class='header-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
-                {column.title}
-              </div>
-              <div class='header-children'>
-                {
+            acc.push(
+              h('div', { class: 'eff-table__header-group' },
+                h('div', { class: 'eff-table__header-group-title', style: { maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }},
+                  column.title
+                ),
+                h('div', { class: 'eff-table__header-group-children' },
                   render(children, parent)
-                }
-              </div>
-            </div>)
+                )
+              ))
           } else {
-            acc.push(<TableHeaderColumn {...{
-              attrs: {
-                colid: parent,
-                column,
-                columnIndex,
-                bodyColumnIndex: index
-              },
-              on: {
-                'sort-change': sortChange
-              }
-            }}
-            />)
+            acc.push(
+              h(TableHeaderColumn,
+                {
+                  colid: parent,
+                  column,
+                  columnIndex,
+                  bodyColumnIndex: index,
+                  on: {
+                    'sort-change': sortChange
+                  }
+                }
+              )
+            )
             index += 1
           }
           return acc
@@ -168,14 +138,14 @@ export default {
       const { start, moveing, end } = this
       onMousemove({ start, moveing, end })
     },
-    start(e) {
+    start() {
       if (!this.dragingTarget) return
       this.table.lineShow = true
       const { right: columnRight } = this.dragingTarget.getBoundingClientRect()
       this.startX = columnRight + 2
       this.moveing()
     },
-    moveing(moveX = 0, moveY) {
+    moveing(moveX = 0) {
       if (!this.dragingTarget) return
       this.isDraging = true
       this.moveX = moveX
@@ -229,15 +199,48 @@ export default {
       }, 100)
     }
   },
-  mounted() {
-    this.table.headerLoad = true
-    on(this.$el, 'scroll', this.handleScroll)
-    this.$nextTick(() => {
-      this.height = this.$refs.header.offsetHeight
-    })
-  },
-  beforeDestroy() {
-    off(this.$el, 'scroll', this.handleScroll)
-  }
-}
+  render() {
+    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange } = this
+    let { searchData } = this
+    const { showSpace, search, heights: { headerHeight }} = table
+    const height = headerHeight + 'px'
 
+    return (
+      h('div',
+        { class: 'eff-table__header-wrapper' },
+        [h('div',
+          {
+            class: { 'eff-table__header': true, 'is--move': isDraging },
+            ref: 'header',
+            style: { height },
+            onClick: handleClick,
+            onMousemove: handleMousemove,
+            onMouseleave: handleMouseleave
+          },
+          [
+            renderColumns(visibleColumns),
+            showSpace ? h('div', { class: 'eff-table__column is--space', style: { height }}) : '',
+            h('div',
+              {
+                ref: 'dragMove',
+                class: 'header-drag-move',
+                style: dragStyle,
+                onMousedown: moveMousedown
+              }
+            )
+          ]
+        ),
+        search && !isColumnsChange ? h(Search,
+          {
+            modelValue: searchData,
+            columns: bodyColumns,
+            showSpace: showSpace,
+            'onUpdate:modelValue': val => (searchData = val),
+            onChange: val => table.$emit('search-change', val)
+          }
+        ) : ''
+        ]
+      )
+    )
+  }
+})

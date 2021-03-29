@@ -1,5 +1,5 @@
 <template>
-  <div class="table-wrapper" :class="{'is--screenfull': isScreenfull}" :style="style">
+  <div class="eff-table" :class="{'is--screenfull': isScreenfull}" :style="tableStyle">
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
@@ -119,7 +119,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>scrollLeft -  {{ scrollLeft }}</p> -->
+    <!-- <p>columns -  {{ value.map(d => d.width) }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
@@ -134,23 +134,24 @@
 </template>
 
 <script>
-import Column from 'mixins/column'
-import Selection from 'mixins/selection'
-import Layout from 'mixins/layout'
-import validate from 'mixins/validate'
-import sort from 'mixins/sort'
-import virtual from 'mixins/virtual'
+import Column from '../mixins/column'
+import Selection from '../mixins/selection'
+import Layout from '../mixins/layout'
+import validate from '../mixins/validate'
+import sort from '../mixins/sort'
+import virtual from '../mixins/virtual'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
-import TableFooter from './TableFooter'
-import Popover from '../components/Popover'
-import Drag from '../components/Drag'
-import Toolbar from '../components/Toolbar'
-import Edit from '../components/Edit'
-import ScrollX from '../components/ScrollX'
-import Loading from '../components/Loading'
+import TableFooter from './TableFooter.vue'
+import Popover from '../components/Popover/index.vue'
+import Drag from '../components/Drag/index.vue'
+import Toolbar from '../components/Toolbar/index.vue'
+import Edit from '../components/Edit/index'
+import ScrollX from '../components/ScrollX/index.vue'
+import Loading from '../components/Loading/index.vue'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'EffTable',
   components: {
     TableHeader,
@@ -164,8 +165,13 @@ export default {
     Loading
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual],
+  provide() {
+    return {
+      table: this
+    }
+  },
   props: {
-    value: { type: Array, default: () => [] },
+    modelValue: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
     form: { type: Object, default: () => {} },
     border: Boolean,
@@ -196,9 +202,37 @@ export default {
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] }
   },
+  emits: [
+    'select',
+    'select-all',
+    'selection-change',
+    'cell-mouse-enter',
+    'cell-mouse-leave',
+    'cell-click',
+    'cell-dblclick',
+    'row-click',
+    'row-contextmenu',
+    'row-dblclick',
+    'header-click',
+    'sort-change',
+    'filter-change',
+    'current-change',
+    'header-dragend',
+    'expand-change',
+    'update:modelValue',
+    'update:form',
+    'drag-change',
+    'row-drag-change',
+    'drag-card-close',
+    'blur',
+    'focus',
+    'edit-open',
+    'edit-close',
+    'editColumnLastToNext'
+  ],
   data() {
     return {
-      columns: this.value.map(d => {
+      columns: this.modelValue.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       show: false,
@@ -206,11 +240,11 @@ export default {
       reference: null,
       currentRow: null,
       lineShow: false,
-      isScreenfull: false,
       tableBody: null,
       tableData: Object.freeze([...this.data]),
       rowHoverIndex: null,
-      expands: []
+      expands: [],
+      expand: null
     }
   },
   computed: {
@@ -230,49 +264,31 @@ export default {
       }
       return plat(this.visibleColumns)
     },
-    style() {
-      const style = {}
-      const { isScreenfull, height, maxHeight } = this
-      const screenHeight = window.screen.height
-      style['--rowHeight'] = this.rowHeight + 'px'
-      if (isScreenfull) {
-        style.height = screenHeight + 'px'
-      } else {
-        if (height) style.height = height + 'px'
-        if (maxHeight) style.maxHeight = maxHeight + 'px'
-        if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
-      }
-
-      return style
+    useExpand() {
+      const { modelValue, expand } = this
+      return expand && modelValue.find(d => d.type === 'expand')
     }
   },
   watch: {
-    data(val) {
-      this.tableData = Object.freeze([...val])
-      this.clearSelection()
-      this.scrollLeftEvent()
-      this.resize()
+    data: {
+      handler(val) {
+        this.tableData = Object.freeze([...val])
+        this.clearSelection()
+        this.scrollLeftEvent()
+        this.resize()
+      },
+      deep: true
     },
-    value(val) {
+    modelValue(val) {
       this.columns = val
     }
   },
-  provide() {
-    return {
-      table: this
-    }
-  },
-  created() {
-    this.$on('screenfullChange', this.screenfullChange)
-    this.$on('expanded', this.expandChange)
-  },
-  beforeDestroy() {
-    this.$off('screenfullChange', this.screenfullChange)
+  mounted() {
+    this.$nextTick(() => {
+      this.expand = this.$slots.expand
+    })
   },
   methods: {
-    screenfullChange(val) {
-      this.isScreenfull = val
-    },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
@@ -286,7 +302,7 @@ export default {
       }
     },
     dargChange() {
-      this.$emit('input', this.columns)
+      this.$emit('update:modelValue', this.columns)
       this.$emit('drag-change', this.columns)
       this.resize()
     },
@@ -313,16 +329,17 @@ export default {
       const { rowIndex } = obj
       const index = this.expands.findIndex(d => d.rowIndex === rowIndex)
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
+      this.$emit('expand-change', this.expands)
     }
   }
-}
+})
 </script>
 
-<style lang="scss" scoped>
-.table-wrapper{
+<style lang="scss">
+.eff-table{
   position: relative;
 }
-.eff-table {
+.eff-table__container {
   font-size: 14px;
   position: relative;
   color: #606266;
@@ -350,10 +367,6 @@ export default {
     box-shadow: none;
   }
 }
-</style>
-
-<style lang="scss">
-@import '../components/Edit/index.scss';
 
 .eff-table {
   .eff-cell{
@@ -402,7 +415,7 @@ export default {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  .header-title{
+  &-title{
     flex: 1;
     display: flex;
     align-items: center;
@@ -411,7 +424,7 @@ export default {
     font-weight: bold;
     box-sizing: border-box;
   }
-  .header-children{
+  &-children{
     flex: 1;
     display: flex;
   }
@@ -528,7 +541,8 @@ export default {
     font-weight: bold;
     user-select: none;
     background-color: #f6f7f8;
-
+  }
+  &-group, .eff-table__column{
     &.is-draging{
       background-color: #c7daf1;
     }
@@ -536,6 +550,12 @@ export default {
       background-color: #f3caca;
     }
   }
+  .is-draging, .is-draging--warning{
+    .eff-table__column{
+      background-color: transparent;
+    }
+  }
+
   .header-drag-move{
     position: fixed;
     width: 8px;
@@ -601,7 +621,7 @@ export default {
 .is-border {
   .eff-table__column,
   .eff-table__search-empty,
-  .header-title{
+  .eff-table__header-group-title{
     border-left: 1px solid #ddd;
   }
   .is-first-right-fixed {
@@ -836,6 +856,65 @@ export default {
   &.is-expanded{
     transform: rotate(90deg);
   }
+}
+
+// edit
+.eff-table-edit{
+  position: fixed;
+  z-index: 10;
+  border: 1px solid #1177E8;
+  box-sizing: border-box;
+  overflow: hidden;
+  &.is-show{
+    visibility: visible;
+  }
+  &.is-hide{
+    visibility: hidden;
+  }
+  input{
+    width: 100%;
+    height: var(--height)!important;
+    line-height: var(--height)!important;
+    padding: 0 5px;
+    border: 0;
+    outline: none;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+  .eff-table-edit-input{
+    width: 0;
+    height: 0;
+    padding: 0;
+    box-sizing: border-box;
+    opacity: 0;
+  }
+}
+
+.is-shake--y{
+  animation: shakeY .2s infinite;
+}
+.is-shake--x{
+  animation: shakeX .2s infinite;
+}
+
+@keyframes shakeY
+{
+  0% {transform: translateY(-1px);}
+  10% {transform: translateY(0px);}
+  40% {transform: translateY(2px);}
+  60% {transform: translateY(0px);}
+  80% {transform: translateY(-1px);}
+  100% {transform: translateY(0px);}
+}
+
+@keyframes shakeX
+{
+  0% {transform: translateX(-1px);}
+  10% {transform: translateX(0px);}
+  40% {transform: translateX(2px);}
+  60% {transform: translateX(0px);}
+  80% {transform: translateX(-1px);}
+  100% {transform: translateX(0px);}
 }
 
 @keyframes rotate {

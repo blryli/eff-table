@@ -1,0 +1,87 @@
+.eff-drag-card {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2000;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: box-shadow .3s;
+  &:hover{
+    box-shadow: 0 1px 10px rgba($color: #000000, $alpha: .1);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+
+    &-close {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      padding: 5px;
+      box-sizing: content-box;
+      &::before,
+      &::after {
+        position: absolute;
+        left: 5px;
+        top: 13px;
+        content: "";
+        width: 16px;
+        height: 1px;
+        background-color: #666;
+      }
+      &::before {
+        transform: rotate(-45deg);
+      }
+      &::after {
+        transform: rotate(45deg);
+      }
+      &:hover {
+        cursor: pointer;
+        &::before,
+        &::after {
+          background-color: #1177e8;
+        }
+      }
+    }
+  }
+
+  &__body {
+    position: relative;
+    height: calc(100% - 40px);
+    padding: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    > * {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      font-size: 12px;
+      user-select: none;
+      background-color: #fff;
+      // box-shadow: 0 1px 5px rgba($color: #000000, $alpha: 0.1);
+      display: block;
+      width: 100%;
+      margin-bottom: 5px;
+      box-sizing: border-box;
+    }
+    > * + * {
+      margin-left: 0;
+    }
+    &.inline {
+      & > * {
+        display: inline-block;
+        width: auto;
+      }
+      & > * + * {
+        margin-left: 5px;
+        margin-top: 5px;
+      }
+    }
+  }
+}

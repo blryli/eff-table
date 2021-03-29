@@ -1,20 +1,13 @@
 const checkedsSet = new Set()
 
 export default {
+  emits: ['selection-change'],
   data() {
     return {
       selecteds: [],
       selectionAll: false,
       indeterminate: false
     }
-  },
-  created() {
-    this.$on('row.selection.change', this.rowSelectionChange)
-    this.$on('all.selection.change', this.allselectionChange)
-  },
-  beforeDestroy() {
-    this.$off('row.selection.change', this.rowSelectionChange)
-    this.$off('all.selection.change', this.allselectionChange)
   },
   computed: {
     checkeds() {

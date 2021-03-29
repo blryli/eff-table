@@ -2,25 +2,25 @@
   <div
     v-show="show"
     ref="card"
-    class="drag-card"
+    class="eff-drag-card"
     shadow="hover"
     :style="style"
     @mousedown="handleMousedown"
     @mousemove="handleMousemove"
     @mouseleave="handleMouseleave"
   >
-    <div class="drag-card__header">
-      <span class="drag-card__header-title">{{ title }}</span>
-      <i class="drag-card__header-close" type="text" @click="$emit('close')" />
+    <div class="eff-drag-card__header">
+      <span class="eff-drag-card__header-title">{{ title }}</span>
+      <i class="eff-drag-card__header-close" type="text" @click="$emit('close')" />
     </div>
-    <div ref="body" class="drag-card__body" :class="{inline: inline}">
+    <div ref="body" class="eff-drag-card__body" :class="{inline: inline}">
       <slot />
     </div>
   </div>
 </template>
 
 <script>
-import { onMousemove, hasClass } from 'utils/dom'
+import { onMousemove, hasClass } from '../../utils/dom'
 
 export default {
   name: 'DragCard',
@@ -72,7 +72,7 @@ export default {
       this.update()
     }, 500)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.addToBody && document.body.removeChild(this.$el)
   },
   methods: {
@@ -105,7 +105,7 @@ export default {
       const { target, x, y } = e
 
       // header 操作
-      const headers = ['drag-card__header', 'drag-card__header-title']
+      const headers = ['eff-drag-card__header', 'eff-drag-card__header-title']
       if (headers.find(d => hasClass(target, d))) {
         const { left, top, right } = this.$el.getBoundingClientRect()
         if (y < top + 8) {
@@ -120,7 +120,7 @@ export default {
         } else {
           this.cursor = 'move' // 头部拖动
         }
-      } else if (hasClass(target, 'drag-card__body')) {
+      } else if (hasClass(target, 'eff-drag-card__body')) {
         // body 操作
         const { left, bottom, right } = this.$refs.body.getBoundingClientRect()
         if (y > bottom - 8) {
@@ -175,7 +175,7 @@ export default {
         this.move = { x, y, width: 0, height: 0 }
       }
     },
-    end(x, y) {
+    end() {
       this.isDraging = false
       const { innerHeight } = window
       const { clientWidth } = document.body
@@ -201,7 +201,7 @@ export default {
 </script>
 
 <style lang="scss">
-.drag-card {
+.eff-drag-card {
   position: fixed;
   right: 10px;
   bottom: 10px;

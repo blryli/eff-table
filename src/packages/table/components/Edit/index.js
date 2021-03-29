@@ -1,12 +1,14 @@
-import { getKeysStr, getType } from 'utils'
-import { on, off } from 'utils/dom'
+import { getKeysStr, getType } from '../../utils/index'
+import { on, off } from '../../utils/dom'
 import { getTableNode, isOverflow, shake } from './dom'
+import { h } from 'vue'
 
 export default {
   name: 'TableEdit',
   props: {
     columns: { type: Array, default: () => [] }
   },
+  emits: ['blur', 'change', 'focus'],
   data() {
     return {
       column: null,
@@ -23,16 +25,16 @@ export default {
   inject: ['table'],
   computed: {
     editRender() {
-      const { rowIndex, table, column = {}, $createElement } = this
+      const { rowIndex, table, column = {}} = this
       const { edit: { render } = {}, prop } = column || {}
-      return render && typeof render === 'function' && render($createElement, { row: table.data[rowIndex], rowIndex, column, columnIndex: this.getColumnIndex(column.prop), prop }) || ''
+      return render && typeof render === 'function' && render(h, { row: table.data[rowIndex], rowIndex, column, columnIndex: this.getColumnIndex(column.prop), prop }) || ''
     }
   },
   watch: {
     show(val) {
       const { table, component } = this
       if (val) {
-        table.$emit('editOpen')
+        table.$emit('edit-open')
       } else {
         component && component.close && component.close()
         this.handleValidate()
@@ -41,7 +43,7 @@ export default {
         this.scrollNum = 0
         this.column = null
         this.cell = null
-        table.$emit('editClose')
+        table.$emit('edit-close')
         table.$emit('blur')
       }
     },
@@ -58,18 +60,15 @@ export default {
     on(window, 'resize', this.close)
     on(document.getElementById('app-container'), 'scroll', this.close)
     this.$nextTick(() => {
-      this.table.$on('cell-click', this.handleEditCell)
-
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
       this.body = this.wrapper.querySelector('.eff-table__body')
     })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     off(window, 'mousedown', this.handleWindowMousedown)
     off(window, 'keyup', this.handleWindowKeyup)
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
-    this.table.$off('cell-click', this.handleEditCell)
   },
   methods: {
     handleValidate() {
@@ -359,11 +358,11 @@ export default {
       return target.nodeName === 'BODY' || this.table.$el.contains(target)
     }
   },
-  render(h) {
-    const { show, table, editRender, $createElement } = this
+  render() {
+    const { show, table, editRender } = this
     const classes = `eff-table-edit${show ? ' is-show' : ' is-hide'}`
     const style = { '--height': table.rowHeight - 2 + 'px' }
-    const input = $createElement('input', { class: 'eff-table-edit-input', ref: 'editInput' })
-    return <div class={classes} style={style}>{[editRender, input]}</div>
+    const input = h('input', { class: 'eff-table-edit-input', ref: 'editInput' })
+    return h('div', { class: classes, style: style }, [editRender, input])
   }
 }

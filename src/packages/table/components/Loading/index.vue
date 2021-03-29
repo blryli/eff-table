@@ -1,20 +1,24 @@
 <template>
-  <div v-if="visible" class="eff-loading">
-    <div class="eff-loading-icon" />
+  <div v-if="visible" class="eff-table__loading">
+    <div class="eff-table__loading-icon" />
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'Loading',
   props: {
     visible: Boolean
+  },
+  setup(props) {
+    return {}
   }
-}
+})
 </script>
 
-<style lang="scss" scoped>
-.eff-loading{
+<style lang="scss">
+.eff-table__loading{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,7 +43,7 @@ export default {
       content: '';
       background-color: #5EB980;
       border-radius: 50%;
-      animation: scale 3s ease-in-out infinite;
+      animation: effScale 3s ease-in-out infinite;
     }
     &::after{
       position: absolute;
@@ -50,12 +54,12 @@ export default {
       content: '';
       background-color: #31a55b;
       border-radius: 50%;
-      animation: iconScale 3s ease-in-out infinite;
+      animation: effIconScale 3s ease-in-out infinite;
     }
   }
 }
 
-@keyframes scale {
+@keyframes effScale {
   0%{
     transform: scale(1.2, 1.2);
   }
@@ -72,7 +76,7 @@ export default {
     transform: scale(1.2, 1.2);
   }
 }
-@keyframes iconScale {
+@keyframes effIconScale {
   0%{
     transform: scale(0, 0);
   }

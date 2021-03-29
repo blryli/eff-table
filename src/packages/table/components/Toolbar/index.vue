@@ -1,9 +1,9 @@
 <template>
-  <div class="table-toobar">
-    <div class="table-toobar__left">
+  <div class="eff-table__toobar">
+    <div class="eff-table__toobar-left">
       <slot />
     </div>
-    <div class="table-toobar__right">
+    <div class="eff-table__toobar-right">
       <Clear v-if="table.search && table.searchClear" />
       <ColumnCtrlBtn v-if="table.columnControl" @change="btnChange" />
       <Fullscreen v-if="table.fullscreen" />
@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Fullscreen from './Fullscreen'
-import ColumnCtrlBtn from './ColumnCtrlBtn'
-import Clear from './Clear'
+import Fullscreen from './Fullscreen.vue'
+import ColumnCtrlBtn from './ColumnCtrlBtn.vue'
+import Clear from './Clear.vue'
 export default {
   name: 'Toolbar',
   components: { Fullscreen, ColumnCtrlBtn, Clear },
@@ -27,8 +27,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.table-toobar{
+<style lang="scss">
+.eff-table__toobar{
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,7 +38,7 @@ export default {
   border-bottom: 0;
   background-color: #f6f7f8;
   box-sizing: border-box;
-  &__left, &__right{
+  &-left, &-right{
     display: flex;
     align-items: center;
     > * + * {

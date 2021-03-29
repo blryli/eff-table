@@ -1,48 +1,45 @@
 <template>
   <div
-    class="checkbox"
+    class="eff-table__checkbox"
     :class="[
       { 'is-disabled': disabled },
-      { 'is-checked': isChecked },
+      { 'is-checked': modelValue },
       { 'is-indeterminate': indeterminate }
     ]"
     @click="handleChange"
   >
-    <span class="checkbox__icon" />
+    <span class="eff-table__checkbox-icon" />
   </div>
 </template>
 
 <script>
+import { toRefs } from 'vue'
 export default {
   name: 'Checkbox',
   props: {
-    value: Boolean,
+    modelValue: Boolean,
     indeterminate: Boolean,
     disabled: Boolean,
     checked: Boolean
   },
-  data() {
+  emits: ['update:modelValue', 'change'],
+  setup(props, ctx) {
+    const { modelValue } = toRefs(props)
+    const handleChange = () => {
+      console.log('check', modelValue.value)
+      // isChecked.value = !isChecked.value
+      ctx.emit('update:modelValue', !modelValue.value)
+      ctx.emit('change', !modelValue.value)
+    }
     return {
-      isChecked: this.value
-    }
-  },
-  watch: {
-    value(val) {
-      this.isChecked = val
-    }
-  },
-  methods: {
-    handleChange() {
-      this.isChecked = !this.isChecked
-      this.$emit('input', this.isChecked)
-      this.$emit('change', this.isChecked)
+      handleChange
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.checkbox {
+<style lang="scss">
+.eff-table__checkbox {
   color: #606266;
   font-weight: 500;
   font-size: 14px;
@@ -51,7 +48,7 @@ export default {
   display: inline-block;
   white-space: nowrap;
   user-select: none;
-  .checkbox__icon {
+  .eff-table__checkbox-icon {
     display: inline-block;
     position: relative;
     border: 1px solid #dcdfe6;

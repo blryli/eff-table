@@ -29,20 +29,21 @@
 </template>
 
 <script>
-import { on, off } from 'utils/dom'
-import EffInput from './Input'
+import { on, off } from '../../../utils/dom'
+import EffInput from './Input.vue'
 
 export default {
   components: {
     EffInput
   },
+  inject: ['table'],
   props: {
-    value: { type: [Array, String], default: () => [] },
+    modelValue: { type: [Array, String], default: () => [] },
     column: { type: Object, default: () => {} }
   },
   data() {
     return {
-      curValue: this.value,
+      curValue: this.modelValue,
       form: { start: '', end: '' },
       show: false,
       style: {}
@@ -52,15 +53,14 @@ export default {
     show(val) {
       this.$emit(val ? 'show' : 'close', this.column)
     },
-    value(val) {
+    modelValue(val) {
       this.curValue = val
     }
   },
-  inject: ['table'],
   mounted() {
     on(window, 'mousedown', this.windowHandleMousedown)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     off(window, 'mousedown', this.windowHandleMousedown)
   },
   methods: {
@@ -97,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .eff-search__range{
   height: auto;
   &-wrapper{

@@ -4,10 +4,10 @@
     class="eff-toobar--text"
     @click="clear"
   >{{ table.searchClearText }}</div>
-  <div v-else class="eff-clear" title="清空搜索" @click="clear">
-    <div class="eff-clear--top" />
-    <div class="eff-clear--center" />
-    <div class="eff-clear--bottom" />
+  <div v-else class="eff-table__clear" title="清空搜索" @click="clear">
+    <div class="eff-table__clear--top" />
+    <div class="eff-table__clear--center" />
+    <div class="eff-table__clear--bottom" />
   </div>
 </template>
 
@@ -26,8 +26,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.eff-clear{
+<style lang="scss">
+.eff-table__clear{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,13 +79,13 @@ export default {
     }
   }
   &:hover{
-    animation: ismove .8s infinite;
-    .eff-clear--bottom{
-      animation: skewX .8s infinite;
+    animation: effIsmove .8s infinite;
+    .eff-table__clear--bottom{
+      animation: effSkewX .8s infinite;
     }
   }
 }
-@keyframes ismove {
+@keyframes effIsmove {
   0%{
     transform: translateX(-2px);
   }
@@ -102,7 +102,7 @@ export default {
     transform: translateX(-2px);
   }
 }
-@keyframes skewX {
+@keyframes effSkewX {
   0%{
     transform: skewX(20deg);
   }

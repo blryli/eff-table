@@ -1,16 +1,18 @@
-import VCheckbox from '../components/Checkbox'
+import VCheckbox from '../components/Checkbox/index.vue'
 import { getTextWidth } from '../utils/dom'
+import { defineComponent, h } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'TableHeaderColumn',
+  components: { VCheckbox },
+  inject: ['table'],
   props: {
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' }
   },
-  components: { VCheckbox },
-  inject: ['table'],
+  emits: ['sort-change'],
   computed: {
     columnClass() {
       const { titleClassName, drag, fixed, edit: { render: editRender } = {}} = this.column
@@ -24,44 +26,6 @@ export default {
       return classes
     }
   },
-  render(h) {
-    const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, type, validator } = column
-
-    const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
-    const { required } = validator || {}
-
-    return (
-      <div
-        class={columnClass}
-        data-colid={colid}
-        data-colidx={columnIndex}
-        key={colid}
-        style={table.setColumnStyle(column, bodyColumnIndex)}
-        on-mouseenter={event => handleMouseenter(event, slot)}
-        on-mouseleave={event => handleMouseleave(event, slot)}
-      >
-        <div ref='cell' class={{ 'eff-cell': true, sortable }}>
-          {
-            required ? <i class='eff-cell--required' /> : ''
-          }
-          <span class='eff-cell--title'>{slot}</span>
-          {
-            sortable ? <span class='eff-cell--sort'>
-              <i
-                class={{ 'eff-cell--sort-asc': true, 'is--active': sortActive('asc') }}
-                on-click={() => sortClick('asc')}
-              ></i>
-              <i
-                class={{ 'eff-cell--sort-desc': true, 'is--active': sortActive('desc') }}
-                on-click={() => sortClick('desc')}
-              ></i>
-            </span> : ''
-          }
-        </div>
-      </div>
-    )
-  },
   methods: {
     sortActive(od) {
       const { table, column } = this
@@ -70,15 +34,17 @@ export default {
     },
     renderSelection(h) {
       const { table, columnIndex, selectionChange } = this
-      return <v-checkbox
-        value={table.selectionAll}
-        key={columnIndex}
-        indeterminate={table.indeterminate}
-        on-change={selectionChange}
-      />
+      return h(VCheckbox,
+        {
+          modelValue: table.selectionAll,
+          key: columnIndex,
+          indeterminate: table.indeterminate,
+          onChange: selectionChange
+        }
+      )
     },
     selectionChange(val) {
-      this.table.$emit('all.selection.change', val)
+      this.table.allselectionChange(val)
     },
     titleRender(h, { column, columnIndex }) {
       if (column.titleRender) {
@@ -108,5 +74,50 @@ export default {
       const { column, column: { prop }} = this
       this.$emit('sort-change', { column, prop, order })
     }
+  },
+  render() {
+    const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
+    const { sortable, title, type, validator } = column
+
+    const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
+    const { required } = validator || {}
+
+    return (
+      h('div',
+        {
+          class: columnClass,
+          'data-colid': colid,
+          'data-colidx': columnIndex,
+          key: colid,
+          style: table.setColumnStyle(column, bodyColumnIndex),
+          onMouseenter: event => handleMouseenter(event, slot),
+          onMouseleave: event => handleMouseleave(event, slot)
+        },
+
+        h('div',
+          { ref: 'cell', class: { 'eff-cell': true, sortable }},
+          [
+            required ? h('i', { class: 'eff-cell--required' }) : '',
+            h('span', { class: 'eff-cell--title' }, slot),
+            sortable ? h('span', { class: 'eff-cell--sort' },
+              [
+                h('i',
+                  {
+                    class: { 'eff-cell--sort-asc': true, 'is--active': sortActive('asc') },
+                    onClick: () => sortClick('asc')
+                  }
+                ),
+                h('i',
+                  {
+                    class: { 'eff-cell--sort-desc': true, 'is--active': sortActive('desc') },
+                    onClick: () => sortClick('desc')
+                  }
+                )
+              ]
+            ) : ''
+          ]
+        )
+      )
+    )
   }
-}
+})

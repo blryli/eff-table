@@ -1,5 +1,6 @@
 <script>
-import { removeBody, getDomClientRect } from 'utils/dom'
+import { removeBody, getDomClientRect } from '../../utils/dom'
+import { h, Transition } from 'vue'
 
 export default {
   name: 'Popover',
@@ -26,7 +27,7 @@ export default {
   computed: {
     pClass() {
       const { effect, show, momentPlacement, popoverClass } = this
-      return `${effect ? `is-${effect}` : 'is-light'}  v-popover__${momentPlacement} ${popoverClass} ${show ? 'v-popover--visible' : 'v-popover--hidden'}`
+      return `${effect ? `is-${effect}` : 'is-light'}  eff-table__popover-${momentPlacement} ${popoverClass} ${show ? 'eff-table__popover--visible' : 'eff-table__popover--hidden'}`
     },
     popoverStyle() {
       const { effect } = this
@@ -96,7 +97,7 @@ export default {
   },
   mounted() {
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.addedBody && removeBody(this, 'popover')
   },
   deactivated() {
@@ -188,28 +189,36 @@ export default {
       }
     }
   },
-  render(h) {
+  render() {
     const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message } = this
-    return <transition name='fade'>
-      <div
-        ref='popover'
-        class={'v-popover ' + pClass}
-        style={popoverStyle}
-        on-mouseenter={mouseenterWrap}
-        on-mouseleave={mouseleaveWrap}
-      >
+    return (
+      h(Transition,
+        { name: 'fade', mode: 'out-in', appear: true },
         {
-          $slots.default || (message || []).map((d, i) => <div key={i} class={`v-popover-item is--${d.type}`}>{d.message}</div>)
+          default() {
+            return h('div',
+              {
+                ref: 'popover',
+                class: 'eff-table__popover ' + pClass,
+                style: popoverStyle,
+                onMouseenter: mouseenterWrap,
+                onMouseleave: mouseleaveWrap
+              },
+              [
+                $slots.default && $slots.default() || (message || []).map((d, i) => h('div', { key: i, class: `eff-table__popover-item is--${d.type}` }, d.message)),
+                h('div', { ref: 'arrow', class: 'eff-table__popover-arrow' })
+              ]
+            )
+          }
         }
-        <div ref='arrow' class='v-popover__arrow' />
-      </div>
-    </transition>
+      )
+    )
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.v-popover {
+<style lang="scss">
+.eff-table__popover {
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -226,7 +235,7 @@ export default {
   color: var(--color);
 
   &-item{
-    + .v-popover-item{
+    + .eff-table__popover-item{
       margin-top: 10px;
     }
   }
@@ -234,89 +243,78 @@ export default {
   .is--error{
     color: red;
   }
+  &--visible {
+    visibility: visible;
+    opacity: 1;
+  }
+  &--hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
+  &-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    &:after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border: 5px solid transparent;
+    }
+  }
 }
 
-.v-popover--visible {
-  visibility: visible;
-  opacity: 1;
-}
-
-.v-popover--hidden {
-  visibility: hidden;
-  opacity: 0;
-}
-
-.v-popover__arrow {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-}
-
-.v-popover__arrow:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border: 5px solid transparent;
-}
-
-.v-popover__top .v-popover__arrow {
+.eff-table__popover-top .eff-table__popover-arrow {
   border-top-color: var(--borderColor);
   margin-left: -6px;
   left: 50%;
   top: 100%;
 }
 
-.v-popover__top .v-popover__arrow:after {
+.eff-table__popover-top .eff-table__popover-arrow:after {
   top: -6px;
   margin-left: -5px;
   border-top: 5px solid var(--bgColor);
 }
 
-.v-popover__right .v-popover__arrow {
+.eff-table__popover-right .eff-table__popover-arrow {
   border-right-color: var(--borderColor);
   margin-top: -6px;
   left: -12px;
   top: 50%;
 }
 
-.v-popover__right .v-popover__arrow:after {
+.eff-table__popover-right .eff-table__popover-arrow:after {
   left: -3px;
   margin-top: -5px;
   border-right: 5px solid var(--bgColor);
 }
 
-.v-popover__bottom .v-popover__arrow {
+.eff-table__popover-bottom .eff-table__popover-arrow {
   border-bottom-color: var(--borderColor);
   margin-left: -6px;
   top: -12px;
   left: 50%;
 }
 
-.v-popover__bottom .v-popover__arrow:after {
+.eff-table__popover-bottom .eff-table__popover-arrow:after {
   top: -3px;
   margin-left: -5px;
   border-bottom: 5px solid var(--bgColor);
 }
 
-.v-popover__left .v-popover__arrow {
+.eff-table__popover-left .eff-table__popover-arrow {
   border-left-color: var(--borderColor);
   margin-top: -6px;
   left: 100%;
   top: 50%;
 }
 
-.v-popover__left .v-popover__arrow:after {
+.eff-table__popover-left .eff-table__popover-arrow:after {
   right: -3px;
   margin-top: -5px;
   border-left: 5px solid var(--bgColor);
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
 }
 </style>

@@ -1,4 +1,4 @@
-import Table from './packages/Table'
+import Table from './packages/table/index'
 
 const components = [Table]
 
@@ -6,14 +6,12 @@ export {
   Table
 }
 
-const install = function(Vue) {
-  components.forEach(component => {
-    Vue.component(component.name, component)
-  })
+const plugin = {
+  install(app, opts = {}) {
+    components.forEach(component => {
+      app.component(component.name, component)
+    })
+  }
 }
 
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue)
-}
-
-export default install
+export default plugin

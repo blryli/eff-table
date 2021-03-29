@@ -13,21 +13,20 @@
 
 <script>
 import Sortable from './sortable'
-import Card from './card'
-import info from '../Info'
-import { addClass, removeClass, hasClass } from 'utils/dom'
+import Card from './card.vue'
+import { addClass, removeClass, hasClass } from '../../utils/dom'
 
 export default {
   name: 'TableDrag',
   components: { Card },
   inject: ['table'],
   props: {
-    value: { type: Array, default: () => [] },
+    modelValue: { type: Array, default: () => [] },
     columnControl: Boolean
   },
   data() {
     return {
-      columns: this.value,
+      columns: this.modelValue,
       show: false,
       dradingTarget: null
     }
@@ -38,7 +37,7 @@ export default {
     }
   },
   watch: {
-    value(val) {
+    modelValue(val) {
       this.columns = val
     },
     dradingTarget(val, oldVal) {
@@ -53,8 +52,6 @@ export default {
     }
   },
   mounted() {
-    this.$parent.$on('header-dragend', this.elDragendChange)
-
     this.$nextTick(() => {
       const { drag, rowDrag, $el } = this.table
       const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
@@ -85,7 +82,7 @@ export default {
       if (columnControl) {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
-            el: cardEl.querySelector('.drag-card__body'),
+            el: cardEl.querySelector('.eff-drag-card__body'),
             group: id,
             dragImage: {
               height: 30
@@ -98,10 +95,9 @@ export default {
       }
     })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.columnSortable = null
     this.cradsSortable = null
-    this.$parent.$off('header-dragend', this.elDragendChange)
   },
   methods: {
     close() {
@@ -111,27 +107,19 @@ export default {
     toggleCardShow(val) {
       this.show = val === undefined ? !this.show : val
     },
-    elDragendChange(newWidth, oldWidth, column, event) {
-      const index = this.columns.findIndex(d => d.title === column.title)
-      if (index > -1) {
-        this.columns[index].width = newWidth
-
-        this.$emit('change', this.columns)
-      }
-    },
     handleRowEnd({ fromEl, toEl }) {
       const fromRowId = fromEl.getAttribute('data-rowid')
       const toRowId = toEl.getAttribute('data-rowid')
       this.$emit('row-change', +fromRowId - 1, +toRowId - 1)
     },
-    handleDragend(target) {
+    handleDragend() {
       removeClass(this.dradingTarget, 'is-draging')
       this.dradingTarget = null
     },
     isHeadNode(target) {
       return hasClass(target, 'eff-table__header')
     },
-    handleDragenter({ from, to, fromEl, toEl, willInsertAfter }) {
+    handleDragenter({ from, to, fromEl, toEl }) {
       // console.log({ from, to, fromEl, toEl, willInsertAfter })
       // tr内元素拖动
       if (this.isHeadNode(from) && this.isHeadNode(to)) {
@@ -142,12 +130,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
         this.dradingTarget = toEl
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
         this.dradingTarget = toEl
       }
     },
@@ -157,17 +145,16 @@ export default {
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) => {
-        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.header-title') : el
+        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.eff-table__header-group-title') : el
         return column.title && column.title.trim() === innerText.trim()
       }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
       if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
 
       if (hasClass(toEl, 'is-drag--filter')) {
-        info('该列不能做拖动操作！')
+        console.log('该列不能做拖动操作！')
         return
       }
-
       // tr内元素拖动
       if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
         const oldItem = columns[oldIndex]
@@ -185,12 +172,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
         columns[oldIndex].show = false
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
         if (oldIndex > -1) {
           const oldItem = columns[oldIndex]
           oldItem.show = true
@@ -208,7 +195,7 @@ export default {
       this.columns = [...columns]
       // console.log(JSON.stringify(columns, null, 2))
 
-      this.$emit('input', this.columns)
+      this.$emit('update:modelValue', this.columns)
       this.$emit('change', this.columns)
     }
   }

@@ -1,4 +1,5 @@
-import { on, off } from 'utils/dom'
+import { on, off } from '../utils/dom'
+import { nextTick } from 'vue'
 export default {
   data() {
     return {
@@ -7,11 +8,15 @@ export default {
       offset: 0,
       overflowX: false,
       headerLoad: false,
-      bodyLoad: false
+      bodyLoad: false,
+      isScreenfull: false
     }
   },
   created() {
     on(window, 'resize', this.resize, { passive: true })
+  },
+  setup(props, ctx) {
+    console.log(props, ctx)
   },
   watch: {
     isScreenfull() {
@@ -21,8 +26,22 @@ export default {
     }
   },
   computed: {
+    tableStyle() {
+      const style = {}
+      const { isScreenfull, height, maxHeight } = this
+      const screenHeight = window.screen.height
+      style['--rowHeight'] = this.rowHeight + 'px'
+      if (isScreenfull) {
+        style.height = screenHeight + 'px'
+      } else {
+        if (height) style.height = height + 'px'
+        if (maxHeight) style.maxHeight = maxHeight + 'px'
+        if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
+      }
+      return style
+    },
     tableClass() {
-      let tClass = 'eff-table'
+      let tClass = 'eff-table__container'
       const { overflowX, overflowY, border } = this
       overflowX && (tClass += ' is-overflow--x')
       overflowY && (tClass += ' is-overflow--y')
@@ -107,7 +126,7 @@ export default {
   },
   methods: {
     resize() {
-      this.$nextTick(() => {
+      nextTick(() => {
         const { $el, minWidth, setOverflowX, scrollLeftEvent } = this
         this.bodyWrapper = this.$refs.body.$el
         this.bodyWrapperWidth = $el.getBoundingClientRect().width || minWidth
@@ -138,7 +157,7 @@ export default {
       clearTimeout(this.timer)
     }, 300)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     off(window, 'resize', this.resize, { passive: true })
     clearTimeout(this.timer)
   }

@@ -1,7 +1,7 @@
 <template>
   <input
     ref="input"
-    v-model="date"
+    :value="date"
     class="eff-search--input"
     placeholder="请输入"
     @input="handleInput"
@@ -15,8 +15,9 @@
 
 export default {
   props: {
-    value: { type: [String, Number, Array], default: '' }
+    modelValue: { type: [String, Number, Array], default: '' }
   },
+  emits: ['input', 'focus', 'blur', 'change', 'update:modelValue'],
   data() {
     return {
       date: this.getValue(),
@@ -26,25 +27,25 @@ export default {
     }
   },
   watch: {
-    value(val) {
+    modelValue(val) {
       this.date = this.getValue()
     }
   },
   methods: {
     getValue() {
-      const { value } = this
-      if (!value) return ''
-      if (Array.isArray(value)) {
-        const [start, end] = value
+      const { modelValue } = this
+      if (!modelValue) return ''
+      if (Array.isArray(modelValue)) {
+        const [start, end] = modelValue
         if (!start || !end) return []
         return `${start} - ${end}`
       } else {
-        return value
+        return modelValue
       }
     },
     handleInput(e) {
       this.data = e.target.value
-      this.$emit('input', this.data)
+      this.$emit('update:modelValue', this.data)
     },
     handleChange(e) {
       this.data = e.target.value

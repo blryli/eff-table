@@ -1,8 +1,11 @@
-import VCheckbox from '../components/Checkbox'
+import VCheckbox from '../components/Checkbox/index.vue'
 import { getTextWidth } from '../utils/dom'
+import { defineComponent, h } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'TableBodyColumn',
+  components: { VCheckbox },
+  inject: ['table'],
   props: {
     row: { type: Object, default: () => {} },
     rowIndex: { type: Number, default: 0 },
@@ -11,32 +14,12 @@ export default {
     message: { type: Object, default: () => {} },
     fixed: { type: String, default: '' }
   },
-  components: { VCheckbox },
-  inject: ['table'],
+  emits: ['cell-mouse-enter', 'cell-mouse-leave'],
   data() {
     return {
       checked: false,
       expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false
     }
-  },
-  render(h) {
-    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
-    const { cellRender, type, prop } = column
-    // row[columnIndex] summary合计列
-    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
-    return (
-      <div
-        class={this.columnClass}
-        key={rowIndex + '-' + columnIndex}
-        style={table.setColumnStyle(column, columnIndex, fixed)}
-        on-mouseenter={event => handleMouseenter(event, slot)}
-        on-mouseleave={event => handleMouseleave(event, slot)}
-      >
-        <div ref='cell' class='eff-cell'>
-          <span class='eff-cell--label'>{slot}</span>
-        </div>
-      </div>
-    )
   },
   computed: {
     columnClass() {
@@ -66,19 +49,21 @@ export default {
     }
   },
   methods: {
-    renderSelection(h) {
+    renderSelection() {
       const { table, rowIndex, selectionChange } = this
-      return <v-checkbox
-        value={table.isChecked(rowIndex)}
-        key={rowIndex}
-        on-change={selectionChange}
-      />
+      return h(VCheckbox,
+        {
+          modelValue: table.isChecked(rowIndex),
+          key: rowIndex,
+          onChange: selectionChange
+        }
+      )
     },
     selectionChange(selected) {
       const { table, rowIndex } = this
-      table.$emit('row.selection.change', rowIndex, selected)
+      table.rowSelectionChange(rowIndex, selected)
     },
-    cellRender(h) {
+    cellRender() {
       const { row, rowIndex } = this
       const { column, columnIndex } = this
       const { cellRender, prop } = column
@@ -93,7 +78,10 @@ export default {
     },
     expandRender() {
       const { expanded, expandClick } = this
-      return <span class={{ 'eff-icon-expand': true, 'is-expanded': expanded }} on-click={expandClick} />
+      return h('span', {
+        class: { 'eff-icon-expand': true, 'is-expanded': expanded },
+        onClick: expandClick
+      })
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
@@ -123,7 +111,31 @@ export default {
     expandClick() {
       const { rowIndex, expanded, table } = this
       this.expanded = !expanded
-      table.$emit('expanded', { rowIndex, expanded: this.expanded })
+      table.expandChange({ rowIndex, expanded: this.expanded })
     }
+  },
+  render() {
+    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
+    const { cellRender, type, prop } = column
+    // row[columnIndex] summary合计列
+    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
+    return (
+      h('div',
+        {
+          class: this.columnClass,
+          key: rowIndex + '-' + columnIndex,
+          style: table.setColumnStyle(column, columnIndex, fixed),
+          onMouseenter: event => handleMouseenter(event, slot),
+          onMouseleave: event => handleMouseleave(event, slot)
+        },
+        h('div',
+          {
+            ref: 'cell',
+            class: 'eff-cell'
+          },
+          h('span', { class: 'eff-cell--label' }, slot)
+        )
+      )
+    )
   }
-}
+})

@@ -1,4 +1,4 @@
-import { getType } from 'utils'
+import { getType } from '../utils/index'
 export default {
   data() {
     return {

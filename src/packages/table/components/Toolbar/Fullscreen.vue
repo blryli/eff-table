@@ -1,17 +1,17 @@
 <template>
   <div
-    class="screenfull"
+    class="eff-table__screenfull"
     :class="{'exit-screenfull': isFullscreen}"
-    title="全屏"
+    :title="isFullscreen ? '退出全屏' : '全屏'"
     @click="click"
   >
     <div
       v-for="d in 4"
       :key="d"
       :style="{transform: `rotate(${-45+(90*(d+1))}deg)`}"
-      class="screenfull-item"
+      class="eff-table__screenfull-item"
     >
-      <div class="screenfull-arrow" />
+      <div class="eff-table__screenfull-arrow" />
     </div>
   </div>
 </template>
@@ -21,6 +21,7 @@ import screenfull from './screenfull'
 
 export default {
   name: 'Icon',
+  inject: ['table'],
   props: {
     iconClass: { type: String, default: '' }
   },
@@ -29,11 +30,10 @@ export default {
       isFullscreen: false
     }
   },
-  inject: ['table'],
   mounted() {
     this.init()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroy()
   },
   methods: {
@@ -46,7 +46,7 @@ export default {
     },
     change() {
       this.isFullscreen = screenfull.isFullscreen
-      this.table.$emit('screenfullChange', this.isFullscreen)
+      this.table.isScreenfull = this.isFullscreen
     },
     init() {
       if (screenfull.isEnabled) {
@@ -62,8 +62,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.screenfull {
+<style lang="scss">
+.eff-table__screenfull {
   position: relative;
   width: 16px;
   height: 16px;
@@ -106,12 +106,12 @@ export default {
     }
   }
   &:hover{
-    .screenfull-arrow{
-      animation: identifier 1s infinite;
+    .eff-table__screenfull-arrow{
+      animation: effIdentifier 1s infinite;
     }
   }
   &.exit-screenfull {
-    .screenfull-arrow {
+    .eff-table__screenfull-arrow {
       &::before {
         transform: rotate(180deg);
       }
@@ -122,7 +122,7 @@ export default {
     }
   }
 }
-@keyframes identifier {
+@keyframes effIdentifier {
   0%{
     transform: translateY(0);
   }
