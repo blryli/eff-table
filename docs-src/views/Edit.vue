@@ -347,7 +347,7 @@ export default {
                 filterable={true}
                 defaultFirstOption={true}
                 on-visible-change={this.visibleChange}
-                on-input={val => (row[prop] = val)}
+                on-change={val => (row[prop] = val)}
               >
                 {
                   this.options.map(item => {

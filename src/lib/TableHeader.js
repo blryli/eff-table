@@ -76,7 +76,7 @@ export default {
           }
         </div>
         {
-          search && !isColumnsChange ? <Search
+          search && !isColumnsChange && table.searchShow ? <Search
             value={searchData}
             columns={bodyColumns}
             showSpace={showSpace}

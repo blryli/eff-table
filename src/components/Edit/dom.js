@@ -32,19 +32,18 @@ export const getTableNode = function(node, placement) {
  * @param {element} area 区域节点
  * @param {object} offset 左右偏移量
  */
-export const isOverflow = function(node, area, offset = {}) {
-  const { leftWidth = 0, rightWidth = 0 } = offset
-  const areaRect = area.getBoundingClientRect()
-  const { left, top, right, bottom } = areaRect
-  const nodeRect = node.getBoundingClientRect()
-  const { left: nodeLeft, top: nodeTop, right: nodeRight, bottom: nodeBottom } = nodeRect
+export const isOverflow = function({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY }) {
+  const wrapperRect = wrapper.getBoundingClientRect()
+  const { left, top, right, bottom } = wrapperRect
+  const cellRect = cell.getBoundingClientRect()
+  const { left: nodeLeft, top: nodeTop, right: nodeRight, bottom: nodeBottom } = cellRect
   // console.log({ left, top, right, bottom })
   // console.log({ nodeLeft, nodeTop, nodeRight, nodeBottom })
   return {
     left: left + leftWidth - nodeLeft > 2,
     top: nodeTop - top < -2,
-    right: right - nodeRight - rightWidth <= 17,
-    bottom: bottom - nodeBottom <= 17
+    right: right - nodeRight - rightWidth <= overflowX ? 17 : 0,
+    bottom: bottom - nodeBottom <= overflowY ? 17 : 0
   }
 }
 

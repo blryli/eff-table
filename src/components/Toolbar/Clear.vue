@@ -17,10 +17,7 @@ export default {
   inject: ['table'],
   methods: {
     clear() {
-      this.table.$emit('update:form', {})
-      this.$nextTick(() => {
-        this.table.$emit('search-clear')
-      })
+      this.table.clearSearch()
     }
   }
 }

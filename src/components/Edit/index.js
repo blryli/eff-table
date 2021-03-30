@@ -1,4 +1,4 @@
-import { getKeysStr, getType } from 'utils'
+import { getType } from 'utils'
 import { on, off } from 'utils/dom'
 import { getTableNode, isOverflow, shake } from './dom'
 
@@ -53,8 +53,6 @@ export default {
     }
   },
   mounted() {
-    on(window, 'mousedown', this.handleWindowMousedown)
-    on(window, 'keyup', this.handleWindowKeyup)
     on(window, 'resize', this.close)
     on(document.getElementById('app-container'), 'scroll', this.close)
     this.$nextTick(() => {
@@ -63,8 +61,6 @@ export default {
     })
   },
   beforeDestroy() {
-    off(window, 'mousedown', this.handleWindowMousedown)
-    off(window, 'keyup', this.handleWindowKeyup)
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
   },
@@ -74,9 +70,13 @@ export default {
       if (typeof rule !== 'function') return
       this.table.validateCell(this.rowIndex, field || prop, rule)
     },
-    handleWindowKeyup(e) {
+    handleWindowMousedown(e) {
+      const { show, $el, table } = this
+      if (!show || $el.contains(e.target) || table.editStop) return
+      this.show = false
+    },
+    handleWindowKeyup(e, keysStr) {
       if (!this.show || this.table.editStop || !this.inTable(e.target)) return
-      const keysStr = getKeysStr(e)
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
 
       // 解决回车选中值和回车跳下一个的冲突问题
@@ -242,8 +242,8 @@ export default {
     },
     fixOverflow(cell, cellIndex) {
       const { wrapper } = this
-      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth } = this.table
-      const overflow = isOverflow(cell, wrapper, { leftWidth, rightWidth })
+      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY } = this.table
+      const overflow = isOverflow({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY })
       const { height: wrapperHeight } = wrapper.getBoundingClientRect()
       const colid = cell.getAttribute('data-colid')
       const [rowIndex] = colid.split('-')
@@ -308,15 +308,11 @@ export default {
       this.$el.style.width = `${width + 1}px`
       this.$el.style.height = `${height + 1}px`
     },
-    handleWindowMousedown(e) {
-      const { show, $el, table } = this
-      if (!show || $el.contains(e.target) || table.editStop) return
-      this.show = false
-    },
     close() {
       this.show = false
     },
-    focus(rowIndex, prop = this.columns.find(d => d.prop).prop) {
+    focus(rowIndex, prop = (this.columns.find(d => d.prop && d.edit) || {}).prop) {
+      if (!prop) return
       this.rowIndex = +rowIndex
       const { table, getColumn, editCell, fixOverflowX } = this
       const { column, cell, columnIndex } = getColumn(prop, +rowIndex)

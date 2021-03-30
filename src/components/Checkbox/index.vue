@@ -80,18 +80,18 @@ export default {
   }
   &.is-checked,
   &.is-indeterminate {
-    .checkbox__icon {
+    .eff-table__checkbox-icon {
       background-color: #409eff;
       border-color: #409eff;
     }
   }
   &.is-checked {
-    .checkbox__icon:after {
+    .eff-table__checkbox-icon:after {
       transform: rotate(45deg) scaleY(1);
     }
   }
   &.is-indeterminate {
-    .checkbox__icon:before {
+    .eff-table__checkbox-icon:before {
       content: "";
       position: absolute;
       display: block;

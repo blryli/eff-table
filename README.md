@@ -207,7 +207,6 @@ value: [
 |cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
 |sort-change|表格排序条件发生变化的时候会触发该事件|sortConfig, data|
-|search-clear|点击清空搜索图标后触发该事件|-|
 |search-clear-filed|使用默认range范围搜索时，点击清空按钮时触发该事件|{ column, prop }|
 
 ### Slot
@@ -216,3 +215,12 @@ value: [
 | -------- | ------------------- | 
 | toolbar | 工具栏区域左侧的内容 | 
 | expand | 展开行的内容. 参数为 { row, rowIndex } |
+### 操作快捷键
+
+| keys | 说明                   | 
+| -------- | ------------------- | 
+| enter         | 编辑模式下聚焦右侧可聚焦单元格 | 
+| shift + enter | 编辑模式下聚焦左侧可聚焦单元格 | 
+| arrowdown     | 编辑模式下聚焦下方单元格 | 
+| arrowup       | 编辑模式下聚焦上方单元格 | 
+| control + b   | 搜索模式下切换搜索行隐藏/展示，默认会清空搜索条件 | 

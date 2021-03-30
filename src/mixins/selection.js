@@ -16,7 +16,7 @@ export default {
   watch: {
     selecteds() {
       const { checkeds, selecteds, data } = this
-      this.$emit('selection-change', checkeds)
+      this.$emit('selection-change', checkeds, selecteds)
       const selectedsLength = selecteds.length
       const dataLength = data.length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength

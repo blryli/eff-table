@@ -1,5 +1,11 @@
 <template>
-  <div class="eff-table" :class="{'is--screenfull': isScreenfull}" :style="style">
+  <div
+    class="eff-table"
+    :class="{'is--screenfull': isScreenfull}"
+    :style="style"
+    @mouseenter="rootMouseenter"
+    @mouseleave="rootMouseleave"
+  >
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
@@ -140,6 +146,7 @@ import Layout from 'mixins/layout'
 import validate from 'mixins/validate'
 import sort from 'mixins/sort'
 import virtual from 'mixins/virtual'
+import shortcutKey from 'mixins/shortcutKey'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
@@ -163,7 +170,7 @@ export default {
     ScrollX,
     Loading
   },
-  mixins: [Column, Layout, Selection, validate, sort, virtual],
+  mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey],
   props: {
     value: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
@@ -288,6 +295,7 @@ export default {
       }
     },
     dargChange() {
+      if (this.edit) this.$refs.edit.show = false
       this.$emit('input', this.columns)
       this.$emit('drag-change', this.columns)
       this.resize()
@@ -316,6 +324,9 @@ export default {
       const index = this.expands.findIndex(d => d.rowIndex === rowIndex)
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
       this.$emit('expand-change', this.expands)
+    },
+    clearSearch() {
+      this.$emit('update:form', {})
     }
   }
 }
