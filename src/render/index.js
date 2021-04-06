@@ -54,7 +54,7 @@ function renderInputEdit(h, renderOpts, params) {
 
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
-  Object.assign(renderOpts, { name: 'input' })
+  const opts = Object.assign({}, renderOpts, { name: 'input' })
   const { data, prop } = params
   const props = {
     value: data[prop] || null,
@@ -63,7 +63,7 @@ function renderTextareaEdit(h, renderOpts, params) {
   const on = {
     input: val => (data[prop] = val)
   }
-  const render = new Render(h, renderOpts, params)
+  const render = new Render(h, opts, params)
   return render.merge('props', props).merge('on', on).render()
 }
 
