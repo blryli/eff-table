@@ -171,6 +171,11 @@ export default {
     Loading
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey],
+  provide() {
+    return {
+      table: this
+    }
+  },
   props: {
     value: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
@@ -271,11 +276,6 @@ export default {
     },
     editStop(val) {
       this.editIsStop = val
-    }
-  },
-  provide() {
-    return {
-      table: this
     }
   },
   mounted() {
@@ -505,7 +505,7 @@ export default {
     border-color: transparent;
     box-sizing: border-box;
   }
-  input, textarea{
+  input, textarea, .el-input__inner{
     height: var(--rowHeight)!important;
   }
   .eff-search--input{

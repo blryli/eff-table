@@ -17,6 +17,7 @@
           fullscreen
         />
         {{ form }}
+        {{ data[0] }}
       </div>
     </section>
 
@@ -36,7 +37,6 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
-import { formatDate } from '@/utils'
 
 const mainSnippet = `
 
@@ -73,7 +73,10 @@ export default {
           prop: 'input',
           title: '输入框',
           width: 100,
-          search: true,
+          config: { name: 'input' },
+          search: {
+            operator: true
+          },
           edit: true
         },
         {
@@ -81,11 +84,9 @@ export default {
           prop: 'textarea',
           title: '文本框',
           width: 100,
-          search: {
-            operator: true
-          },
+          search: true,
           edit: {
-            render: { name: 'textarea' }
+            render: { name: 'textarea', on: { input: val => { console.log({ val }) } }}
           }
         },
         {
@@ -93,17 +94,34 @@ export default {
           prop: 'select',
           title: '选择器',
           width: 100,
-          edit: {
-            render: { name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }], props: { clearable: true, placeholder: '请选择' }}
-          }
+          config: {
+            name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]
+          },
+          edit: true,
+          search: true
+        },
+        {
+          show: true,
+          prop: 'switch',
+          title: '开关',
+          width: 100,
+          config: { name: 'switch' },
+          edit: true,
+          search: true
         },
         {
           show: true,
           prop: 'date',
           title: '日期',
-          width: 100,
-          cellRender: (h, { prop, row }) => {
-            return formatDate(row[prop], 'yyyy-MM-dd')
+          width: 160,
+          // cellRender: (h, { prop, row }) => {
+          //   return formatDate(row[prop], 'yyyy-MM-dd')
+          // },
+          config: {
+            name: 'date-picker', format: 'yyyy-MM-dd'
+          },
+          search: {
+            operator: true
           },
           edit: {
             render: { name: 'date-picker', props: { type: 'date', placeholder: '选择日期' }}
@@ -114,9 +132,20 @@ export default {
           prop: 'link',
           title: '文字链接',
           width: 100,
+          search: true,
           cellRender: { name: 'link', props: { url: '' }},
           edit: {
-            render: { name: 'dialog', props: { visible: true }, on: { save: () => { console.log('save') } }, children: [{ name: 'form' }] }
+            render: { name: 'dialog', props: { visible: false }, on: {
+              save: () => {
+                console.log('save')
+              },
+              open: () => {
+                console.log('open')
+              },
+              close: () => {
+                console.log('close')
+              }
+            }, children: [{ name: 'form' }] }
           }
         },
         {
@@ -128,23 +157,34 @@ export default {
         },
         {
           show: true,
+          prop: 'popover',
+          title: '气泡',
+          width: 100,
+          config: { name: 'popover', props: { content: '飘起来' }, children: [{ tag: 'div', content: 'popover', slot: 'reference' }] }
+        },
+        {
+          show: true,
+          prop: 'checkboxgroup',
+          title: '多选框组',
+          width: 160,
+          config: { name: 'checkbox-group', children: [
+            { name: 'checkbox', props: { label: '深圳' }},
+            { name: 'checkbox', props: { label: '广州' }}
+          ] }
+        },
+        {
+          show: true,
+          prop: 'checkbox',
+          title: '多选框',
+          width: 100,
+          config: { name: 'checkbox' }
+        },
+        {
+          show: true,
           prop: 'button',
           title: '按钮',
           width: 100,
-          cellRender: { name: 'button', content: '操作' }
-        },
-        {
-          show: true,
-          prop: 'button',
-          title: '气泡',
-          width: 100,
-          cellRender: { name: 'popover', children: [{ name: 'div', content: 'popover', slot: 'reference' }] }
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '核酸检测时间',
-          width: 100
+          config: { name: 'button', content: '操作' }
         }
       ]
     }
@@ -155,10 +195,14 @@ export default {
       this.data = mock.mock({
         'array|5': [
           {
-            'input': '@city',
-            'textarea': '',
-            'select': '',
+            'input|+1': 1,
+            'textarea': '@name',
+            'select': '1',
             'date': '',
+            'switch': false,
+            'checkboxgroup': [],
+            'checkbox': false,
+            'popover': '@title',
             'link': '@ctitle',
             'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
           }

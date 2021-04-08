@@ -8,7 +8,7 @@ export default {
     // popover消息提示
     data: { type: [String, Object, Array], default: '' },
     placement: { type: String, default: 'top' },
-    borderColor: { type: String, default: '#ccc' },
+    borderColor: { type: String, default: '#ddd' },
     popoverClass: { type: String, default: '' },
     trigger: { type: String, default: 'hover' },
     reference: HTMLDivElement,
@@ -31,7 +31,7 @@ export default {
     popoverStyle() {
       const { effect } = this
       const style = {
-        '--borderColor': '#ccc',
+        '--borderColor': '#ddd',
         '--bgColor': '#fff',
         '--color': '#303133'
       }
@@ -41,7 +41,7 @@ export default {
       if (typeof effect === 'string') {
         switch (effect) {
           case 'light':
-            style['--borderColor'] = '#ccc'
+            style['--borderColor'] = '#ddd'
             style['--bgColor'] = '#fff'
             style['--color'] = '#303133'
             break
@@ -72,7 +72,7 @@ export default {
         } else {
           style['--borderColor'] = effect.borderColor
             ? effect.borderColor
-            : '#ccc'
+            : '#ddd'
           style['--bgColor'] = effect.backgroundColor
             ? effect.backgroundColor
             : '#fff'
@@ -224,6 +224,7 @@ export default {
   background-color: var(--bgColor);
   border-color: var(--borderColor);
   color: var(--color);
+  box-shadow: 0 1px 10px rgba($color: #000000, $alpha: .1);
 
   &-item{
     + .eff-table__popover-item{

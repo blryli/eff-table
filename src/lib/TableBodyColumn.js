@@ -22,9 +22,9 @@ export default {
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
-    const { cellRender, type, prop } = column
+    const { type } = column
     // row[columnIndex] summary合计列
-    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : cellRender ? this.cellRender(h) : (type === 'selection' ? this.renderSelection(h) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : '')
+    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderSelection(h) : this.cellRender(h)
     return (
       <div
         class={this.columnClass}
@@ -81,18 +81,15 @@ export default {
     },
     cellRender(h) {
       const { table, row, rowIndex, column, columnIndex } = this
-      const { cellRender, prop } = column
-      const compConf = typeof cellRender === 'object' && renderer.get(cellRender.name)
-      if (cellRender) {
-        if (typeof cellRender === 'function') {
-          return cellRender(h, { row, rowIndex, column, columnIndex, prop })
-        } else if (compConf) {
-          return compConf && compConf.renderDefault(h, cellRender, { table, data: row, prop, rowIndex })
-        } else {
-          console.error('cellRender 必须是函数')
-        }
+      const { cellRender, prop, config, type } = column
+      if (typeof cellRender === 'function') {
+        return cellRender(h, { row, rowIndex, column, columnIndex, prop })
+      } else {
+        const renderOpts = Object.assign({}, config, cellRender)
+        const { name } = renderOpts
+        const compConf = renderer.get(name)
+        return compConf ? compConf.renderDefault(h, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
-      return false
     },
     expandRender() {
       const { expanded, expandClick } = this

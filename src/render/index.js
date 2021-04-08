@@ -1,17 +1,14 @@
+import toDateString from 'xe-utils/toDateString'
 const status = { rowIndex: 0, columnIndex: 0 }
 /**
  * 基础渲染函数
  */
 class Render {
-  constructor(h, renderOpts = {}, params = {}) {
-    const { name } = renderOpts
-    const { columnIndex } = params
-    columnIndex !== undefined && (status.columnIndex = columnIndex)
-    const isBaseTag = ['div', 'span', 'i'].includes(name)
+  constructor(h, renderOpts = {}, params = {}, key) {
     this.h = h
     this.params = params
-    this.opts = Object.assign({}, renderOpts)
-    this.tag = isBaseTag ? name : params.table.$EFF.uiPrefix + name
+    const { rowIndex, columnIndex } = params
+    this.opts = Object.assign({ key: `${rowIndex}-${columnIndex}-${renderOpts.name}${key ? '-' + key : ''}` }, renderOpts)
   }
 
   // 合并属性 外部传入属性 > 默认属性
@@ -21,89 +18,171 @@ class Render {
   }
 
   // 设置属性
-  set(key, value) {
+  setOpts(key, value) {
     this.opts[key] = value
     return this
   }
 
   render() {
-    const { h, tag, opts } = this
+    const { h, opts } = this
     const { data = {}, prop } = this.params
+    const { tag, name } = opts
+    const cTag = tag || this.params.table.$EFF.uiPrefix + name
 
-    return h(tag, opts, opts.content || data[prop] || '')
+    return h(cTag, opts, opts.content || data[prop] || '')
   }
+}
+
+// 合并事件，如果有相同的方法，内部方法先于外部方法执行
+function getOn(on, events) {
+  if (typeof on !== 'object') return events
+  const ons = Object.assign({}, on, events)
+  for (const key in events) {
+    if (on[key]) {
+      ons[key] = val => {
+        events[key](val)
+        on[key](val)
+      }
+    }
+  }
+  return ons
 }
 
 // 默认 render
 function renderDefault(h, renderOpts, params) {
-  return new Render(h, renderOpts, params).render()
+  const { tag, name, props } = renderOpts || {}
+  const { row, prop } = params || {}
+  const label = row[prop]
+  const render = () => new Render(h, renderOpts, params).render()
+  if (tag) {
+    return render()
+  } else if (['input', 'textarea'].includes(name)) {
+    return label
+  } else if (name === 'select') {
+    const { labelName, options = [] } = renderOpts || []
+    const { labelKey = 'label', valueKey = 'value' } = props || {}
+    const opt = options.find(d => d[valueKey] === label) || {}
+    return labelName ? row[labelName] : labelKey ? opt[labelKey] : label
+  } else if (name === 'date-picker') {
+    return toDateString(label, 'yyyy-MM-dd')
+  }
+  return render()
 }
 
-// 输入框 input
-function renderInputEdit(h, renderOpts, params) {
+// 双向绑定组件 v-model
+function renderVModel(h, renderOpts, params) {
   const { data, prop } = params
   const props = {
     value: data[prop] || null
   }
-  const on = {
-    input: val => (data[prop] = val)
-  }
+  const on = getOn(renderOpts.on, {
+    input: val => {
+      data[prop] = val
+    }
+  })
+
   const render = new Render(h, renderOpts, params)
-  return render.merge('props', props).merge('on', on).render()
+  return render.merge('props', props).setOpts('on', on).render()
 }
 
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
-  const opts = Object.assign({}, renderOpts, { name: 'input' })
   const { data, prop } = params
   const props = {
     value: data[prop] || null,
     type: 'textarea'
   }
-  const on = {
-    input: val => (data[prop] = val)
-  }
-  const render = new Render(h, opts, params)
-  return render.merge('props', props).merge('on', on).render()
+  const on = getOn(renderOpts.on, {
+    input: val => {
+      data[prop] = val
+    }
+  })
+  const render = new Render(h, renderOpts, params)
+  return render.setOpts('name', 'input').merge('props', props).setOpts('on', on).render()
 }
 
 // 选择器 select
-function renderSelectEdit(h, renderOpts, params) {
-  console.log('renderSelectEdit')
-  const { options } = renderOpts
-  const { table, data, prop } = params
+function renderSelect(h, renderOpts, params, renderType) {
+  const { options = [] } = renderOpts
+  const { table, data, prop, searchChange } = params
   const props = {
     value: data[prop] || null,
-    automaticDropdown: true,
-    filterable: true,
-    defaultFirstOption: true
+    placeholder: '请选择'
   }
   const on = {
-    input: val => (data[prop] = val),
-    'visible-change': table.setEditIsStop
+    input: val => {
+      data[prop] = val
+      searchChange && searchChange(val)
+    }
   }
-  const render = new Render(h, renderOpts, params)
+  if (renderType) {
+    Object.assign(props, {
+      filterable: true,
+      clearable: true
+    })
+    if (renderType === 'edit') {
+      Object.assign(props, {
+        automaticDropdown: true,
+        defaultFirstOption: true
+      })
+      Object.assign(on, {
+        'visible-change': table.setEditIsStop
+      })
+    }
+  }
+
+  const ons = getOn(renderOpts.on, on)
 
   // 渲染options
-  const optionsRender = options.map(item => h(table.$EFF.uiPrefix + 'option', { key: item.value, props: { title: item.title, value: item.value }}))
-  return render.merge('props', props).merge('on', on).set('content', optionsRender).render()
+  const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
+  const optionsRender = options.map(item => h(table.$EFF.uiPrefix + 'option', { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+
+  const render = new Render(h, renderOpts, params)
+  return render.merge('props', props).merge('on', ons).setOpts('content', optionsRender).render()
+}
+function renderSelectSearch(h, renderOpts, params) {
+  return renderSelect(h, renderOpts, params, 'search')
+}
+function renderSelectEdit(h, renderOpts, params) {
+  return renderSelect(h, renderOpts, params, 'edit')
 }
 
 // 日期 datepick
-function renderDatepickerEdit(h, renderOpts, params) {
-  const { table, data, prop } = params
+function renderDatepicker(h, renderOpts, params, renderType) {
+  const { table, data, prop, searchChange } = params
   const props = {
     value: data[prop] || null,
-    type: 'date',
-    valueFormat: 'timestamp'
+    valueFormat: 'timestamp' // 时间格式默认用时间戳
   }
   const on = {
-    input: val => (data[prop] = val),
-    focus: () => table.setEditIsStop(true),
-    blur: () => table.setEditIsStop(false)
+    input: val => {
+      data[prop] = val
+      searchChange && searchChange(val)
+    }
   }
+  if (renderType) {
+    if (renderType === 'search') {
+      Object.assign(props, {
+        type: 'daterange'
+      })
+    } else if (renderType === 'edit') {
+      Object.assign(on, {
+        focus: () => table.setEditIsStop(true),
+        blur: () => table.setEditIsStop(false)
+      })
+    }
+  }
+
+  const ons = getOn(renderOpts.on, on)
+
   const render = new Render(h, renderOpts, params)
-  return render.merge('props', props).merge('on', on).render()
+  return render.merge('props', props).merge('on', ons).render()
+}
+function renderDatepickerEdit(h, renderOpts, params) {
+  return renderDatepicker(h, renderOpts, params, 'edit')
+}
+function renderDatepickerSearchRange(h, renderOpts, params) {
+  return renderDatepicker(h, renderOpts, params, 'search')
 }
 
 // 链接 link
@@ -119,8 +198,7 @@ function renderLink(h, renderOpts, params) {
 function renderImage(h, renderOpts, params) {
   const { data, prop } = params
   const props = {
-    src: data[prop],
-    previewSrcList: [data[prop]]
+    src: data[prop]
   }
   const render = new Render(h, renderOpts, params)
   return render.merge('props', props).render()
@@ -128,27 +206,28 @@ function renderImage(h, renderOpts, params) {
 
 // 气泡 popover
 function renderPopover(h, renderOpts, params) {
-  const { children } = renderOpts
+  const { children = [] } = renderOpts
   const props = {
-    trigger: 'hover'
+    trigger: 'hover',
+    palcement: 'top'
   }
   const render = new Render(h, renderOpts, params)
-  const renderChildren = children.map(opts => new Render(h, opts, params).render())
-  return render.merge('props', props).set('content', renderChildren).render()
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.merge('props', props).setOpts('content', renderChildren).render()
 }
 
 // 弹窗 dialog
 function renderDialog(h, renderOpts, params) {
-  const { children, on: { open, close, save } = {}} = renderOpts
+  const { children, on: { save } = {}} = renderOpts
   const { table, rowIndex, column, columnIndex } = params
   const props = {
     modal: false,
     title: column.title
   }
   function opened() {
+    if (!renderOpts.props) renderOpts.props = {}
     renderOpts.props.visible = true
     table.setEditIsStop(true)
-    open && open()
   }
   function submit() {
     save && save()
@@ -157,87 +236,135 @@ function renderDialog(h, renderOpts, params) {
   function closed() {
     renderOpts.props.visible = false
     table.setEditIsStop(false)
-    close && close()
   }
 
-  const on = { close: closed }
+  const on = getOn(renderOpts.on, {
+    close: closed
+  })
 
   // 激活弹窗
+  // console.log(rowIndex, status.rowIndex, columnIndex, status.columnIndex)
   if (rowIndex !== status.rowIndex || columnIndex !== status.columnIndex) {
     opened()
     status.rowIndex = rowIndex
+    status.columnIndex = columnIndex
   }
 
   const render = new Render(h, renderOpts, params)
   // 渲染内容及footer
   const renderChildren = [
-    children.map(opts => new Render(h, opts, params).render()),
+    children.map((opts, idx) => new Render(h, opts, params, idx).render()),
     h('span', { slot: 'footer' }, [
-      new Render(h, { name: 'button', content: '取 消', on: { click: closed }}, params).render(),
-      new Render(h, { name: 'button', props: { type: 'primary' }, content: '确 定', on: { click: submit }}, params).render()
+      new Render(h, { name: 'button', key: 'cancel', content: '取 消', on: { click: closed }}, params).render(),
+      new Render(h, { name: 'button', key: 'submit', props: { type: 'primary' }, content: '确 定', on: { click: submit }}, params).render()
     ])
   ]
   const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: renderOpts.props.visible ? 'block' : 'none' }})
 
-  return [render.merge('props', props).merge('on', on).set('content', renderChildren).render(), modal]
+  return [render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render(), modal]
 }
 
 // 表单 form
 function renderForm(h, renderOpts, params) {
-  const { children } = renderOpts
+  const { children = [] } = renderOpts
   const props = {
 
   }
   const render = new Render(h, renderOpts, params)
-  const renderChildren = children.map(opts => new Render(h, opts, params).render())
-  return render.merge('props', props).set('content', renderChildren).render()
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.merge('props', props).setOpts('content', renderChildren).render()
+}
+
+// 开关 switch
+function renderSwitch(h, renderOpts, params) {
+  const { data, prop } = params
+  const props = {
+    value: Boolean(+data[prop])
+  }
+  const on = getOn(renderOpts.on, {
+    input: val => {
+      data[prop] = val
+    }
+  })
+  const render = new Render(h, renderOpts, params)
+  return render.merge('props', props).setOpts('on', on).render()
+}
+
+function renderSwitchEdit(h, renderOpts, params) {
+  const opts = Object.assign({ options: [{ value: '1', label: '开' }, { value: '0', label: '关' }] }, renderOpts, { name: 'select' })
+  return renderSelectEdit(h, opts, params)
+}
+function renderSwitchSearch(h, renderOpts, params) {
+  const opts = Object.assign({ options: [{ value: '1', label: '开' }, { value: '0', label: '关' }] }, renderOpts, { name: 'select' })
+  return renderSelectSearch(h, opts, params)
+}
+
+// 多选框组 checkbox-group
+function renderCheckboxGroup(h, renderOpts, params) {
+  const { children = [] } = renderOpts
+  const { data, prop } = params
+  const props = {
+    value: data[prop] || []
+  }
+  const on = getOn(renderOpts.on, {
+    input: val => {
+      data[prop] = val
+    }
+  })
+  const render = new Render(h, renderOpts, params)
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render()
 }
 
 // 文本 text
 function renderText(h, renderOpts, params) {
-  const { children } = renderOpts
+  const { children = [] } = renderOpts
   const props = {
     trigger: 'hover'
   }
   const render = new Render(h, renderOpts, params)
-  const renderChildren = children.map(opts => new Render(h, opts, params).render())
-  return render.merge('props', props).set('content', renderChildren).render()
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.merge('props', props).setOpts('content', renderChildren).render()
 }
 
 const renderMap = {
   input: {
     renderDefault: renderDefault,
-    renderEdit: renderInputEdit,
-    renderSearch: renderInputEdit
+    renderEdit: renderVModel,
+    renderSearch: renderVModel
   },
   textarea: {
     renderDefault: renderDefault,
     renderEdit: renderTextareaEdit,
-    renderSearch: renderInputEdit
+    renderSearch: renderVModel
   },
   select: {
     renderDefault: renderDefault,
-    renderEdit: renderSelectEdit
+    renderEdit: renderSelectEdit,
+    renderSearch: renderSelectSearch
   },
   'date-picker': {
     renderDefault: renderDefault,
-    renderEdit: renderDatepickerEdit
+    renderEdit: renderDatepickerEdit,
+    renderSearch: renderDatepicker,
+    renderSearchRange: renderDatepickerSearchRange
   },
   link: {
     renderDefault: renderLink,
-    renderEdit: renderDialog
+    renderEdit: renderDefault
   },
   button: {
     renderDefault: renderDefault
   },
   image: {
-    renderDefault: renderImage
+    renderDefault: renderImage,
+    renderEdit: renderDialog
   },
   popover: {
     renderDefault: renderPopover
   },
   dialog: {
-    renderDialog: renderDialog,
+    renderDefault: renderDialog,
     renderEdit: renderDialog
   },
   text: {
@@ -245,6 +372,17 @@ const renderMap = {
   },
   form: {
     renderDefault: renderForm
+  },
+  switch: {
+    renderDefault: renderSwitch,
+    renderEdit: renderSwitchEdit,
+    renderSearch: renderSwitchSearch
+  },
+  checkbox: {
+    renderDefault: renderVModel
+  },
+  'checkbox-group': {
+    renderDefault: renderCheckboxGroup
   }
 }
 export const renderer = {

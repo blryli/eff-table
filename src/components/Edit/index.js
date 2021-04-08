@@ -26,22 +26,20 @@ export default {
     editRender() {
       const { column } = this
       if (!column) return ''
-      const { edit, prop } = column || {}
+      const { edit, prop, config } = column || {}
+      if (prop === 'checkbox') console.log(edit)
       if (edit) {
         const { rowIndex, table, $createElement } = this
         const columnIndex = this.getColumnIndex(column.prop)
         const row = table.data[rowIndex]
-        let { render } = edit || {}
-        if (edit || render === true || typeof render === 'object') {
-          render = render || { name: 'input' }
-          const { name } = render
-          const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, render, { table, data: row, row, rowIndex, column, columnIndex, prop }) || ''
-        } else if (typeof render === 'function') {
+        const { render } = edit || {}
+        if (typeof render === 'function') {
           return render($createElement, { row, rowIndex, column, columnIndex, prop }) || ''
         } else {
-          console.error('render 必须是对象或函数！')
-          return ''
+          const renderOpts = Object.assign({ name: 'input' }, config, render)
+          const { name } = renderOpts
+          const compConf = renderer.get(name)
+          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) || ''
         }
       }
     }
@@ -50,7 +48,7 @@ export default {
     show(val) {
       const { table, component } = this
       if (val) {
-        table.$emit('editOpen')
+        table.$emit('edit-open')
       } else {
         component && component.close && component.close()
         this.handleValidate()
@@ -59,7 +57,7 @@ export default {
         this.scrollNum = 0
         this.column = null
         this.cell = null
-        table.$emit('editClose')
+        table.$emit('edit-close')
         table.$emit('blur')
       }
     },
@@ -166,10 +164,8 @@ export default {
     },
     canFocus(column, cell) {
       const { type, edit } = column
-      const { render, config } = edit || {}
       const types = ['selection', 'index']
-      const isEdit = (render) => edit || render && typeof render === 'function' || typeof render === 'object'
-      return column && (isEdit(render) || isEdit(config)) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
+      return edit && column && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
       const { placement, rowIndex, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
@@ -318,7 +314,6 @@ export default {
         }
 
         const target = component.getInput ? component.getInput() : component
-        console.log({ component })
         if (component.focus || target.focus) {
           component.focus ? component.focus() : target.focus()
           componentInstance.$emit('focus')
