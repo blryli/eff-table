@@ -1,9 +1,11 @@
 import Table from './lib/Table.vue'
+import Popup from './components/popover/popup'
 
-const components = [Table]
+const components = [Table, Popup]
 
 export {
-  Table
+  Table,
+  Popup
 }
 
 const install = function(Vue, opts) {

@@ -16,8 +16,6 @@
           border
           fullscreen
         />
-        {{ form }}
-        {{ data[0] }}
       </div>
     </section>
 
@@ -91,6 +89,14 @@ export default {
         },
         {
           show: true,
+          prop: 'popup',
+          title: '气泡',
+          width: 100,
+          config: { name: 'popup', props: { content: '飘起来' }, children: [{ tag: 'div', content: 'popup' }] },
+          edit: true
+        },
+        {
+          show: true,
           prop: 'select',
           title: '选择器',
           width: 100,
@@ -157,13 +163,6 @@ export default {
         },
         {
           show: true,
-          prop: 'popover',
-          title: '气泡',
-          width: 100,
-          config: { name: 'popover', props: { content: '飘起来' }, children: [{ tag: 'div', content: 'popover', slot: 'reference' }] }
-        },
-        {
-          show: true,
           prop: 'checkboxgroup',
           title: '多选框组',
           width: 160,
@@ -177,7 +176,7 @@ export default {
           prop: 'checkbox',
           title: '多选框',
           width: 100,
-          config: { name: 'checkbox' }
+          config: { name: 'checkbox', content: '选项' }
         },
         {
           show: true,
@@ -202,7 +201,7 @@ export default {
             'switch': false,
             'checkboxgroup': [],
             'checkbox': false,
-            'popover': '@title',
+            'popup': '@title',
             'link': '@ctitle',
             'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
           }

@@ -160,6 +160,7 @@ export default {
       if (component) {
         component && componentValue !== component.value && component.$emit('change', component.value)
         component && component.$emit('blur')
+        component.blur && component.blur()
       }
     },
     canFocus(column, cell) {

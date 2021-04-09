@@ -125,10 +125,11 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>editIsStop -  {{ editIsStop }}</p>
+    <!-- <p>editIsStop -  {{ editIsStop }}</p> -->
 
     <!-- 气泡 -->
-    <Popover ref="popover" v-model="show" :reference="reference" :message="message" />
+    <Popover ref="popover" v-bind="popoverOpts" />
+    <Popover v-if="edit" ref="editPopover" v-bind="editPopoverOpts" />
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -213,9 +214,6 @@ export default {
       columns: this.value.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
-      show: false,
-      message: null,
-      reference: null,
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
@@ -224,7 +222,9 @@ export default {
       rowHoverIndex: null,
       expands: [],
       expand: null,
-      editIsStop: false
+      editIsStop: false,
+      popoverOpts: {},
+      editPopoverOpts: {}
     }
   },
   computed: {
@@ -318,13 +318,19 @@ export default {
     handleCardClose() {
       this.$emit('drag-card-close')
     },
-    tipShow({ reference, message }) {
+    tipShow(opts) {
       this.$refs.popover.doShow()
-      this.reference = reference
-      this.message = message
+      this.popoverOpts = opts
     },
     tipClose() {
       this.$refs.popover.doHide()
+    },
+    editTipShow(opts) {
+      this.$refs.editPopover.doShow()
+      this.editPopoverOpts = opts
+    },
+    editTipClose() {
+      this.$refs.editPopover.doHide()
     },
     expandChange(obj) {
       const { rowIndex } = obj
@@ -375,6 +381,7 @@ export default {
 
 <style lang="scss">
 @import '../components/Edit/index.scss';
+@import '../components/Popover/popover.scss';
 
 .eff-table {
   .eff-cell{

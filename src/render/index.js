@@ -205,7 +205,7 @@ function renderImage(h, renderOpts, params) {
 }
 
 // 气泡 popover
-function renderPopover(h, renderOpts, params) {
+function renderPopup(h, renderOpts, params) {
   const { children = [] } = renderOpts
   const props = {
     trigger: 'hover',
@@ -213,7 +213,7 @@ function renderPopover(h, renderOpts, params) {
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
-  return render.merge('props', props).setOpts('content', renderChildren).render()
+  return render.setOpts('tag', 'popup').merge('props', props).setOpts('content', renderChildren).render()
 }
 
 // 弹窗 dialog
@@ -312,7 +312,11 @@ function renderCheckboxGroup(h, renderOpts, params) {
     }
   })
   const render = new Render(h, renderOpts, params)
-  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  const renderChildren = children.map((opts, idx) => {
+    const { label } = opts.props || {}
+    const childrenOpts = Object.assign({}, { content: label }, opts)
+    return new Render(h, childrenOpts, params, idx).render()
+  })
   return render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render()
 }
 
@@ -360,8 +364,9 @@ const renderMap = {
     renderDefault: renderImage,
     renderEdit: renderDialog
   },
-  popover: {
-    renderDefault: renderPopover
+  popup: {
+    renderDefault: renderPopup,
+    renderEdit: renderPopup
   },
   dialog: {
     renderDefault: renderDialog,

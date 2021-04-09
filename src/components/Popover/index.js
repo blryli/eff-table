@@ -1,4 +1,3 @@
-<script>
 import { removeBody, getDomClientRect } from 'utils/dom'
 
 export default {
@@ -11,10 +10,11 @@ export default {
     borderColor: { type: String, default: '#ddd' },
     popoverClass: { type: String, default: '' },
     trigger: { type: String, default: 'hover' },
-    reference: HTMLDivElement,
+    reference: HTMLElement,
     message: { type: [String, Array], default: '' },
     enterable: Boolean,
-    hideDelay: { type: Number, default: 200 }
+    hideDelay: { type: Number, default: 200 },
+    vslot: {}
   },
   data() {
     return {
@@ -199,121 +199,11 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          $slots.default || (message || []).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          this.slot || $slots.default || (message || []).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='eff-table__popover-arrow' />
       </div>
     </transition>
   }
 }
-</script>
 
-<style lang="scss">
-.eff-table__popover {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  position: fixed;
-  z-index: 3000;
-  padding: 10px;
-  line-height: 1.2;
-  font-size: 14px;
-  min-width: 10px;
-  border-radius: 4px;
-  border: 1px solid;
-  background-color: var(--bgColor);
-  border-color: var(--borderColor);
-  color: var(--color);
-  box-shadow: 0 1px 10px rgba($color: #000000, $alpha: .1);
-
-  &-item{
-    + .eff-table__popover-item{
-      margin-top: 10px;
-    }
-  }
-
-  .is--error{
-    color: red;
-  }
-  &--visible {
-    visibility: visible;
-    opacity: 1;
-  }
-  &--hidden {
-    visibility: hidden;
-    opacity: 0;
-  }
-  &-arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: 6px solid transparent;
-    &:after {
-      content: "";
-      position: absolute;
-      width: 0;
-      height: 0;
-      border: 5px solid transparent;
-    }
-  }
-}
-
-.eff-table__popover-top .eff-table__popover-arrow {
-  border-top-color: var(--borderColor);
-  margin-left: -6px;
-  left: 50%;
-  top: 100%;
-}
-
-.eff-table__popover-top .eff-table__popover-arrow:after {
-  top: -6px;
-  margin-left: -5px;
-  border-top: 5px solid var(--bgColor);
-}
-
-.eff-table__popover-right .eff-table__popover-arrow {
-  border-right-color: var(--borderColor);
-  margin-top: -6px;
-  left: -12px;
-  top: 50%;
-}
-
-.eff-table__popover-right .eff-table__popover-arrow:after {
-  left: -3px;
-  margin-top: -5px;
-  border-right: 5px solid var(--bgColor);
-}
-
-.eff-table__popover-bottom .eff-table__popover-arrow {
-  border-bottom-color: var(--borderColor);
-  margin-left: -6px;
-  top: -12px;
-  left: 50%;
-}
-
-.eff-table__popover-bottom .eff-table__popover-arrow:after {
-  top: -3px;
-  margin-left: -5px;
-  border-bottom: 5px solid var(--bgColor);
-}
-
-.eff-table__popover-left .eff-table__popover-arrow {
-  border-left-color: var(--borderColor);
-  margin-top: -6px;
-  left: 100%;
-  top: 50%;
-}
-
-.eff-table__popover-left .eff-table__popover-arrow:after {
-  right: -3px;
-  margin-top: -5px;
-  border-left: 5px solid var(--bgColor);
-}
-
-.effFade-enter-active, .effFade-leave-active {
-  transition: opacity .5s;
-}
-.effFade-enter, .effFade-leave-to {
-  opacity: 0;
-}
-</style>

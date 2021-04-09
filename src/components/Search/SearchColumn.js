@@ -1,5 +1,5 @@
 import Icon from './components/Icon.vue'
-import Popover from '../Popover/index.vue'
+import Popover from '../Popover'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'
 import RangeInput from './components/RangeInput.vue'
