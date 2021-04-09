@@ -1,11 +1,14 @@
 name: GitHub Actions Build and Deploy Demo
-on: [push]
+on:
+  push:
+    branches:
+      - v2
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v2
