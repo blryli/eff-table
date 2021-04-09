@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import screenfull from 'screenfull'
 import { routes } from './router'
 import { config } from './config'
 
@@ -36,13 +35,6 @@ export default {
   },
   created() {
     document.title = config.name + '-demo'
-  },
-  methods: {
-    toggleFullscreen(event) {
-      if (screenfull.isEnabled) {
-        screenfull.toggle(document.documentElement)
-      }
-    }
   }
 }
 </script>
