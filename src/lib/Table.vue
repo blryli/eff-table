@@ -140,8 +140,8 @@
     <slot v-if="false" name="expand" />
 
     <Loading :visible="loading" />
-    <SelectRange v-if="selectRange"/>
-    <copy v-if="copy"/>
+    <SelectRange v-if="selectRange" />
+    <copy v-if="copy" />
   </div>
 </template>
 
@@ -178,7 +178,7 @@ export default {
     ScrollX,
     Loading,
     SelectRange,
-    Copy,
+    Copy
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey],
   provide() {
@@ -218,7 +218,7 @@ export default {
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] },
     selectRange: Boolean,
-    copy: Boolean,
+    copy: Boolean
   },
   data() {
     return {
@@ -299,13 +299,13 @@ export default {
   },
   methods: {
     rootMousemove(event) {
-      this.$emit('table-mouse-move', {event})
+      this.$emit('table-mouse-move', { event })
     },
     rootMouseup() {
       this.$emit('table-mouse-up')
     },
     rootSelectstart(event) {
-      let a = !(this.select || this.copy)
+      const a = !(this.select || this.copy)
       return a
     },
     setEditIsStop(val) {
