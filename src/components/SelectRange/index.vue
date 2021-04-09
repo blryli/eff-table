@@ -133,6 +133,26 @@ export default {
           }
         }
       }
+    },
+    onPaste(e) {
+      if (this.status != 2) {
+        return true
+      }
+
+      let {startRow, startColumn} = this._getReac()
+
+      let data = e.clipboardData.getData('text/plain')
+      data = data.split("\n")
+      data = data.map(v => {
+        if (v.indexOf("\t ") != -1) {
+          return v.split("\t ")
+        }
+
+        return v.split("\t")
+      })
+
+      let postData = {startRow, startColumn, data}
+      this.table.$emit("table-paste", postData)
     }
   },
   mounted() {
@@ -148,9 +168,13 @@ export default {
         this.borderStyle = "dashed"
         this.handleRect()
       })
+
+    document.addEventListener('paste', this.onPaste, false)
+
   },
   destroyed() {
     clearInterval(this.autoScrollIntervalId)
+    document.removeEventListener("paste", this.onPaste, false)
   }
 }
 </script>

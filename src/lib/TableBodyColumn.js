@@ -24,7 +24,7 @@ export default {
   },
   render(h) {
 
-    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
+    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove  } = this
     const { type } = column
     // row[columnIndex] summary合计列
     const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderSelection(h) : this.cellRender(h)
