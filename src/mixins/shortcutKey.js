@@ -21,10 +21,12 @@ export default {
     closeEdit() {
       this.$refs.edit.close()
     },
-    rootMouseenter() {
+    rootMouseenter(event) {
+      this.$emit('table-mouse-enter', { event })
       this.inRoot = true
     },
-    rootMouseleave() {
+    rootMouseleave(event) {
+      this.$emit('table-mouse-leave', { event })
       this.inRoot = false
     },
     handleWindowMousedown(e) {

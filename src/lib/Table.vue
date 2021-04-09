@@ -5,6 +5,9 @@
     :style="style"
     @mouseenter="rootMouseenter"
     @mouseleave="rootMouseleave"
+    @selectstart.prevent="rootSelectstart"
+    @mouseup="rootMouseup"
+    @mousemove="rootMousemove($event)"
   >
     <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
       <slot name="toolbar" />
@@ -136,6 +139,8 @@
     <slot v-if="false" name="expand" />
 
     <Loading :visible="loading" />
+    <SelectRange v-if="selectRange"/>
+    <copy v-if="copy"/>
   </div>
 </template>
 
@@ -156,6 +161,8 @@ import Toolbar from '../components/Toolbar'
 import Edit from '../components/Edit'
 import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
+import SelectRange from '../components/SelectRange/index'
+import Copy from '../components/Copy/index'
 
 export default {
   name: 'EffTable',
@@ -168,7 +175,9 @@ export default {
     Toolbar,
     Edit,
     ScrollX,
-    Loading
+    Loading,
+    SelectRange,
+    Copy,
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey],
   provide() {
@@ -206,7 +215,9 @@ export default {
     showOverflowTooltip: Boolean,
     cellClassName: { type: [String, Function], default: '' },
     rowClassName: { type: [String, Function], default: '' },
-    messages: { type: Array, default: () => [] }
+    messages: { type: Array, default: () => [] },
+    selectRange: Boolean,
+    copy: Boolean,
   },
   data() {
     return {
@@ -228,6 +239,7 @@ export default {
     }
   },
   computed: {
+
     visibleColumns() {
       return this.columns.filter(d => d.show !== false)
     },
@@ -286,6 +298,16 @@ export default {
     })
   },
   methods: {
+    rootMousemove(event) {
+      this.$emit('table-mouse-move', {event})
+    },
+    rootMouseup() {
+      this.$emit('table-mouse-up')
+    },
+    rootSelectstart(event) {
+      let a = !(this.select || this.copy)
+      return a
+    },
     setEditIsStop(val) {
       this.editIsStop = val
     },
