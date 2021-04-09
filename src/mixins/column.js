@@ -72,6 +72,13 @@ export default {
       if (columnIndex === 0) {
         style.borderLeft = 0
       }
+
+      for (const key in column.borderStyle) {
+        if (Object.hasOwnProperty.call(column.borderStyle, key)) {
+          const v = column.borderStyle[key];
+          style[key] = v
+        }
+      }
       return style
     }
   }

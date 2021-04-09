@@ -16,22 +16,32 @@ export default {
   inject: ['table'],
   data() {
     return {
+      style: {},
       checked: false,
-      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false
+      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false,
+      text: ""
     }
   },
   render(h) {
-    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave } = this
+
+    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove  } = this
     const { type } = column
     // row[columnIndex] summary合计列
     const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderSelection(h) : this.cellRender(h)
+
+    this.text = slot
+
     return (
       <div
         class={this.columnClass}
         key={rowIndex + '-' + columnIndex}
-        style={table.setColumnStyle(column, columnIndex, fixed)}
+        style={getStyle()}
         on-mouseenter={event => handleMouseenter(event, slot)}
         on-mouseleave={event => handleMouseleave(event, slot)}
+
+        on-mouseup={event => handleMouseUp(event)}
+        on-mousedown={event => handleMouseDown(event)}
+        on-mousemove={event => handleMousemove(event)}
       >
         <div ref='cell' class='eff-cell'>
           <span class='eff-cell--label'>{slot}</span>
@@ -67,6 +77,10 @@ export default {
     }
   },
   methods: {
+    getStyle() {
+      let defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
+      return Object.assign(defaultStyle, this.style)
+    },
     renderSelection(h) {
       const { table, rowIndex, selectionChange } = this
       return <v-checkbox
@@ -124,6 +138,20 @@ export default {
       const { rowIndex, expanded, table } = this
       this.expanded = !expanded
       table.expandChange({ rowIndex, expanded: this.expanded })
-    }
+    },
+
+    handleMouseUp(event) {
+      const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
+      table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex})
+    },
+    handleMouseDown(event) {
+      const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
+      table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex})
+    },
+    handleMousemove(event) {
+      const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
+      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex})
+    },
+
   }
 }

@@ -105,6 +105,8 @@ export default {
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
 | summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
+| selectRange       | 是否开启选择区域功能    | Boolean |       |       |
+| copy       | 是否开启复制功能    | Boolean |       |       |
 
 ```js
 value: [
@@ -208,6 +210,13 @@ value: [
 |header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
 |sort-change|表格排序条件发生变化的时候会触发该事件|sortConfig, data|
 |search-clear-filed|使用默认range范围搜索时，点击清空按钮时触发该事件|{ column, prop }|
+|table-paste|当用selectRange选择一块区域时，ctrl+v粘贴，触发这个事件|{ startRow，startColumn, data }|
+|select-range-data|当用selectRange选择一块区域时触发，textArr是数据二维数组{ textArr }|
+|cell-mouse-move|鼠标在单元格按下触发|{ row, column, rowIndex, columnIndex, cell, event }|
+|cell-mouse-down|鼠标在单元格移动触发|{ row, column, rowIndex, columnIndex, cell, event }|
+|table-mouse-up|鼠标在表格松开触发|{event}|
+|table-mouse-enter|鼠标滑进表格|{event}|
+|table-mouse-leave|鼠标离开表格|{event}|
 
 ### Slot
 
