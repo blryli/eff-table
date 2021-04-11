@@ -14,7 +14,8 @@ export default {
     message: { type: [String, Array], default: '' },
     enterable: Boolean,
     hideDelay: { type: Number, default: 200 },
-    vslot: {}
+    vslot: {},
+    addToBody: Boolean
   },
   data() {
     return {
@@ -92,8 +93,12 @@ export default {
           this.calculateCoordinate()
         }, 0)
       }
+    },
+    placement(val) {
+      this.momentPlacement = val
     }
   },
+  inject: ['table'],
   mounted() {
   },
   beforeDestroy() {
@@ -105,9 +110,9 @@ export default {
   },
   methods: {
     popoverAddedBody() {
-      const { addedBody, show, $el } = this
+      const { addToBody, addedBody, show, $el } = this
       if (!addedBody && show) {
-        document.body.appendChild($el)
+        if (addToBody) document.body.appendChild($el)
         this.addedBody = true
       }
     },
@@ -141,17 +146,17 @@ export default {
       }
     },
     calculateCoordinate() {
-      const { addedBody, $el, reference, momentPlacement, popoverAddedBody, changeDirection } = this
+      const { addedBody, $el, reference, popoverAddedBody, changeDirection } = this
       !addedBody && popoverAddedBody()
       const popover = $el
       const referenceRect = getDomClientRect(reference)
       const popoverRect = getDomClientRect(popover)
 
-      changeDirection(popoverRect, referenceRect)
+      changeDirection(popoverRect, referenceRect, popover)
 
       let top
       const left = referenceRect.centerX - (popoverRect.width / 2)
-      switch (momentPlacement) {
+      switch (this.momentPlacement) {
         case 'top':
           top = referenceRect.top - popoverRect.height - 10
           break
@@ -163,10 +168,11 @@ export default {
           console.error('Wrong placement must top/bottom')
           break
       }
-      popover.style.left = left + 'px'
-      popover.style.top = top + 'px'
+      const { left: tLeft, top: tTop } = getDomClientRect(this.table.$el)
+      popover.style.left = left - tLeft + 'px'
+      popover.style.top = top - tTop + 'px'
     },
-    changeDirection(popoverRect, referenceRect) {
+    changeDirection(popoverRect, referenceRect, popover) {
       const allHeight = referenceRect.bottom + popoverRect.height + 5
       switch (this.placement) {
         case 'top':
@@ -199,7 +205,7 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          this.slot || $slots.default || (message || []).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          this.vslot || $slots.default || (message || []).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='eff-table__popover-arrow' />
       </div>

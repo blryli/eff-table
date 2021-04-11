@@ -2,7 +2,7 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease;
-  position: fixed;
+  position: absolute;
   z-index: 3000;
   padding: 10px;
   line-height: 1.2;
@@ -107,6 +107,7 @@
 }
 
 .eff-table__popup{
+  width: 100%;
   height: var(--rowHeight);
   line-height: var(--rowHeight);
   text-align: left;

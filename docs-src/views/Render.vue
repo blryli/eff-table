@@ -92,7 +92,7 @@ export default {
           prop: 'popup',
           title: '气泡',
           width: 100,
-          config: { name: 'popup', props: { content: '飘起来' }, children: [{ tag: 'div', content: 'popup' }] },
+          config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
           edit: true
         },
         {
