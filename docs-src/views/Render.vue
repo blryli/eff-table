@@ -92,7 +92,7 @@ export default {
           prop: 'popup',
           title: '气泡',
           width: 100,
-          config: { name: 'popup', props: { content: '飘起来' }, children: [{ tag: 'div', content: 'popup' }] },
+          config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
           edit: true
         },
         {
@@ -120,18 +120,13 @@ export default {
           prop: 'date',
           title: '日期',
           width: 160,
-          // cellRender: (h, { prop, row }) => {
-          //   return formatDate(row[prop], 'yyyy-MM-dd')
-          // },
           config: {
             name: 'date-picker', format: 'yyyy-MM-dd'
           },
           search: {
             operator: true
           },
-          edit: {
-            render: { name: 'date-picker', props: { type: 'date', placeholder: '选择日期' }}
-          }
+          edit: true
         },
         {
           show: true,
@@ -141,17 +136,7 @@ export default {
           search: true,
           cellRender: { name: 'link', props: { url: '' }},
           edit: {
-            render: { name: 'dialog', props: { visible: false }, on: {
-              save: () => {
-                console.log('save')
-              },
-              open: () => {
-                console.log('open')
-              },
-              close: () => {
-                console.log('close')
-              }
-            }, children: [{ name: 'form' }] }
+            render: { name: 'dialog', props: { visible: false }, children: [{ name: 'form' }] }
           }
         },
         {

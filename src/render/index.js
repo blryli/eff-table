@@ -1,5 +1,5 @@
 import toDateString from 'xe-utils/toDateString'
-const status = { rowIndex: 0, columnIndex: 0 }
+const status = { rowIndex: 0 }
 /**
  * 基础渲染函数
  */
@@ -208,8 +208,17 @@ function renderImage(h, renderOpts, params) {
 function renderPopup(h, renderOpts, params) {
   const { children = [] } = renderOpts
   const props = {
-    trigger: 'hover',
     palcement: 'top'
+  }
+  const render = new Render(h, renderOpts, params)
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.setOpts('tag', 'popup').merge('props', props).setOpts('content', renderChildren).render()
+}
+function renderPopupEdit(h, renderOpts, params) {
+  const { children = [] } = renderOpts
+  const props = {
+    addToBody: false,
+    palcement: 'bottom'
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
@@ -244,10 +253,10 @@ function renderDialog(h, renderOpts, params) {
 
   // 激活弹窗
   // console.log(rowIndex, status.rowIndex, columnIndex, status.columnIndex)
-  if (rowIndex !== status.rowIndex || columnIndex !== status.columnIndex) {
+  if (rowIndex !== status.rowIndex || columnIndex !== table.currentEdit.oldColumnIndex) {
     opened()
     status.rowIndex = rowIndex
-    status.columnIndex = columnIndex
+    table.currentEdit.oldColumnIndex = columnIndex
   }
 
   const render = new Render(h, renderOpts, params)
@@ -260,8 +269,9 @@ function renderDialog(h, renderOpts, params) {
     ])
   ]
   const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: renderOpts.props.visible ? 'block' : 'none' }})
+  const { data, prop } = params
 
-  return [render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render(), modal]
+  return [h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}), render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render(), modal]
 }
 
 // 表单 form
@@ -366,7 +376,7 @@ const renderMap = {
   },
   popup: {
     renderDefault: renderPopup,
-    renderEdit: renderPopup
+    renderEdit: renderPopupEdit
   },
   dialog: {
     renderDefault: renderDialog,

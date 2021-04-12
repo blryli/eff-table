@@ -18,18 +18,14 @@ export default {
     return {
       style: {},
       checked: false,
-      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false,
-      text: ""
+      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false
     }
   },
   render(h) {
-
-    const { row, rowIndex, column, columnIndex, table, fixed, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove  } = this
+    const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
     const { type } = column
     // row[columnIndex] summary合计列
     const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderSelection(h) : this.cellRender(h)
-
-    this.text = slot
 
     return (
       <div
@@ -78,7 +74,7 @@ export default {
   },
   methods: {
     getStyle() {
-      let defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
+      const defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
       return Object.assign(defaultStyle, this.style)
     },
     renderSelection(h) {
@@ -142,16 +138,16 @@ export default {
 
     handleMouseUp(event) {
       const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
-      table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex})
+      table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex })
     },
     handleMouseDown(event) {
       const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
-      table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex})
+      table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     },
     handleMousemove(event) {
       const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
-      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex})
-    },
+      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
+    }
 
   }
 }

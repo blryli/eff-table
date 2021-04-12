@@ -160,7 +160,7 @@ export default {
       if (component) {
         component && componentValue !== component.value && component.$emit('change', component.value)
         component && component.$emit('blur')
-        component.blur && component.blur()
+        component.close && component.close()
       }
     },
     canFocus(column, cell) {
@@ -236,10 +236,13 @@ export default {
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
+          this.table.currentEdit.oldColumnIndex = this.cellIndex
           this.cellIndex = cellIndex
           this.cell = getColumn(prop).cell
           this.show = true
           this.setElPos() // 设置编辑框位置
+
+          this.table.currentEdit.columnIndex = cellIndex
 
           this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦
@@ -325,8 +328,9 @@ export default {
     },
     setElPos() {
       const { left, top, width, height } = this.cell.getBoundingClientRect()
-      this.$el.style.left = `${left - 1}px`
-      this.$el.style.top = `${top - 1}px`
+      const { left: tLeft, top: tTop } = this.table.$el.getBoundingClientRect()
+      this.$el.style.left = `${left - tLeft - 1}px`
+      this.$el.style.top = `${top - tTop - 1}px`
       this.$el.style.width = `${width + 1}px`
       this.$el.style.height = `${height + 1}px`
     },
