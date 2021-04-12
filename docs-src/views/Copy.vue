@@ -11,7 +11,7 @@
           border
           :max-height="400"
           :data="data"
-          selectRange
+          select-range
           copy
         />
       </div>

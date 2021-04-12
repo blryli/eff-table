@@ -314,8 +314,8 @@ export default {
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
     },
-    rootMouseup() {
-      this.$emit('table-mouse-up')
+    rootMouseup(event) {
+      this.$emit('table-mouse-up', { event: event })
     },
     rootSelectstart(event) {
       const a = !(this.select || this.copy)
