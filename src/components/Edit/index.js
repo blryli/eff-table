@@ -376,6 +376,9 @@ export default {
     },
     inTable(target) {
       return target.nodeName === 'BODY' || this.table.$el.contains(target)
+    },
+    editFiled({ row, prop, content }) {
+      row[prop] = content
     }
   },
   render(h) {

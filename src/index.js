@@ -1,5 +1,5 @@
 import Table from './lib/Table.vue'
-import Popup from './components/popover/popup'
+import Popup from './components/Popover/popup'
 
 const components = [Table, Popup]
 

@@ -6,7 +6,7 @@ export default {
   },
   methods: {
     sort(prop, order) {
-      const column = this.columns.find(d => d.prop === prop)
+      const column = this.formatColumns.find(d => d.prop === prop)
       this.sortChange({ column, prop, order }, true)
     },
     clearSort() {

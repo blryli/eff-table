@@ -112,7 +112,7 @@
     <drag
       v-if="border && drag"
       ref="drag"
-      v-model="columns"
+      v-model="formatColumns"
       :column-control="columnControl"
       @cardClose="handleCardClose"
       @change="dargChange"
@@ -186,8 +186,12 @@ export default {
       table: this
     }
   },
+  model: {
+    prop: 'columns',
+    event: 'input'
+  },
   props: {
-    value: { type: Array, default: () => [] },
+    columns: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
     form: { type: Object, default: () => {} },
     border: Boolean,
@@ -222,7 +226,7 @@ export default {
   },
   data() {
     return {
-      columns: this.value.map(d => {
+      formatColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       currentRow: null,
@@ -243,9 +247,8 @@ export default {
     }
   },
   computed: {
-
     visibleColumns() {
-      return this.columns.filter(d => d.show !== false)
+      return this.formatColumns.filter(d => d.show !== false)
     },
     bodyColumns() {
       const plat = arr => {
@@ -287,8 +290,8 @@ export default {
       this.scrollLeftEvent()
       this.resize()
     },
-    value(val) {
-      this.columns = val
+    columns(val) {
+      this.formatColumns = val
     },
     editStop(val) {
       this.editIsStop = val
@@ -300,8 +303,14 @@ export default {
       const { expand } = $scopedSlots || $slots
       this.expand = expand
     })
+    this.$on('edit-fileds', this.editFileds)
   },
   methods: {
+    editFileds(fileds) {
+      this.edit && fileds.forEach(filed => {
+        this.$refs.edit.editFiled(filed)
+      })
+    },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
     },
@@ -319,18 +328,18 @@ export default {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
     handleDragend(column) {
-      const { columns } = this
-      const index = columns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      const { formatColumns } = this
+      const index = formatColumns.findIndex(d => column.prop === d.prop && column.title === d.title)
       if (index > -1) {
-        columns[index] = column
-        this.columns = [...columns]
+        formatColumns[index] = column
+        this.formatColumns = [...formatColumns]
         this.dargChange()
       }
     },
     dargChange() {
       if (this.edit) this.$refs.edit.show = false
-      this.$emit('input', this.columns)
-      this.$emit('drag-change', this.columns)
+      this.$emit('input', this.formatColumns)
+      this.$emit('drag-change', this.formatColumns)
       this.resize()
     },
     dragRowChange(fromIndex, toIndex) {
