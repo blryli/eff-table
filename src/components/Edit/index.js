@@ -236,10 +236,13 @@ export default {
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
+          this.table.currentEdit.oldColumnIndex = this.cellIndex
           this.cellIndex = cellIndex
           this.cell = getColumn(prop).cell
           this.show = true
           this.setElPos() // 设置编辑框位置
+
+          this.table.currentEdit.columnIndex = cellIndex
 
           this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦

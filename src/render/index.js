@@ -1,5 +1,5 @@
 import toDateString from 'xe-utils/toDateString'
-const status = { rowIndex: 0, columnIndex: 0 }
+const status = { rowIndex: 0 }
 /**
  * 基础渲染函数
  */
@@ -253,10 +253,10 @@ function renderDialog(h, renderOpts, params) {
 
   // 激活弹窗
   // console.log(rowIndex, status.rowIndex, columnIndex, status.columnIndex)
-  if (rowIndex !== status.rowIndex || columnIndex !== status.columnIndex) {
+  if (rowIndex !== status.rowIndex || columnIndex !== table.currentEdit.oldColumnIndex) {
     opened()
     status.rowIndex = rowIndex
-    status.columnIndex = columnIndex
+    table.currentEdit.oldColumnIndex = columnIndex
   }
 
   const render = new Render(h, renderOpts, params)

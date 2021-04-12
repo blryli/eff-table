@@ -128,7 +128,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editIsStop -  {{ editIsStop }}</p> -->
+    <!-- <p>currentEdit -  {{ currentEdit }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -235,7 +235,11 @@ export default {
       expand: null,
       editIsStop: false,
       popoverOpts: {},
-      editPopoverOpts: {}
+      editPopoverOpts: {},
+      currentEdit: {
+        oldColumnIndex: null,
+        columnIndex: null
+      }
     }
   },
   computed: {
