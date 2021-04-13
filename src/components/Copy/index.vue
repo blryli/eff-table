@@ -1,6 +1,4 @@
-<template>
-  <div />
-</template>
+<template />
 
 <script>
 
@@ -33,7 +31,6 @@ export default {
 
       const text = textArr.join('\r\n')
 
-      console.log(e, 1111)
       e.clipboardData.setData('text/plain', text)
       this.table.$emit('copy')
       e.preventDefault()
@@ -41,6 +38,7 @@ export default {
     onListener() {
       this.table.$on('select-range-data', (textArr) => {
         this.textArr = textArr
+        console.log(this.textArr, 2222)
       })
       document.addEventListener('copy', this.onCopy, false)
     },

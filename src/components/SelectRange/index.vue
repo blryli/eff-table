@@ -229,7 +229,7 @@ export default {
 
           if (column) {
             column.style = style
-            this.textMap[i + '-' + j] = column.text
+            this.textMap[i + '-' + j] = column.$el.innerText
           }
         }
       }
