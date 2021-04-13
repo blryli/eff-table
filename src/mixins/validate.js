@@ -12,7 +12,7 @@ export default {
           console.error('需要校验的字段，必须具有 prop 属性')
           resolve()
         }
-        const { data, columns, validators, tableBody } = this
+        const { data, columns, validators, tableBodyEl } = this
         const row = data[rowIndex]
         const value = row[prop]
         if (!rule) {
@@ -25,7 +25,7 @@ export default {
         }
 
         const cellIndex = columns.findIndex(d => d.prop && d.prop === prop)
-        const childNodes = tableBody.childNodes[rowIndex]
+        const childNodes = tableBodyEl.childNodes[rowIndex]
         const cell = childNodes ? childNodes.childNodes[cellIndex] : null
 
         // 校验处理函数

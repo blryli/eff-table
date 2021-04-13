@@ -6,7 +6,7 @@ export default {
   },
   methods: {
     sort(prop, order) {
-      const column = this.formatColumns.find(d => d.prop === prop)
+      const column = this.tableColumns.find(d => d.prop === prop)
       this.sortChange({ column, prop, order }, true)
     },
     clearSort() {
@@ -20,7 +20,7 @@ export default {
       this.updateData()
     },
     updateData() {
-      let tableData = [...this.data]
+      let tableData = [...this.tableData]
       const { column = {}, prop, order } = this.curSort
       const { sortMethod, remoteSort } = column
       if (order) {

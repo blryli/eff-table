@@ -112,7 +112,7 @@
     <drag
       v-if="border && drag"
       ref="drag"
-      v-model="formatColumns"
+      v-model="tableColumns"
       :column-control="columnControl"
       @cardClose="handleCardClose"
       @change="dargChange"
@@ -226,13 +226,13 @@ export default {
   },
   data() {
     return {
-      formatColumns: this.columns.map(d => {
+      tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
-      tableBody: null,
+      tableBodyEl: null,
       tableData: Object.freeze([...this.data]),
       rowHoverIndex: null,
       expands: [],
@@ -248,7 +248,7 @@ export default {
   },
   computed: {
     visibleColumns() {
-      return this.formatColumns.filter(d => d.show !== false)
+      return this.tableColumns.filter(d => d.show !== false)
     },
     bodyColumns() {
       const plat = arr => {
@@ -291,7 +291,7 @@ export default {
       this.resize()
     },
     columns(val) {
-      this.formatColumns = val
+      this.tableColumns = val
     },
     editStop(val) {
       this.editIsStop = val
@@ -328,18 +328,18 @@ export default {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
     handleDragend(column) {
-      const { formatColumns } = this
-      const index = formatColumns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      const { tableColumns } = this
+      const index = tableColumns.findIndex(d => column.prop === d.prop && column.title === d.title)
       if (index > -1) {
-        formatColumns[index] = column
-        this.formatColumns = [...formatColumns]
+        tableColumns[index] = column
+        this.tableColumns = [...tableColumns]
         this.dargChange()
       }
     },
     dargChange() {
       if (this.edit) this.$refs.edit.show = false
-      this.$emit('input', this.formatColumns)
-      this.$emit('drag-change', this.formatColumns)
+      this.$emit('input', this.tableColumns)
+      this.$emit('drag-change', this.tableColumns)
       this.resize()
     },
     dragRowChange(fromIndex, toIndex) {

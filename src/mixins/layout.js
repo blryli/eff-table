@@ -113,7 +113,7 @@ export default {
         this.bodyWrapperWidth = $el.getBoundingClientRect().width || minWidth
         setOverflowX()
         scrollLeftEvent()
-        this.tableBody = $el.querySelector('.eff-table__body')
+        this.tableBodyEl = $el.querySelector('.eff-table__body')
       })
     },
     setOverflowX() {
