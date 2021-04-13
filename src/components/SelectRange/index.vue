@@ -1,15 +1,22 @@
 <template>
   <div v-if="status >= 2" :style="toolStyle" class="tool">
 
-    <div class="sight">
-      <div class="vertical" />
-      <div class="lineae" />
+    <div v-if="status === 2" class="sight" @mousedown="sightMouseDown">
+      <template v-if="selectCount == 1">
+        <div class="vertical" />
+        <div class="lineae" />
+      </template>
     </div>
-    <el-button :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
+    <el-button v-if="status === 2" :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
   </div>
 </template>
 
 <script>
+
+// eslint-disable-next-line no-extend-native
+String.prototype.trim = function() {
+  return this.replace(/(^\s*)|(\s*$)/g, '')
+}
 
 export default {
   data() {
@@ -19,6 +26,8 @@ export default {
       status: 0,
       startPosition: { columnIndex: 0, rowIndex: 0 },
       endPosition: { columnIndex: 0, rowIndex: 0 },
+      sightStartPosition: { columnIndex: 0, rowIndex: 0 },
+      sightEndPosition: { columnIndex: 0, rowIndex: 0 },
       unit: {
         width: 0,
         height: 0
@@ -26,19 +35,18 @@ export default {
       autoScrollIntervalId: null,
       borderStyle: 'solid',
       copyBtnType: 'primary',
-      toolStyle: {}
+      toolStyle: {},
+      selectCount: 0
     }
   },
   computed: {
   },
   watch: {
     'table.scrollTop'(scrollTop, oldTop) {
-      this.handleRect()
-      if (this.status !== 1) {
-        return
+      if (this.status === 1) {
+        this.endPosition.y += scrollTop - oldTop
       }
-
-      this.endPosition.y += scrollTop - oldTop
+      this.handleRect()
     }
   },
   inject: ['table'],
@@ -46,14 +54,11 @@ export default {
     this.table.$on('table-mouse-up', this.selectRangeMouseUp)
     this.table.$on('cell-mouse-down', this.selectRangeMouseDown)
     this.table.$on('cell-mouse-move', this.selectRangeMouseMove)
-    this.table.$on('table-mouse-enter', this.selectRangeMouseEnter)
-    this.table.$on('table-mouse-leave', this.selectRangeMouseLeave)
     this.table.$on('copy', () => {
-      if (this.status !== 2) {
-        return
+      if (this.status === 2) {
+        this.borderStyle = 'dashed'
+        this.handleRect()
       }
-      this.borderStyle = 'dashed'
-      this.handleRect()
     })
 
     document.addEventListener('paste', this.onPaste, false)
@@ -82,35 +87,45 @@ export default {
       }
     },
     sightMouseDown() {
-
-    },
-    sightMouseUp() {
-
-    },
-    sightMouseMove() {
-
+      if (this.selectCount !== 1) {
+        return
+      }
+      this.status = 3
+      this.sightStartPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
+      this.sightEndPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
     },
     selectRangeMouseUp(e) {
-      const { endRow, endColumn } = this._getReac()
       const map = this._getColumnMap()
-      const endColumnModel = map[endRow + '-' + endColumn]
 
-      if (endColumnModel) {
-        const columnEl = endColumnModel ? endColumnModel.$el : null
-        const rowEl = columnEl.parentElement
-        const offsetLeft = columnEl.offsetLeft + columnEl.offsetWidth
-        const offsetTop = rowEl.offsetTop + columnEl.offsetHeight * 2
+      if (this.status === 3) {
+        this.endPosition = this.sightEndPosition
+        const content = map[this.sightStartPosition.rowIndex + '-' + this.sightStartPosition.columnIndex].$el.innerText
 
-        this.toolStyle = { top: offsetTop - 7 + 'px', left: offsetLeft - 7 + 'px' }
-        console.log(offsetLeft, offsetTop, this.toolStyle, columnEl.style.height.replace('px', ''))
+        const updateArr = this.handleUpdateData(content, 'sightStartPosition', 'sightEndPosition')
+        this.table.$emit('edit-fileds', updateArr)
       }
 
-      if (this.status < 2) {
-        this.copyBtnType = 'primary'
+      this.copyBtnType = 'primary'
+      this.selectCount = this.startPosition.columnIndex === this.endPosition.columnIndex && this.startPosition.rowIndex === this.endPosition.rowIndex ? 1 : 2
+
+      if (this.status === 1) {
+        const { endRow, endColumn } = this._getReac()
+        const endColumnModel = map[endRow + '-' + endColumn]
+
+        if (endColumnModel) {
+          const columnEl = endColumnModel ? endColumnModel.$el : null
+          const rowEl = columnEl.parentElement
+          const offsetLeft = columnEl.offsetLeft + columnEl.offsetWidth
+          const offsetTop = rowEl.offsetTop + columnEl.offsetHeight * 2
+          this.toolStyle = { top: offsetTop - 7 + 'px', left: offsetLeft - 7 + 'px' }
+        }
+
+        this.status = 2
+        this.table.$emit('select-range-data', this.textArr)
       }
-      this.status = 2
       this.handleRect()
-      this.table.$emit('select-range-data', this.textArr)
+
+      this.status = 2
     },
     selectRangeMouseDown(e) {
       this.borderStyle = 'solid'
@@ -127,36 +142,64 @@ export default {
       this.changeData()
     },
     selectRangeMouseMove(e) {
-      if (this.status !== 1) {
-        return
-      }
       const { rowIndex, columnIndex } = e
-      this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
+      if (this.status === 1) {
+        this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
 
-      this.handleRect()
-      this.changeData()
+        this.handleRect()
+        this.changeData()
+      }
+
+      if (this.status === 3) {
+        this.sightEndPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
+
+        const { endRow, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
+        const map = this._getColumnMap()
+        const endColumnModel = map[endRow + '-' + endColumn]
+
+        if (endColumnModel) {
+          const columnEl = endColumnModel ? endColumnModel.$el : null
+          const rowEl = columnEl.parentElement
+          const offsetLeft = columnEl.offsetLeft + columnEl.offsetWidth
+          const offsetTop = rowEl.offsetTop + columnEl.offsetHeight * 2
+          this.toolStyle = { top: offsetTop - 7 + 'px', left: offsetLeft - 7 + 'px' }
+        }
+
+        this.handleSightRect()
+      }
     },
-    _getReac() {
-      const startRow = this.endPosition.rowIndex > this.startPosition.rowIndex ? this.startPosition.rowIndex : this.endPosition.rowIndex
-      const endRow = this.endPosition.rowIndex < this.startPosition.rowIndex ? this.startPosition.rowIndex : this.endPosition.rowIndex
+    handleSightRect() {
+      const { startRow, endRow, startColumn, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
 
-      const startColumn = this.endPosition.columnIndex > this.startPosition.columnIndex ? this.startPosition.columnIndex : this.endPosition.columnIndex
-      const endColumn = this.endPosition.columnIndex < this.startPosition.columnIndex ? this.startPosition.columnIndex : this.endPosition.columnIndex
+      const map = this._getColumnMap()
 
-      return { startRow, endRow, startColumn, endColumn }
-    },
-    _getColumnMap() {
-      const rows = this.table.$refs.body.$children
+      for (let i = startRow; i <= endRow; i++) {
+        for (let j = startColumn; j <= endColumn; j++) {
+          const column = map[i + '-' + j]
+          const style = {}
 
-      const map = {}
-      rows.forEach(v => {
-        v.$children.forEach(vv => {
-          map[vv.rowIndex + '-' + vv.columnIndex] = vv
-          vv.style = {}
-        })
-      })
+          if (j === startColumn) {
+            style.borderLeft = `2px ${this.borderStyle} rgb(17 210 232)`
+          }
 
-      return map
+          if (j === endColumn) {
+            style.borderRight = `2px ${this.borderStyle} rgb(17 210 232)`
+          }
+
+          if (i === startRow) {
+            style.borderTop = `2px ${this.borderStyle} rgb(17 210 232)`
+          }
+
+          if (i === endRow) {
+            style.borderBottom = `2px ${this.borderStyle} rgb(17 210 232)`
+          }
+
+          if (column) {
+            column.style = style
+            // this.textMap[i + '-' + j] = column.text
+          }
+        }
+      }
     },
     handleRect() {
       const { startRow, endRow, startColumn, endColumn } = this._getReac()
@@ -196,20 +239,60 @@ export default {
         return true
       }
 
-      const { startRow, startColumn } = this._getReac()
+      const { startRow, startColumn, endRow, endColumn } = this._getReac()
 
       let data = e.clipboardData.getData('text/plain')
-      data = data.split('\n')
-      data = data.map(v => {
+
+      const updateArr = []
+      data = data.trim().split('\r\n')
+      data = data.map((v, k) => {
+        let columnList
+
         if (v.indexOf('\t ') !== -1) {
-          return v.split('\t ')
+          columnList = v.split('\t ')
+        } else {
+          columnList = v.split('\t')
         }
 
-        return v.split('\t')
+        columnList.forEach((vv, kk) => {
+          updateArr.push({ rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
+        })
       })
 
-      const postData = { startRow, startColumn, data }
-      this.table.$emit('table-paste', postData)
+      this.table.$emit('edit-fileds', updateArr)
+    },
+    handleUpdateData(content, startKey = 'startPosition', endKey = 'endPosition') {
+      const updateArr = []
+      const { startRow, startColumn, endRow, endColumn } = this._getReac(startKey, endKey)
+      for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
+        for (let columnIndex = startColumn; columnIndex <= endColumn; columnIndex++) {
+          updateArr.push({ rowIndex, columnIndex, content })
+        }
+      }
+
+      return updateArr
+    },
+    _getReac(startKey = 'startPosition', endKey = 'endPosition') {
+      const startRow = this[endKey].rowIndex > this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
+      const endRow = this[endKey].rowIndex < this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
+
+      const startColumn = this[endKey].columnIndex > this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
+      const endColumn = this[endKey].columnIndex < this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
+
+      return { startRow, endRow, startColumn, endColumn }
+    },
+    _getColumnMap() {
+      const rows = this.table.$refs.body.$children
+
+      const map = {}
+      rows.forEach(v => {
+        v.$children.forEach(vv => {
+          map[vv.rowIndex + '-' + vv.columnIndex] = vv
+          vv.style = {}
+        })
+      })
+
+      return map
     }
   }
 }

@@ -305,10 +305,19 @@ export default {
     })
     this.$on('edit-fileds', this.editFileds)
   },
+  beforeDestroy() {
+    this.$off('edit-fileds', this.editFileds)
+  },
   methods: {
     editFileds(fileds) {
-      this.edit && fileds.forEach(filed => {
-        this.$refs.edit.editFiled(filed)
+      console.log(fileds, 22222)
+      fileds.forEach(filed => {
+        const { data, visibleColumns } = this
+        const { rowIndex, columnIndex, content } = filed
+        const column = visibleColumns[columnIndex]
+        if (column && column.prop) {
+          data[rowIndex][column.prop] = content
+        }
       })
     },
     rootMousemove(event) {
