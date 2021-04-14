@@ -283,8 +283,8 @@ export default {
       return style
     },
     useExpand() {
-      const { value, expand } = this
-      return expand && value.find(d => d.type === 'expand')
+      const { visibleColumns, expand } = this
+      return expand && visibleColumns.find(d => d.type === 'expand')
     }
   },
   watch: {
