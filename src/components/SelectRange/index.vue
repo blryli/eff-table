@@ -111,13 +111,11 @@ export default {
       if (this.status === 1) {
         const { endRow, endColumn } = this._getReac()
         const endColumnModel = map[endRow + '-' + endColumn]
-
         if (endColumnModel) {
-          const columnEl = endColumnModel ? endColumnModel.$el : null
-          const rowEl = columnEl.parentElement
-          const offsetLeft = columnEl.offsetLeft + columnEl.offsetWidth
-          const offsetTop = rowEl.offsetTop + columnEl.offsetHeight * 2
-          this.toolStyle = { top: offsetTop - 7 + 'px', left: offsetLeft - 7 + 'px' }
+          const width = endColumnModel.$el.offsetWidth
+          const height = endColumnModel.$el.offsetHeight
+          const { top, left } = endColumnModel.$el.getBoundingClientRect()
+          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
         this.status = 2
@@ -158,11 +156,10 @@ export default {
         const endColumnModel = map[endRow + '-' + endColumn]
 
         if (endColumnModel) {
-          const columnEl = endColumnModel ? endColumnModel.$el : null
-          const rowEl = columnEl.parentElement
-          const offsetLeft = columnEl.offsetLeft + columnEl.offsetWidth
-          const offsetTop = rowEl.offsetTop + columnEl.offsetHeight * 2
-          this.toolStyle = { top: offsetTop - 7 + 'px', left: offsetLeft - 7 + 'px' }
+          const width = endColumnModel.$el.offsetWidth
+          const height = endColumnModel.$el.offsetHeight
+          const { top, left } = endColumnModel.$el.getBoundingClientRect()
+          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
         this.handleSightRect()
@@ -300,7 +297,7 @@ export default {
 
 <style lang="scss" scoped>
 .tool {
-  position: absolute;
+  position: fixed;
   display: flex;
   .copybtn {
     margin-left: 10px;

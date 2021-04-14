@@ -16,6 +16,8 @@
           fullscreen
           show-summary
           border
+          select-range
+          copy
           @selection-change="selectionChange"
           @search-change="searchChange"
           @editColumnLastToNext="editColumnLastToNext"
