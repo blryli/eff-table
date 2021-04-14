@@ -33,7 +33,7 @@ export default {
           }
         }
       }
-      this.tableData = Object.freeze(tableData)
+      this.tableData = tableData
       this.$emit('sort-change', this.curSort, tableData)
       return tableData
     },
