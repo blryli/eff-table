@@ -128,7 +128,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>currentEdit -  {{ currentEdit }}</p> -->
+    <!-- <p>form -  {{ form }}</p>
+    <p>tableForm -  {{ tableForm }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -151,6 +152,7 @@ import Selection from 'mixins/selection'
 import Layout from 'mixins/layout'
 import validate from 'mixins/validate'
 import sort from 'mixins/sort'
+import proxy from 'mixins/proxy'
 import virtual from 'mixins/virtual'
 import shortcutKey from 'mixins/shortcutKey'
 import TableHeader from './TableHeader'
@@ -180,7 +182,7 @@ export default {
     SelectRange,
     Copy
   },
-  mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey],
+  mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
     return {
       table: this
@@ -222,18 +224,20 @@ export default {
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] },
     selectRange: Boolean,
-    copy: Boolean
+    copy: Boolean,
+    proxyConfig: { type: Object, default: () => {} }
   },
   data() {
     return {
+      tableData: [...this.data],
       tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
+      tableForm: {},
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
       tableBodyEl: null,
-      tableData: Object.freeze([...this.data]),
       rowHoverIndex: null,
       expands: [],
       expand: null,
@@ -279,19 +283,24 @@ export default {
       return style
     },
     useExpand() {
-      const { value, expand } = this
-      return expand && value.find(d => d.type === 'expand')
+      const { visibleColumns, expand } = this
+      return expand && visibleColumns.find(d => d.type === 'expand')
     }
   },
   watch: {
     data(val) {
-      this.tableData = Object.freeze([...val])
+      this.tableData = [...val]
+    },
+    tableData() {
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
     },
     columns(val) {
       this.tableColumns = val
+    },
+    form(val) {
+      this.tableForm = val
     },
     editStop(val) {
       this.editIsStop = val

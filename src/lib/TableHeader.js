@@ -24,7 +24,7 @@ export default {
       if (this.fixed) return
       this.$el.scrollLeft = val
     },
-    'table.columns'() {
+    'table.tableColumns'() {
       // columns 变化之后重新渲染搜索组件
       this.isColumnsChange = true
       this.$nextTick(() => {

@@ -47,7 +47,7 @@ export default {
 
     const { operator } = this.column.search || {}
     this.$nextTick(() => {
-      this.unwatch = this.$watch(`table.form.${this.column.prop}`, this.formChange)
+      this.unwatch = this.$watch(`table.tableForm.${this.column.prop}`, this.formChange)
       operator && (this.reference = this.$refs.dropdown)
     })
   },
@@ -56,16 +56,37 @@ export default {
   },
   methods: {
     formChange(val) {
+      console.log('form change')
       this.form[this.column.prop] = val
       this.change()
     },
     searchChange(val) {
+      console.log('search change', val, this.column.prop, this.form)
       this.form[this.column.prop] = val
       this.updateForm()
     },
+    updateForm() {
+      const { table, form, column: { prop }} = this
+      const { tableForm } = table
+      this.$set(table.tableForm, prop, form[prop])
+      table.$emit('update:form', tableForm)
+    },
+    change() {
+      const { form, column } = this
+      const operator = form.type
+      const { prop } = column
+      let content = this.form[prop]
+      if (Array.isArray(content) && isDate(content[0])) {
+        content = content.map(d => new Date(d).getTime())
+      } else if (isDate(content)) {
+        content = new Date(content).getTime()
+      }
+      const type = this.column.search.type || null
+      this.$emit('change', { field: prop, operator, content, type })
+    },
     init() {
       if (!this.column.prop) return
-      const value = this.table.form[this.column.prop]
+      const value = this.table.tableForm[this.column.prop]
       const { search: { operatorDefault } = {}} = this.column
       this.form[this.column.prop] = value || ''
       this.form.type = this.value.operator || operatorDefault || 'like'
@@ -96,26 +117,6 @@ export default {
       this.form.type = !type && column.search.operatorDefault || type
       if (isChange || this.form[prop]) this.change()
       this.$refs.popover.doHide()
-    },
-    updateForm() {
-      const { table, form, column } = this
-      const copyForm = { ...table.form }
-      const { prop } = column
-      copyForm[prop] = form[prop]
-      table.$emit('update:form', copyForm)
-    },
-    change() {
-      const { form, column } = this
-      const operator = form.type
-      const { prop } = column
-      let content = this.form[prop]
-      if (Array.isArray(content) && isDate(content[0])) {
-        content = content.map(d => new Date(d).getTime())
-      } else if (isDate(content)) {
-        content = new Date(content).getTime()
-      }
-      const type = this.column.search.type || null
-      this.$emit('change', { field: prop, operator, content, type })
     },
     searchRender(h) {
       const { column } = this

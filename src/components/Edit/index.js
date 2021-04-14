@@ -30,8 +30,9 @@ export default {
       if (prop === 'checkbox') console.log(edit)
       if (edit) {
         const { rowIndex, table, $createElement } = this
+        const { proxyConfig } = table
         const columnIndex = this.getColumnIndex(column.prop)
-        const row = table.data[rowIndex]
+        const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
         const { render } = edit || {}
         if (typeof render === 'function') {
           return render($createElement, { row, rowIndex, column, columnIndex, prop }) || ''
@@ -111,7 +112,8 @@ export default {
             const { column } = this
             const { prop, edit: { leaveTime } = {}} = column
             const { rowIndex, table } = this
-            const row = table.tableData[rowIndex]
+            const { proxyConfig } = table
+            const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
             if (leaveTime) {
               if (typeof leaveTime === 'number') {
                 setTimeout(() => {
@@ -210,7 +212,8 @@ export default {
       if (skip === undefined) return false
 
       if (typeof skip === 'function') {
-        return skip({ row: table.data[rowIndex], rowIndex })
+        const { data, tableData, proxyConfig } = table
+        return skip({ row: (proxyConfig ? tableData : data)[rowIndex], rowIndex })
       }
       if (typeof skip !== 'boolean') {
         console.error(`${prop} 字段，skip类型必须是 function/boolean`)

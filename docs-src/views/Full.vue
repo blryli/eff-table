@@ -59,18 +59,320 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
 const mainSnippet = `
+data() {
+  return {
+    searchData: [],
+    form: {},
+    editStop: false,
+    options: [{
+      value: '男',
+      label: '男'
+    }, {
+      value: '女',
+      label: '女'
+    }],
+    hobbys: [{
+      value: 'K歌',
+      label: 'K歌'
+    }, {
+      value: '游泳',
+      label: '游泳'
+    }, {
+      value: '篮球',
+      label: '篮球'
+    }],
+    data: [],
+    list: [],
+    selectionIndexs: [],
+    columns: [
+      {
+        show: true,
+        type: 'selection',
+        width: 40,
+        fixed: 'left'
+      },
+      {
+        show: true,
+        prop: 'cname',
+        title: '名字',
+        search: true,
+        width: 120,
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'sex',
+        title: '性别',
+        width: 100,
+        search: {
+          render: (h, { prop, row }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.options.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        },
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-select
+              value={row[prop]}
+              automaticDropdown={true}
+              filterable={true}
+              defaultFirstOption={true}
+              on-change={val => (row[prop] = val)}
+              on-visible-change={this.visibleChange}
+            >
+              {
+                this.options.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'age',
+        title: '年龄',
+        width: 100,
+        sortable: true,
+        search: {
+          operator: true
+        },
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-input value={row[prop]} type='number' on-input={val => (row[prop] = val)} />
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'hobby',
+        title: '爱好',
+        search: {
+          render: (h, { prop, row, rowIndex }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              multiple={true}
+              collapseTags={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.hobbys.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        },
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-select
+              value={row[prop]}
+              automaticDropdown={true}
+              filterable={true}
+              defaultFirstOption={true}
+              on-change={val => (row[prop] = val)}
+              on-visible-change={this.visibleChange}
+              style='width: 100%'
+            >
+              {
+                this.hobbys.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
+      },
+      {
+        show: true,
+        prop: 'date',
+        title: '时间',
+        search: {
+          render: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='date'
+              on-input={val => this.updateForm(prop, val)}
+            />
+          },
+          rangeRender: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='daterange'
+              on-input={val => this.updateForm(prop, val)}
+            />
+          },
+          operator: true,
+          operatorDefault: 'equals',
+          type: 'dates'
+        },
+        edit: {
+          render: (h, { prop, row }) => {
+            return <el-date-picker
+              value={row[prop]}
+              value-format='yyyy-MM-dd'
+              on-input={val => (row[prop] = val)}
+              on-focus={val => this.visibleChange(true)}
+              on-blur={val => this.visibleChange(false)}
+              type='date'
+            />
+          }
+        }
+      }
+    ]
+  }
+},
+mounted() {
+  setTimeout(() => {
+    this.getData()
+  }, 50)
+},
+methods: {
+  add() {
+    this.data.push(this.columns.reduce((acc, cur) => {
+      acc.cur = ''
+      return acc
+    }, {}))
+    this.list = [...this.data]
+    this.$refs.table.focus(this.data.length - 1)
+  },
+  deleted() {
+    const { selectionIndexs } = this
+    console.log('selectionIndexs', selectionIndexs)
+    this.data = this.data.filter((d, i) => selectionIndexs.indexOf(i) < 0)
+    this.list = [...this.data]
+  },
+  selectionChange(selection, selectionIndexs) {
+    this.selectionIndexs = selectionIndexs
+  },
+  getData() {
+    this.data = mock.mock({
+      'array|100': [
+        {
+          'age': /\d{2}/,
+          'cname': '@cname',
+          'sex': function name() {
+            return this.index % 2 === 0 ? '男' : '女'
+          },
+          'hobby': function name() {
+            return this.index % 2 === 0 ? '游泳' : this.index % 5 === 0 ? '篮球' : 'K歌'
+          },
+          'date': '@date',
+          'index|+1': 1
+        }
+      ]
+    }).array
+    this.list = [...this.data]
+  },
+  visibleChange(val) {
+    this.editStop = val
+  },
+  updateForm(prop, val) {
+    this.$set(this.form, prop, val)
+  },
+  editColumnLastToNext({ placement, rowIndex }) {
+    if (placement === 'right') {
+      this.data[rowIndex + 1] && this.$refs.table.focus(rowIndex + 1)
+    }
+  },
+  searchChange(val) {
+    console.log(JSON.stringify(val, null, 2))
+    this.searchData = val
+    let list = [...this.data]
+    if (val.length) {
+      val.forEach(d => {
+        const { field, operator, content } = d
+        list = list.filter(da => {
+          if (Array.isArray(content)) {
+            if (operator === 'like') {
+              return content.includes(da[field])
+            } else {
+              const [start, end] = content
+              return +da[field] > +start && +da[field] < +end
+            }
+          } else {
+            const daValue = da[field]
+            switch (operator) {
+              case 'equals':
+                return daValue === content
 
+              case 'unequals':
+                return daValue.indexOf(content) === -1
+
+              case 'less':
+                return +daValue < +content
+
+              case 'greater':
+                return +daValue > +content
+
+              case 'lessthan':
+                return +daValue <= +content
+
+              case 'greaterthan':
+                return +daValue >= +content
+
+              default:
+                return daValue.indexOf(content) > -1
+            }
+          }
+        })
+      })
+    }
+    this.list = list
+  }
+}
 `
 
 const componentSnippet = `
 <eff-table
+  ref="table"
   v-model="columns"
   :data="list"
   :form.sync="form"
+  drag
+  column-control
+  edit
+  :edit-stop="editStop"
   search
   fullscreen
+  show-summary
   border
+  select-range
+  copy
+  @selection-change="selectionChange"
   @search-change="searchChange"
+  @editColumnLastToNext="editColumnLastToNext"
 />
 `
 export default {
