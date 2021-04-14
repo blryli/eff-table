@@ -4,15 +4,15 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          ref="table"
           v-model="columns"
+          :data="list"
+          :form.sync="form"
+          search
           fullscreen
-          edit
           border
-          :max-height="400"
-          :data="data"
           select-range
           copy
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -35,91 +35,154 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
 const mainSnippet = `
-data() {
+data () {
   return {
+    searchData: [],
+    form: {},
+    options: [{
+      value: '男',
+      label: '男'
+    }, {
+      value: '女',
+      label: '女'
+    }],
+    hobbys: [{
+      value: 'K歌',
+      label: 'K歌'
+    }, {
+      value: '游泳',
+      label: '游泳'
+    }, {
+      value: '篮球',
+      label: '篮球'
+    }],
     data: [],
+    list: [],
     columns: [
       {
         show: true,
-        fixed: 'left',
-        type: 'index',
+        prop: 'index',
         title: '序号',
+        fixed: 'left',
         width: 80
       },
       {
         show: true,
-        prop: 'name',
-        title: '列1',
-        width: 200
+        prop: 'cname',
+        title: '名字',
+        search: true,
+        width: 120
+      },
+      {
+        show: true,
+        prop: 'sex',
+        title: '性别',
+        width: 100,
+        search: {
+          render: (h, { prop, row, rowIndex }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.options.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
       },
       {
         show: true,
         prop: 'age',
-        title: '列2',
-        width: 200
+        title: '年龄',
+        search: {
+          operator: true
+        },
+        width: 100
       },
       {
         show: true,
-        prop: 'name',
-        title: '列3',
-        width: 200
+        prop: 'hobby',
+        title: '爱好',
+        search: {
+          render: (h, { prop, row, rowIndex }) => {
+            return <el-select
+              value={this.form[prop]}
+              clearable={true}
+              multiple={true}
+              on-change={val => this.updateForm(prop, val)}
+            >
+              {
+                this.hobbys.map(item => {
+                  return <el-option
+                    key={item.value}
+                    title={item.title}
+                    value={item.value}>
+                  </el-option>
+                })
+              }
+            </el-select>
+          }
+        }
       },
       {
         show: true,
-        prop: 'age',
-        title: '列4',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列5',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'height',
-        title: '列6',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列7',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列8',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列9',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列10',
-        width: 200
+        prop: 'datetime',
+        title: '时间',
+        search: {
+          render: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='date'
+              on-input={val => this.updateForm(prop, val)}
+            ></el-date-picker>
+          },
+          rangeRender: (h, { prop }) => {
+            return <el-date-picker
+              value={this.form[prop]}
+              type='daterange'
+              on-input={val => this.updateForm(prop, val)}
+            ></el-date-picker>
+          },
+          operator: true,
+          operatorDefault: 'equals',
+          type: 'dates'
+        }
       }
     ]
+  },
+  updateForm(prop, val) {
+    this.$set(this.form, prop, val)
+  },
+  searchChange(val) {
+    this.searchData = val
+    let list = [...this.data]
+    if (val.length) {
+      val.forEach(d => {
+        list = list.filter(da => Array.isArray(d.content) ? d.content.includes(da[d.field]) : da[d.field].indexOf(d.content) > -1)
+      })
+    }
+    this.list = list
   }
 }
 `
 
 const componentSnippet = `
 <eff-table
-  ref="table"
   v-model="columns"
+  :data="list"
+  :form.sync="form"
+  search
   fullscreen
-  edit
   border
-  :max-height="400"
-  :data="data"
+  @search-change="searchChange"
 />
 `
 export default {
@@ -133,74 +196,125 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
+      searchData: [],
+      form: {},
+      options: [{
+        value: '男',
+        label: '男'
+      }, {
+        value: '女',
+        label: '女'
+      }],
+      hobbys: [{
+        value: 'K歌',
+        label: 'K歌'
+      }, {
+        value: '游泳',
+        label: '游泳'
+      }, {
+        value: '篮球',
+        label: '篮球'
+      }],
       data: [],
+      list: [],
       columns: [
         {
           show: true,
-          fixed: 'left',
-          type: 'index',
+          prop: 'index',
           title: '序号',
+          fixed: 'left',
           width: 80
         },
         {
           show: true,
-          prop: 'name',
-          title: '列1',
-          width: 200
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120
+        },
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别',
+          width: 100,
+          search: {
+            render: (h, { prop, row, rowIndex }) => {
+              return <el-select
+                value={this.form[prop]}
+                clearable={true}
+                on-change={val => this.updateForm(prop, val)}
+              >
+                {
+                  this.options.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
+            }
+          }
         },
         {
           show: true,
           prop: 'age',
-          title: '列2',
-          width: 200
+          title: '年龄',
+          search: {
+            operator: true
+          },
+          width: 100
         },
         {
           show: true,
-          prop: 'name',
-          title: '列3',
-          width: 200
+          prop: 'hobby',
+          title: '爱好',
+          search: {
+            render: (h, { prop, row, rowIndex }) => {
+              return <el-select
+                value={this.form[prop]}
+                clearable={true}
+                multiple={true}
+                collapseTags={true}
+                on-change={val => this.updateForm(prop, val)}
+              >
+                {
+                  this.hobbys.map(item => {
+                    return <el-option
+                      key={item.value}
+                      title={item.title}
+                      value={item.value}>
+                    </el-option>
+                  })
+                }
+              </el-select>
+            }
+          }
         },
         {
           show: true,
-          prop: 'age',
-          title: '列4',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列5',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'height',
-          title: '列6',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列7',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列8',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列9',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列10',
-          width: 200
+          prop: 'datetime',
+          title: '时间',
+          search: {
+            render: (h, { prop }) => {
+              return <el-date-picker
+                value={this.form[prop]}
+                type='date'
+                on-input={val => this.updateForm(prop, val)}
+              />
+            },
+            rangeRender: (h, { prop }) => {
+              return <el-date-picker
+                value={this.form[prop]}
+                type='daterange'
+                on-input={val => this.updateForm(prop, val)}
+              />
+            },
+            operator: true,
+            operatorDefault: 'equals',
+            type: 'dates'
+          }
         }
       ]
     }
@@ -208,19 +322,95 @@ export default {
   mounted() {
     setTimeout(() => {
       this.data = mock.mock({
-        'array|1000': [
+        'array|100': [
           {
-            'name': function name() {
-              return this.index % 5 === 0 ? '' : this.cname
-            },
+            'age': /\d{2}/,
             'cname': '@cname',
-            'age': /[1-7][0-9]/,
-            'height': /1[5-9][0-9]/,
+            'sex': function name() {
+              return this.index % 2 === 0 ? '男' : '女'
+            },
+            'hobby': function name() {
+              return this.index % 2 === 0 ? '游泳' : this.index % 5 === 0 ? '篮球' : 'K歌'
+            },
+            'datetime': '@datetime',
             'index|+1': 1
           }
         ]
       }).array
+      this.list = [...this.data]
     }, 50)
+  },
+  methods: {
+    updateForm(prop, val) {
+      this.$set(this.form, prop, val)
+    },
+    searchChange(val) {
+      console.log(JSON.stringify(val, null, 2))
+      this.searchData = val
+      let list = [...this.data]
+      if (val.length) {
+        val.forEach(d => {
+          const { field, operator, content } = d
+          list = list.filter(da => {
+            if (Array.isArray(content)) {
+              if (operator === 'like') {
+                return content.includes(da[field])
+              } else {
+                const [start, end] = content
+                return +da[field] > +start && +da[field] < +end
+              }
+            } else {
+              const daValue = da[field]
+              switch (operator) {
+                case 'equals':
+                  return daValue === content
+
+                case 'unequals':
+                  return daValue.indexOf(content) === -1
+
+                case 'less':
+                  return +daValue < +content
+
+                case 'greater':
+                  return +daValue > +content
+
+                case 'lessthan':
+                  return +daValue <= +content
+
+                case 'greaterthan':
+                  return +daValue >= +content
+
+                default:
+                  return daValue.indexOf(content) > -1
+              }
+            }
+          })
+        })
+      }
+      this.list = list
+    }
   }
 }
 </script>
+
+<style lang="scss">
+.eff-table .cell .el-radio__label{
+  display: none;
+}
+.table-toobar__left{
+  button{
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    &:hover, &:focus{
+      border-color: #ccc;
+      background-color: #f5f5f5;
+    }
+    &:active{
+      border-color: #aaa;
+      background-color: #f5f5f5;
+    }
+  }
+}
+</style>

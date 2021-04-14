@@ -379,11 +379,6 @@ export default {
     },
     inTable(target) {
       return target.nodeName === 'BODY' || this.table.$el.contains(target)
-    },
-    editFiled(filed) {
-      const { data, visibleColumns } = this.table
-      const { rowIndex, columnIndex, content } = filed
-      data[rowIndex][visibleColumns[columnIndex].prop] = content
     }
   },
   render(h) {
