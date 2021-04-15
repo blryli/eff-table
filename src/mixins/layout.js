@@ -73,7 +73,7 @@ export default {
       return bodyHeight && (maxHeight ? dataHeight > maxHeight : dataHeight > bodyHeight - overflowXHeight)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, data, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
+      const { height, maxHeight, isScreenfull, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
       const { toolbar, header, footer } = this.$refs
 
       const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || 400
@@ -81,7 +81,7 @@ export default {
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
-      const dataHeight = data.length ? data.length * rowHeight : rowHeight
+      const dataHeight = tableData.length ? tableData.length * rowHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
       if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {

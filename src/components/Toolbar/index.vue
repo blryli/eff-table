@@ -1,20 +1,9 @@
-<template>
-  <div class="eff-table__toobar">
-    <div class="eff-table__toobar-left">
-      <slot />
-    </div>
-    <div class="eff-table__toobar-right">
-      <Clear v-if="table.search && table.searchClear" />
-      <ColumnCtrlBtn v-if="table.columnControl" @change="btnChange" />
-      <Fullscreen v-if="table.fullscreen" />
-    </div>
-  </div>
-</template>
-
 <script>
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
 import Clear from './Clear'
+import { renderer, getOn } from 'render'
+
 export default {
   name: 'Toolbar',
   components: { Fullscreen, ColumnCtrlBtn, Clear },
@@ -23,6 +12,38 @@ export default {
     btnChange() {
       this.table.$refs.drag.toggleCardShow()
     }
+  },
+  render(h) {
+    const { table } = this
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen } = table
+    const { buttons = [] } = toolbarConfig || {}
+    const buttonsRender = buttons.reduce((acc, cur, idx) => {
+      const { code, on } = cur
+      const event = code && getOn(on, { click: () => this.table.commitProxy(code) })
+      const opts = Object.assign({}, cur, { on: event })
+      const compConf = renderer.get(opts.name)
+      return compConf ? acc.concat(compConf.renderDefault(h, opts, { table, columnIndex: idx })) : acc
+    }, [])
+
+    return (
+      <div class='eff-table__toobar'>
+        <div class='eff-table__toobar-left'>
+          { buttonsRender }
+          { this.$slots.default }
+        </div>
+        <div class='eff-table__toobar-right'>
+          {
+            search && searchClear && <Clear /> || ''
+          }
+          {
+            columnControl && <ColumnCtrlBtn /> || ''
+          }
+          {
+            fullscreen && <Fullscreen /> || ''
+          }
+        </div>
+      </div>
+    )
   }
 }
 </script>

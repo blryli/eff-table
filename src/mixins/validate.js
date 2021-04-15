@@ -12,8 +12,8 @@ export default {
           console.error('需要校验的字段，必须具有 prop 属性')
           resolve()
         }
-        const { data, columns, validators, tableBodyEl } = this
-        const row = data[rowIndex]
+        const { tableData, columns, validators, tableBodyEl } = this
+        const row = tableData[rowIndex]
         const value = row[prop]
         if (!rule) {
           const { validator = {}} = columns.find(d => d.prop === prop) || {}
@@ -58,8 +58,8 @@ export default {
     },
     validate(rows) {
       return new Promise((resolve, reject) => {
-        const { data, validateRow } = this
-        const validators = data.reduce((acc, cur, idx) => {
+        const { tableData, validateRow } = this
+        const validators = tableData.reduce((acc, cur, idx) => {
           if (Array.isArray(rows)) {
             return rows.find(d => JSON.stringify(d) === JSON.stringify(cur)) ? acc.concat(validateRow(idx)) : acc
           } else {

@@ -2,7 +2,7 @@
   <div
     class="eff-table__checkbox"
     :class="[
-      { 'is-disabled': disabled },
+      { 'is--disabled': disabled },
       { 'is-checked': isChecked },
       { 'is-indeterminate': indeterminate }
     ]"
@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     handleChange() {
+      if (this.disabled) return
       this.isChecked = !this.isChecked
       this.$emit('input', this.isChecked)
       this.$emit('change', this.isChecked)

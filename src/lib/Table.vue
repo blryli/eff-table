@@ -128,8 +128,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>form -  {{ form }}</p>
-    <p>tableForm -  {{ tableForm }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -166,6 +165,7 @@ import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
+import clone from 'xe-utils/clone'
 
 export default {
   name: 'EffTable',
@@ -225,7 +225,9 @@ export default {
     messages: { type: Array, default: () => [] },
     selectRange: Boolean,
     copy: Boolean,
-    proxyConfig: { type: Object, default: () => {} }
+    proxyConfig: { type: Object, default: () => {} }, // 代理配置
+    toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
+    rowId: { type: String, default: 'id' } // 工具栏配置
   },
   data() {
     return {
@@ -244,7 +246,10 @@ export default {
       editIsStop: false,
       popoverOpts: {},
       editPopoverOpts: {},
-      currentEdit: {
+      editStore: {
+        insertList: [],
+        removeList: [],
+        pandingList: [],
         oldColumnIndex: null,
         columnIndex: null
       }
@@ -288,13 +293,11 @@ export default {
     }
   },
   watch: {
-    data(val) {
-      this.tableData = [...val]
+    data(data) {
+      this.tableData = [...data]
     },
-    tableData() {
-      this.clearSelection()
-      this.scrollLeftEvent()
-      this.resize()
+    tableData(data) {
+      this.loadTableData(data)
     },
     columns(val) {
       this.tableColumns = val
@@ -318,6 +321,13 @@ export default {
     this.$off('edit-fileds', this.editFileds)
   },
   methods: {
+    loadTableData(data) {
+      this.tableData = data
+      this.tableSourceData = clone(data, true)
+      this.clearSelection()
+      this.scrollLeftEvent()
+      this.resize()
+    },
     editFileds(fileds) {
       console.log(fileds, 22222)
       fileds.forEach(filed => {
@@ -921,9 +931,51 @@ export default {
     border-bottom: 1px solid #666;
     transform: rotate(-45deg);
   }
-  &.is-expanded{
+  &.is--expanded{
     transform: rotate(90deg);
   }
+}
+
+.is--new{
+  .eff-table__column::before{
+    content: "";
+    top: -5px;
+    left: -5px;
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #19a15f transparent transparent;
+    transform: rotate(45deg);
+  }
+}
+.is--pending{
+  color: #f56c6c;
+  text-decoration: line-through;
+  cursor: no-drop;
+  .eff-table__column::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-bottom: 1px solid #f56c6c;
+    z-index: 1;
+  }
+}
+
+.is--dirty::before{
+  content: "";
+  top: -5px;
+  left: -5px;
+  position: absolute;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #f56c6c transparent transparent;
+  transform: rotate(45deg);
+}
+.eff-table .is--disabled{
+  cursor: no-drop;
 }
 
 @keyframes rotate {

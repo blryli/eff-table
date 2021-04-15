@@ -232,20 +232,20 @@ export default {
       const { rowIndex, getColumnIndex, canFocus, getColumn, fixOverflowX } = this
       const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
-        // console.log({ column, cell, cellIndex, index: this.cellIndex })
+        // console.log({ column, cell, cellIndex, index: cellIndex })
         if (cellIndex === -1 || !canFocus(column, cell)) return
         this.blurEvent()
 
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
-          this.table.currentEdit.oldColumnIndex = this.cellIndex
+          this.table.editStore.oldColumnIndex = this.cellIndex
           this.cellIndex = cellIndex
           this.cell = getColumn(prop).cell
           this.show = true
           this.setElPos() // 设置编辑框位置
 
-          this.table.currentEdit.columnIndex = cellIndex
+          this.table.editStore.columnIndex = cellIndex
 
           this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦
@@ -340,18 +340,20 @@ export default {
     close() {
       this.show = false
     },
-    focus(rowIndex, prop = (this.columns.find(d => d.prop && d.edit) || {}).prop) {
+    focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
       if (!prop) return
       this.rowIndex = +rowIndex
       const { table, getColumn, editCell, fixOverflowX } = this
       const { column, cell, columnIndex } = getColumn(prop, +rowIndex)
+      this.column = column
       if (cell) {
-        editCell(column, cell)
+        setTimeout(() => editCell(column, cell))
       } else {
         fixOverflowX(columnIndex).then(() => {
           table.toScroll(+rowIndex).then(() => {
             setTimeout(() => {
               const { column, cell } = getColumn(prop, +rowIndex)
+              this.column = column
               this.handleType = 'to'
               editCell(column, cell)
             }, 100)

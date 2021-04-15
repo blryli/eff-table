@@ -10,17 +10,17 @@ export default {
   },
   computed: {
     checkeds() {
-      return this.selecteds.map(v => this.data[v])
+      return this.selecteds.map(v => this.tableData[v])
     }
   },
   watch: {
     selecteds() {
-      const { checkeds, selecteds, data } = this
+      const { checkeds, selecteds, tableData } = this
       this.$emit('selection-change', checkeds, selecteds)
       const selectedsLength = selecteds.length
-      const dataLength = data.length
-      this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength
-      this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
+      const tableDataLength = tableData.length
+      this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
+      this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     }
   },
   methods: {
@@ -32,8 +32,8 @@ export default {
       this.selectionChange()
     },
     toggleRowSelection(row, selected) {
-      const { data, isSame, toggleSelection } = this
-      const rowIndex = data.findIndex(d => isSame(d, row))
+      const { tableData, isSame, toggleSelection } = this
+      const rowIndex = tableData.findIndex(d => isSame(d, row))
       if (rowIndex !== -1) {
         toggleSelection(rowIndex, checkedsSet.has(rowIndex), selected)
       } else {
@@ -45,16 +45,16 @@ export default {
       this.allselectionChange(this.selectionAll)
     },
     rowSelectionChange(index, selected) {
-      const { checkeds, data, toggleSelection, selectionChange } = this
+      const { checkeds, tableData, toggleSelection, selectionChange } = this
       toggleSelection(index, !selected)
-      this.$emit('select', checkeds, data[index])
+      this.$emit('select', checkeds, tableData[index])
       selectionChange()
     },
     allselectionChange(selected) {
-      const { data, selectionChange } = this
+      const { tableData, selectionChange } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? data.forEach((d, i) => checkedsSet.add(i)) : checkedsSet.clear()
+      selected ? tableData.forEach((d, i) => checkedsSet.add(i)) : checkedsSet.clear()
       selectionChange()
       this.$emit('select-all', this.checkeds)
     },
@@ -66,8 +66,8 @@ export default {
       this.selectionChange()
     },
     setCurrentRow(row) {
-      const { data, isSame, selectionChange } = this
-      const rowIndex = data.findIndex(d => isSame(d, row))
+      const { tableData, isSame, selectionChange } = this
+      const rowIndex = tableData.findIndex(d => isSame(d, row))
       checkedsSet.clear()
       if (rowIndex !== -1) {
         checkedsSet.add(rowIndex)

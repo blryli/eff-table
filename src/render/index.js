@@ -7,7 +7,7 @@ class Render {
   constructor(h, renderOpts = {}, params = {}, key) {
     this.h = h
     this.params = params
-    const { rowIndex, columnIndex } = params
+    const { rowIndex = 0, columnIndex = 0 } = params
     this.opts = Object.assign({ key: `${rowIndex}-${columnIndex}-${renderOpts.name}${key ? '-' + key : ''}` }, renderOpts)
   }
 
@@ -34,7 +34,7 @@ class Render {
 }
 
 // 合并事件，如果有相同的方法，内部方法先于外部方法执行
-function getOn(on, events) {
+export function getOn(on, events) {
   if (typeof on !== 'object') return events
   const ons = Object.assign({}, on, events)
   for (const key in events) {
@@ -52,7 +52,7 @@ function getOn(on, events) {
 function renderDefault(h, renderOpts, params) {
   const { tag, name, props } = renderOpts || {}
   const { row, prop } = params || {}
-  const label = row[prop]
+  const label = row && prop && row[prop] || ''
   const render = () => new Render(h, renderOpts, params).render()
   if (tag) {
     return render()
@@ -258,10 +258,10 @@ function renderDialog(h, renderOpts, params) {
 
   // 激活弹窗
   // console.log(rowIndex, status.rowIndex, columnIndex, status.columnIndex)
-  if (rowIndex !== status.rowIndex || columnIndex !== table.currentEdit.oldColumnIndex) {
+  if (rowIndex !== status.rowIndex || columnIndex !== table.editStore.oldColumnIndex) {
     opened()
     status.rowIndex = rowIndex
-    table.currentEdit.oldColumnIndex = columnIndex
+    table.editStore.oldColumnIndex = columnIndex
   }
 
   const render = new Render(h, renderOpts, params)
@@ -347,6 +347,7 @@ function renderText(h, renderOpts, params) {
 }
 
 const renderMap = {
+  renderDefault: renderDefault,
   input: {
     renderDefault: renderDefault,
     renderEdit: renderVModel,
