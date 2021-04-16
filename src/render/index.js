@@ -72,6 +72,7 @@ function renderDefault(h, renderOpts, params) {
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
   const { data, prop, searchChange } = params
+  if (!data || !prop) renderDefault(h, renderOpts, params)
   const props = {
     value: data[prop] || null
   }
@@ -91,8 +92,6 @@ function renderVModel(h, renderOpts, params) {
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
   const { data, prop } = params
-  console.log('params', params)
-  console.log({ data, prop })
   const props = {
     value: data[prop] || null,
     type: 'textarea'

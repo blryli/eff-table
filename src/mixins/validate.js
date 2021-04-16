@@ -60,8 +60,8 @@ export default {
       return new Promise((resolve, reject) => {
         const { tableData, validateRow } = this
         const validators = tableData.reduce((acc, cur, idx) => {
-          if (Array.isArray(rows)) {
-            return rows.find(d => JSON.stringify(d) === JSON.stringify(cur)) ? acc.concat(validateRow(idx)) : acc
+          if (Array.isArray(rows) && rows.length) {
+            return rows.some(d => d === cur) ? acc.concat(validateRow(idx)) : acc
           } else {
             return acc.concat(validateRow(idx))
           }

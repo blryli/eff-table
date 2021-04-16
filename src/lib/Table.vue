@@ -128,7 +128,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -139,7 +139,7 @@
 
     <slot v-if="false" name="expand" />
 
-    <Loading :visible="loading" />
+    <Loading :visible="isLoading" />
     <SelectRange v-if="selectRange" />
     <copy v-if="copy" />
   </div>
@@ -244,14 +244,16 @@ export default {
       expands: [],
       expand: null,
       editIsStop: false,
+      isLoading: false,
       popoverOpts: {},
       editPopoverOpts: {},
       editStore: {
         insertList: [],
         removeList: [],
-        pandingList: [],
-        oldColumnIndex: null,
-        columnIndex: null
+        updateList: [],
+        pendingList: [],
+        oldColumnIndex: 0,
+        columnIndex: 0
       }
     }
   },
@@ -294,13 +296,13 @@ export default {
   },
   watch: {
     data(data) {
-      this.tableData = [...data]
-    },
-    tableData(data) {
       this.loadTableData(data)
     },
     columns(val) {
       this.tableColumns = val
+    },
+    loading(val) {
+      this.isLoading = val
     },
     form(val) {
       this.tableForm = val
@@ -308,6 +310,9 @@ export default {
     editStop(val) {
       this.editIsStop = val
     }
+  },
+  created() {
+    this.loadTableData(this.data || [])
   },
   mounted() {
     this.$nextTick(() => {
@@ -327,15 +332,30 @@ export default {
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
+      return this.$nextTick()
+    },
+    updateStatus(row, prop) {
+      const { tableSourceData, rowId, editStore } = this
+      const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
+      const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
+      if (prop && sourceRow) {
+        if (sourceRow[prop] !== row[prop]) {
+          index === -1 && editStore.updateList.push(sourceRow)
+        } else {
+          index === -1 && editStore.updateList.splice(index, 1)
+        }
+      }
     },
     editFileds(fileds) {
-      console.log(fileds, 22222)
       fileds.forEach(filed => {
-        const { data, visibleColumns } = this
+        const { tableData, visibleColumns, updateStatus } = this
         const { rowIndex, columnIndex, content } = filed
-        const column = visibleColumns[columnIndex]
-        if (column && column.prop) {
-          data[rowIndex][column.prop] = content
+        const column = visibleColumns[columnIndex] || {}
+        const { prop, validator: { rule } = {}} = column
+        if (prop) {
+          tableData[rowIndex][prop] = content
+          rule && console.log(this.validateCell(rowIndex, prop, rule))
+          updateStatus(tableData[rowIndex], prop)
         }
       })
     },
@@ -346,8 +366,7 @@ export default {
       this.$emit('table-mouse-up', { event: event })
     },
     rootSelectstart(event) {
-      const a = !(this.select || this.copy)
-      return a
+      return !(this.select || this.copy)
     },
     setEditIsStop(val) {
       this.editIsStop = val

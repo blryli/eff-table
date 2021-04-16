@@ -76,7 +76,7 @@ export default {
     isPending() {
       const { table, row } = this
       const { editStore, rowId } = table
-      return editStore.pandingList.find(d => d[rowId] === row[rowId])
+      return Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     }
   },
   methods: {

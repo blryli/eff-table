@@ -51,10 +51,12 @@ export default {
       let classes = `eff-table__column`
       const { row, column, rowIndex, columnIndex, table } = this
       const { className, prop } = column
-      const { cellClassName, tableSourceData, rowId } = table
+      const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
-      const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
-      prop && sourceRow[prop] !== row[prop] && (classes += ' is--dirty')
+      const sourceRow = updateList.find(d => d[rowId] === row[rowId])
+      if (prop && sourceRow && sourceRow[prop] !== row[prop]) {
+        classes += ' is--dirty'
+      }
       if (className) {
         if (typeof className === 'function') {
           const c = className({ row, column, rowIndex, columnIndex })

@@ -86,7 +86,7 @@ data() {
           width: 100,
           search: true,
           edit: {
-            render: { name: 'textarea', on: { input: val => { console.log({ val }) } }}
+            render: { name: 'textarea'}
           }
         },
         {
@@ -201,6 +201,8 @@ export default {
         edit: true,
         columnControl: true,
         border: true,
+        // selectRange: true,
+        // copy: true,
         fullscreen: true,
         rowId: 'id',
         toolbarConfig: {
@@ -257,6 +259,9 @@ export default {
             search: {
               operator: true
             },
+            validator: { required: true, rule: ({ value }) => {
+              return !value && '不能为空'
+            } },
             edit: true
           },
           {
@@ -266,8 +271,11 @@ export default {
             width: 100,
             search: true,
             edit: {
-              render: { name: 'textarea', on: { input: val => { console.log({ val }) } }}
-            }
+              render: { name: 'textarea' }
+            },
+            validator: { required: true, rule: ({ value }) => {
+              return !value && '不能为空'
+            } }
           },
           {
             show: true,

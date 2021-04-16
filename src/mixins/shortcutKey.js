@@ -56,7 +56,9 @@ export default {
         const { edit, editPopover } = this.$refs
         // 点击编辑以外的区域时关闭编辑框
         if (edit.show) {
-          if (!this.$refs.body.$el.contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) this.closeEdit()
+          if (!this.$refs.body.$el.contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
+            this.closeEdit()
+          }
         }
       }
     }

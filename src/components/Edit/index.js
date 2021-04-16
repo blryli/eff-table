@@ -54,6 +54,7 @@ export default {
         component && component.close && component.close()
         this.handleValidate()
         table.clearSelection()
+        this.updateStatus()
         this.placement = ''
         this.scrollNum = 0
         this.column = null
@@ -92,6 +93,10 @@ export default {
       if (!show || $el.contains(e.target) || table.editIsStop) return
       this.show = false
     },
+    updateStatus() {
+      const { table, column, rowIndex } = this
+      column.prop && table.updateStatus(table.tableData[rowIndex], column.prop)
+    },
     handleWindowKeyup(e, keysStr) {
       const { show, table, inTable } = this
       if (!show || table.editIsStop || !inTable(e.target)) return
@@ -107,6 +112,7 @@ export default {
             e.preventDefault()
             this.placement = placement
             this.handleValidate()
+            this.updateStatus()
 
             // 跳下一个处理
             const { column } = this
