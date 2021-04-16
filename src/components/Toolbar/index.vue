@@ -36,7 +36,7 @@ export default {
             search && searchClear && <Clear /> || ''
           }
           {
-            columnControl && <ColumnCtrlBtn /> || ''
+            columnControl && <ColumnCtrlBtn on-change={this.btnChange} /> || ''
           }
           {
             fullscreen && <Fullscreen /> || ''
