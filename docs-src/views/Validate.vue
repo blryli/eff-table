@@ -222,6 +222,7 @@ export default {
       this.data = mock.mock({
         'array|8': [
           {
+            'id|+1': 1,
             'name': function name() {
               return this.index % 5 === 0 ? '' : this.cname
             },

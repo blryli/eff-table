@@ -14,14 +14,16 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { showSpace, columnRenderIndex } = this.table
+    const { showSpace, columnRenderIndex, rowId } = this.table
     const { rowIndex, rowClassName, fixed, row, messages, rowStyle, isPending, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
+    const id = row[rowId]
     return (
       <div
         class={rowClassName}
         style={rowStyle}
+        rowid={id}
         data-rowid={rowIndex + 1}
-        key={rowIndex + 1}
+        key={id}
         on-click={handleClick}
         on-dblclick={handleDoubleClick}
         on-mouseenter={handleMouseenter}

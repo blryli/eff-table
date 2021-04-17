@@ -196,6 +196,7 @@ data () {
       this.data = mock.mock({
         'array|500': [
           {
+            'id|+1': 1,
             'name': '@cname',
             'async': '',
             'select': '',
@@ -209,6 +210,7 @@ data () {
     },
     add() {
       this.data.push(mock.mock({
+        'id': this.data.length,
         'name': '',
         'select': '',
         'async': '',
@@ -405,6 +407,7 @@ export default {
       this.data = mock.mock({
         'array|500': [
           {
+            'id|+1': 1,
             'name': '@cname',
             'async': '',
             'select': '',
@@ -418,6 +421,7 @@ export default {
     },
     add() {
       this.data.push(mock.mock({
+        'id': this.data.length,
         'name': '',
         'select': '',
         'async': '',

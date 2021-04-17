@@ -83,16 +83,12 @@ export default {
       return Object.assign(defaultStyle, this.style)
     },
     renderSelection(h) {
-      const { table, rowIndex, selectionChange } = this
+      const { table, row } = this
       return <v-checkbox
-        value={table.isChecked(rowIndex)}
-        key={rowIndex}
-        on-change={selectionChange}
+        value={table.isChecked(row)}
+        key={row[table.rowId]}
+        on-change={selected => table.rowSelectionChange(row, selected)}
       />
-    },
-    selectionChange(selected) {
-      const { table, rowIndex } = this
-      table.rowSelectionChange(rowIndex, selected)
     },
     cellRender(h) {
       const { table, row, rowIndex, column, columnIndex, disabled } = this

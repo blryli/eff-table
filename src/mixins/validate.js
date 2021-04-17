@@ -12,9 +12,10 @@ export default {
           console.error('需要校验的字段，必须具有 prop 属性')
           resolve()
         }
-        const { tableData, columns, validators, tableBodyEl } = this
+        const { tableData, columns, validators, tableBodyEl, rowId } = this
         const row = tableData[rowIndex]
         const value = row[prop]
+        const id = row[rowId]
         if (!rule) {
           const { validator = {}} = columns.find(d => d.prop === prop) || {}
           if (typeof validator.rule === 'function') {
@@ -31,7 +32,7 @@ export default {
         // 校验处理函数
         const validate = params => {
           const message = typeof params === 'string' ? params : params.message || ''
-          const validator = { rowIndex, prop, message }
+          const validator = { rowIndex, rowId: id, prop, message }
           const index = validators.findIndex(d => d.prop === prop && d.rowIndex === rowIndex)
           index === -1 ? validators.push(validator) : validators.splice(index, 1, validator)
           this.$emit('validate', validator, validators)

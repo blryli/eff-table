@@ -128,7 +128,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <p>selecteds -  {{ selecteds }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -227,7 +227,7 @@ export default {
     copy: Boolean,
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
-    rowId: { type: String, default: 'id' } // 工具栏配置
+    rowId: { type: String, default: 'id' } // 行主键
   },
   data() {
     return {
@@ -312,6 +312,9 @@ export default {
     }
   },
   created() {
+    Object.assign(this, {
+      tableDataMap: new Map()
+    })
     this.loadTableData(this.data || [])
   },
   mounted() {
@@ -329,9 +332,15 @@ export default {
     loadTableData(data) {
       this.tableData = data
       this.tableSourceData = clone(data, true)
+      this.updateCache()
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
+
+      // 检测行主键在行数据中是否存在
+      if (data.length && !data[0].hasOwnProperty(this.rowId)) {
+        console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
+      }
       return this.$nextTick()
     },
     updateStatus(row, prop) {
@@ -345,6 +354,13 @@ export default {
           index === -1 && editStore.updateList.splice(index, 1)
         }
       }
+    },
+    // 更新数据行map
+    updateCache() {
+      const { tableData, rowId } = this
+      tableData.forEach(d => {
+        this.tableDataMap.set(d[rowId], d)
+      })
     },
     editFileds(fileds) {
       fileds.forEach(filed => {

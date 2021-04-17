@@ -333,7 +333,8 @@ export default {
               return this.index % 2 === 0 ? '游泳' : this.index % 5 === 0 ? '篮球' : 'K歌'
             },
             'datetime': '@datetime',
-            'index|+1': 1
+            'index|+1': 1,
+            'id|+1': 1
           }
         ]
       }).array

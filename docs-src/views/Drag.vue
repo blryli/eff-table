@@ -190,7 +190,8 @@ export default {
             'email': '@email',
             'datetime': '@datetime',
             'phone': '13888888888',
-            'index|+1': 1
+            'index|+1': 1,
+            'id|+1': 1
           }
         ]
       }).array

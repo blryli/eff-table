@@ -256,6 +256,7 @@ export default {
             title: '输入框',
             width: 100,
             config: { name: 'input' },
+            sortable: true,
             search: {
               operator: true
             },
