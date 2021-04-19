@@ -59,11 +59,11 @@
 
 <script>
 import card from './card'
-import Sortable from './sortable'
+import Sortable from '../Drag/sortable'
 import { deepClone } from '../../utils/index'
 
 export default {
-  name: 'TableDrag',
+  name: 'TableColumnEdit',
   components: { card },
   props: {
     initColumns: { type: Array, default: () => [] },

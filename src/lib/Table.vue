@@ -9,7 +9,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
+    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
 
@@ -121,9 +121,9 @@
 
     <column-edit
       v-if="border && drag"
-      ref="drag"
+      ref="columnEdit"
       :init-columns.sync="tableColumns"
-      :column-control="columnControl"
+      :column-control="columnEdit"
       @cardClose="handleCardClose"
       @change="dargChange"
       @row-change="dragRowChange"
@@ -216,6 +216,8 @@ export default {
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
+    columnEdit: Boolean,
+    columnEditText: { type: String, default: '' },
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,

@@ -11,10 +11,6 @@
   >
     <div class="eff-drag-card__header">
       <span class="eff-drag-card__header-title">{{ title }}</span>
-      <div>
-        <el-button type="default" size="mini" @click="$emit('resetColumns')"> 还原 </el-button>
-        <el-button type="success" size="mini" @click="$emit('save')"> 保存 </el-button>
-      </div>
       <i class="eff-drag-card__header-close" type="text" @click="$emit('close')" />
     </div>
     <div ref="body" class="eff-drag-card__body" :class="{inline: inline}">
@@ -34,19 +30,16 @@ export default {
     height: { type: Number, default: 250 },
     minWidth: { type: Number, default: 100 },
     minHeight: { type: Number, default: 200 },
-    top: { type: Number, default: 200 },
-    left: { type: Number, default: 200 },
     show: Boolean,
     inline: Boolean,
     addToBody: Boolean,
-    limit: { type: Number, default: 10 },
-    initStyle: { type: Object, default() { return { left: 0, top: 0, width: 0, height: 0 } } }
+    limit: { type: Number, default: 10 }
   },
   data() {
     return {
       isAddToBody: false,
       startRect: { left: 0, top: 0, width: 0, height: 0 },
-      endRect: this.initStyle,
+      endRect: { left: 0, top: 0, width: this.width, height: this.height },
       move: { x: 0, y: 0, width: 0, height: 0 },
       cursor: null,
       isDraging: false
@@ -55,7 +48,6 @@ export default {
   computed: {
     style() {
       const { left, top, width, height } = this.endRect
-      console.log({ left, top, width, height }, 111111)
       return {
         left: left ? left + 'px' : '',
         top: top ? top + 'px' : '',
@@ -70,9 +62,6 @@ export default {
     },
     cursor(val) {
       document.body.style.cursor = val.replace(/_[a-z]+/, '')
-    },
-    initStyle(val) {
-      this.endRect = val
     }
   },
   mounted() {
@@ -81,7 +70,6 @@ export default {
     setTimeout(() => {
       this.startRect = this.$el.getBoundingClientRect()
       this.update()
-      console.log(this.style, 3333)
     }, 500)
   },
   beforeDestroy() {
@@ -270,26 +258,23 @@ export default {
   &__body {
     position: relative;
     height: calc(100% - 40px);
-    // height: 100%;
     padding: 10px;
     overflow-y: auto;
     box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
     > * {
       padding: 8px 10px;
-      // border: 1px solid #ddd;
+      border: 1px solid #ddd;
       font-size: 12px;
       user-select: none;
       background-color: #fff;
       // box-shadow: 0 1px 5px rgba($color: #000000, $alpha: 0.1);
       display: block;
-      // width: 100%;
-      height: 32px;
+      width: 100%;
       margin-bottom: 5px;
       box-sizing: border-box;
     }
     > * + * {
+      margin-left: 0;
     }
     &.inline {
       & > * {

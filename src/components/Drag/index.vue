@@ -105,6 +105,7 @@ export default {
       this.$emit('cardClose')
     },
     toggleCardShow(val) {
+      console.log(11111)
       val = true
       this.show = val === undefined ? !this.show : val
     },
