@@ -112,6 +112,16 @@
     <drag
       v-if="border && drag"
       ref="drag"
+      v-model="tableColumns"
+      :column-control="columnControl"
+      @cardClose="handleCardClose"
+      @change="dargChange"
+      @row-change="dragRowChange"
+    />
+
+    <column-edit
+      v-if="border && drag"
+      ref="drag"
       :init-columns.sync="tableColumns"
       :column-control="columnControl"
       @cardClose="handleCardClose"
@@ -165,6 +175,7 @@ import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
+import ColumnEdit from '../components/ColumnEdit/index'
 import clone from 'xe-utils/clone'
 
 export default {
@@ -180,7 +191,8 @@ export default {
     ScrollX,
     Loading,
     SelectRange,
-    Copy
+    Copy,
+    ColumnEdit
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {

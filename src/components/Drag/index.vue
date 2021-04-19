@@ -4,125 +4,54 @@
       v-if="columnControl"
       :show="show"
       title="列控制"
-      :init-style="cardStyle"
       @close="close"
-      @save="save"
-      @resetColumns="resetColumns"
     >
-      <div class="main">
-
-        <div class="left" :style="leftStyle">
-          左固定
-          <div class="list area-left" :data-key="leftList.length - 1">
-            <template v-for="(d, i) in leftList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
-                {{ d.title }}
-              </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'left' ? 'sel': ''" />
-            </template>
-            <template v-if="!leftList.length">
-              <div :data-key="-1" class="blank" :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'sel': ''" />
-            </template>
-          </div>
-        </div>
-        <div class="center" :style="centerStyle">
-          <div class="list area-center" :data-key="centerList.length - 1">
-            <template v-for="(d, i) in centerList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
-                {{ d.title }}
-              </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'center' ? 'sel': ''" />
-            </template>
-          </div>
-        </div>
-        <div class="right" :style="rightStyle">
-          右固定
-          <div class="list area-right" :data-key="rightList.length - 1">
-            <template v-for="(d, i) in rightList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
-                {{ d.title }}
-              </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'right' ? 'sel': ''" />
-            </template>
-            <template v-if="!rightList.length">
-              <div :data-key="-1" class="blank" :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'sel': ''" />
-            </template>
-          </div>
-        </div>
-      </div>
+      <div v-for="(d, i) in hiddenColumns" :key="i">{{ d.title }}</div>
     </card>
   </div>
 </template>
 
 <script>
-import card from './card'
 import Sortable from './sortable'
-import { deepClone } from '../../utils/index'
+import Card from './card'
+import { addClass, removeClass, hasClass } from 'utils/dom'
 
 export default {
   name: 'TableDrag',
-  components: { card },
+  components: { Card },
   props: {
-    initColumns: { type: Array, default: () => [] },
+    value: { type: Array, default: () => [] },
     columnControl: Boolean
   },
-  dragToEl: {},
   data() {
     return {
-      columns: [],
+      columns: this.value,
       show: false,
-      cardStyle: {},
-      willDragInIndex: -2,
-      willDragInArea: 'left',
-      leftList: [],
-      rightList: [],
-      centerList: [],
-      realColumns: []
+      dradingTarget: null
     }
   },
-  inject: ['table'],
   computed: {
-    leftStyle() {
-      return { width: this.leftList.length ? '25%' : '60px' }
-    },
-    centerStyle() {
-      let width = 80
-      if (this.leftStyle.width === '25%') {
-        width -= 15
-      }
-      if (this.rightStyle.width === '25%') {
-        width -= 15
-      }
-
-      width = width + '%'
-      return 'auto'
-      return { width }
-    },
-    rightStyle() {
-      return { width: this.rightList.length ? '25%' : '60px' }
+    hiddenColumns() {
+      return this.columns.filter(d => d.show === false)
     }
   },
   watch: {
-    initColumns: {
-      immediate: true,
-      handler(val) {
-        this.columnsInit(val)
+    value(val) {
+      this.columns = val
+    },
+    dradingTarget(val, oldVal) {
+      if (val !== oldVal) {
+        const classes = target =>
+          hasClass(target, 'is-drag--filter')
+            ? 'is-draging--warning'
+            : 'is-draging'
+        addClass(val, classes(val))
+        removeClass(oldVal, classes(oldVal))
       }
     }
   },
+  inject: ['table'],
   mounted() {
-    this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
-    this.cardStyle = {
-      top: offsetTop + 80,
-      left: offsetLeft + 20,
-      width: clientWidth - 40,
-      height: offsetHeight < 300 ? 300 : offsetHeight
-    }
-
     this.$nextTick(() => {
       const { drag, rowDrag, $el } = this.table
       const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
@@ -151,180 +80,125 @@ export default {
         }
       }
       if (columnControl) {
-        const calback = (className) => {
-          setTimeout(() => {
-            this.cradsSortable = new Sortable({
-              el: cardEl.querySelector(className),
-              group: id,
-              dragImage: {
-                height: 30
-              },
-              dragend: handleDragend,
-              dragenter: handleDragenter,
-              onEnd: handleEnd
-            })
-          }, 500)
-        }
-
-        calback('.left .list')
-        calback('.center .list')
-        calback('.right .list')
+        setTimeout(() => {
+          this.cradsSortable = new Sortable({
+            el: cardEl.querySelector('.eff-drag-card__body'),
+            group: id,
+            dragImage: {
+              height: 30
+            },
+            dragend: handleDragend,
+            dragenter: handleDragenter,
+            onEnd: handleEnd
+          })
+        }, 500)
       }
     })
   },
   beforeDestroy() {
-
+    this.columnSortable = null
+    this.cradsSortable = null
   },
   methods: {
-    columnsInit(val) {
-      const columns = deepClone(val)
-      this.leftList = columns.filter(v => v.fixed && v.fixed === 'left')
-      this.rightList = columns.filter(v => v.fixed && v.fixed === 'right')
-      this.centerList = columns.filter(v => !v.fixed)
-      this.columns = columns
-    },
-    resetColumns() {
-      this.columns = deepClone(this.realColumns)
-      this.columnsInit(this.columns)
-    },
-    save() {
-      const columns = []
-      const callback = (arr, type) => {
-        arr.forEach(v => {
-          if (type) {
-            v.fixed = type
-          } else {
-            delete v.fixed
-          }
-          columns.push(v)
-        })
-      }
-      callback(this.leftList, 'left')
-      callback(this.centerList)
-      callback(this.rightList, 'right')
-
-      this.value = this.columns
-      this.$emit('update:initColumns', this.columns)
-      this.close()
-    },
-    clickShow(item) {
-      item.show = !item.show
-    },
-    clickFixed(item, type) {
-      if (item.fixed && item.fixed === type) {
-        delete item.fixed
-      } else {
-        item.fixed = type
-      }
-      this.$forceUpdate()
-      console.log(item)
-    },
-    toggleCardShow(e) {
-      console.log(this.cardStyle, 333)
-      this.show = !this.show
-    },
     close() {
       this.show = false
       this.$emit('cardClose')
     },
-    reset() {
-
+    toggleCardShow(val) {
+      val = true
+      this.show = val === undefined ? !this.show : val
     },
-    confirm() {
-
+    handleRowEnd({ fromEl, toEl }) {
+      const fromRowId = fromEl.getAttribute('data-rowid')
+      const toRowId = toEl.getAttribute('data-rowid')
+      this.$emit('row-change', +fromRowId - 1, +toRowId - 1)
     },
-    handleEnd(e) {
-      const fromArea = e.fromEl.parentElement.className.replace('list area-', '')
-      const fromIndex = e.fromEl.dataset.key
-
-      const from = this[fromArea + 'List'].splice(fromIndex, 1)[0]
-      this[this.willDragInArea + 'List'].splice(parseInt(this.willDragInIndex) + 1, 0, from)
-
-      console.log(this.willDragInIndex + 1, 12345)
-      this.willDragInArea = ''
-      this.willDragInIndex = -2
+    handleDragend(target) {
+      removeClass(this.dradingTarget, 'is-draging')
+      this.dradingTarget = null
     },
-    handleDragend(e) {},
-    handleDragenter(e) {
-      this.willDragInArea = e.to.className.replace('list area-', '')
-      this.willDragInIndex = e.toEl.dataset.key
+    isHeadNode(target) {
+      return hasClass(target, 'eff-table__header')
+    },
+    handleDragenter({ from, to, fromEl, toEl, willInsertAfter }) {
+      // console.log({ from, to, fromEl, toEl, willInsertAfter })
+      // tr内元素拖动
+      if (this.isHeadNode(from) && this.isHeadNode(to)) {
+        this.dradingTarget = toEl
+        if (toEl === fromEl) {
+          this.dradingTarget = null
+        }
+      }
+
+      // tr移出元素
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
+        this.dradingTarget = toEl
+      }
+
+      // 元素移入tr
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
+        this.dradingTarget = toEl
+      }
+    },
+    handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
+      this.dradingTarget = null
+      const columns = [...this.columns]
+      console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+
+      const some = (column, el) => {
+        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.eff-table__header-group-title') : el
+        return column.title && column.title.trim() === innerText.trim()
+      }
+      const oldIndex = columns.findIndex(d => some(d, fromEl))
+      if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
+
+      if (hasClass(toEl, 'is-drag--filter')) {
+        console.log('该列不能做拖动操作！')
+        return
+      }
+      // tr内元素拖动
+      if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
+        const oldItem = columns[oldIndex]
+        columns.splice(oldIndex, 1)
+        if (hasClass(toEl, 'is--space')) {
+          const index = columns.findIndex(d => d.fixed === 'right')
+          index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
+        } else {
+          let newIndex = columns.findIndex(d => some(d, toEl))
+          if (toIndex > fromIndex) {
+            newIndex += 1
+          }
+          columns.splice(newIndex, 0, oldItem)
+        }
+      }
+
+      // tr移出元素
+      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
+        columns[oldIndex].show = false
+      }
+
+      // 元素移入tr
+      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
+        if (oldIndex > -1) {
+          const oldItem = columns[oldIndex]
+          oldItem.show = true
+          columns.splice(oldIndex, 1)
+          if (hasClass(toEl, 'is--space')) {
+            const index = columns.findIndex(d => d.fixed === 'right')
+            index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
+          } else {
+            const newIndex = columns.findIndex(d => some(d, toEl))
+            columns.splice(newIndex, 0, oldItem)
+          }
+        }
+      }
+
+      this.columns = [...columns]
+      // console.log(JSON.stringify(columns, null, 2))
+
+      this.$emit('input', this.columns)
+      this.$emit('change', this.columns)
     }
   }
 }
 </script>
-<style lang="scss" scoped>
-.main {
-  display: flex;
-  width: 100%;
-  padding: 0;
-  height: 100%;
-}
-.list {
-  width: 100%;
-  // height: 100%;
-  display: flex;
-  margin-top: 10px;
-  height: calc(90% - 100px);
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
-  .item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ededed;
-    min-width: 60px;
-    margin-bottom: 5px;
-    height: 30px;
-    border-radius: 4px;
-    padding: 0 4px;
-    .act {
-      margin-right: 10px;
-      font-size: 16px;
-    }
-  }
-    .sel {
-    background-color: #409EFF;
-      color: white;
-    }
-}
-
-.left {
-  border-right: 1px solid #ededed;
-  height: 97%;
-  width: 20%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  padding-top: 10px;
-}
-.right {
-  display: flex;
-  flex-direction: column;
-
-  border-left: 1px solid #ededed;
-  height: 97%;
-  // height: 100%;
-  text-align: center;
-  padding-top: 10px;
-  width: 20%;
-}
-.center {
-  flex: 1;
-  display: flex;
-  height: 97%;
-  padding-top: 25px;
-  padding: 0 10px;
-}
-.blank {
-  border: unset;
-  width: 10px;
-  height: 30px;
-  border-radius: 10px;
-}
-
-.blank.sel {
-  background-color: rgba($color: #0bc7ff, $alpha: 0.6);
-}
-
-</style>
