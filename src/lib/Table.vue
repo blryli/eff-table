@@ -150,7 +150,7 @@
     <slot v-if="false" name="expand" />
 
     <Loading :visible="isLoading" />
-    <SelectRange v-if="selectRange" />
+    <SelectRange v-if="selectRange" ref="selectRange" />
     <copy v-if="copy" />
   </div>
 </template>
