@@ -190,6 +190,7 @@ export default {
       this.data = mock.mock({
         'array|100': [
           {
+            'id|+1': 1,
             'city': '@city',
             'name': '@name',
             'email': '@email',

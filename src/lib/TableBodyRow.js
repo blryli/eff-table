@@ -14,14 +14,16 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { showSpace, columnRenderIndex } = this.table
-    const { rowIndex, rowClassName, fixed, row, messages, rowStyle, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
+    const { showSpace, columnRenderIndex, rowId } = this.table
+    const { rowIndex, rowClassName, fixed, row, messages, rowStyle, isPending, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
+    const id = row[rowId]
     return (
       <div
         class={rowClassName}
         style={rowStyle}
+        rowid={id}
         data-rowid={rowIndex + 1}
-        key={rowIndex + 1}
+        key={id}
         on-click={handleClick}
         on-dblclick={handleDoubleClick}
         on-mouseenter={handleMouseenter}
@@ -40,6 +42,7 @@ export default {
               columnIndex={columnIndex}
               message={message}
               fixed={fixed}
+              disabled={isPending}
             />
           })
         }
@@ -62,13 +65,20 @@ export default {
     },
     rowClassName() {
       const { row, rowIndex, table } = this
-      const { currentRow, rowClassName } = table
-      let classes = `eff-table__body-row${currentRow === rowIndex ? ' current-row' : ''}`
-      table.rowHoverIndex === rowIndex && (classes += ' is--hover')
-      if (rowClassName) {
-        classes += ' ' + (typeof rowClassName === 'function' ? rowClassName({ row, rowIndex }) : rowClassName)
-      }
-      return classes
+      const { currentRow, rowClassName, editStore, rowId } = table
+      return ['eff-table__body-row', {
+        'current-row': currentRow === rowIndex,
+        'is--hover': table.rowHoverIndex === rowIndex,
+        'is--new': editStore.insertList.find(d => d[rowId] === row[rowId]),
+        'is--pending': this.isPending
+      },
+      rowClassName ? (typeof rowClassName === 'function' ? rowClassName({ row, rowIndex }) : rowClassName) : ''
+      ]
+    },
+    isPending() {
+      const { table, row } = this
+      const { editStore, rowId } = table
+      return Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     }
   },
   methods: {
@@ -89,7 +99,7 @@ export default {
       this.handleEvent(event, 'dblclick')
     },
     handleEvent(event, name) {
-      const { table, row, rowIndex } = this
+      const { table, row, rowIndex, isPending } = this
       const cell = getCell(event)
       let column
       if (cell) {
@@ -100,7 +110,7 @@ export default {
           if (column) {
             const obj = { row, column, rowIndex, columnIndex, cell, event }
             const { edit } = table.$refs
-            name === 'click' && edit && edit.handleEditCell(obj)
+            !isPending && name === 'click' && edit && edit.handleEditCell(obj)
             table.$emit(`cell-${name}`, obj)
           }
         }

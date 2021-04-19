@@ -28,9 +28,9 @@ export default {
     },
     formatValidators() {
       return (this.validators.concat(this.messages) || []).reduce((acc, cur, index) => {
-        const rowIndex = `${cur.rowIndex}`
-        if (!acc[rowIndex]) acc[rowIndex] = []
-        acc[rowIndex].push(cur)
+        const rowId = `${cur.rowId}`
+        if (!acc[rowId]) acc[rowId] = []
+        acc[rowId].push(cur)
         return acc
       }, {})
     },
@@ -101,7 +101,7 @@ export default {
   },
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
     const { $scopedSlots, $slots } = table
     const { expand } = $scopedSlots || $slots
     return (
@@ -123,7 +123,7 @@ export default {
                 row-index={currentIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
-                messages={formatValidators[currentIndex]}
+                messages={formatValidators[row[rowId]]}
               />, expandNode]
             })
           }

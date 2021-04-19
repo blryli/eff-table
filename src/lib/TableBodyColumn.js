@@ -10,7 +10,8 @@ export default {
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
     message: { type: Object, default: () => {} },
-    fixed: { type: String, default: '' }
+    fixed: { type: String, default: '' },
+    disabled: Boolean
   },
   components: { VCheckbox },
   inject: ['table'],
@@ -49,9 +50,13 @@ export default {
     columnClass() {
       let classes = `eff-table__column`
       const { row, column, rowIndex, columnIndex, table } = this
-      const { className } = column
-      const { cellClassName } = table
+      const { className, prop } = column
+      const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
+      const sourceRow = updateList.find(d => d[rowId] === row[rowId])
+      if (prop && sourceRow && sourceRow[prop] !== row[prop]) {
+        classes += ' is--dirty'
+      }
       if (className) {
         if (typeof className === 'function') {
           const c = className({ row, column, rowIndex, columnIndex })
@@ -78,32 +83,32 @@ export default {
       return Object.assign(defaultStyle, this.style)
     },
     renderSelection(h) {
-      const { table, rowIndex, selectionChange } = this
+      const { table, row } = this
       return <v-checkbox
-        value={table.isChecked(rowIndex)}
-        key={rowIndex}
-        on-change={selectionChange}
+        value={table.isChecked(row)}
+        key={row[table.rowId]}
+        on-change={selected => table.rowSelectionChange(row, selected)}
       />
     },
-    selectionChange(selected) {
-      const { table, rowIndex } = this
-      table.rowSelectionChange(rowIndex, selected)
-    },
     cellRender(h) {
-      const { table, row, rowIndex, column, columnIndex } = this
+      const { table, row, rowIndex, column, columnIndex, disabled } = this
       const { cellRender, prop, config, type } = column
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
         const renderOpts = Object.assign({}, config, cellRender)
+        if (disabled) {
+          if (!renderOpts.props) renderOpts.props = {}
+          renderOpts.props.disabled = true
+        }
         const { name } = renderOpts
         const compConf = renderer.get(name)
         return compConf ? compConf.renderDefault(h, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
-      const { expanded, expandClick } = this
-      return <span class={{ 'eff-icon-expand': true, 'is-expanded': expanded }} on-click={expandClick} />
+      const { expanded, disabled, expandClick } = this
+      return <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return

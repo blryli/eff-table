@@ -21,6 +21,9 @@ export default {
     closeEdit() {
       this.$refs.edit.close()
     },
+    closeSelectRange() {
+      this.$refs.selectRange.close()
+    },
     rootMouseenter(event) {
       this.$emit('table-mouse-enter', { event })
       this.inRoot = true
@@ -55,9 +58,14 @@ export default {
         const { target } = e
         const { edit, editPopover } = this.$refs
         // 点击编辑以外的区域时关闭编辑框
-        if (edit.show) {
-          if (!this.$refs.body.$el.contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) this.closeEdit()
+        // if (edit.show) {
+        if (!this.$refs.body.$el.contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
+          if (edit.show) {
+            this.closeEdit()
+          }
+          this.closeSelectRange()
         }
+        // }
       }
     }
   }

@@ -124,6 +124,7 @@ export default {
       this.data = mock.mock({
         'array|1000': [
           {
+            'id|+1': 100,
             'message': '@email',
             'name': '@cname',
             'email': '@email',

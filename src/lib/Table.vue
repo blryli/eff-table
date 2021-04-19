@@ -9,7 +9,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
+    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
 
@@ -119,6 +119,16 @@
       @row-change="dragRowChange"
     />
 
+    <column-edit
+      v-if="border && drag"
+      ref="columnEdit"
+      :init-columns.sync="tableColumns"
+      :column-control="columnEdit"
+      @cardClose="handleCardClose"
+      @change="dargChange"
+      @row-change="dragRowChange"
+    />
+
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -128,8 +138,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>form -  {{ form }}</p>
-    <p>tableForm -  {{ tableForm }}</p> -->
+    <p>selecteds -  {{ selecteds }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -140,8 +149,8 @@
 
     <slot v-if="false" name="expand" />
 
-    <Loading :visible="loading" />
-    <SelectRange v-if="selectRange" />
+    <Loading :visible="isLoading" />
+    <SelectRange v-if="selectRange" ref="selectRange" />
     <copy v-if="copy" />
   </div>
 </template>
@@ -166,6 +175,8 @@ import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
+import ColumnEdit from '../components/ColumnEdit/index'
+import clone from 'xe-utils/clone'
 
 export default {
   name: 'EffTable',
@@ -180,7 +191,8 @@ export default {
     ScrollX,
     Loading,
     SelectRange,
-    Copy
+    Copy,
+    ColumnEdit
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -204,6 +216,8 @@ export default {
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
+    columnEdit: Boolean,
+    columnEditText: { type: String, default: '' },
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
@@ -225,7 +239,9 @@ export default {
     messages: { type: Array, default: () => [] },
     selectRange: Boolean,
     copy: Boolean,
-    proxyConfig: { type: Object, default: () => {} }
+    proxyConfig: { type: Object, default: () => {} }, // 代理配置
+    toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
+    rowId: { type: String, default: 'id' } // 行主键
   },
   data() {
     return {
@@ -242,11 +258,16 @@ export default {
       expands: [],
       expand: null,
       editIsStop: false,
+      isLoading: false,
       popoverOpts: {},
       editPopoverOpts: {},
-      currentEdit: {
-        oldColumnIndex: null,
-        columnIndex: null
+      editStore: {
+        insertList: [],
+        removeList: [],
+        updateList: [],
+        pendingList: [],
+        oldColumnIndex: 0,
+        columnIndex: 0
       }
     }
   },
@@ -288,16 +309,14 @@ export default {
     }
   },
   watch: {
-    data(val) {
-      this.tableData = [...val]
-    },
-    tableData() {
-      this.clearSelection()
-      this.scrollLeftEvent()
-      this.resize()
+    data(data) {
+      this.loadTableData(data)
     },
     columns(val) {
       this.tableColumns = val
+    },
+    loading(val) {
+      this.isLoading = val
     },
     form(val) {
       this.tableForm = val
@@ -305,6 +324,12 @@ export default {
     editStop(val) {
       this.editIsStop = val
     }
+  },
+  created() {
+    Object.assign(this, {
+      tableDataMap: new Map()
+    })
+    this.loadTableData(this.data || [])
   },
   mounted() {
     this.$nextTick(() => {
@@ -318,14 +343,49 @@ export default {
     this.$off('edit-fileds', this.editFileds)
   },
   methods: {
+    loadTableData(data) {
+      this.tableData = data
+      this.tableSourceData = clone(data, true)
+      this.updateCache()
+      this.clearSelection()
+      this.scrollLeftEvent()
+      this.resize()
+
+      // 检测行主键在行数据中是否存在
+      if (data.length && !data[0].hasOwnProperty(this.rowId)) {
+        console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
+      }
+      return this.$nextTick()
+    },
+    updateStatus(row, prop) {
+      const { tableSourceData, rowId, editStore } = this
+      const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
+      const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
+      if (prop && sourceRow) {
+        if (sourceRow[prop] !== row[prop]) {
+          index === -1 && editStore.updateList.push(sourceRow)
+        } else {
+          index === -1 && editStore.updateList.splice(index, 1)
+        }
+      }
+    },
+    // 更新数据行map
+    updateCache() {
+      const { tableData, rowId } = this
+      tableData.forEach(d => {
+        this.tableDataMap.set(d[rowId], d)
+      })
+    },
     editFileds(fileds) {
-      console.log(fileds, 22222)
       fileds.forEach(filed => {
-        const { data, visibleColumns } = this
+        const { tableData, visibleColumns, updateStatus } = this
         const { rowIndex, columnIndex, content } = filed
-        const column = visibleColumns[columnIndex]
-        if (column && column.prop) {
-          data[rowIndex][column.prop] = content
+        const column = visibleColumns[columnIndex] || {}
+        const { prop, validator: { rule } = {}} = column
+        if (prop) {
+          tableData[rowIndex][prop] = content
+          rule && console.log(this.validateCell(rowIndex, prop, rule))
+          updateStatus(tableData[rowIndex], prop)
         }
       })
     },
@@ -336,8 +396,7 @@ export default {
       this.$emit('table-mouse-up', { event: event })
     },
     rootSelectstart(event) {
-      const a = !(this.select || this.copy)
-      return a
+      return !(this.select || this.copy)
     },
     setEditIsStop(val) {
       this.editIsStop = val
@@ -921,9 +980,51 @@ export default {
     border-bottom: 1px solid #666;
     transform: rotate(-45deg);
   }
-  &.is-expanded{
+  &.is--expanded{
     transform: rotate(90deg);
   }
+}
+
+.is--new{
+  .eff-table__column::before{
+    content: "";
+    top: -5px;
+    left: -5px;
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #19a15f transparent transparent;
+    transform: rotate(45deg);
+  }
+}
+.is--pending{
+  color: #f56c6c;
+  text-decoration: line-through;
+  cursor: no-drop;
+  .eff-table__column::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-bottom: 1px solid #f56c6c;
+    z-index: 1;
+  }
+}
+
+.is--dirty::before{
+  content: "";
+  top: -5px;
+  left: -5px;
+  position: absolute;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #f56c6c transparent transparent;
+  transform: rotate(45deg);
+}
+.eff-table .is--disabled{
+  cursor: no-drop;
 }
 
 @keyframes rotate {

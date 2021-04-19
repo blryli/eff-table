@@ -86,7 +86,7 @@ data() {
           width: 100,
           search: true,
           edit: {
-            render: { name: 'textarea', on: { input: val => { console.log({ val }) } }}
+            render: { name: 'textarea'}
           }
         },
         {
@@ -201,7 +201,18 @@ export default {
         edit: true,
         columnControl: true,
         border: true,
+        // selectRange: true,
+        // copy: true,
         fullscreen: true,
+        rowId: 'id',
+        toolbarConfig: {
+          buttons: [
+            { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'save', content: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
+          ]
+        },
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
@@ -211,11 +222,12 @@ export default {
                   data: mock.mock({
                     'array|5': [
                       {
+                        'id|+1': 100,
                         'input|+1': 1,
                         'textarea': '@name',
                         'select': '1',
                         'date': '',
-                        'switch': false,
+                        'switch': null,
                         'checkboxgroup': [],
                         'checkbox': false,
                         'popup': '@title',
@@ -234,13 +246,23 @@ export default {
         columns: [
           {
             show: true,
+            type: 'selection',
+            width: 40,
+            fixed: 'left'
+          },
+          {
+            show: true,
             prop: 'input',
             title: '输入框',
             width: 100,
             config: { name: 'input' },
+            sortable: true,
             search: {
               operator: true
             },
+            validator: { required: true, rule: ({ value }) => {
+              return !value && '不能为空'
+            } },
             edit: true
           },
           {
@@ -250,8 +272,11 @@ export default {
             width: 100,
             search: true,
             edit: {
-              render: { name: 'textarea', on: { input: val => { console.log({ val }) } }}
-            }
+              render: { name: 'textarea' }
+            },
+            validator: { required: true, rule: ({ value }) => {
+              return !value && '不能为空'
+            } }
           },
           {
             show: true,
@@ -277,7 +302,7 @@ export default {
             prop: 'switch',
             title: '开关',
             width: 100,
-            config: { name: 'switch' },
+            config: { name: 'switch', defaultValue: false },
             edit: true,
             search: true
           },
@@ -302,7 +327,7 @@ export default {
             search: true,
             cellRender: { name: 'link', props: { url: '' }},
             edit: {
-              render: { name: 'dialog', props: { visible: false }, children: [{ name: 'form' }] }
+              render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
             }
           },
           {
@@ -314,7 +339,6 @@ export default {
           },
           {
             show: true,
-            prop: 'checkboxgroup',
             title: '多选框组',
             width: 160,
             config: { name: 'checkbox-group', children: [
@@ -324,14 +348,12 @@ export default {
           },
           {
             show: true,
-            prop: 'checkbox',
             title: '多选框',
             width: 100,
             config: { name: 'checkbox', content: '选项' }
           },
           {
             show: true,
-            prop: 'button',
             title: '按钮',
             width: 100,
             config: { name: 'button', content: '操作' }

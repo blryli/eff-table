@@ -12,9 +12,10 @@ export default {
           console.error('需要校验的字段，必须具有 prop 属性')
           resolve()
         }
-        const { data, columns, validators, tableBodyEl } = this
-        const row = data[rowIndex]
+        const { tableData, columns, validators, tableBodyEl, rowId } = this
+        const row = tableData[rowIndex]
         const value = row[prop]
+        const id = row[rowId]
         if (!rule) {
           const { validator = {}} = columns.find(d => d.prop === prop) || {}
           if (typeof validator.rule === 'function') {
@@ -31,7 +32,7 @@ export default {
         // 校验处理函数
         const validate = params => {
           const message = typeof params === 'string' ? params : params.message || ''
-          const validator = { rowIndex, prop, message }
+          const validator = { rowIndex, rowId: id, prop, message }
           const index = validators.findIndex(d => d.prop === prop && d.rowIndex === rowIndex)
           index === -1 ? validators.push(validator) : validators.splice(index, 1, validator)
           this.$emit('validate', validator, validators)
@@ -58,10 +59,10 @@ export default {
     },
     validate(rows) {
       return new Promise((resolve, reject) => {
-        const { data, validateRow } = this
-        const validators = data.reduce((acc, cur, idx) => {
-          if (Array.isArray(rows)) {
-            return rows.find(d => JSON.stringify(d) === JSON.stringify(cur)) ? acc.concat(validateRow(idx)) : acc
+        const { tableData, validateRow } = this
+        const validators = tableData.reduce((acc, cur, idx) => {
+          if (Array.isArray(rows) && rows.length) {
+            return rows.some(d => d === cur) ? acc.concat(validateRow(idx)) : acc
           } else {
             return acc.concat(validateRow(idx))
           }

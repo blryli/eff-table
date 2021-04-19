@@ -13,6 +13,7 @@
           row-drag
           border
           fullscreen
+          column-edit
         />
       </div>
     </section>
@@ -109,7 +110,7 @@ const componentSnippet = `
 />
 `
 export default {
-  name: '',
+  name: 'ColumnEdit',
   components: {
     CodeSnippet,
     Collapse

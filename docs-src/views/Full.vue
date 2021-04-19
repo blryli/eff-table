@@ -280,6 +280,7 @@ methods: {
     this.data = mock.mock({
       'array|100': [
         {
+          'id|+1': 1,
           'age': /\d{2}/,
           'cname': '@cname',
           'sex': function name() {
@@ -605,6 +606,7 @@ export default {
       this.data = mock.mock({
         'array|100': [
           {
+            'id|+1': 1,
             'age': /\d{2}/,
             'cname': '@cname',
             'sex': function name() {

@@ -1,7 +1,4 @@
-<template />
-
 <script>
-
 export default {
   data() {
     return {
@@ -46,6 +43,9 @@ export default {
       this.table.$off('select-range-data')
       document.removeEventListener('copy', this.onCopy, false)
     }
+  },
+  render() {
+    return ''
   }
 }
 

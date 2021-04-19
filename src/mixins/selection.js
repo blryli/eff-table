@@ -1,4 +1,4 @@
-const checkedsSet = new Set()
+let checkedsSet = new Set()
 
 export default {
   data() {
@@ -10,17 +10,18 @@ export default {
   },
   computed: {
     checkeds() {
-      return this.selecteds.map(v => this.data[v])
+      const { tableDataMap, selecteds } = this
+      return selecteds.map(id => tableDataMap.get(id))
     }
   },
   watch: {
     selecteds() {
-      const { checkeds, selecteds, data } = this
+      const { checkeds, selecteds, tableData } = this
       this.$emit('selection-change', checkeds, selecteds)
       const selectedsLength = selecteds.length
-      const dataLength = data.length
-      this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength
-      this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
+      const tableDataLength = tableData.length
+      this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
+      this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     }
   },
   methods: {
@@ -32,10 +33,10 @@ export default {
       this.selectionChange()
     },
     toggleRowSelection(row, selected) {
-      const { data, isSame, toggleSelection } = this
-      const rowIndex = data.findIndex(d => isSame(d, row))
-      if (rowIndex !== -1) {
-        toggleSelection(rowIndex, checkedsSet.has(rowIndex), selected)
+      const { tableDataMap, rowId, toggleSelection } = this
+      const id = row[rowId]
+      if (tableDataMap.has(id)) {
+        toggleSelection(row, checkedsSet.has(id), selected)
       } else {
         console.error('methods toggleRowSelection (row) is not find')
       }
@@ -44,41 +45,42 @@ export default {
       this.selectionAll = !this.selectionAll
       this.allselectionChange(this.selectionAll)
     },
-    rowSelectionChange(index, selected) {
-      const { checkeds, data, toggleSelection, selectionChange } = this
-      toggleSelection(index, !selected)
-      this.$emit('select', checkeds, data[index])
+    rowSelectionChange(row, selected) {
+      const { checkeds, tableDataMap, rowId, toggleSelection, selectionChange } = this
+      const id = row[rowId]
+      toggleSelection(row, !selected)
+      this.$emit('select', checkeds, tableDataMap.get(id))
       selectionChange()
     },
     allselectionChange(selected) {
-      const { data, selectionChange } = this
+      const { tableDataMap, selectionChange } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? data.forEach((d, i) => checkedsSet.add(i)) : checkedsSet.clear()
+      selected ? checkedsSet = new Set([...tableDataMap.keys()]) : checkedsSet.clear()
       selectionChange()
       this.$emit('select-all', this.checkeds)
     },
-    isSame(obj1, obj2) {
-      return JSON.stringify(obj1) === JSON.stringify(obj2)
-    },
-    toggleSelection(index, has, selected) {
-      selected ? checkedsSet.add(index) : has ? checkedsSet.delete(index) : checkedsSet.add(index)
+    toggleSelection(row, has, selected) {
+      const id = row[this.rowId]
+      selected ? checkedsSet.add(id) : has ? checkedsSet.delete(id) : checkedsSet.add(id)
       this.selectionChange()
     },
     setCurrentRow(row) {
-      const { data, isSame, selectionChange } = this
-      const rowIndex = data.findIndex(d => isSame(d, row))
+      const { tableDataMap, rowId, selectionChange } = this
+      const id = row[rowId]
       checkedsSet.clear()
-      if (rowIndex !== -1) {
-        checkedsSet.add(rowIndex)
+      if (tableDataMap.has(id)) {
+        checkedsSet.add(id)
       }
+
       selectionChange()
     },
     selectionChange() {
       this.selecteds = [...checkedsSet]
     },
-    isChecked(index) {
-      return this.selecteds.includes(index)
+    isChecked(row) {
+      const { rowId } = this
+      return checkedsSet.has(row[rowId])
     }
   }
 }

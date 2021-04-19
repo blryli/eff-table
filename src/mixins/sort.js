@@ -4,6 +4,11 @@ export default {
       curSort: {}
     }
   },
+  computed: {
+    sorts() {
+      return [this.curSort]
+    }
+  },
   methods: {
     sort(prop, order) {
       const column = this.tableColumns.find(d => d.prop === prop)
