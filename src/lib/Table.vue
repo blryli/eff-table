@@ -112,7 +112,7 @@
     <drag
       v-if="border && drag"
       ref="drag"
-      v-model="tableColumns"
+      :init-columns.sync="tableColumns"
       :column-control="columnControl"
       @cardClose="handleCardClose"
       @change="dargChange"
