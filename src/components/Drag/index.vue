@@ -7,6 +7,7 @@
       :init-style="cardStyle"
       @close="close"
       @save="save"
+      @resetColumns="resetColumns"
     >
       <div class="main">
 
@@ -78,7 +79,8 @@ export default {
       willDragInArea: 'left',
       leftList: [],
       rightList: [],
-      centerList: []
+      centerList: [],
+      realColumns: []
     }
   },
   inject: ['table'],
@@ -107,15 +109,12 @@ export default {
     initColumns: {
       immediate: true,
       handler(val) {
-        const columns = deepClone(val)
-        this.leftList = columns.filter(v => v.fixed && v.fixed === 'left')
-        this.rightList = columns.filter(v => v.fixed && v.fixed === 'right')
-        this.centerList = columns.filter(v => !v.fixed)
-        this.columns = columns
+        this.columnsInit(val)
       }
     }
   },
   mounted() {
+    this.realColumns = deepClone(this.initColumns)
     const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
     this.cardStyle = {
       top: offsetTop + 80,
@@ -177,6 +176,17 @@ export default {
 
   },
   methods: {
+    columnsInit(val) {
+      const columns = deepClone(val)
+      this.leftList = columns.filter(v => v.fixed && v.fixed === 'left')
+      this.rightList = columns.filter(v => v.fixed && v.fixed === 'right')
+      this.centerList = columns.filter(v => !v.fixed)
+      this.columns = columns
+    },
+    resetColumns() {
+      this.columns = deepClone(this.realColumns)
+      this.columnsInit(this.columns)
+    },
     save() {
       const columns = []
       const callback = (arr, type) => {

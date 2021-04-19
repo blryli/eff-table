@@ -11,7 +11,10 @@
   >
     <div class="eff-drag-card__header">
       <span class="eff-drag-card__header-title">{{ title }}</span>
-      <el-button type="success" size="mini" @click="$emit('save')"> 保存 </el-button>
+      <div>
+        <el-button type="default" size="mini" @click="$emit('resetColumns')"> 还原 </el-button>
+        <el-button type="success" size="mini" @click="$emit('save')"> 保存 </el-button>
+      </div>
       <i class="eff-drag-card__header-close" type="text" @click="$emit('close')" />
     </div>
     <div ref="body" class="eff-drag-card__body" :class="{inline: inline}">
