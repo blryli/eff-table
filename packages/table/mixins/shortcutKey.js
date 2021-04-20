@@ -63,7 +63,9 @@ export default {
           if (edit.show) {
             this.closeEdit()
           }
-          this.closeSelectRange()
+          if (this.selectRange) {
+            this.closeSelectRange()
+          }
         }
         // }
       }
