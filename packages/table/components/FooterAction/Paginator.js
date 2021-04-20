@@ -44,7 +44,8 @@ export default {
         pageSizes: [10, 50, 100, 200, 300, 400],
         'page-size': this.pageSize,
         layout: 'total, sizes, prev, pager, next, jumper',
-        total: this.total
+        total: this.total,
+        pagerCount: 5
       },
       on: {
         'size-change': this.onSizeChange,
