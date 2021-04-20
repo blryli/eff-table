@@ -15,7 +15,7 @@ const file = type => `dist/${name}.${type}.js`
 export { name, file }
 
 export default {
-  input: 'src/index.js',
+  input: 'packages/index.js',
   plugins: [
     resolve({
       mainFields: ['module', 'jsnext:main', 'main', 'browser'],
@@ -41,6 +41,6 @@ export default {
     })
   ],
   watch: {
-    include: 'src/**'
+    include: 'packages/**'
   }
 }

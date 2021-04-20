@@ -338,7 +338,7 @@ export default {
             title: '标签',
             width: 100,
             search: true,
-            cellRender: { tag: 'div', children: [{ tag: 'div', children: [1111, { tag: 'h2', children: '333' }] }] },
+            cellRender: { name: 'tag', children: '11' },
             edit: {
               render: { name: 'select', props: { multiple: true }, options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] }
             }
