@@ -107,7 +107,7 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-    <FooterAction v-if="$slots.footer_action || showPaginator">
+    <FooterAction v-if="$slots.footer_action || footerActionConfig.showPager">
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
@@ -246,7 +246,7 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
-    showPaginator: Boolean
+    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },
   data() {
     return {

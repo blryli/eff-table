@@ -107,8 +107,7 @@ export default {
 | summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
 | selectRange       | 是否开启选择区域功能    | Boolean |       |       |
 | copy       | 是否开启复制功能    | Boolean |       |       |
-| showPaginator       | 是否开启分页    | Boolean |       |       |
-
+| footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 ```js
 value: [
   {

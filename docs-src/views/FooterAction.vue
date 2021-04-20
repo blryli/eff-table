@@ -196,7 +196,10 @@ export default {
       mainSnippet,
       componentSnippet,
       tableOptions: {
-        showPaginator: true,
+        footerActionConfig: {
+          showPager: true,
+          showBorder: true,
+        },
         search: true,
         drag: true,
         edit: true,
