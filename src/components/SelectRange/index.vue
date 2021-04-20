@@ -68,6 +68,10 @@ export default {
     document.removeEventListener('paste', this.onPaste, false)
   },
   methods: {
+    close() {
+      this.status = 0
+      this.handleSightRect()
+    },
     onClickCopy() {
       this.copyBtnType = 'success'
       document.execCommand('copy')
@@ -95,6 +99,10 @@ export default {
       this.sightEndPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
     },
     selectRangeMouseUp(e) {
+      if (this.status === 0) {
+        return
+      }
+
       const map = this._getColumnMap()
 
       if (this.status === 3) {
@@ -126,10 +134,12 @@ export default {
       this.status = 2
     },
     selectRangeMouseDown(e) {
+      const { rowIndex, columnIndex, column } = e
+      if (['expand', 'selection'].indexOf(column.type) !== -1) {
+        return this.close()
+      }
       this.borderStyle = 'solid'
       this.status = 1
-      const { rowIndex, columnIndex } = e
-
       this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
       this.startPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
 
@@ -176,19 +186,19 @@ export default {
           const style = {}
 
           if (j === startColumn) {
-            style.borderLeft = `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderLeft = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (j === endColumn) {
-            style.borderRight = `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (i === startRow) {
-            style.borderTop = `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (i === endRow) {
-            style.borderBottom = `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderBottom = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (column) {

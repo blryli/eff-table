@@ -1,21 +1,25 @@
 <script>
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
+import ColumnEditBtn from './ColumnEditBtn'
 import Clear from './Clear'
 import { renderer, getOn } from 'render'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn },
   inject: ['table'],
   methods: {
     btnChange() {
       this.table.$refs.drag.toggleCardShow()
+    },
+    btnEdit() {
+      this.table.$refs.columnEdit.toggleCardShow()
     }
   },
   render(h) {
     const { table } = this
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen } = table
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit } = table
     const { buttons = [] } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       const { code, on } = cur
@@ -25,6 +29,7 @@ export default {
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { table, columnIndex: idx })) : acc
     }, [])
 
+    console.log(columnEdit, 123123123)
     return (
       <div class='eff-table__toobar'>
         <div class='eff-table__toobar-left'>
@@ -34,6 +39,9 @@ export default {
         <div class='eff-table__toobar-right'>
           {
             search && searchClear && <Clear /> || ''
+          }
+          {
+            columnEdit && <ColumnEditBtn on-change={this.btnEdit} /> || ''
           }
           {
             columnControl && <ColumnCtrlBtn on-change={this.btnChange} /> || ''

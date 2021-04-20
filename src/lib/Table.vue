@@ -9,7 +9,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl" ref="toolbar">
+    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
 
@@ -119,6 +119,16 @@
       @row-change="dragRowChange"
     />
 
+    <column-edit
+      v-if="border && drag"
+      ref="columnEdit"
+      :init-columns.sync="tableColumns"
+      :column-control="columnEdit"
+      @cardClose="handleCardClose"
+      @change="dargChange"
+      @row-change="dragRowChange"
+    />
+
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -140,7 +150,7 @@
     <slot v-if="false" name="expand" />
 
     <Loading :visible="isLoading" />
-    <SelectRange v-if="selectRange" />
+    <SelectRange v-if="selectRange" ref="selectRange" />
     <copy v-if="copy" />
   </div>
 </template>
@@ -165,6 +175,7 @@ import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
+import ColumnEdit from '../components/ColumnEdit/index'
 import clone from 'xe-utils/clone'
 
 export default {
@@ -180,7 +191,8 @@ export default {
     ScrollX,
     Loading,
     SelectRange,
-    Copy
+    Copy,
+    ColumnEdit
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -204,6 +216,8 @@ export default {
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
+    columnEdit: Boolean,
+    columnEditText: { type: String, default: '' },
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
