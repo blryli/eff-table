@@ -9,11 +9,17 @@ export default {
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save } = request || {}
       switch (code) {
+        case 'add':
+          this.add()
+          break
+        case 'add_focus':
+          this.add().then(rowIndex => this.focus(rowIndex))
+          break
         case 'insert':
           this.insert()
           break
         case 'insert_focus':
-          this.insert().then(({ row }) => this._insert_focus(row))
+          this.insert().then(rowIndex => this.focus(rowIndex))
           break
         case 'mark_cancel':
           this.triggerPending()
@@ -105,17 +111,20 @@ export default {
       checkeds.forEach(item => {
         if (list.some(data => data === item)) {
           list = list.filter(d => !(d[rowId] === item[rowId]))
+          // 被标记删除的行，清除校验
         } else {
           list = list.concat(item)
         }
       })
+      const pendingRowIds = list.map(d => d[rowId])
+      this.validators = [...this.validators.filter(d => pendingRowIds.indexOf(d.rowId) === -1)]
       this.editStore.pendingList = [...list]
       this.clearSelection()
     },
     save(save) {
       const { tableData, editStore, rowId, validate } = this
       const { insertList, updateList, pendingList } = editStore
-      if (!insertList.length && !updateList.length) {
+      if (!insertList.length && !updateList.length && !pendingList.length) {
         this.$message.info('数据未改动！')
         return
       }
@@ -127,6 +136,7 @@ export default {
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
         const { rowIndex, prop } = errMap[0]
+        // 聚焦到第一个校验不通过的单元格
         this.focus(rowIndex, prop)
       }).then(success => {
         if (success) {
@@ -142,56 +152,53 @@ export default {
         }
       })
     },
-    reloadData(data) {
-      this.clearStatus()
-      this.loadTableData(data)
+    // 往表格末尾位置增加临时数据
+    add() {
+      return this.insert(null, -1)
     },
-    clearStatus() {
-      this.editStore = Object.assign({}, {
-        insertList: [],
-        removeList: [],
-        updateList: [],
-        pendingList: [],
-        oldColumnIndex: 0,
-        columnIndex: 0
-      })
-    },
-    insert() {
+    /**
+     * 往表格指定行中插入临时数据
+     * 如果 row 为空则插入到顶部
+     * 如果 row 为 -1 则从插入到底部
+     * 如果 row 为有效行则插入到该行的位置
+     * @param {Object/Array} records 新的数据
+     * @param {RowIndex} rowIndex 指定行
+     */
+    insert(records, rowIndex) {
       const { checkeds, columns, tableData, rowId } = this
-      const checkedsLen = checkeds.length
-      const records = columns.reduce((acc, column) => {
-        const { type, prop } = column
-        if (['expand', 'selection'].indexOf(type) > -1 || !prop) return acc
+      if (!records) {
+        records = columns.reduce((acc, column) => {
+          const { type, prop } = column
+          if (['expand', 'selection', 'radio'].indexOf(type) > -1 || !prop) return acc
 
-        const { config = {}, edit = {}} = column
-        const { defaultValue } = Object.assign({}, config, edit.render)
-        acc[prop] = defaultValue !== undefined ? defaultValue : null
-        return acc
-      }, {})
-      Object.assign(records, { [rowId]: `row_${tableData.length}` })
+          const { config = {}, edit = {}} = column
+          const { defaultValue } = Object.assign({}, config, edit.render)
+          acc[prop] = defaultValue !== undefined ? defaultValue : null
+          return acc
+        }, {})
+        Object.assign(records, { [rowId]: `row_${tableData.length}` })
+      }
+      if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
-      const row = checkedsLen ? tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) : -1
-      return this._insert(records, row)
-    },
-    _insert(records = {}, row = -1) {
-      if (!row) {
-        this.tableData.unshift(records)
-      } else if (row === -1) {
-        this.tableData.push(records)
-      } else {
-        this.tableData.splice(row, 0, records)
+
+      const checkedsLen = checkeds.length
+      if (checkedsLen) {
+        rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
-      this.editStore.insertList.push(records)
-      return this.$nextTick().then(() => row)
-    },
-    _insert_focus(row = -1) {
-      if (!row) {
-        this.focus(0)
-      } else if (row === -1) {
-        this.focus(this.tableData.length - 1)
+      if (!rowIndex) {
+        this.tableData.unshift(...records)
+        rowIndex = 0
       } else {
-        this.focus(row)
+        if (rowIndex === -1) {
+          this.tableData.push(...records)
+          rowIndex = this.tableData.length - 1
+        } else {
+          this.tableData.splice(rowIndex, 0, ...records)
+        }
       }
+      this.editStore.insertList.push(...records)
+      this.updateCache()
+      return this.$nextTick().then(() => rowIndex)
     }
   }
 }

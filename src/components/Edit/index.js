@@ -53,7 +53,6 @@ export default {
       } else {
         component && component.close && component.close()
         this.handleValidate()
-        table.clearSelection()
         this.updateStatus()
         this.placement = ''
         this.scrollNum = 0

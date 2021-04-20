@@ -101,8 +101,8 @@ export default {
           if (!renderOpts.props) renderOpts.props = {}
           renderOpts.props.disabled = true
         }
-        const { name } = renderOpts
-        const compConf = renderer.get(name)
+        const { name, tag } = renderOpts
+        const compConf = renderer.get(name) || tag && renderer.get('default')
         return compConf ? compConf.renderDefault(h, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },

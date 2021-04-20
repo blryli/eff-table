@@ -128,7 +128,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>selecteds -  {{ selecteds }}</p>
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -342,6 +342,20 @@ export default {
         console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
       }
       return this.$nextTick()
+    },
+    reloadData(data) {
+      this.clearStatus()
+      this.loadTableData(data)
+    },
+    clearStatus() {
+      this.editStore = Object.assign({}, {
+        insertList: [],
+        removeList: [],
+        updateList: [],
+        pendingList: [],
+        oldColumnIndex: 0,
+        columnIndex: 0
+      })
     },
     updateStatus(row, prop) {
       const { tableSourceData, rowId, editStore } = this

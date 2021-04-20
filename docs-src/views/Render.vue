@@ -207,10 +207,11 @@ export default {
         rowId: 'id',
         toolbarConfig: {
           buttons: [
-            { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'save', content: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
+            { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
           ]
         },
         proxyConfig: {
@@ -227,6 +228,7 @@ export default {
                         'textarea': '@name',
                         'select': '1',
                         'date': '',
+                        'tag': [],
                         'switch': null,
                         'checkboxgroup': [],
                         'checkbox': false,
@@ -325,9 +327,20 @@ export default {
             title: '文字链接',
             width: 100,
             search: true,
-            cellRender: { name: 'link', props: { url: '' }},
+            cellRender: { name: 'link', props: { url: '' }, cellKey: 'url' },
             edit: {
               render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
+            }
+          },
+          {
+            show: true,
+            prop: 'tag',
+            title: '标签',
+            width: 100,
+            search: true,
+            cellRender: { tag: 'div', children: [{ tag: 'div', children: [1111, { tag: 'h2', children: '333' }] }] },
+            edit: {
+              render: { name: 'select', props: { multiple: true }, options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] }
             }
           },
           {
@@ -350,13 +363,13 @@ export default {
             show: true,
             title: '多选框',
             width: 100,
-            config: { name: 'checkbox', content: '选项' }
+            config: { name: 'checkbox', children: '选项' }
           },
           {
             show: true,
             title: '按钮',
             width: 100,
-            config: { name: 'button', content: '操作' }
+            config: { name: 'button', children: '操作' }
           }
         ]
       }

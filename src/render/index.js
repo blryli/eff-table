@@ -1,4 +1,6 @@
 import toDateString from 'xe-utils/toDateString'
+import isObject from 'xe-utils/isObject'
+import isArray from 'xe-utils/isArray'
 const status = { rowIndex: 0 }
 /**
  * 基础渲染函数
@@ -29,7 +31,7 @@ class Render {
     const { tag, name } = opts
     const cTag = tag || this.params.table.$EFF.uiPrefix + name
 
-    return h(cTag, opts, opts.content || data[prop] || '')
+    return h(cTag, opts, opts.children || data[prop] || '')
   }
 }
 
@@ -48,23 +50,44 @@ export function getOn(on, events) {
   return ons
 }
 
+export function getChildren(h, children, params) {
+  if (children && Array.isArray(children)) {
+    return children.map((child, idx) => {
+      if (isObject(child)) {
+        const { children } = child
+        const childrenRender = getChildren(h, children, params)
+        return new Render(h, child, params, idx).setOpts('children', childrenRender).render()
+      }
+      return child
+    })
+  }
+  return children
+}
+
 // 默认 render
 function renderDefault(h, renderOpts, params) {
-  const { tag, name, props } = renderOpts || {}
+  const { tag, name, props, cellPath, children } = renderOpts || {}
   const { row, prop } = params || {}
-  const label = row && prop && row[prop] || ''
-  const render = () => new Render(h, renderOpts, params).render()
+  let cellLabel = row && prop && row[prop] || ''
+  const childrenRender = getChildren(h, children, params)
+  const render = () => new Render(h, renderOpts, params).setOpts('children', childrenRender).render()
+  if (isObject(cellLabel)) {
+    cellLabel = cellLabel[cellPath]
+  }
+  if (isArray(cellLabel)) {
+    cellLabel.map(() => render())
+  }
   if (tag) {
     return render()
   } else if (['input', 'textarea'].includes(name)) {
-    return label
+    return cellLabel
+  } else if (name === 'date-picker') {
+    return toDateString(cellLabel, 'yyyy-MM-dd')
   } else if (name === 'select') {
     const { labelName, options = [] } = renderOpts || []
     const { labelKey = 'label', valueKey = 'value' } = props || {}
-    const opt = options.find(d => d[valueKey] === label) || {}
-    return labelName ? row[labelName] : labelKey ? opt[labelKey] : label
-  } else if (name === 'date-picker') {
-    return toDateString(label, 'yyyy-MM-dd')
+    const opt = options.find(d => d[valueKey] === cellLabel) || {}
+    return labelName ? row[labelName] : labelKey ? opt[labelKey] : cellLabel
   }
   return render()
 }
@@ -72,7 +95,7 @@ function renderDefault(h, renderOpts, params) {
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
   const { data, prop, searchChange } = params
-  if (!data || !prop) renderDefault(h, renderOpts, params)
+  if (!data || !prop) return renderDefault(h, renderOpts, params)
   const props = {
     value: data[prop] || null
   }
@@ -142,7 +165,7 @@ function renderSelect(h, renderOpts, params, renderType) {
   const optionsRender = options.map(item => h(table.$EFF.uiPrefix + 'option', { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
 
   const render = new Render(h, renderOpts, params)
-  return render.merge('props', props).merge('on', ons).setOpts('content', optionsRender).render()
+  return render.merge('props', props).merge('on', ons).setOpts('children', optionsRender).render()
 }
 function renderSelectSearch(h, renderOpts, params) {
   return renderSelect(h, renderOpts, params, 'search')
@@ -216,7 +239,7 @@ function renderPopup(h, renderOpts, params) {
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
-  return render.setOpts('tag', 'popup').merge('props', props).setOpts('content', renderChildren).render()
+  return render.setOpts('tag', 'popup').merge('props', props).setOpts('children', renderChildren).render()
 }
 function renderPopupEdit(h, renderOpts, params) {
   const { children = [] } = renderOpts
@@ -226,7 +249,7 @@ function renderPopupEdit(h, renderOpts, params) {
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
-  return render.setOpts('tag', 'popup').merge('props', props).setOpts('content', renderChildren).render()
+  return render.setOpts('tag', 'popup').merge('props', props).setOpts('children', renderChildren).render()
 }
 
 // 弹窗 dialog
@@ -268,14 +291,14 @@ function renderDialog(h, renderOpts, params) {
   const renderChildren = [
     children.map((opts, idx) => new Render(h, opts, params, idx).render()),
     h('span', { slot: 'footer' }, [
-      new Render(h, { name: 'button', key: 'cancel', content: '取 消', on: { click: closed }}, params).render(),
-      new Render(h, { name: 'button', key: 'submit', props: { type: 'primary' }, content: '确 定', on: { click: submit }}, params).render()
+      new Render(h, { name: 'button', key: 'cancel', children: '取 消', on: { click: closed }}, params).render(),
+      new Render(h, { name: 'button', key: 'submit', props: { type: 'primary' }, children: '确 定', on: { click: submit }}, params).render()
     ])
   ]
   const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: renderOpts.props.visible ? 'block' : 'none' }})
   const { data, prop } = params
 
-  return [h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}), render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render(), modal]
+  return [h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}), render.merge('props', props).setOpts('on', on).setOpts('children', renderChildren).render(), modal]
 }
 
 // 表单 form
@@ -286,14 +309,17 @@ function renderForm(h, renderOpts, params) {
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
-  return render.merge('props', props).setOpts('content', renderChildren).render()
+  return render.merge('props', props).setOpts('children', renderChildren).render()
 }
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
   const { data, prop } = params
+  const isBoolean = typeof data[prop] === 'boolean'
   const props = {
-    value: Boolean(+data[prop])
+    value: data[prop],
+    activeValue: isBoolean ? true : '1',
+    inactiveValue: isBoolean ? false : '0'
   }
   const on = getOn(renderOpts.on, {
     input: val => {
@@ -328,10 +354,10 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => {
     const { label } = opts.props || {}
-    const childrenOpts = Object.assign({}, { content: label }, opts)
+    const childrenOpts = Object.assign({}, { children: label }, opts)
     return new Render(h, childrenOpts, params, idx).render()
   })
-  return render.merge('props', props).setOpts('on', on).setOpts('content', renderChildren).render()
+  return render.merge('props', props).setOpts('on', on).setOpts('children', renderChildren).render()
 }
 
 // 文本 text
@@ -342,11 +368,13 @@ function renderText(h, renderOpts, params) {
   }
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
-  return render.merge('props', props).setOpts('content', renderChildren).render()
+  return render.merge('props', props).setOpts('children', renderChildren).render()
 }
 
 const renderMap = {
-  renderDefault: renderDefault,
+  default: {
+    renderDefault: renderDefault
+  },
   input: {
     renderDefault: renderDefault,
     renderEdit: renderVModel,
@@ -370,6 +398,10 @@ const renderMap = {
   },
   link: {
     renderDefault: renderLink,
+    renderEdit: renderDefault
+  },
+  tag: {
+    renderDefault: renderDefault,
     renderEdit: renderDefault
   },
   button: {
