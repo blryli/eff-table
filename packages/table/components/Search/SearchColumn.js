@@ -187,6 +187,7 @@ export default {
                 placement='bottom'
                 reference={reference}
                 enterable
+                isFixed
               >
                 <Operator data={operators} type={type} on-change={operatorChange} />
               </Popover>
