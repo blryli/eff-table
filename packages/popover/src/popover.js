@@ -15,7 +15,8 @@ export default {
     enterable: Boolean,
     hideDelay: { type: Number, default: 200 },
     vslot: {},
-    addToBody: Boolean
+    addToBody: Boolean,
+    isFixed: Boolean
   },
   data() {
     return {
@@ -26,8 +27,8 @@ export default {
   },
   computed: {
     pClass() {
-      const { effect, show, momentPlacement, popoverClass } = this
-      return `${effect ? `is-${effect}` : 'is-light'}  eff-table__popover-${momentPlacement} ${popoverClass} ${show ? 'eff-table__popover--visible' : 'eff-table__popover--hidden'}`
+      const { effect, show, momentPlacement, popoverClass, isFixed } = this
+      return `${effect ? `is-${effect}` : 'is-light'}  eff-table__popover-${momentPlacement} ${popoverClass} ${show ? 'eff-table__popover--visible' : 'eff-table__popover--hidden'} ${isFixed ? 'is--fixed' : ''}`
     },
     popoverStyle() {
       const { effect } = this
@@ -146,7 +147,7 @@ export default {
       }
     },
     calculateCoordinate() {
-      const { addedBody, $el, reference, popoverAddedBody, changeDirection } = this
+      const { addedBody, $el, reference, isFixed, popoverAddedBody, changeDirection } = this
       !addedBody && popoverAddedBody()
       const popover = $el
       const referenceRect = getDomClientRect(reference)
@@ -169,8 +170,8 @@ export default {
           break
       }
       const { left: tLeft, top: tTop } = getDomClientRect(this.table.$el)
-      popover.style.left = left - tLeft + 'px'
-      popover.style.top = top - tTop + 'px'
+      popover.style.left = left - (isFixed ? 0 : tLeft) + 'px'
+      popover.style.top = top - (isFixed ? 0 : tTop) + 'px'
     },
     changeDirection(popoverRect, referenceRect, popover) {
       const allHeight = referenceRect.bottom + popoverRect.height + 5
