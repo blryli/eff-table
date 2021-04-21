@@ -107,7 +107,7 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-    <FooterAction v-if="$slots.footer_action || footerActionConfig.showPager">
+    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager">
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
