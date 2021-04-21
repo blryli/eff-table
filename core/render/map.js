@@ -18,7 +18,8 @@ const map = {
   'checkbox': 'el-checkbox',
 
   // 内置组件
-  'popup': 'popup'
+  'popup': 'popup',
+  'layout': 'layout'
 }
 
 export default {
