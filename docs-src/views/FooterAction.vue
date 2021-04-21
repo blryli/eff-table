@@ -211,6 +211,7 @@ export default {
         rowId: 'id',
         toolbarConfig: {
           buttons: [
+            { name: 'button', code: 'checkout_select_type', content: '切换单选', props: { icon: 'el-icon-news' }},
             { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
             { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
