@@ -24,6 +24,9 @@ export default {
         case 'mark_cancel':
           this.triggerPending()
           break
+        case 'checkout_select_type':
+          this.checkoutSelectType()
+          break
         case 'delete':
           typeof deleted === 'function' ? this.delete(deleted) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
           break
@@ -99,6 +102,16 @@ export default {
       // deleted({ body: checkeds }).then(res => {
       //   del()
       // })
+    },
+    checkoutSelectType() {
+      this.tableColumns.forEach(v => {
+        if (v.type === 'radio') {
+          v.type = 'selection'
+        } else if (v.type === 'selection') {
+          v.type = 'radio'
+        }
+      })
+      this.clearSelection()
     },
     triggerPending() {
       const { checkeds, rowId } = this

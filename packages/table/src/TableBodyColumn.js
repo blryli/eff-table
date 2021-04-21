@@ -1,4 +1,5 @@
 import VCheckbox from '../components/Checkbox'
+import VRadio from '../components/Radio'
 import { getTextWidth } from '../utils/dom'
 import { renderer } from 'core/render'
 
@@ -13,7 +14,7 @@ export default {
     fixed: { type: String, default: '' },
     disabled: Boolean
   },
-  components: { VCheckbox },
+  components: { VCheckbox, VRadio },
   inject: ['table'],
   data() {
     return {
@@ -26,7 +27,20 @@ export default {
     const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
     const { type } = column
     // row[columnIndex] summary合计列
-    const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderSelection(h) : this.cellRender(h)
+    let slot
+    if (type === 'expand') {
+      slot = this.expandRender(h)
+    } else if (row[columnIndex] !== undefined) {
+      slot = row[columnIndex]
+    } else if (type === 'selection') {
+      slot = this.renderSelection(h)
+    } else if (type === 'radio') {
+      slot = this.renderRadio(h)
+    } else {
+      slot = this.cellRender(h)
+    }
+
+    // const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderRadio(h) : this.cellRender(h)
 
     return (
       <div
@@ -88,6 +102,14 @@ export default {
         value={table.isChecked(row)}
         key={row[table.rowId]}
         on-change={selected => table.rowSelectionChange(row, selected)}
+      />
+    },
+    renderRadio(h) {
+      const { table, row } = this
+      return <v-radio
+        value={table.isChecked(row)}
+        key={row[table.rowId]}
+        on-change={selected => table.rowSelectionChange(row, selected, true)}
       />
     },
     cellRender(h) {

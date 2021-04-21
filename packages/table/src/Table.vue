@@ -107,7 +107,9 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-
+    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager">
+      <slot name="footer_action" />
+    </FooterAction>
     <!-- 拖动 -->
     <drag
       v-if="border && drag"
@@ -170,6 +172,7 @@ import TableFooter from './TableFooter'
 import Popover from 'packages/popover'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
+import FooterAction from '../components/FooterAction'
 import Edit from '../components/Edit'
 import ScrollX from '../components/ScrollX'
 import Loading from '../components/Loading'
@@ -192,7 +195,8 @@ export default {
     Loading,
     SelectRange,
     Copy,
-    ColumnEdit
+    ColumnEdit,
+    FooterAction
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -241,7 +245,8 @@ export default {
     copy: Boolean,
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
-    rowId: { type: String, default: 'id' } // 行主键
+    rowId: { type: String, default: 'id' }, // 行主键
+    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },
   data() {
     return {
@@ -268,7 +273,8 @@ export default {
         pendingList: [],
         oldColumnIndex: 0,
         columnIndex: 0
-      }
+      },
+      pager: {}
     }
   },
   computed: {
