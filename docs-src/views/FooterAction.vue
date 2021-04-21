@@ -198,7 +198,7 @@ export default {
       tableOptions: {
         footerActionConfig: {
           showPager: true,
-          showBorder: true,
+          showBorder: true
         },
         search: true,
         drag: true,
@@ -256,7 +256,7 @@ export default {
         columns: [
           {
             show: true,
-            type: 'selection',
+            type: 'radio',
             width: 40,
             fixed: 'left'
           },

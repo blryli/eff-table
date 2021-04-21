@@ -45,9 +45,12 @@ export default {
       this.selectionAll = !this.selectionAll
       this.allselectionChange(this.selectionAll)
     },
-    rowSelectionChange(row, selected) {
+    rowSelectionChange(row, selected, isRadio = false) {
       const { checkeds, tableDataMap, rowId, toggleSelection, selectionChange } = this
       const id = row[rowId]
+      if (isRadio) {
+        checkedsSet.clear()
+      }
       toggleSelection(row, !selected)
       this.$emit('select', checkeds, tableDataMap.get(id))
       selectionChange()
@@ -63,6 +66,7 @@ export default {
     toggleSelection(row, has, selected) {
       const id = row[this.rowId]
       selected ? checkedsSet.add(id) : has ? checkedsSet.delete(id) : checkedsSet.add(id)
+
       this.selectionChange()
     },
     setCurrentRow(row) {
@@ -77,6 +81,7 @@ export default {
     },
     selectionChange() {
       this.selecteds = [...checkedsSet]
+      this.$forceUpdate()
     },
     isChecked(row) {
       const { rowId } = this
