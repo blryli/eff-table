@@ -1,6 +1,6 @@
-import { getType } from 'packages/table/utils'
-import { on, off } from 'packages/table/utils/dom'
-import { renderer } from 'core/render'
+import { getType } from 'pk/utils'
+import { on, off } from 'pk/utils/dom'
+import { renderer } from 'pk/utils/render'
 import { getTableNode, isOverflow, shake } from './dom'
 
 export default {

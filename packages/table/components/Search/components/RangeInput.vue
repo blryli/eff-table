@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { on, off } from 'packages/table/utils/dom'
+import { on, off } from 'pk/utils/dom'
 import EffInput from './Input'
 
 export default {

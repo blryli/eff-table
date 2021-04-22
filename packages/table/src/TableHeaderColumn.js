@@ -1,5 +1,5 @@
 import VCheckbox from '../components/Checkbox'
-import { getTextWidth } from '../utils/dom'
+import { getTextWidth } from 'pk/utils/dom'
 
 export default {
   name: 'TableHeaderColumn',

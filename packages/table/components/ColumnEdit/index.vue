@@ -60,7 +60,7 @@
 <script>
 import card from './card'
 import Sortable from '../Drag/sortable'
-import { deepClone } from '../../utils/index'
+import { deepClone } from '../../../utils/index'
 
 export default {
   name: 'TableColumnEdit',
@@ -89,17 +89,7 @@ export default {
       return { width: this.leftList.length ? '25%' : '60px' }
     },
     centerStyle() {
-      let width = 80
-      if (this.leftStyle.width === '25%') {
-        width -= 15
-      }
-      if (this.rightStyle.width === '25%') {
-        width -= 15
-      }
-
-      width = width + '%'
       return 'auto'
-      return { width }
     },
     rightStyle() {
       return { width: this.rightList.length ? '25%' : '60px' }

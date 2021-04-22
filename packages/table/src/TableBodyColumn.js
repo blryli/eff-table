@@ -1,7 +1,7 @@
 import VCheckbox from '../components/Checkbox'
 import VRadio from '../components/Radio'
-import { getTextWidth } from '../utils/dom'
-import { renderer } from 'core/render'
+import { getTextWidth } from 'pk/utils/dom'
+import { renderer } from 'pk/utils/render'
 
 export default {
   name: 'TableBodyColumn',

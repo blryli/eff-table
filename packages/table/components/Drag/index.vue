@@ -14,7 +14,7 @@
 <script>
 import Sortable from './sortable'
 import Card from './card'
-import { addClass, removeClass, hasClass } from 'packages/table/utils/dom'
+import { addClass, removeClass, hasClass } from 'pk/utils/dom'
 
 export default {
   name: 'TableDrag',

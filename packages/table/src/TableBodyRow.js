@@ -1,5 +1,5 @@
 import TableBodyColumn from './TableBodyColumn'
-import { getCell } from '../utils/dom'
+import { getCell } from 'pk/utils/dom'
 
 export default {
   name: 'TableBodyRow',

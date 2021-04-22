@@ -3,7 +3,7 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
-        <!-- <VRender :config="{name: 'form', children: [{name: 'form-item', children: [{name: 'input'}]}, {name: 'form-item', children: [{name: 'date-picker'}]}]}" />
+        <!-- <VRender :config="{name: 'form', children: [{name: 'form-item', children: [{name: 'input'}]}, {name: 'form-item', children: function(h) {return h('div', {}, 111)}}]}" />
         <VRender :config="{name: 'form'}">
           <VRender :config="{name: 'form-item'}">
             <VRender :config="{name: 'input'}" />
@@ -292,7 +292,7 @@ export default {
             prop: 'popup',
             title: '气泡',
             width: 100,
-            config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
+            config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', props: { autofocus: true }}] },
             edit: true
           },
           {

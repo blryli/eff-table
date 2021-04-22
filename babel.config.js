@@ -14,7 +14,7 @@ module.exports = {
         'root': ['./'],
         alias: {
           'core': './core/',
-          'packages': './packages/'
+          'pk': './packages/'
         }
       }
     ]

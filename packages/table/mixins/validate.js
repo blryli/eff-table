@@ -1,4 +1,5 @@
-import { getType } from 'packages/table/utils'
+import { getType } from 'pk/utils'
+
 export default {
   data() {
     return {
