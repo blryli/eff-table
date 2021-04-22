@@ -11,7 +11,11 @@ module.exports = {
     [
       'module-resolver',
       {
-        'root': ['src/']
+        'root': ['./'],
+        alias: {
+          'core': './core/',
+          'packages': './packages/'
+        }
       }
     ]
   ]

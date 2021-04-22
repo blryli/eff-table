@@ -3,13 +3,6 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
-        <!-- <VRender :config="{name: 'form', children: [{name: 'form-item', children: [{name: 'input'}]}, {name: 'form-item', children: [{name: 'date-picker'}]}]}" />
-        <VRender :config="{name: 'form'}">
-          <VRender :config="{name: 'form-item'}">
-            <VRender :config="{name: 'input'}" />
-            <VRender :config="{name: 'date-picker'}" />
-          </VRender>
-        </VRender> -->
         <eff-table
           ref="table"
           v-bind="tableOptions"
@@ -192,7 +185,7 @@ const componentSnippet = `
 />
 `
 export default {
-  name: 'Render',
+  name: 'FooterAction',
   components: {
     CodeSnippet,
     Collapse
@@ -203,6 +196,10 @@ export default {
       mainSnippet,
       componentSnippet,
       tableOptions: {
+        footerActionConfig: {
+          showPager: true,
+          showBorder: true
+        },
         search: true,
         drag: true,
         edit: true,
@@ -214,11 +211,11 @@ export default {
         rowId: 'id',
         toolbarConfig: {
           buttons: [
-            { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
+            { name: 'button', code: 'checkout_select_type', content: '切换单选', props: { icon: 'el-icon-news' }},
+            { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'save', content: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
           ]
         },
         proxyConfig: {
@@ -227,24 +224,29 @@ export default {
               const params = { ...form }
               return axios.get('url', params).catch(res => {
                 return {
-                  data: mock.mock({
-                    'array|5': [
-                      {
-                        'id|+1': 100,
-                        'input|+1': 1,
-                        'textarea': '@name',
-                        'select': '1',
-                        'date': '',
-                        'tag': [],
-                        'switch': null,
-                        'checkboxgroup': [],
-                        'checkbox': false,
-                        'popup': '@title',
-                        'link': '@ctitle',
-                        'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                      }
-                    ]
-                  }).array
+                  data: {
+                    list: mock.mock({
+                      'array|5': [
+                        {
+                          'id|+1': 100,
+                          'input|+1': 1,
+                          'textarea': '@name',
+                          'select': '1',
+                          'date': '',
+                          'switch': null,
+                          'checkboxgroup': [],
+                          'checkbox': false,
+                          'popup': '@title',
+                          'link': '@ctitle',
+                          'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+                        }
+                      ]
+                    }).array,
+                    pageNum: 1,
+                    pageSize: 10,
+                    total: 100
+                  }
+
                 }
               })
             },
@@ -255,7 +257,7 @@ export default {
         columns: [
           {
             show: true,
-            type: 'selection',
+            type: 'radio',
             width: 40,
             fixed: 'left'
           },
@@ -334,21 +336,9 @@ export default {
             title: '文字链接',
             width: 100,
             search: true,
-            cellRender: { name: 'link', props: { url: '' }, cell: 'url' },
+            cellRender: { name: 'link', props: { url: '' }},
             edit: {
               render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
-            }
-          },
-          {
-            show: true,
-            prop: 'tag',
-            title: '标签',
-            width: 100,
-            search: true,
-            cellRender: { name: 'tag' },
-            config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
-            edit: {
-              render: { name: 'select', props: { multiple: true }}
             }
           },
           {
@@ -360,7 +350,6 @@ export default {
           },
           {
             show: true,
-            prop: 'checkboxgroup',
             title: '多选框组',
             width: 160,
             config: { name: 'checkbox-group', children: [
@@ -370,16 +359,15 @@ export default {
           },
           {
             show: true,
-            prop: 'checkbox',
             title: '多选框',
             width: 100,
-            config: { name: 'checkbox', children: '选项' }
+            config: { name: 'checkbox', content: '选项' }
           },
           {
             show: true,
             title: '按钮',
             width: 100,
-            config: { name: 'button', children: '操作' }
+            config: { name: 'button', content: '操作' }
           }
         ]
       }

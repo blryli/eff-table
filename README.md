@@ -107,7 +107,7 @@ export default {
 | summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
 | selectRange       | 是否开启选择区域功能    | Boolean |       |       |
 | copy       | 是否开启复制功能    | Boolean |       |       |
-
+| footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 ```js
 value: [
   {
@@ -217,6 +217,8 @@ value: [
 |table-mouse-up|鼠标在表格松开触发|{event}|
 |table-mouse-enter|鼠标滑进表格|{event}|
 |table-mouse-leave|鼠标离开表格|{event}|
+|page-current-change|分页当前页发生改变|{pageNum}|
+|page-size-change|分页每页大小发生改变|{pageSize}|
 
 ### Slot
 
