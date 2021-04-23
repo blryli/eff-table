@@ -261,6 +261,7 @@ export default {
       tableBodyEl: null,
       rowHoverIndex: null,
       expands: [],
+      columnGroupIds: [],
       expand: null,
       editIsStop: false,
       isLoading: false,
@@ -1003,6 +1004,44 @@ export default {
   }
   &.is--expanded{
     transform: rotate(90deg);
+  }
+}
+
+.icon-loading{
+  display: flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  animation: rotating 2s linear infinite;
+  div {
+    width: 2px;
+    height: 10px;
+    position: absolute;
+    span {
+      display: block;
+      background-color: #afb2b7;
+      height: 3px;
+      width: 2px;
+    }
+  }
+  :nth-child(1) {transform: rotate(0deg)}
+  :nth-child(2) {transform: rotate(45deg)}
+  :nth-child(3) {transform: rotate(90deg)}
+  :nth-child(4) {transform: rotate(135deg)}
+  :nth-child(5) {transform: rotate(180deg)}
+  :nth-child(6) {transform: rotate(225deg)}
+  :nth-child(7) {transform: rotate(270deg)}
+  :nth-child(8) {transform: rotate(315deg)}
+}
+
+@keyframes rotating {
+  0% {
+    transform: rotate( 0deg );
+  }
+
+  100% {
+      transform: rotate( 1turn );
   }
 }
 
