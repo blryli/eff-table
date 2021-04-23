@@ -99,7 +99,74 @@ const mainSnippet = `
         }
       ]
     }
-  },  
+  },
+  mounted() {
+    this.loading = true
+    setTimeout(() => {
+      this.data = mock.mock({
+        'array|500': [
+          {
+            'city': '@city',
+            'cfirst': '@cfirst',
+            'clast': '@clast',
+            'email': '@email',
+            'datetime': '@datetime',
+            'phone': '13888888888',
+            'index|+1': 1,
+            'id|+1': 1
+          }
+        ]
+      }).array
+      this.loading = false
+
+      this.data[0].children = mock.mock({
+        'array|5': [
+          {
+            'city': '@city',
+            'cfirst': '@cfirst',
+            'clast': '@clast',
+            'email': '@email',
+            'datetime': '@datetime',
+            'phone': '13888888888',
+            'index|+1': 501,
+            'id|+1': 501
+          }
+        ]
+      }).array
+
+      this.data[1].children = mock.mock({
+        'array|5': [
+          {
+            'city': '@city',
+            'cfirst': '@cfirst',
+            'clast': '@clast',
+            'email': '@email',
+            'datetime': '@datetime',
+            'phone': '13888888888',
+            'index|+1': 1601,
+            'id|+1': 1601
+          }
+        ]
+      }).array
+
+      this.data[1].children[0].children = mock.mock({
+        'array|5': [
+          {
+            'city': '@city',
+            'cfirst': '@cfirst',
+            'clast': '@clast',
+            'email': '@email',
+            'datetime': '@datetime',
+            'phone': '13888888888',
+            'index|+1': 1630,
+            'id|+1': 1630
+          }
+        ]
+      }).array
+
+      this.data[2].hasChildren = true
+    }, 1000)
+  },
   methods: {
     loadChildren(tree, resolve) {
       setTimeout(() => {
