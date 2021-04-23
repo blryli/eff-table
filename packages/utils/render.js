@@ -3,8 +3,6 @@ import isArray from 'xe-utils/isArray'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
-const status = { rowIndex: 0 }
-
 // 合并事件，如果有相同的方法，内部方法先于外部方法执行
 export function getOn(on, events) {
   if (typeof on !== 'object') return events
@@ -200,36 +198,26 @@ function renderPopupEdit(h, renderOpts, params) {
 // 弹窗 dialog
 function renderDialog(h, renderOpts, params) {
   const { children, on: { save } = {}} = renderOpts
-  const { table, rowIndex, column, columnIndex } = params
+  const { table, column, edit } = params
   const props = {
+    visible: edit.dialogVisible,
     modal: false,
     title: column.title
   }
-  function opened() {
-    if (!renderOpts.props) renderOpts.props = {}
-    renderOpts.props.visible = true
-    table.setEditIsStop(true)
-  }
+
+  if (edit.dialogVisible) table.setEditIsStop(true)
   function submit() {
     save && save()
     closed()
   }
   function closed() {
-    renderOpts.props.visible = false
+    edit.dialogVisible = false
     table.setEditIsStop(false)
   }
 
   const on = getOn(renderOpts.on, {
     close: closed
   })
-
-  // 激活弹窗
-  // console.log(rowIndex, status.rowIndex, columnIndex, status.columnIndex)
-  if (rowIndex !== status.rowIndex || columnIndex !== table.editStore.oldColumnIndex) {
-    opened()
-    status.rowIndex = rowIndex
-    table.editStore.oldColumnIndex = columnIndex
-  }
 
   // 渲染内容及footer
   const renderChildren = [
@@ -239,9 +227,8 @@ function renderDialog(h, renderOpts, params) {
       render(h, { name: 'button', key: 'submit', props: { type: 'primary' }, children: '确 定', on: { click: submit }}, params).render()
     ])
   ]
-  const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: renderOpts.props.visible ? 'block' : 'none' }})
+  const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: edit.dialogVisible ? 'block' : 'none' }})
   const { data, prop } = params
-  console.log(props, renderOpts)
 
   return [
     h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}),
@@ -293,7 +280,6 @@ function renderCheckboxGroup(h, renderOpts, params) {
   }
   const on = getOn(renderOpts.on, {
     input: val => {
-      console.log(val)
       data[prop] = val
     }
   })
