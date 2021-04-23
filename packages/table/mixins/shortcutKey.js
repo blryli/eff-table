@@ -1,5 +1,5 @@
-import { on, off } from 'packages/table/utils/dom'
-import { getKeysStr } from 'packages/table/utils'
+import { on, off } from 'pk/utils/dom'
+import { getKeysStr } from 'pk/utils'
 export default {
   data() {
     return {

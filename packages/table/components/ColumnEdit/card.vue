@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { onMousemove, hasClass } from 'packages/table/utils/dom'
+import { onMousemove, hasClass } from 'pk/utils/dom'
 
 export default {
   name: 'ColumnCard',
@@ -289,8 +289,7 @@ export default {
       margin-bottom: 5px;
       box-sizing: border-box;
     }
-    > * + * {
-    }
+
     &.inline {
       & > * {
         display: inline-block;

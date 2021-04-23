@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { onMousemove, hasClass } from 'packages/table/utils/dom'
+import { onMousemove, hasClass } from 'pk/utils/dom'
 
 export default {
   name: 'DragCard',

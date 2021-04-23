@@ -140,7 +140,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -272,7 +272,8 @@ export default {
         updateList: [],
         pendingList: [],
         oldColumnIndex: 0,
-        columnIndex: 0
+        columnIndex: 0,
+        dialogVisible: false
       },
       pager: {}
     }

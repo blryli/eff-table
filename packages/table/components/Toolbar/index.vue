@@ -3,7 +3,7 @@ import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
 import ColumnEditBtn from './ColumnEditBtn'
 import Clear from './Clear'
-import { renderer, getOn } from 'core/render'
+import { renderer, getOn } from 'pk/utils/render'
 
 export default {
   name: 'Toolbar',

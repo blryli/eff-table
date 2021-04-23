@@ -1,4 +1,4 @@
-import { renderer } from 'core/render'
+import { renderer } from 'pk/utils/render'
 
 export default {
   name: 'Paginator',
