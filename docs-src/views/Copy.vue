@@ -181,6 +181,7 @@ const componentSnippet = `
   search
   fullscreen
   border
+  copy
   @search-change="searchChange"
 />
 `

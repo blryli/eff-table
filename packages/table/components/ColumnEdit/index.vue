@@ -114,32 +114,8 @@ export default {
     }
 
     this.$nextTick(() => {
-      const { drag, rowDrag, $el } = this.table
-      const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
+      const { handleDragend, handleDragenter, handleEnd, columnControl, $el: cardEl } = this
       const id = Math.floor(Math.random() * 100000)
-      if (drag) {
-        this.columnSortable = new Sortable({
-          el: $el.querySelector('.eff-table__header'),
-          group: id,
-          filter: 'is-drag--filter',
-          dragImage: {
-            height: 30
-          },
-          dragend: handleDragend,
-          dragenter: handleDragenter,
-          onEnd: handleEnd
-        })
-        if (rowDrag) {
-          this.rowSortable = new Sortable({
-            el: $el.querySelector('.eff-table__body'),
-            filter: 'is-drag--filter',
-            dragImage: {
-              height: 30
-            },
-            onEnd: handleRowEnd
-          })
-        }
-      }
       if (columnControl) {
         const calback = (className) => {
           setTimeout(() => {

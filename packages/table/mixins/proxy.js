@@ -7,7 +7,7 @@ export default {
     // 提交指令
     commitProxy(code) {
       const { request } = this.proxyConfig || {}
-      const { query, delete: deleted, save } = request || {}
+      const { query, delete: deleted, save, loadChildren } = request || {}
       switch (code) {
         case 'add':
           this.add()
@@ -35,6 +35,9 @@ export default {
           break
         case 'save':
           typeof save === 'function' ? this.save(save) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          break
+        case 'loadChildren':
+          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
           break
         default:
           break
