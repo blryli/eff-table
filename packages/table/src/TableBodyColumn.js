@@ -2,6 +2,11 @@ import VCheckbox from '../components/Checkbox'
 import VRadio from '../components/Radio'
 import { getTextWidth } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
+import isEqual from 'xe-utils/isEqual'
+import eqNull from 'xe-utils/eqNull'
+import isString from 'xe-utils/isString'
+import isNumber from 'xe-utils/isNumber'
+import get from 'xe-utils/get'
 
 export default {
   name: 'TableBodyColumn',
@@ -68,7 +73,7 @@ export default {
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
       const sourceRow = updateList.find(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && sourceRow[prop] !== row[prop]) {
+      if (prop && sourceRow && !this.eqCellValue(sourceRow, row, prop)) {
         classes += ' is--dirty'
       }
       if (className) {
@@ -174,7 +179,24 @@ export default {
     handleMousemove(event) {
       const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
+    },
+    /**
+ * 单元格的值为：'' | null | undefined 时都属于空值
+ */
+    eqCellNull(cellValue) {
+      return cellValue === '' || eqNull(cellValue)
+    },
+    eqCellValue(row1, row2, field) {
+      const val1 = get(row1, field)
+      const val2 = get(row2, field)
+      if (this.eqCellNull(val1) && this.eqCellNull(val2)) {
+        return true
+      }
+      if (isString(val1) || isNumber(val1)) {
+        /* eslint-disable eqeqeq */
+        return val1 == val2
+      }
+      return isEqual(val1, val2)
     }
-
   }
 }

@@ -236,7 +236,7 @@ export default {
                         'select': '1',
                         'date': '',
                         'tag': [],
-                        'switch': null,
+                        'switch': '0',
                         'checkboxgroup': [],
                         'checkbox': false,
                         'popup': '@title',
@@ -287,14 +287,16 @@ export default {
               return !value && '不能为空'
             } }
           },
-          {
-            show: true,
-            prop: 'popup',
-            title: '气泡',
-            width: 100,
-            config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', props: { autofocus: true }}] },
-            edit: true
-          },
+          // {
+          //   show: true,
+          //   prop: 'popup',
+          //   title: '气泡',
+          //   width: 100,
+          //   config: { name: 'popup', props: { content: '飘起来' }, children: ['输入框', { name: 'input' }, function(h) {
+          //     return <el-input />
+          //   }] },
+          //   edit: true
+          // },
           {
             show: true,
             prop: 'select',
@@ -328,17 +330,17 @@ export default {
             },
             edit: true
           },
-          {
-            show: true,
-            prop: 'link',
-            title: '文字链接',
-            width: 100,
-            search: true,
-            cellRender: { name: 'link', props: { url: '' }, cell: 'url' },
-            edit: {
-              render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
-            }
-          },
+          // {
+          //   show: true,
+          //   prop: 'link',
+          //   title: '文字链接',
+          //   width: 100,
+          //   search: true,
+          //   cellRender: { name: 'link', props: { url: '' }},
+          //   edit: {
+          //     render: { name: 'dialog', defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
+          //   }
+          // },
           {
             show: true,
             prop: 'tag',

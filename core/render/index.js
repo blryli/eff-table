@@ -3,7 +3,7 @@ import map from './map'
 import isObject from 'xe-utils/isObject'
 import isArray from 'xe-utils/isArray'
 
-function getChildren(h, children, params, key) {
+export function getChildren(h, children, params, key) {
   if (children) {
     if (typeof children === 'function') {
       const fn = children(h, params)
@@ -41,22 +41,30 @@ class Render {
 
   // 合并属性 外部传入属性 > 默认属性
 
-  merge(key, value) {
-    this.opts[key] = Object.assign({}, value, this.opts[key])
+  mergeOpts(opts) {
+    for (const key in opts) {
+      const opt = opts[key]
+      this.opts[key] = Object.assign({}, opt, this.opts[key])
+    }
     return this
   }
 
-  // 设置属性
+  // 设置opts属性
   setOpts(key, value) {
     this.opts[key] = value
+    return this
+  }
+  // 设置opts属性
+  set(key, value) {
+    this[key] = value
     return this
   }
 
   render() {
     const { h, opts, children } = this
-    const { name, defaultSlot } = opts
+    const { name, tag, defaultSlot } = opts
 
-    return h(map.get(name), opts, [children, defaultSlot])
+    return h(tag || map.get(name), opts, [children, defaultSlot])
   }
 }
 

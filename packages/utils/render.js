@@ -1,7 +1,7 @@
 import toDateString from 'xe-utils/toDateString'
-import isObject from 'xe-utils/isObject'
 import isArray from 'xe-utils/isArray'
-import { render } from 'core/render'
+import { render, getChildren } from 'core/render'
+import map from 'core/render/map'
 
 const status = { rowIndex: 0 }
 
@@ -20,29 +20,19 @@ export function getOn(on, events) {
   return ons
 }
 
+function getOptions(options, params) {
+  return typeof options === 'function' ? options(params) : options
+}
+
 // 默认 render
 function renderDefault(h, renderOpts, params) {
-  const { name, props, cellPath } = renderOpts || {}
+  return render(h, renderOpts, params).render()
+}
+
+// 默认 render
+function renderCell(h, renderOpts, params) {
   const { row, prop } = params || {}
-  let cellLabel = row && prop && row[prop] || ''
-  const renderFn = () => render(h, renderOpts, params).render()
-  if (isObject(cellLabel)) {
-    cellLabel = cellLabel[cellPath]
-  }
-  if (isArray(cellLabel)) {
-    cellLabel.map(() => renderFn())
-  }
-  if (['input', 'textarea'].includes(name)) {
-    return cellLabel
-  } else if (name === 'date-picker') {
-    return toDateString(cellLabel, 'yyyy-MM-dd')
-  } else if (name === 'select') {
-    const { labelName, options = [] } = renderOpts || []
-    const { labelKey = 'label', valueKey = 'value' } = props || {}
-    const opt = options.find(d => d[valueKey] === cellLabel) || {}
-    return labelName ? row[labelName] : labelKey ? opt[labelKey] : cellLabel
-  }
-  return renderFn()
+  return row && prop && row[prop] || ''
 }
 
 // 双向绑定组件 v-model
@@ -61,7 +51,7 @@ function renderVModel(h, renderOpts, params) {
     }
   })
 
-  return render(h, renderOpts, params).merge('props', props).setOpts('on', on).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
 }
 
 // 文本域 textarea
@@ -76,10 +66,18 @@ function renderTextareaEdit(h, renderOpts, params) {
       data[prop] = val
     }
   })
-  return render(h, renderOpts, params).setOpts('name', 'input').merge('props', props).setOpts('on', on).render()
+  return render(h, renderOpts, params).setOpts('name', 'input').mergeOpts({ props, on }).render()
 }
 
 // 选择器 select
+function renderselectCell(h, renderOpts, params) {
+  const { props, options = [] } = renderOpts || {}
+  const { row, prop } = params || {}
+  const cellLabel = row && prop && row[prop] || ''
+  const { labelKey = 'label', valueKey = 'value' } = props || {}
+  const opt = getOptions(options, params).find(d => d[valueKey] === cellLabel) || {}
+  return labelKey ? opt[labelKey] : cellLabel
+}
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
   const { table, data, prop, searchChange } = params
@@ -113,9 +111,8 @@ function renderSelect(h, renderOpts, params, renderType) {
 
   // 渲染options
   const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
-  const optionsRender = options.map(item => h(table.$EFF.uiPrefix + 'option', { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
-
-  return render(h, renderOpts, params).merge('props', props).merge('on', ons).setOpts('children', optionsRender).render()
+  const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+  return render(h, renderOpts, params).mergeOpts({ props, on: ons }).set('children', optionsRender).render()
 }
 function renderSelectSearch(h, renderOpts, params) {
   return renderSelect(h, renderOpts, params, 'search')
@@ -125,6 +122,12 @@ function renderSelectEdit(h, renderOpts, params) {
 }
 
 // 日期 datepick
+function renderdateCell(h, renderOpts, params) {
+  const { format } = renderOpts || {}
+  const { row, prop } = params || {}
+  const cellLabel = row && prop && row[prop] || ''
+  return toDateString(cellLabel, format)
+}
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { table, data, prop, searchChange } = params
   const props = {
@@ -152,7 +155,7 @@ function renderDatepicker(h, renderOpts, params, renderType) {
 
   const ons = getOn(renderOpts.on, on)
 
-  return render(h, renderOpts, params).merge('props', props).merge('on', ons).render()
+  return render(h, renderOpts, params).mergeOpts({ props, on: ons }).render()
 }
 function renderDatepickerEdit(h, renderOpts, params) {
   return renderDatepicker(h, renderOpts, params, 'edit')
@@ -163,10 +166,11 @@ function renderDatepickerSearchRange(h, renderOpts, params) {
 
 // 链接 link
 function renderLink(h, renderOpts, params) {
+  const { data, prop } = params
   const props = {
     type: 'primary'
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).set('children', data[prop]).render()
 }
 
 // 图片 image
@@ -175,7 +179,7 @@ function renderImage(h, renderOpts, params) {
   const props = {
     src: data[prop]
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
 
 // 气泡 popover
@@ -183,14 +187,14 @@ function renderPopup(h, renderOpts, params) {
   const props = {
     palcement: 'top'
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
 function renderPopupEdit(h, renderOpts, params) {
   const props = {
     addToBody: false,
     palcement: 'bottom'
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
 
 // 弹窗 dialog
@@ -229,7 +233,7 @@ function renderDialog(h, renderOpts, params) {
 
   // 渲染内容及footer
   const renderChildren = [
-    children.map((opts, idx) => render(h, opts, params, idx).render()),
+    getChildren(h, children, params),
     h('span', { slot: 'footer' }, [
       render(h, { name: 'button', key: 'cancel', children: '取 消', on: { click: closed }}, params).render(),
       render(h, { name: 'button', key: 'submit', props: { type: 'primary' }, children: '确 定', on: { click: submit }}, params).render()
@@ -237,8 +241,13 @@ function renderDialog(h, renderOpts, params) {
   ]
   const modal = h('div', { attrs: { class: 'eff-modal' }, style: { display: renderOpts.props.visible ? 'block' : 'none' }})
   const { data, prop } = params
+  console.log(props, renderOpts)
 
-  return [h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}), render(h, renderOpts, params).merge('props', props).setOpts('on', on).setOpts('children', renderChildren).render(), modal]
+  return [
+    h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}),
+    render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render(),
+    modal
+  ]
 }
 
 // 表单 form
@@ -246,7 +255,7 @@ function renderForm(h, renderOpts, params) {
   const props = {
 
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
 
 // 开关 switch
@@ -263,7 +272,7 @@ function renderSwitch(h, renderOpts, params) {
       data[prop] = val
     }
   })
-  return render(h, renderOpts, params).merge('props', props).setOpts('on', on).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
 }
 
 function renderSwitchEdit(h, renderOpts, params) {
@@ -293,15 +302,18 @@ function renderCheckboxGroup(h, renderOpts, params) {
     const childrenOpts = Object.assign({}, { children: label }, opts)
     return render(h, childrenOpts, params).render()
   })
-  return render(h, renderOpts, params).merge('props', props).setOpts('on', on).setOpts('children', renderChildren).render()
+  return render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render()
 }
 
 // 标签 tag
 function renderTag(h, renderOpts, params) {
-  const props = {
-    trigger: 'hover'
-  }
-  return render(h, renderOpts, params).merge('props', props).render()
+  const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
+  const { data, prop } = params || {}
+  const value = data[prop]
+  return (isArray(value) ? value : [value]).map(d => {
+    const label = getOptions(options, params).find(o => o[valueKey] === d)[labelKey]
+    return render(h, renderOpts, params).set('children', label).render()
+  })
 }
 
 // 文本 text
@@ -309,7 +321,7 @@ function renderText(h, renderOpts, params) {
   const props = {
     trigger: 'hover'
   }
-  return render(h, renderOpts, params).merge('props', props).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
 
 const renderMap = {
@@ -317,22 +329,22 @@ const renderMap = {
     renderDefault: renderDefault
   },
   input: {
-    renderDefault: renderDefault,
+    renderDefault: renderCell,
     renderEdit: renderVModel,
     renderSearch: renderVModel
   },
   textarea: {
-    renderDefault: renderDefault,
+    renderDefault: renderCell,
     renderEdit: renderTextareaEdit,
     renderSearch: renderVModel
   },
   select: {
-    renderDefault: renderDefault,
+    renderDefault: renderselectCell,
     renderEdit: renderSelectEdit,
     renderSearch: renderSelectSearch
   },
   'date-picker': {
-    renderDefault: renderDefault,
+    renderDefault: renderdateCell,
     renderEdit: renderDatepickerEdit,
     renderSearch: renderDatepicker,
     renderSearchRange: renderDatepickerSearchRange
@@ -343,7 +355,7 @@ const renderMap = {
   },
   tag: {
     renderDefault: renderTag,
-    renderEdit: renderDefault
+    renderEdit: renderSelectEdit
   },
   button: {
     renderDefault: renderDefault
