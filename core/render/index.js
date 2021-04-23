@@ -6,11 +6,10 @@ const status = { rowIndex: 0 }
  * 基础渲染函数
  */
 class Render {
-  constructor(h, renderOpts = {}, params = {}, key) {
+  constructor(h, renderOpts = {}, params = {}) {
     this.h = h
     this.params = params
-    const { rowIndex = 0, columnIndex = 0 } = params
-    this.opts = Object.assign({ key: `${rowIndex}-${columnIndex}-${renderOpts.name}${key ? '-' + key : ''}` }, renderOpts)
+    this.opts = renderOpts
   }
 
   // 合并属性 外部传入属性 > 默认属性
@@ -28,12 +27,14 @@ class Render {
 
   render() {
     const { h, opts } = this
-    const { data = {}, prop } = this.params
-    const { tag, name } = opts
-    const cTag = tag || this.params.table.$EFF.uiPrefix + name
+    const { name, children, defaultSlot } = opts
 
-    return h(cTag, opts, opts.children || data[prop] || '')
+    return h(name, opts, [children, defaultSlot])
   }
+}
+
+export function render(h, renderOpts, params) {
+  return new Render(h, renderOpts, params)
 }
 
 // 合并事件，如果有相同的方法，内部方法先于外部方法执行
@@ -51,36 +52,19 @@ export function getOn(on, events) {
   return ons
 }
 
-export function getChildren(h, children, params) {
-  if (children && Array.isArray(children)) {
-    return children.map((child, idx) => {
-      if (isObject(child)) {
-        const { children } = child
-        const childrenRender = getChildren(h, children, params)
-        return new Render(h, child, params, idx).setOpts('children', childrenRender).render()
-      }
-      return child
-    })
-  }
-  return children
-}
-
 // 默认 render
 function renderDefault(h, renderOpts, params) {
-  const { tag, name, props, cellPath, children } = renderOpts || {}
+  const { name, props, cellPath } = renderOpts || {}
   const { row, prop } = params || {}
   let cellLabel = row && prop && row[prop] || ''
-  const childrenRender = getChildren(h, children, params)
-  const render = () => new Render(h, renderOpts, params).setOpts('children', childrenRender).render()
+  const render = () => new Render(h, renderOpts, params).render()
   if (isObject(cellLabel)) {
     cellLabel = cellLabel[cellPath]
   }
   if (isArray(cellLabel)) {
     cellLabel.map(() => render())
   }
-  if (tag) {
-    return render()
-  } else if (['input', 'textarea'].includes(name)) {
+  if (['input', 'textarea'].includes(name)) {
     return cellLabel
   } else if (name === 'date-picker') {
     return toDateString(cellLabel, 'yyyy-MM-dd')
@@ -349,16 +333,28 @@ function renderCheckboxGroup(h, renderOpts, params) {
   }
   const on = getOn(renderOpts.on, {
     input: val => {
+      console.log(val)
       data[prop] = val
     }
   })
   const render = new Render(h, renderOpts, params)
   const renderChildren = children.map((opts, idx) => {
     const { label } = opts.props || {}
-    const childrenOpts = Object.assign({}, { children: label }, opts)
-    return new Render(h, childrenOpts, params, idx).render()
+    const childrenOpts = Object.assign({}, { children: label, key: idx }, opts)
+    return new Render(h, childrenOpts, params).render()
   })
   return render.merge('props', props).setOpts('on', on).setOpts('children', renderChildren).render()
+}
+
+// 标签 tag
+function renderTag(h, renderOpts, params) {
+  const { children = [] } = renderOpts
+  const props = {
+    trigger: 'hover'
+  }
+  const render = new Render(h, renderOpts, params)
+  const renderChildren = children.map((opts, idx) => new Render(h, opts, params, idx).render())
+  return render.merge('props', props).setOpts('children', renderChildren).render()
 }
 
 // 文本 text
@@ -402,7 +398,7 @@ const renderMap = {
     renderEdit: renderDefault
   },
   tag: {
-    renderDefault: renderDefault,
+    renderDefault: renderTag,
     renderEdit: renderDefault
   },
   button: {

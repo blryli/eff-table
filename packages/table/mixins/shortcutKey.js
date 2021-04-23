@@ -19,10 +19,12 @@ export default {
   },
   methods: {
     closeEdit() {
-      this.$refs.edit.close()
+      const { edit } = this.$refs
+      edit && edit.close()
     },
     closeSelectRange() {
-      this.$refs.selectRange.close()
+      const { selectRange } = this.$refs
+      selectRange && selectRange.close()
     },
     rootMouseenter(event) {
       this.$emit('table-mouse-enter', { event })

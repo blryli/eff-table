@@ -1,11 +1,14 @@
 import Table from './table/src/Table.vue'
 import Popup from './popover/src/popup'
-
-const components = [Table, Popup]
+import Layout from './layout/src/layout'
+import VRender from 'core/render/render'
+const components = [Table, Popup,Layout, VRender]
 
 export {
   Table,
-  Popup
+  Popup,
+  Layout,
+  VRender
 }
 
 const install = function(Vue, opts = {}) {

@@ -3,6 +3,13 @@
     <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
+        <!-- <VRender :config="{name: 'form', children: [{name: 'form-item', children: [{name: 'input'}]}, {name: 'form-item', children: [{name: 'date-picker'}]}]}" />
+        <VRender :config="{name: 'form'}">
+          <VRender :config="{name: 'form-item'}">
+            <VRender :config="{name: 'input'}" />
+            <VRender :config="{name: 'date-picker'}" />
+          </VRender>
+        </VRender> -->
         <eff-table
           ref="table"
           v-bind="tableOptions"
@@ -327,7 +334,7 @@ export default {
             title: '文字链接',
             width: 100,
             search: true,
-            cellRender: { name: 'link', props: { url: '' }, cellKey: 'url' },
+            cellRender: { name: 'link', props: { url: '' }, cell: 'url' },
             edit: {
               render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
             }
@@ -338,9 +345,10 @@ export default {
             title: '标签',
             width: 100,
             search: true,
-            cellRender: { name: 'tag', children: '11' },
+            cellRender: { name: 'tag' },
+            config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
             edit: {
-              render: { name: 'select', props: { multiple: true }, options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] }
+              render: { name: 'select', props: { multiple: true }}
             }
           },
           {
@@ -352,6 +360,7 @@ export default {
           },
           {
             show: true,
+            prop: 'checkboxgroup',
             title: '多选框组',
             width: 160,
             config: { name: 'checkbox-group', children: [
@@ -361,6 +370,7 @@ export default {
           },
           {
             show: true,
+            prop: 'checkbox',
             title: '多选框',
             width: 100,
             config: { name: 'checkbox', children: '选项' }

@@ -41,6 +41,6 @@ export default {
     })
   ],
   watch: {
-    include: 'packages/**'
+    include: ['packages/**', 'core/**']
   }
 }
