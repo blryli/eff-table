@@ -10,7 +10,6 @@
           search
           fullscreen
           border
-          select-range
           copy
           @search-change="searchChange"
         />
