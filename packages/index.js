@@ -1,12 +1,13 @@
 import Table from './table/src/Table.vue'
 import Popup from './popover/src/popup'
+import Layout from './layout/src/layout'
 import VRender from 'core/render/render'
-
-const components = [Table, Popup, VRender]
+const components = [Table, Popup,Layout, VRender]
 
 export {
   Table,
   Popup,
+  Layout,
   VRender
 }
 
