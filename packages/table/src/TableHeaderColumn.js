@@ -1,4 +1,4 @@
-import VCheckbox from '../components/Checkbox'
+import VCheckbox from 'pk/checkbox'
 import { getTextWidth } from 'pk/utils/dom'
 
 export default {

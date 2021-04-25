@@ -59,8 +59,8 @@
 
 <script>
 import card from './card'
-import Sortable from '../Drag/sortable'
-import { deepClone } from '../../../utils/index'
+import Sortable from 'pk/utils/sortable'
+import { deepClone } from 'pk/utils/index'
 
 export default {
   name: 'TableColumnEdit',

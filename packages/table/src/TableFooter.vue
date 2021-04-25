@@ -66,22 +66,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-
-.eff-table__footer{
-  position: relative;
-  border-top: 1px solid #ddd;
-  overflow-x: hidden;
-  background-color: #f6f7f8;
-  box-sizing: border-box;
-  .eff-table__body-row{
-    .eff-table__column{
-      background-color: #f6f7f8;
-    }
-    &:hover .eff-table__column{
-      background-color: #f6f7f8;
-    }
-  }
-}
-</style>

@@ -297,7 +297,7 @@ function renderTag(h, renderOpts, params) {
   const { data, prop } = params || {}
   const value = data[prop]
   return (isArray(value) ? value : [value]).map(d => {
-    const label = getOptions(options, params).find(o => o[valueKey] === d)[labelKey]
+    const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
     return render(h, renderOpts, params).set('children', label).render()
   })
 }

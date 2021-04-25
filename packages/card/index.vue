@@ -2,18 +2,18 @@
   <div
     v-show="show"
     ref="card"
-    class="eff-drag-card"
+    class="eff-card"
     shadow="hover"
     :style="style"
     @mousedown="handleMousedown"
     @mousemove="handleMousemove"
     @mouseleave="handleMouseleave"
   >
-    <div class="eff-drag-card__header">
-      <span class="eff-drag-card__header-title">{{ title }}</span>
-      <i class="eff-drag-card__header-close" type="text" @click="$emit('close')" />
+    <div class="eff-card__header">
+      <span class="eff-card__header-title">{{ title }}</span>
+      <i class="eff-card__header-close" type="text" @click="$emit('close')" />
     </div>
-    <div ref="body" class="eff-drag-card__body" :class="{inline: inline}">
+    <div ref="body" class="eff-card__body" :class="{inline: inline}">
       <slot />
     </div>
   </div>
@@ -105,7 +105,7 @@ export default {
       const { target, x, y } = e
 
       // header 操作
-      const headers = ['eff-drag-card__header', 'eff-drag-card__header-title']
+      const headers = ['eff-card__header', 'eff-card__header-title']
       if (headers.find(d => hasClass(target, d))) {
         const { left, top, right } = this.$el.getBoundingClientRect()
         if (y < top + 8) {
@@ -120,7 +120,7 @@ export default {
         } else {
           this.cursor = 'move' // 头部拖动
         }
-      } else if (hasClass(target, 'eff-drag-card__body')) {
+      } else if (hasClass(target, 'eff-card__body')) {
         // body 操作
         const { left, bottom, right } = this.$refs.body.getBoundingClientRect()
         if (y > bottom - 8) {
@@ -199,93 +199,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.eff-drag-card {
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  z-index: 2000;
-  border: 1px solid #ddd;
-  background-color: #fff;
-  box-sizing: border-box;
-  transition: box-shadow .3s;
-  &:hover{
-    box-shadow: 0 1px 10px rgba($color: #000000, $alpha: .1);
-  }
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 40px;
-    padding: 0 10px;
-    border-bottom: 1px solid #ddd;
-    box-sizing: border-box;
-
-    &-close {
-      position: relative;
-      width: 16px;
-      height: 16px;
-      padding: 5px;
-      box-sizing: content-box;
-      &::before,
-      &::after {
-        position: absolute;
-        left: 5px;
-        top: 13px;
-        content: "";
-        width: 16px;
-        height: 1px;
-        background-color: #666;
-      }
-      &::before {
-        transform: rotate(-45deg);
-      }
-      &::after {
-        transform: rotate(45deg);
-      }
-      &:hover {
-        cursor: pointer;
-        &::before,
-        &::after {
-          background-color: #1177e8;
-        }
-      }
-    }
-  }
-
-  &__body {
-    position: relative;
-    height: calc(100% - 40px);
-    padding: 10px;
-    overflow-y: auto;
-    box-sizing: border-box;
-    > * {
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      font-size: 12px;
-      user-select: none;
-      background-color: #fff;
-      // box-shadow: 0 1px 5px rgba($color: #000000, $alpha: 0.1);
-      display: block;
-      width: 100%;
-      margin-bottom: 5px;
-      box-sizing: border-box;
-    }
-    > * + * {
-      margin-left: 0;
-    }
-    &.inline {
-      & > * {
-        display: inline-block;
-        width: auto;
-      }
-      & > * + * {
-        margin-left: 5px;
-        margin-top: 5px;
-      }
-    }
-  }
-}
-</style>

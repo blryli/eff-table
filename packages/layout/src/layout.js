@@ -1,28 +1,28 @@
 
 export default {
-  //页面布局容器组件
+  // 页面布局容器组件
   name: 'layout',
   props: {
-    //布局方式  [row: 行布局 | col: 列布局 ]   
+    // 布局方式  [row: 行布局 | col: 列布局 ]
     type: { type: String, default: 'row' },
 
-    //布局方式  [row: 行布局 | col: 列布局]  
+    // 布局方式  [row: 行布局 | col: 列布局]
     warp: { type: Boolean, default: false },
 
-    //可伸缩性  [row: 行布局 | col: 列布局]  
+    // 可伸缩性  [row: 行布局 | col: 列布局]
     flexibility: { type: Boolean, default: true },
 
-    //宽度
+    // 宽度
     width: String,
 
-    //高度
+    // 高度
     height: String,
 
-    //主轴上的对齐方式  flex-start | flex-end | center | space-between | space-around   
+    // 主轴上的对齐方式  flex-start | flex-end | center | space-between | space-around
     justifyContent: { type: String, default: 'flex-start' },
 
-    //是否可被挤压缩小 
-    supportShrink: { type: Boolean, default: false },
+    // 是否可被挤压缩小
+    supportShrink: { type: Boolean, default: false }
 
     // //子元素
     // children:{
@@ -41,26 +41,26 @@ export default {
 
   },
   render(h) {
-    let width = this.width;
-    let height = this.height;
-    let jc = this.justifyContent
-    let jcStr = jc == 'flex-start' ? '' : `justify-content:${jc}`;
-    let style = `${width ? 'width:' + width : ''} ${height ? ';height:' + height : ''};${jcStr}`
+    const width = this.width
+    const height = this.height
+    const jc = this.justifyContent
+    const jcStr = jc == 'flex-start' ? '' : `justify-content:${jc}`
+    const style = `${width ? 'width:' + width : ''} ${height ? ';height:' + height : ''};${jcStr}`
     return h(
       'div',
       {
-        'class':{
-          'layout':true,
-          'flex-row':this.type=='col',
-          'flex-col':this.type=='row',
-          'flex-grow':this.flexibility,
-          'flex-warp':this.warp,
-          'no-shrink':!this.supportShrink
+        'class': {
+          'layout': true,
+          'flex-row': this.type == 'col',
+          'flex-col': this.type == 'row',
+          'flex-grow': this.flexibility,
+          'flex-warp': this.warp,
+          'no-shrink': !this.supportShrink
         },
         style,
         on: {
-          click:(e)=>{
-            this.$emit("click",e)
+          click: (e) => {
+            this.$emit('click', e)
           }
         }
       },
