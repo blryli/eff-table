@@ -19,6 +19,7 @@ export default {
       componentValue: null,
       handleType: null,
       scrollNum: 0,
+      dialogVisible: true,
       baseText: null,
       columnIndex: null
     }
@@ -37,7 +38,7 @@ export default {
         const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
         const { render } = edit || {}
 
-        if (this.baseText === null || this.columnIndex != columnIndex) {
+        if (this.baseText === null || this.columnIndex !== columnIndex) {
           this.baseText = row[prop]
           this.columnIndex = columnIndex
         }
@@ -48,12 +49,18 @@ export default {
           const renderOpts = Object.assign({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }
   },
   watch: {
+    component() {
+      this.dialogVisible = true
+    },
+    rowIndex() {
+      this.dialogVisible = true
+    },
     show(val) {
       const { table, component } = this
       if (val) {
@@ -66,6 +73,7 @@ export default {
         this.scrollNum = 0
         this.column = null
         this.cell = null
+        this.visible = true
         table.$emit('edit-close')
         table.$emit('blur')
       }
