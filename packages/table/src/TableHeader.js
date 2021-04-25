@@ -1,6 +1,6 @@
 import TableHeaderColumn from './TableHeaderColumn'
 import Search from '../components/Search'
-import { on, off, hasClass, onMousemove, getCell } from '../utils/dom'
+import { on, off, hasClass, onMousemove, getCell } from 'pk/utils/dom'
 
 export default {
   name: 'TableHeader',

@@ -1,6 +1,6 @@
-import { getType } from 'packages/table/utils'
-import { on, off } from 'packages/table/utils/dom'
-import { renderer } from 'core/render'
+import { getType } from 'pk/utils'
+import { on, off } from 'pk/utils/dom'
+import { renderer } from 'pk/utils/render'
 import { getTableNode, isOverflow, shake } from './dom'
 
 export default {
@@ -18,7 +18,10 @@ export default {
       component: null,
       componentValue: null,
       handleType: null,
-      scrollNum: 0
+      scrollNum: 0,
+      dialogVisible: true,
+      baseText: null,
+      columnIndex: null
     }
   },
   inject: ['table'],
@@ -34,18 +37,30 @@ export default {
         const columnIndex = this.getColumnIndex(column.prop)
         const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
         const { render } = edit || {}
+
+        if (this.baseText === null || this.columnIndex !== columnIndex) {
+          this.baseText = row[prop]
+          this.columnIndex = columnIndex
+        }
+
         if (typeof render === 'function') {
           return render($createElement, { row, rowIndex, column, columnIndex, prop }) || ''
         } else {
           const renderOpts = Object.assign({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }
   },
   watch: {
+    component() {
+      this.dialogVisible = true
+    },
+    rowIndex() {
+      this.dialogVisible = true
+    },
     show(val) {
       const { table, component } = this
       if (val) {
@@ -58,6 +73,7 @@ export default {
         this.scrollNum = 0
         this.column = null
         this.cell = null
+        this.visible = true
         table.$emit('edit-close')
         table.$emit('blur')
       }
@@ -102,6 +118,14 @@ export default {
       e.stopPropagation()
       e.preventDefault()
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
+
+      if (keysStr === 'escape') {
+        let data = this.table.proxyConfig ? this.table.tableData : this.table.data
+        data = data[this.rowIndex]
+
+        this.table.$set(data, this.column.prop, this.baseText)
+        return this.close()
+      }
 
       // 解决回车选中值和回车跳下一个的冲突问题
       setTimeout(() => {
@@ -237,7 +261,6 @@ export default {
       const { rowIndex, getColumnIndex, canFocus, getColumn, fixOverflowX } = this
       const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
-        // console.log({ column, cell, cellIndex, index: cellIndex })
         if (cellIndex === -1 || !canFocus(column, cell)) return
         this.blurEvent()
 
@@ -343,6 +366,7 @@ export default {
       this.$el.style.height = `${height + 1}px`
     },
     close() {
+      this.baseText = null
       this.show = false
     },
     focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {

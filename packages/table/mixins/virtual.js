@@ -16,8 +16,8 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length }, renderSize, useExpand } = this
-      return !useExpand && length > 50 && length > renderSize
+      const { tableData: { length }, renderSize, useExpand, useGroupColumn } = this
+      return !useExpand && !useGroupColumn && length > 50 && length > renderSize
     },
     renderData() {
       const { isVirtual, tableData, renderIndex, renderSize } = this
@@ -34,8 +34,8 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { useExpand, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
-      return !useExpand && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
+      const { useGroupColumn, useExpand, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
+      return !useExpand && !useGroupColumn && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this

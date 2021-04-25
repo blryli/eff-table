@@ -13,6 +13,10 @@ export default {
     fixed: { type: String, default: '' }
   },
   inject: ['table'],
+  data() {
+    return {
+    }
+  },
   computed: {
     bodyStyle() {
       const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth, columnIsVirtual } = this.table
@@ -97,6 +101,44 @@ export default {
       if (scrollTop === table.scrollTop) return
       table.fixedType = fixed
       table.scrollTop = scrollTop
+    },
+    getGroupNode(row, rowIndex) {
+      if (!(row.children && row.children.length && this.table.columnGroupIds.indexOf(row[this.table.rowId]) !== -1)) {
+        return { groupNodes: [], index: rowIndex }
+      }
+
+      const { table, fixed, bodyColumns, formatValidators } = this
+      const { renderColumn, rowId } = table
+      const groupNodes = []
+
+      const groupFloor = 1
+
+      const func = (arr, groupFloor) => {
+        arr.forEach((v, k) => {
+          const dom = <TableBodyRow
+            key={'group-' + groupFloor + rowIndex}
+            row={v}
+            group-floor={groupFloor}
+            row-index={rowIndex}
+            body-columns={fixed ? bodyColumns : renderColumn}
+            fixed={fixed}
+            messages={formatValidators[v[rowId]]}
+          />
+          ++rowIndex
+
+          groupNodes.push(dom)
+
+          if (!(v.children && v.children.length && this.table.columnGroupIds.indexOf(v[this.table.rowId]) !== -1)) {
+            return
+          }
+
+          func(v.children, groupFloor + 1)
+        })
+      }
+
+      func(row.children, groupFloor)
+
+      return { groupNodes, index: rowIndex }
     }
   },
   render(h) {
@@ -104,6 +146,9 @@ export default {
     const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
     const { $scopedSlots, $slots } = table
     const { expand } = $scopedSlots || $slots
+
+    let rowIndex = renderIndex
+
     return (
       <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
@@ -113,18 +158,23 @@ export default {
           style={bodyStyle}
         >
           {
-            renderData.map((row, rowIndex) => {
-              const { expanded } = expands.find(d => d.rowIndex === rowIndex) || {}
-              const expandNode = expanded ? <div class='eff-table__expanded'>{expand({ row, rowIndex })}</div> : ''
-              const currentIndex = rowIndex + renderIndex
-              return [<TableBodyRow
-                key={currentIndex}
+            renderData.map((row, key) => {
+              const { expanded } = expands.find(d => d.rowIndex === key) || {}
+              const expandNode = expanded ? <div class='eff-table__expanded'>{expand({ row, key })}</div> : ''
+
+              const dom = [<TableBodyRow
+                key={rowIndex}
                 row={row}
-                row-index={currentIndex}
+                row-index={rowIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 messages={formatValidators[row[rowId]]}
               />, expandNode]
+              ++rowIndex
+
+              const { groupNodes, index } = this.getGroupNode(row, rowIndex)
+              rowIndex = index
+              return dom.concat(groupNodes)
             })
           }
           {

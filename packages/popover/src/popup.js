@@ -12,7 +12,7 @@ export default {
   methods: {
     focus() {
       this.visible = true
-      this.table.editTipShow({ reference: this.$el, vslot: this.$slots.default[0], placement: 'bottom' })
+      this.table.editTipShow({ reference: this.$el, vslot: this.$slots.default, placement: 'bottom' })
     },
     close() {
       this.visible = false

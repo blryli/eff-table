@@ -2,7 +2,9 @@ import Table from './table/src/Table.vue'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import VRender from 'core/render/render'
-const components = [Table, Popup,Layout, VRender]
+import Styles from './styles/index.vue'
+
+const components = [Table, Popup, Layout, VRender, Styles]
 
 export {
   Table,

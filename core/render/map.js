@@ -3,6 +3,7 @@ const map = {
   'input': 'el-input',
   'textarea': 'el-textarea',
   'select': 'el-select',
+  'option': 'el-option',
   'date-picker': 'el-date-picker',
   'button': 'el-button',
   'link': 'el-link',

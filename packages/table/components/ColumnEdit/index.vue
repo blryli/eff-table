@@ -59,8 +59,8 @@
 
 <script>
 import card from './card'
-import Sortable from '../Drag/sortable'
-import { deepClone } from '../../utils/index'
+import Sortable from 'pk/utils/sortable'
+import { deepClone } from 'pk/utils/index'
 
 export default {
   name: 'TableColumnEdit',
@@ -89,17 +89,7 @@ export default {
       return { width: this.leftList.length ? '25%' : '60px' }
     },
     centerStyle() {
-      let width = 80
-      if (this.leftStyle.width === '25%') {
-        width -= 15
-      }
-      if (this.rightStyle.width === '25%') {
-        width -= 15
-      }
-
-      width = width + '%'
       return 'auto'
-      return { width }
     },
     rightStyle() {
       return { width: this.rightList.length ? '25%' : '60px' }
@@ -124,32 +114,8 @@ export default {
     }
 
     this.$nextTick(() => {
-      const { drag, rowDrag, $el } = this.table
-      const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
+      const { handleDragend, handleDragenter, handleEnd, columnControl, $el: cardEl } = this
       const id = Math.floor(Math.random() * 100000)
-      if (drag) {
-        this.columnSortable = new Sortable({
-          el: $el.querySelector('.eff-table__header'),
-          group: id,
-          filter: 'is-drag--filter',
-          dragImage: {
-            height: 30
-          },
-          dragend: handleDragend,
-          dragenter: handleDragenter,
-          onEnd: handleEnd
-        })
-        if (rowDrag) {
-          this.rowSortable = new Sortable({
-            el: $el.querySelector('.eff-table__body'),
-            filter: 'is-drag--filter',
-            dragImage: {
-              height: 30
-            },
-            onEnd: handleRowEnd
-          })
-        }
-      }
       if (columnControl) {
         const calback = (className) => {
           setTimeout(() => {

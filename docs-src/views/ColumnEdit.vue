@@ -107,6 +107,7 @@ const componentSnippet = `
   row-drag
   border
   fullscreen
+  column-edit
 />
 `
 export default {

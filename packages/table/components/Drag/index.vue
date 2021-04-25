@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Sortable from './sortable'
-import Card from './card'
-import { addClass, removeClass, hasClass } from 'packages/table/utils/dom'
+import Sortable from 'pk/utils/sortable'
+import Card from 'pk/card'
+import { addClass, removeClass, hasClass } from 'pk/utils/dom'
 
 export default {
   name: 'TableDrag',
@@ -82,7 +82,7 @@ export default {
       if (columnControl) {
         setTimeout(() => {
           this.cradsSortable = new Sortable({
-            el: cardEl.querySelector('.eff-drag-card__body'),
+            el: cardEl.querySelector('.eff-card__body'),
             group: id,
             dragImage: {
               height: 30
@@ -132,12 +132,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-card__body')) {
         this.dradingTarget = toEl
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-card__body')) {
         this.dradingTarget = toEl
       }
     },
@@ -174,12 +174,12 @@ export default {
       }
 
       // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('eff-drag-card__body')) {
+      if (this.isHeadNode(from) && to.classList.contains('eff-card__body')) {
         columns[oldIndex].show = false
       }
 
       // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('eff-drag-card__body')) {
+      if (this.isHeadNode(to) && from.classList.contains('eff-card__body')) {
         if (oldIndex > -1) {
           const oldItem = columns[oldIndex]
           oldItem.show = true
