@@ -74,16 +74,17 @@ export default {
     },
     heights() {
       const { height, maxHeight, isScreenfull, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
-      const { toolbar, header, footer } = this.$refs
+      const { toolbar, header, footer, footerAction } = this.$refs
 
       const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || 400
       const toolbarHeight = toolbar ? rowHeight : 0
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
+      const footerActionHeight = footerAction ? rowHeight : 0
       const dataHeight = tableData.length ? tableData.length * rowHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - searchHeight : 0
+      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0
       if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
@@ -94,6 +95,7 @@ export default {
         headerHeight,
         searchHeight,
         footerHeight,
+        footerActionHeight,
         bodyHeight: Math.max(bodyHeight, rowHeight)
       }
     },
