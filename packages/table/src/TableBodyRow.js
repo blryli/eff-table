@@ -1,5 +1,5 @@
 import TableBodyColumn from './TableBodyColumn'
-import { getCell } from '../utils/dom'
+import { getCell } from 'pk/utils/dom'
 
 export default {
   name: 'TableBodyRow',
@@ -10,13 +10,23 @@ export default {
     messages: { type: Array, default: () => [] },
     fixed: { type: String, default: '' },
     rowIndex: Number,
-    summary: Boolean
+    summary: Boolean,
+    groupFloor: { type: Number, default: 0 }
+
   },
   inject: ['table'],
   render(h) {
     const { showSpace, columnRenderIndex, rowId } = this.table
     const { rowIndex, rowClassName, fixed, row, messages, rowStyle, isPending, bodyColumns, handleClick, handleDoubleClick, handleMouseenter, handleMouseleave } = this
     const id = row[rowId]
+
+    let groupKey
+    bodyColumns.map(v => {
+      if (['expand', 'selection', 'radio'].indexOf(v.type) === -1) {
+        groupKey = !groupKey ? v.prop : groupKey
+      }
+    })
+
     return (
       <div
         class={rowClassName}
@@ -34,6 +44,7 @@ export default {
             columnIndex = fixed ? columnIndex : columnRenderIndex + columnIndex
             const colid = `${rowIndex + 1}-${columnIndex + 1}`
             const message = messages.find(d => d.prop === column.prop) || {}
+
             return <TableBodyColumn
               data-colid={colid}
               row={row}
@@ -43,6 +54,8 @@ export default {
               message={message}
               fixed={fixed}
               disabled={isPending}
+              groupFloor={groupKey === column.prop ? this.groupFloor : 0 }
+              groupKey={groupKey}
             />
           })
         }

@@ -77,8 +77,10 @@ section {
     padding: 20px 20px 0;
     @include h-box;
     @include box-center;
+    flex-wrap: wrap;
 
     a {
+      margin-bottom: 10px;
       display: inline-block;
       padding: 0 16px;
       height: 36px;

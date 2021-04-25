@@ -1,4 +1,4 @@
-import { removeBody, getDomClientRect } from 'packages/table/utils/dom'
+import { removeBody, getDomClientRect } from 'pk/utils/dom'
 
 export default {
   name: 'Popover',

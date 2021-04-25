@@ -1,7 +1,12 @@
-import VCheckbox from '../components/Checkbox'
-import VRadio from '../components/Radio'
-import { getTextWidth } from '../utils/dom'
-import { renderer } from 'core/render'
+import VCheckbox from 'pk/checkbox'
+import VRadio from 'pk/radio'
+import { getTextWidth } from 'pk/utils/dom'
+import { renderer } from 'pk/utils/render'
+import isEqual from 'xe-utils/isEqual'
+import eqNull from 'xe-utils/eqNull'
+import isString from 'xe-utils/isString'
+import isNumber from 'xe-utils/isNumber'
+import get from 'xe-utils/get'
 
 export default {
   name: 'TableBodyColumn',
@@ -12,7 +17,9 @@ export default {
     columnIndex: { type: Number, default: 0 },
     message: { type: Object, default: () => {} },
     fixed: { type: String, default: '' },
-    disabled: Boolean
+    disabled: Boolean,
+    groupFloor: { type: Number, default: 0 },
+    groupKey: { type: String, default: '' }
   },
   components: { VCheckbox, VRadio },
   inject: ['table'],
@@ -20,13 +27,15 @@ export default {
     return {
       style: {},
       checked: false,
-      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false
+      expanded: (this.table.expands.find(d => d.rowIndex === this.rowIndex) || {}).expanded || false,
+      groupStatus: 0
     }
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
     const { type } = column
     // row[columnIndex] summary合计列
+
     let slot
     if (type === 'expand') {
       slot = this.expandRender(h)
@@ -40,12 +49,31 @@ export default {
       slot = this.cellRender(h)
     }
 
-    // const slot = type === 'expand' ? this.expandRender(h) : row[columnIndex] !== undefined ? row[columnIndex] : type === 'selection' ? this.renderRadio(h) : this.cellRender(h)
+    let groupEl = ''
+    if ((row.children && row.children.length || row.hasChildren) && column.prop === this.groupKey) {
+      if (this.groupStatus < 3) {
+        this.groupStatus = this.table.columnGroupIds.indexOf(this.row[this.table.rowId]) === -1 ? 1 : 2
+      }
+
+      groupEl = <span class={{ 'eff-icon-expand': true, 'is--expanded': this.groupStatus === 2 }} on-click={e => this.groupClick(e)} />
+
+      if (this.groupStatus === 3) {
+        groupEl = <div class='icon-loading'>
+          {
+            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
+              return <div>
+                <span class='blank'></span>
+              </div>
+            })
+          }
+        </div>
+      }
+    }
 
     return (
       <div
         class={this.columnClass}
-        key={rowIndex + '-' + columnIndex}
+        key={this.groupFloor + '-' + rowIndex + '-' + columnIndex}
         style={getStyle()}
         on-mouseenter={event => handleMouseenter(event, slot)}
         on-mouseleave={event => handleMouseleave(event, slot)}
@@ -54,6 +82,7 @@ export default {
         on-mousedown={event => handleMouseDown(event)}
         on-mousemove={event => handleMousemove(event)}
       >
+        {groupEl}
         <div ref='cell' class='eff-cell'>
           <span class='eff-cell--label'>{slot}</span>
         </div>
@@ -68,7 +97,7 @@ export default {
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
       const sourceRow = updateList.find(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && sourceRow[prop] !== row[prop]) {
+      if (prop && sourceRow && !this.eqCellValue(sourceRow, row, prop)) {
         classes += ' is--dirty'
       }
       if (className) {
@@ -92,9 +121,26 @@ export default {
     }
   },
   methods: {
+    groupClick(e) {
+      const pos = this.table.columnGroupIds.indexOf(this.row[this.table.rowId])
+
+      if (pos === -1) {
+        this.table.columnGroupIds.push(this.row[this.table.rowId])
+        if (!this.row.children || !this.row.children.length) {
+          this.groupStatus = 3
+          this.table.commitProxy('loadChildren', this.row, (arr) => {
+            this.$set(this.row, 'children', arr)
+            this.groupStatus = 2
+          })
+        }
+      } else {
+        this.table.columnGroupIds.splice(pos, 1)
+      }
+    },
     getStyle() {
       const defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
-      return Object.assign(defaultStyle, this.style)
+      const paddingLeft = { paddingLeft: this.groupFloor * 28 + 'px' }
+      return Object.assign(defaultStyle, this.style, paddingLeft)
     },
     renderSelection(h) {
       const { table, row } = this
@@ -174,7 +220,24 @@ export default {
     handleMousemove(event) {
       const { column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
+    },
+    /**
+ * 单元格的值为：'' | null | undefined 时都属于空值
+ */
+    eqCellNull(cellValue) {
+      return cellValue === '' || eqNull(cellValue)
+    },
+    eqCellValue(row1, row2, field) {
+      const val1 = get(row1, field)
+      const val2 = get(row2, field)
+      if (this.eqCellNull(val1) && this.eqCellNull(val2)) {
+        return true
+      }
+      if (isString(val1) || isNumber(val1)) {
+        /* eslint-disable eqeqeq */
+        return val1 == val2
+      }
+      return isEqual(val1, val2)
     }
-
   }
 }

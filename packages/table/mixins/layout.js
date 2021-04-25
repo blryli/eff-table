@@ -1,4 +1,4 @@
-import { on, off } from 'packages/table/utils/dom'
+import { on, off } from 'pk/utils/dom'
 export default {
   data() {
     return {

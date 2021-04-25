@@ -2,29 +2,29 @@
   <div
     v-show="show"
     ref="card"
-    class="eff-drag-card"
+    class="eff-card"
     shadow="hover"
     :style="style"
     @mousedown="handleMousedown"
     @mousemove="handleMousemove"
     @mouseleave="handleMouseleave"
   >
-    <div class="eff-drag-card__header">
-      <span class="eff-drag-card__header-title">{{ title }}</span>
+    <div class="eff-card__header">
+      <span class="eff-card__header-title">{{ title }}</span>
       <div>
         <el-button type="default" size="mini" @click="$emit('resetColumns')"> 还原 </el-button>
         <el-button type="success" size="mini" @click="$emit('save')"> 保存 </el-button>
       </div>
-      <i class="eff-drag-card__header-close" type="text" @click="$emit('close')" />
+      <i class="eff-card__header-close" type="text" @click="$emit('close')" />
     </div>
-    <div ref="body" class="eff-drag-card__body" :class="{inline: inline}">
+    <div ref="body" class="eff-card__body" :class="{inline: inline}">
       <slot />
     </div>
   </div>
 </template>
 
 <script>
-import { onMousemove, hasClass } from 'packages/table/utils/dom'
+import { onMousemove, hasClass } from 'pk/utils/dom'
 
 export default {
   name: 'ColumnCard',
@@ -117,7 +117,7 @@ export default {
       const { target, x, y } = e
 
       // header 操作
-      const headers = ['eff-drag-card__header', 'eff-drag-card__header-title']
+      const headers = ['eff-card__header', 'eff-card__header-title']
       if (headers.find(d => hasClass(target, d))) {
         const { left, top, right } = this.$el.getBoundingClientRect()
         if (y < top + 8) {
@@ -132,7 +132,7 @@ export default {
         } else {
           this.cursor = 'move' // 头部拖动
         }
-      } else if (hasClass(target, 'eff-drag-card__body')) {
+      } else if (hasClass(target, 'eff-card__body')) {
         // body 操作
         const { left, bottom, right } = this.$refs.body.getBoundingClientRect()
         if (y > bottom - 8) {
@@ -213,7 +213,7 @@ export default {
 </script>
 
 <style lang="scss">
-.eff-drag-card {
+.eff-card {
   position: fixed;
   right: 10px;
   bottom: 10px;
@@ -289,8 +289,7 @@ export default {
       margin-bottom: 5px;
       box-sizing: border-box;
     }
-    > * + * {
-    }
+
     &.inline {
       & > * {
         display: inline-block;

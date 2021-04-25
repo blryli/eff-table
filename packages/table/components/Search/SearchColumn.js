@@ -1,10 +1,10 @@
 import Icon from './components/Icon.vue'
-import Popover from '../../../popover'
+import Popover from 'packages/popover'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'
 import RangeInput from './components/RangeInput.vue'
-import { getType } from 'packages/table/utils'
-import { renderer } from 'core/render'
+import { getType } from 'pk/utils'
+import { renderer } from 'pk/utils/render'
 
 const isDate = val => getType(val) === 'Date'
 
