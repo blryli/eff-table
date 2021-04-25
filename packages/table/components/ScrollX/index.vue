@@ -15,14 +15,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.eff-table__scrollx{
-  width: 100%;
-  position: absolute;
-  left: 0;
-  bottom: 36px;
-  overflow-x: auto;
-  overflow-y: scroll;
-}
-</style>

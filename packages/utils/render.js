@@ -231,7 +231,7 @@ function renderDialog(h, renderOpts, params) {
   const { data, prop } = params
 
   return [
-    h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}),
+    h('div', { attrs: { class: 'eff-table__popup' }}, data[prop]),
     render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render(),
     modal
   ]

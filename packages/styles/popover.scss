@@ -114,10 +114,11 @@
   width: 100%;
   height: var(--rowHeight);
   line-height: var(--rowHeight);
-  text-align: left;
-  border: 0;
-  background-color: transparent;
-  &:hover, &:active{
-    background-color: transparent;
+  box-sizing: border-box;
+}
+
+.eff-table-edit{
+  .eff-table__popup{
+    margin: 0 5px;
   }
 }

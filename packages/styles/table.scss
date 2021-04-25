@@ -1,10 +1,10 @@
 .eff-table{
   position: relative;
+  font-size: 14px;
+  color: #606266;
 }
 .eff-table__container {
-  font-size: 14px;
   position: relative;
-  color: #606266;
   overflow: hidden;
   border: 1px solid #ddd;
   box-sizing: border-box;
@@ -14,6 +14,7 @@
   top: 0;
   overflow: hidden;
   background-color: #fff;
+  z-index: 5;
 }
 .eff-table__fixed-left{
   left: 0;
@@ -187,6 +188,54 @@
     }
   }
 }
+.eff-search__range{
+  height: auto;
+  &-wrapper{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    .eff-search--input{
+      background-color: #fff;
+      border-color: #ddd;
+      &:hover{
+        border-color: #c0c4cc;
+        z-index: 1;
+      }
+      &:focus, &:active{
+        border-color: #1177E8;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+.eff-operator{
+  font-size: 12px;
+  &-item{
+    line-height: 24px;
+    &:hover{
+      color: #1177e8;
+      cursor: pointer;
+    }
+  }
+
+  .is--active{
+    .eff-operator-icon{
+      color: #1177e8;
+    }
+  }
+}
+
+.eff-table__scrollx{
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 36px;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+
 .eff-table__column{
   height: 100%;
   position: relative;

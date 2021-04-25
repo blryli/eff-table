@@ -225,7 +225,7 @@ export default {
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
-    showSummary: Boolean,
+    showSummary: Boolean, // 合计
     searchClear: { type: Boolean, default: true },
     searchClearText: { type: String, default: '' },
     sortConfig: { type: Object, default: () => {} },
