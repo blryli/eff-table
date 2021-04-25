@@ -281,7 +281,7 @@ export default {
     this.loading = true
     setTimeout(() => {
       this.data = mock.mock({
-        'array|500': [
+        'array|20': [
           {
             'city': '@city',
             'cfirst': '@cfirst',
