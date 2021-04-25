@@ -180,7 +180,7 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
-import clone from 'xe-utils/clone'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'EffTable',
@@ -358,7 +358,7 @@ export default {
   methods: {
     loadTableData(data) {
       this.tableData = data
-      this.tableSourceData = clone(data, true)
+      this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       this.clearSelection()
       this.scrollLeftEvent()

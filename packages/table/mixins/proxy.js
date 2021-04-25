@@ -161,7 +161,7 @@ export default {
       }).then(success => {
         if (success) {
           this.isLoading = true
-          save({ body: currentTableData }).then(res => {
+          save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
             if (res.success) {
               this.$message.success('保存成功！')
