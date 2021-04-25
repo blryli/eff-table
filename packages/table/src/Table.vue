@@ -314,6 +314,11 @@ export default {
     useExpand() {
       const { visibleColumns, expand } = this
       return expand && visibleColumns.find(d => d.type === 'expand')
+    },
+    useGroupColumn() {
+      const { tableData } = this
+
+      return tableData.find(d => typeof d.children !== 'undefined')
     }
   },
   watch: {
