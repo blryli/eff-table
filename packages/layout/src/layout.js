@@ -44,15 +44,15 @@ export default {
     const width = this.width
     const height = this.height
     const jc = this.justifyContent
-    const jcStr = jc == 'flex-start' ? '' : `justify-content:${jc}`
+    const jcStr = jc === 'flex-start' ? '' : `justify-content:${jc}`
     const style = `${width ? 'width:' + width : ''} ${height ? ';height:' + height : ''};${jcStr}`
     return h(
       'div',
       {
         'class': {
           'layout': true,
-          'flex-row': this.type == 'col',
-          'flex-col': this.type == 'row',
+          'flex-row': this.type === 'col',
+          'flex-col': this.type === 'row',
           'flex-grow': this.flexibility,
           'flex-warp': this.warp,
           'no-shrink': !this.supportShrink

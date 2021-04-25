@@ -107,7 +107,7 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager">
+    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager" ref="footerAction">
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
@@ -154,6 +154,7 @@
     <Loading :visible="isLoading" />
     <SelectRange v-if="selectRange || copy" ref="selectRange" />
     <copy v-if="copy" />
+
   </div>
 </template>
 
@@ -317,7 +318,6 @@ export default {
     },
     useGroupColumn() {
       const { tableData } = this
-
       return tableData.find(d => typeof d.children !== 'undefined')
     }
   },
