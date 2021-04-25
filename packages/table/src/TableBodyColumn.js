@@ -1,5 +1,5 @@
-import VCheckbox from '../components/Checkbox'
-import VRadio from '../components/Radio'
+import VCheckbox from 'pk/checkbox'
+import VRadio from 'pk/radio'
 import { getTextWidth } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import isEqual from 'xe-utils/isEqual'
