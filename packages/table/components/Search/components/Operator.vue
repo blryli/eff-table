@@ -34,22 +34,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.eff-operator{
-  font-size: 12px;
-  &-item{
-    line-height: 24px;
-    &:hover{
-      color: #1177e8;
-      cursor: pointer;
-    }
-  }
-
-  .is--active{
-    .eff-operator-icon{
-      color: #1177e8;
-    }
-  }
-}
-</style>

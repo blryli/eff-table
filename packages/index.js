@@ -19,7 +19,6 @@ const install = function(Vue, opts = {}) {
   })
 
   Vue.prototype.$EFF = {
-    uiPrefix: opts.uiPrefix || 'el-',
     request: opts.request
   }
 }

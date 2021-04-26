@@ -187,9 +187,9 @@ export default {
       }
     },
     blurEvent() {
-      const { component, componentValue } = this
+      const { component } = this
       if (component) {
-        component && componentValue !== component.value && component.$emit('change', component.value)
+        // component && componentValue !== component.value && component.$emit('change', component.value)
         component && component.$emit('blur')
         component.close && component.close()
       }

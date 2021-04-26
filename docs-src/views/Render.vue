@@ -381,6 +381,7 @@ export default {
             show: true,
             title: '按钮',
             width: 100,
+            fixed: 'right',
             config: { name: 'button', children: '操作' }
           }
         ]

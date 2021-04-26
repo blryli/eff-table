@@ -96,27 +96,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.eff-search__range{
-  height: auto;
-  &-wrapper{
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-    .eff-search--input{
-      background-color: #fff;
-      border-color: #ddd;
-      &:hover{
-        border-color: #c0c4cc;
-        z-index: 1;
-      }
-      &:focus, &:active{
-        border-color: #1177E8;
-        z-index: 1;
-      }
-    }
-  }
-}
-</style>

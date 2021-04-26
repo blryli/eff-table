@@ -2,11 +2,7 @@ import VCheckbox from 'pk/checkbox'
 import VRadio from 'pk/radio'
 import { getTextWidth } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
-import isEqual from 'xe-utils/isEqual'
-import eqNull from 'xe-utils/eqNull'
-import isString from 'xe-utils/isString'
-import isNumber from 'xe-utils/isNumber'
-import get from 'xe-utils/get'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableBodyColumn',
@@ -225,19 +221,19 @@ export default {
  * 单元格的值为：'' | null | undefined 时都属于空值
  */
     eqCellNull(cellValue) {
-      return cellValue === '' || eqNull(cellValue)
+      return cellValue === '' || XEUtils.eqNull(cellValue)
     },
     eqCellValue(row1, row2, field) {
-      const val1 = get(row1, field)
-      const val2 = get(row2, field)
+      const val1 = XEUtils.get(row1, field)
+      const val2 = XEUtils.get(row2, field)
       if (this.eqCellNull(val1) && this.eqCellNull(val2)) {
         return true
       }
-      if (isString(val1) || isNumber(val1)) {
+      if (XEUtils.isString(val1) || XEUtils.isNumber(val1)) {
         /* eslint-disable eqeqeq */
         return val1 == val2
       }
-      return isEqual(val1, val2)
+      return XEUtils.isEqual(val1, val2)
     }
   }
 }

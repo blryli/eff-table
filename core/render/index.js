@@ -1,7 +1,6 @@
 import map from './map'
 
-import isObject from 'xe-utils/isObject'
-import isArray from 'xe-utils/isArray'
+import XEUtils from 'xe-utils'
 
 export function getChildren(h, children, params, key) {
   if (children) {
@@ -11,11 +10,11 @@ export function getChildren(h, children, params, key) {
         return fn
       }
       return getChildren(h, fn, params)
-    } else if (isArray(children)) {
+    } else if (XEUtils.isArray(children)) {
       return children.map((child, idx) => {
         return getChildren(h, child, params, idx)
       })
-    } else if (isObject(children)) {
+    } else if (XEUtils.isObject(children)) {
       const { children: childs } = children
       const childrenRender = getChildren(h, childs, params)
       const opts = Object.assign({}, children, { key, children: childrenRender })

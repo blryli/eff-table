@@ -1,4 +1,4 @@
-import Icon from './components/Icon.vue'
+import Icon from 'pk/icon'
 import Popover from 'packages/popover'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'

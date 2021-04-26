@@ -1,5 +1,4 @@
-import toDateString from 'xe-utils/toDateString'
-import isArray from 'xe-utils/isArray'
+import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
@@ -124,7 +123,7 @@ function renderdateCell(h, renderOpts, params) {
   const { format } = renderOpts || {}
   const { row, prop } = params || {}
   const cellLabel = row && prop && row[prop] || ''
-  return toDateString(cellLabel, format)
+  return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { table, data, prop, searchChange } = params
@@ -231,7 +230,7 @@ function renderDialog(h, renderOpts, params) {
   const { data, prop } = params
 
   return [
-    h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}),
+    h('div', { attrs: { class: 'eff-table__popup' }}, data[prop]),
     render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render(),
     modal
   ]
@@ -296,7 +295,7 @@ function renderTag(h, renderOpts, params) {
   const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
   const { data, prop } = params || {}
   const value = data[prop]
-  return (isArray(value) ? value : [value]).map(d => {
+  return (XEUtils.isArray(value) ? value : [value]).map(d => {
     const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
     return render(h, renderOpts, params).set('children', label).render()
   })

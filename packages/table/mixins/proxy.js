@@ -56,6 +56,8 @@ export default {
           this.loadTableData(data)
         }
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
+      }).catch(e => {
+        console.error(e)
       })
     },
     getList(query) {
@@ -74,7 +76,7 @@ export default {
           formData[prop] = values.join(',')
         })
         const { getMethos, url } = query
-        return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.currentPage}`, formData })
+        return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式
         return query({ page, sorts, filters, form: tableForm })
@@ -87,24 +89,25 @@ export default {
         this.$message.warning('请至少选择一条记录！')
         return
       }
-      const del = () => {
-        this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
-        this.clearSelection()
-      }
       this.$confirm('确定要删除所选记录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        del()
-        this.$message({
-          type: 'success',
-          message: '成功删除所选记录!'
+        deleted({ body: checkeds }).then(res => {
+          if (res.success) {
+            this.$message.success('成功删除所选记录!')
+            this.commitProxy('query')
+            this.clearSelection()
+          } else {
+            this.$message.error(res.message)
+          }
+        }).catch(() => {
+          // this.$message.success('成功删除所选记录!')
+          this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
+          this.clearSelection()
         })
       })
-      // deleted({ body: checkeds }).then(res => {
-      //   del()
-      // })
     },
     checkoutSelectType() {
       this.tableColumns.forEach(v => {
@@ -149,6 +152,7 @@ export default {
         cur = tableData.find(d => d[rowId] === cur[rowId])
         return cur && !pendingList.some(item => item === cur) ? acc.concat(cur) : acc
       }, [])
+      const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
         const { rowIndex, prop } = errMap[0]
@@ -157,14 +161,19 @@ export default {
       }).then(success => {
         if (success) {
           this.isLoading = true
-          // save({ body: tableData }).then(res => {
-          //   this.reloadData(tableData.filter(da => !pendingList.some(d => d === da)))
-          // })
-          this.reloadData(tableData.filter(da => !pendingList.some(d => d === da)))
-          this.$message.success('保存成功！')
-          setTimeout(() => {
+          save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
-          }, 200)
+            if (res.success) {
+              this.$message.success('保存成功！')
+              this.commitProxy('query')
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(e => {
+            console.error(e)
+            this.isLoading = false
+            this.reloadData(currentTableData)
+          })
         }
       })
     },

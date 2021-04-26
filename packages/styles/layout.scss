@@ -1,0 +1,22 @@
+
+.flex-col{
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row{
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-warp{
+  flex-wrap: wrap;
+}
+
+.flex-grow{
+  flex-grow: 1;
+}
+
+.no-shrink{
+  flex-shrink: 0;
+}
