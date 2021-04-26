@@ -44,8 +44,8 @@ export default {
       }
     },
     query(query) {
-      this.getList(query).then(res => {
-        const { data = [] } = res
+      this.getList(query).then(data => {
+        if (!data) data = []
         if (Array.isArray(data)) {
           // 无分页
           this.loadTableData(data)

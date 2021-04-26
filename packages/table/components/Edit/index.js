@@ -30,7 +30,6 @@ export default {
       const { column } = this
       if (!column) return ''
       const { edit, prop, config } = column || {}
-      if (prop === 'checkbox') console.log(edit)
       if (edit) {
         const { rowIndex, table, $createElement } = this
         const { proxyConfig } = table
