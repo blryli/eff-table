@@ -277,7 +277,10 @@ export default {
         columnIndex: 0,
         dialogVisible: false
       },
-      pager: {}
+      pager: {
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed: {
