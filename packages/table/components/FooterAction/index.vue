@@ -15,7 +15,7 @@ export default {
     let slot
     if (pageInLeft) {
       slot = (
-        <div class='eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
+        <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
           <div class='eff-table__toobar-right'>
             {
               showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
@@ -28,7 +28,7 @@ export default {
       )
     } else {
       slot =
-      <div class='eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
+      <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
         <div class='eff-table__toobar-left'>
           { this.$slots.default }
         </div>
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <style lang="scss">
-.eff-table__toobar{
+.eff-table__action.eff-table__toobar{
   display: flex;
   justify-content: space-between;
   align-items: center;

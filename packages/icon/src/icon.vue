@@ -3,6 +3,7 @@
 </template>
 <script>
 export default {
+  name: 'Icon',
   props: {
     operator: { type: Array, default: () => [] },
     icon: { type: String, default: 'like' }

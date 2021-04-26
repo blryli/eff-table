@@ -8,14 +8,6 @@ export default {
     'pageSize',
     'total'
   ],
-  watch: {
-    'table.pager': {
-      handler() {
-        this.render()
-      },
-      deep: true
-    }
-  },
   methods: {
     onSizeChange(e) {
       this.table.pager.pageNum = e

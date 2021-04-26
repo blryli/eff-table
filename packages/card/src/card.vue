@@ -23,7 +23,7 @@
 import { onMousemove, hasClass } from 'pk/utils/dom'
 
 export default {
-  name: 'DragCard',
+  name: 'Card',
   props: {
     title: { type: String, required: true },
     width: { type: Number, default: 250 },
