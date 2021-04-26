@@ -7,7 +7,9 @@
         <div class="lineae" />
       </template>
     </div>
-    <el-button v-if="status === 2" :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
+    <div class="flex flex-direction">
+      <el-button v-if="status === 2" :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
+    </div>
   </div>
 </template>
 
@@ -46,6 +48,7 @@ export default {
       if (this.status === 1) {
         this.endPosition.y += scrollTop - oldTop
       }
+      this.$set(this.toolStyle, 'display', 'none')
       this.handleRect()
     }
   },
@@ -246,7 +249,8 @@ export default {
         return true
       }
 
-      const { startRow, startColumn, endRow, endColumn } = this._getReac()
+      this.table.$refs.edit && this.table.$refs.edit.close()
+      const { startRow, startColumn } = this._getReac()
 
       let data = e.clipboardData.getData('text/plain')
 
@@ -310,7 +314,10 @@ export default {
   position: fixed;
   display: flex;
   .copybtn {
-    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  .pastebtn {
+    margin-left: 0px;
   }
   .sight {
     width: 14px;
@@ -334,6 +341,13 @@ export default {
       height: 4px;
       margin-top: -1px;
     }
+  }
+  .flex {
+    margin-left: 10px;
+    display: flex;
+  }
+  .flex-direction {
+    flex-direction: column;
   }
 }
 </style>
