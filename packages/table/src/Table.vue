@@ -360,7 +360,7 @@ export default {
   },
   methods: {
     loadTableData(data) {
-      this.tableData = data
+      this.tableData = data || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       this.clearSelection()
