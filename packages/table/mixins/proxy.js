@@ -28,32 +28,32 @@ export default {
           this.checkoutSelectType()
           break
         case 'delete':
-          typeof deleted === 'function' ? this.delete(deleted) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          deleted && (typeof deleted === 'function' ? this.delete(deleted) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
         case 'query':
-          typeof query === 'function' ? this.query(query) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          query && (typeof query === 'function' ? this.query(query) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
         case 'save':
-          typeof save === 'function' ? this.save(save) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          save && (typeof save === 'function' ? this.save(save) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
         case 'loadChildren':
-          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : console.warn(`requst 没有传入函数 ${[code]}`)
           break
         default:
           break
       }
     },
     query(query) {
-      this.getList(query).then(res => {
-        const { data } = res
-        if (data.list) {
-          // 有分页
-          const { pageNum, pageSize, total } = data
-          this.loadTableData(data.list)
-          Object.assign(this.pager, { pageNum, pageSize, total })
-        } else {
+      this.getList(query).then(data => {
+        if (!data) data = []
+        if (Array.isArray(data)) {
           // 无分页
           this.loadTableData(data)
+        } else {
+          // 有分页
+          const { pageNum, pageSize, total } = data
+          this.loadTableData(data.list || [])
+          Object.assign(this.pager, { pageNum, pageSize, total })
         }
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
@@ -61,7 +61,7 @@ export default {
       })
     },
     getList(query) {
-      const { page, sorts, filters, tableForm } = this
+      const { pager: page, sorts, filters, tableForm } = this
       // 配置模式
       if (typeof query === 'object') {
         const formData = Object.assign({}, tableForm)

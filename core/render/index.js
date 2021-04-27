@@ -62,6 +62,8 @@ class Render {
   render() {
     const { h, opts, children } = this
     const { name, tag, defaultSlot } = opts
+    if (!opts.props) opts.props = {}
+    if (!opts.props.size) opts.props.size = 'mini'
 
     return h(tag || map.get(name), opts, [children, defaultSlot])
   }

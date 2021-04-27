@@ -8,18 +8,9 @@ export default {
     'pageSize',
     'total'
   ],
-  watch: {
-    'table.pager': {
-      handler() {
-        this.render()
-      },
-      deep: true
-    }
-  },
   methods: {
     onSizeChange(e) {
       this.table.pager.pageNum = e
-      this.table.query(this.table.proxyConfig.request.query)
       this.table.commitProxy('query')
       this.table.$emit('table-page-num-change', { pageSize: e })
     },

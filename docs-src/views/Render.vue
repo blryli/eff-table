@@ -226,26 +226,24 @@ export default {
             query: ({ page, sorts, filters, form }) => {
               const params = { ...form }
               return axios.get('url', params).catch(res => {
-                return {
-                  data: mock.mock({
-                    'array|5': [
-                      {
-                        'id|+1': 100,
-                        'input|+1': 1,
-                        'textarea': '@name',
-                        'select': '1',
-                        'date': '',
-                        'tag': [],
-                        'switch': '0',
-                        'checkboxgroup': [],
-                        'checkbox': false,
-                        'popup': '@title',
-                        'link': '@ctitle',
-                        'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                      }
-                    ]
-                  }).array
-                }
+                return mock.mock({
+                  'array|5': [
+                    {
+                      'id|+1': 100,
+                      'input|+1': 1,
+                      'textarea': '@name',
+                      'select': '1',
+                      'date': '',
+                      'tag': [],
+                      'switch': '0',
+                      'checkboxgroup': [],
+                      'checkbox': false,
+                      'popup': '@title',
+                      'link': '@ctitle',
+                      'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+                    }
+                  ]
+                }).array
               })
             },
             delete: ({ body }) => axios.post('url', body),

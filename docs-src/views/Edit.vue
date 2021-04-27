@@ -11,6 +11,7 @@
           :edit-stop="editStop"
           fullscreen
           border
+          copy
           @editColumnLastToNext="editColumnLastToNext"
         >
           <div slot="toolbar">

@@ -277,7 +277,10 @@ export default {
         columnIndex: 0,
         dialogVisible: false
       },
-      pager: {}
+      pager: {
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed: {
@@ -357,7 +360,7 @@ export default {
   },
   methods: {
     loadTableData(data) {
-      this.tableData = data
+      this.tableData = data || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       this.clearSelection()
