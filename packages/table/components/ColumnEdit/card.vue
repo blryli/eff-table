@@ -55,7 +55,6 @@ export default {
   computed: {
     style() {
       const { left, top, width, height } = this.endRect
-      console.log({ left, top, width, height }, 111111)
       return {
         left: left ? left + 'px' : '',
         top: top ? top + 'px' : '',
