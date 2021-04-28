@@ -392,10 +392,12 @@ export default {
       const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
       const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
       if (prop && sourceRow) {
-        if (sourceRow[prop] !== row[prop]) {
-          index === -1 && editStore.updateList.push(sourceRow)
+        if (index === -1) {
+          sourceRow[prop] !== row[prop] && editStore.updateList.push(sourceRow)
         } else {
-          index === -1 && editStore.updateList.splice(index, 1)
+          if ([row].some(d => d === sourceRow)) {
+            editStore.updateList.splice(index, 1)
+          }
         }
       }
     },

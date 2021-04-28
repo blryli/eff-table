@@ -10,8 +10,8 @@ export default {
   },
   data() {
     return {
-      column: null,
       show: false,
+      column: null,
       rowIndex: 0,
       cell: null,
       placement: '',
@@ -61,20 +61,17 @@ export default {
       this.dialogVisible = true
     },
     show(val) {
-      const { table, component } = this
+      const { table } = this
       if (val) {
         table.$emit('edit-open')
       } else {
-        component && component.close && component.close()
-        this.handleValidate()
-        this.updateStatus()
+        this.blurEvent(true)
         this.placement = ''
         this.scrollNum = 0
         this.column = null
         this.cell = null
         this.visible = true
         table.$emit('edit-close')
-        table.$emit('blur')
       }
     },
     'table.scrollTop'(scrollTop) {
@@ -109,7 +106,8 @@ export default {
     },
     updateStatus() {
       const { table, column, rowIndex } = this
-      column.prop && table.updateStatus(table.tableData[rowIndex], column.prop)
+      console.log({ table, column, rowIndex })
+      column && column.prop && table.updateStatus(table.tableData[rowIndex], column.prop)
     },
     handleWindowKeyup(e, keysStr) {
       const { show, table, inTable } = this
@@ -133,8 +131,6 @@ export default {
           if (keysStr === str) {
             e.preventDefault()
             this.placement = placement
-            this.handleValidate()
-            this.updateStatus()
 
             // 跳下一个处理
             const { column } = this
@@ -183,14 +179,6 @@ export default {
         this.toX(placement)
       } else {
         editLengthways && this.toY(placement)
-      }
-    },
-    blurEvent() {
-      const { component } = this
-      if (component) {
-        // component && componentValue !== component.value && component.$emit('change', component.value)
-        component && component.$emit('blur')
-        component.close && component.close()
       }
     },
     canFocus(column, cell) {
@@ -251,8 +239,10 @@ export default {
 
     handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
-      this.rowIndex = rowIndex
-      this.editCell(column, cell)
+      this.blurEvent(true).then(() => {
+        this.rowIndex = rowIndex
+        this.editCell(column, cell)
+      })
     },
     editCell(column, cell) {
       this.scrollNum = 0
@@ -261,21 +251,21 @@ export default {
       const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
         if (cellIndex === -1 || !canFocus(column, cell)) return
-        this.blurEvent()
+        this.blurEvent().then(() => {
+          // 处理溢出
+          this.fixOverflow(cell, cellIndex).then(() => {
+            this.column = column
+            this.table.editStore.oldColumnIndex = this.cellIndex
+            this.cellIndex = cellIndex
+            this.cell = getColumn(prop).cell
+            this.show = true
+            this.setElPos() // 设置编辑框位置
 
-        // 处理溢出
-        this.fixOverflow(cell, cellIndex).then(() => {
-          this.column = column
-          this.table.editStore.oldColumnIndex = this.cellIndex
-          this.cellIndex = cellIndex
-          this.cell = getColumn(prop).cell
-          this.show = true
-          this.setElPos() // 设置编辑框位置
+            this.table.editStore.columnIndex = cellIndex
 
-          this.table.editStore.columnIndex = cellIndex
-
-          this.table.$emit('blur', prop, rowIndex)
-          this.handleFocus()// 处理聚焦
+            this.table.$emit('blur', prop, rowIndex)
+            this.handleFocus()// 处理聚焦
+          })
         })
       }
       if (!cell) {
@@ -367,6 +357,21 @@ export default {
     close() {
       this.baseText = null
       this.show = false
+      this.blurEvent()
+    },
+    blurEvent(update) {
+      const { component, handleType, table } = this
+      if (component) {
+        if (update || handleType === 'to') {
+          this.handleValidate()
+          this.updateStatus()
+        }
+        component.$emit('blur')
+        const { close } = component
+        close && close()
+      }
+      table.$emit('blur')
+      return this.$nextTick()
     },
     focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
       if (!prop) return
