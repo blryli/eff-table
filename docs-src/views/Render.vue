@@ -267,9 +267,9 @@ export default {
             search: {
               operator: true
             },
-            validator: { required: true, rule: ({ value }) => {
+            rules: [{ validator: ({ value }) => {
               return !value && '不能为空'
-            } },
+            } }],
             edit: true
           },
           {
@@ -281,9 +281,9 @@ export default {
             edit: {
               render: { name: 'textarea' }
             },
-            validator: { required: true, rule: ({ value }) => {
+            rules: [{ validator: ({ value }) => {
               return !value && '不能为空'
-            } }
+            } }]
           },
           {
             show: true,

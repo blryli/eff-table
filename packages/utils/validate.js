@@ -1,114 +1,68 @@
 import { getType } from './'
 /**
- * 通用校验类
+ * 校验规则
  */
-class Validate {
-  constructor(data, fileds, params) {
-    this.data = data
-    this.fileds = fileds
-    this.params = params
-    this.validators = []
-  }
-  validateCell(rowIndex, prop, rule) {
-    return new Promise((resolve, reject) => {
-      if (!prop) {
-        console.error('需要校验的字段，必须具有 prop 属性')
-        resolve()
-      }
-      const { data, fileds, validators, params, tableBodyEl } = this
-      const { rowId } = params
-      const row = data[rowIndex]
-      const value = row[prop]
-      const id = row[rowId]
-      if (!rule) {
-        const { validator = {}} = fileds.find(d => d.prop === prop) || {}
-        if (typeof validator.rule === 'function') {
-          rule = validator.rule
-        } else {
-          resolve()
-        }
-      }
-
-      const cellIndex = fileds.findIndex(d => d.prop && d.prop === prop)
-      const childNodes = tableBodyEl.childNodes[rowIndex]
-      const cell = childNodes ? childNodes.childNodes[cellIndex] : null
-
-      // 校验处理函数
-      const validate = params => {
-        const message = typeof params === 'string' ? params : params.message || ''
-        const validator = { rowIndex, rowId: id, prop, message }
-        const index = validators.findIndex(d => d.prop === prop && d.rowIndex === rowIndex)
-        index === -1 ? validators.push(validator) : validators.splice(index, 1, validator)
-        this.$emit('validate', validator, validators)
-
-        return validator
-      }
-
-      const result = rule({ value, row, rowIndex })
-      // 异步校验
-      if (getType(result) === 'Promise') {
-        cell && cell.classList.add('is-async-validator')
-        result.then(res => {
-          cell && cell.classList.remove('is-async-validator')
-          resolve(validate(res))
-        }).catch(err => {
-          cell && cell.classList.remove('is-async-validator')
-          console.error(err)
-          reject()
-        })
-      } else {
-        resolve(validate(result))
-      }
+class Rule {
+  constructor(rule) {
+    Object.assign(this, {
+      $options: rule,
+      required: rule.required,
+      min: rule.min,
+      max: rule.max,
+      type: rule.type,
+      pattern: rule.pattern,
+      validator: rule.validator,
+      trigger: rule.trigger,
+      maxWidth: rule.maxWidth
     })
-  }
-  validate(rows) {
-    return new Promise((resolve, reject) => {
-      const { data, validateRow } = this
-      const validators = data.reduce((acc, cur, idx) => {
-        if (Array.isArray(rows) && rows.length) {
-          return rows.some(d => d === cur) ? acc.concat(validateRow(idx)) : acc
-        } else {
-          return acc.concat(validateRow(idx))
-        }
-      }, [])
-      Promise.all(validators).then(data => {
-        const messages = data.filter(d => d.message)
-        if (!messages.length) {
-          resolve(true)
-        } else {
-          reject(messages)
-        }
-      }).catch(err => {
-        reject(err)
-      })
-    })
-  }
-  validateRow(rowIndex) {
-    const { fileds, validateCell } = this
-    return fileds.reduce((acc, cur) => {
-      const { prop } = cur
-      const { rule } = cur.validator || {}
-      return typeof rule === 'function' ? acc.concat(validateCell(rowIndex, prop, rule)) : acc
-    }, [])
-  }
-  clearValidate(props) {
-    const clear = prop => {
-      const { validators } = this
-      const index = validators.findIndex(d => d.prop === prop)
-      index > -1 ? validators.splice(index, 1) : console.error('clearValidate: 请传入正确的参数')
-    }
-    if (!props) {
-      this.validators = []
-    } else if (Array.isArray(props)) {
-      props.forEach(prop => {
-        clear(prop)
-      })
-    } else {
-      clear(props)
-    }
   }
 }
+/**
+ * 字段校验
+ */
 
-export function validate(params) {
-  return new Validate()
+export function validateFiled(rules, params) {
+  return new Promise((resolve, reject) => {
+    rules.map(rule => {
+      const { validator } = rule
+      if (typeof validator === 'function') {
+        const valid = validator(params)
+        const { id, prop } = params
+        if (getType(valid) === 'Promise') {
+          valid.then(message => {
+            resolve({ id, prop, message })
+          }).catch(e => reject(e))
+        } else {
+          resolve({ id, prop, message: valid })
+        }
+      }
+    })
+  })
+}
+
+/**
+ * 通用校验
+ */
+
+export function validate(rows, columns, validateFiled) {
+  return new Promise((resolve, reject) => {
+    const rules = rows.reduce((acc, row) =>
+      acc.concat(
+        columns.reduce((acc, cur) => {
+          const { prop, rules = [] } = cur
+          return rules.length ? acc.concat(validateFiled(row, prop, rules)) : acc
+        }, [])
+      ),
+    [])
+    Promise.all(rules).then(data => {
+      const messages = data.filter(d => d.message)
+      if (!messages.length) {
+        resolve(true)
+      } else {
+        reject(messages)
+      }
+    }).catch(err => {
+      reject(err)
+    })
+  })
 }

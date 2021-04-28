@@ -65,7 +65,7 @@ data() {
             return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
           }
         },
-        validator: {
+        rules: {
           rule: ({ value }) => !value && '名字不能为空'
         }
       },
@@ -78,7 +78,7 @@ data() {
             return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
           }
         },
-        validator: {
+        rules: {
           required: true,
           rule: ({ value }) => value > 50 && '年龄不能大于50'
         }
@@ -92,7 +92,7 @@ data() {
             return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
           }
         },
-        validator: {
+        rules: {
           rule: ({ value }) => new Promise(resolve => setTimeout(() => {
             resolve(value < 170 && '身高不能低于170')
           }, 1000))
@@ -181,9 +181,7 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          validator: {
-            rule: ({ value }) => !value && '名字不能为空'
-          }
+          rules: [{ validator: ({ value }) => !value && '名字不能为空' }]
         },
         {
           show: true,
@@ -194,10 +192,7 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          validator: {
-            required: true,
-            rule: ({ value }) => value > 50 && '年龄不能大于50'
-          }
+          rules: [{ validator: ({ value }) => value > 50 && '年龄不能大于50' }]
         },
         {
           show: true,
@@ -208,11 +203,9 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          validator: {
-            rule: ({ value }) => new Promise(resolve => setTimeout(() => {
-              resolve(value < 170 && '身高不能低于170')
-            }, 1000))
-          }
+          rules: [{ validator: ({ value }) => new Promise(resolve => setTimeout(() => {
+            resolve(value < 170 && '身高不能低于170')
+          }, 1000)) }]
         }
       ]
     }
@@ -237,7 +230,7 @@ export default {
   },
   methods: {
     validate() {
-      this.$refs.table.validate().then(res => {
+      this.$refs.table.validate(true).then(res => {
         this.$message.success('校验通过!')
       }).catch(data => {
         this.$message.error('校验不通过!')

@@ -180,7 +180,7 @@ value: [
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
 | validate      | 对整个表单进行校验的方法 | Array 需要校验的数组，不传参数校验所有 |
 | validateRow | 对行进行校验的方法 | rowIndex |
-| validateCell | 对单元格进行校验的方法 | rowIndex, prop |
+| validateFiled | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|

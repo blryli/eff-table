@@ -140,7 +140,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <!-- <p>validators -  {{ validators }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -413,10 +413,10 @@ export default {
         const { tableData, visibleColumns, updateStatus } = this
         const { rowIndex, columnIndex, content } = filed
         const column = visibleColumns[columnIndex] || {}
-        const { prop, validator: { rule } = {}} = column
+        const { prop, rules } = column
         if (prop) {
           tableData[rowIndex][prop] = content
-          rule && console.log(this.validateCell(rowIndex, prop, rule))
+          rules.length && this.validateFiled(rowIndex, prop, rules)
           updateStatus(tableData[rowIndex], prop)
         }
       })
