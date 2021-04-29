@@ -108,6 +108,7 @@ export default {
 | summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
 | selectRange       | 是否开启选择区域功能    | Boolean |       |       |
 | copy       | 是否开启复制功能    | Boolean |       |       |
+| edit-history       | 是否开启前进后退功能    | Boolean |       |       |
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 ```js
 value: [
@@ -221,6 +222,7 @@ value: [
 |table-mouse-leave|鼠标离开表格|{event}|
 |page-current-change|分页当前页发生改变|{pageNum}|
 |page-size-change|分页每页大小发生改变|{pageSize}|
+|table-update-data|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
 
 ### Slot
 
