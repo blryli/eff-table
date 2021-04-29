@@ -3,14 +3,19 @@
     <card
       v-if="columnControl"
       :show="show"
-      title="列控制"
+      title="列编辑"
       :init-style="cardStyle"
       @close="close"
       @save="save"
       @resetColumns="resetColumns"
     >
+      <template slot="header">
+        <div>
+          <el-button type="default" size="mini" @click="resetColumns"> 还原 </el-button>
+          <el-button type="success" size="mini" @click="save"> 保存 </el-button>
+        </div>
+      </template>
       <div class="main">
-
         <div class="left" :style="leftStyle">
           左固定
           <div class="list area-left" :data-key="leftList.length - 1">
@@ -58,13 +63,13 @@
 </template>
 
 <script>
-import card from './card'
+import Card from 'pk/card'
 import Sortable from 'pk/utils/sortable'
 import { deepClone } from 'pk/utils/index'
 
 export default {
   name: 'TableColumnEdit',
-  components: { card },
+  components: { Card },
   props: {
     initColumns: { type: Array, default: () => [] },
     columnControl: Boolean

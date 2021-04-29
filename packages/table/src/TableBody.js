@@ -32,9 +32,9 @@ export default {
     },
     formatValidators() {
       return (this.validators.concat(this.messages) || []).reduce((acc, cur, index) => {
-        const rowId = `${cur.rowId}`
-        if (!acc[rowId]) acc[rowId] = []
-        acc[rowId].push(cur)
+        const id = `${cur.id}`
+        if (!acc[id]) acc[id] = []
+        acc[id].push(cur)
         return acc
       }, {})
     },

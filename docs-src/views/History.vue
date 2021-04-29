@@ -12,6 +12,8 @@
           fullscreen
           border
           copy
+          edit-history
+          @editColumnLastToNext="editColumnLastToNext"
         >
           <div slot="toolbar">
             <el-button @click="add">新增</el-button>
@@ -221,6 +223,11 @@ data () {
       }))
       this.$refs.table.focus(this.data.length - 1)
     },
+    editColumnLastToNext({ placement, rowIndex }) {
+      if (placement === 'right') {
+        this.data[rowIndex + 1] && this.$refs.table.focus(rowIndex + 1)
+      }
+    },
     focus() {
       this.$refs.table.focus(9)
     }
@@ -237,6 +244,8 @@ const componentSnippet = `
   :edit-stop="editStop"
   fullscreen
   border
+  @editColumnLastToNext="editColumnLastToNext"
+  editHistory
 >
   <div slot="toolbar">
     <el-button @click="add">新增</el-button>
@@ -247,7 +256,7 @@ const componentSnippet = `
 </eff-table>
 `
 export default {
-  name: 'Edit',
+  name: 'History',
   components: {
     CodeSnippet,
     Collapse
@@ -425,6 +434,11 @@ export default {
         'dynamic': ''
       }))
       this.$refs.table.focus(this.data.length - 1)
+    },
+    editColumnLastToNext({ placement, rowIndex }) {
+      if (placement === 'right') {
+        this.data[rowIndex + 1] && this.$refs.table.focus(rowIndex + 1)
+      }
     },
     focus() {
       this.$refs.table.focus(9)

@@ -2,12 +2,13 @@
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
 import ColumnEditBtn from './ColumnEditBtn'
+import EditHistory from './EditHistory'
 import Clear from './Clear'
 import { renderer, getOn } from 'pk/utils/render'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory },
   inject: ['table'],
   methods: {
     btnChange() {
@@ -19,7 +20,7 @@ export default {
   },
   render(h) {
     const { table } = this
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit } = table
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory } = table
     const { buttons = [] } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       const { code, on } = cur
@@ -36,6 +37,9 @@ export default {
           { this.$slots.default }
         </div>
         <div class='eff-table__toobar-right'>
+          {
+            editHistory && <EditHistory /> || ''
+          }
           {
             search && searchClear && <Clear /> || ''
           }
