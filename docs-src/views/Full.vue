@@ -20,7 +20,6 @@
           copy
           @selection-change="selectionChange"
           @search-change="searchChange"
-          @editColumnLastToNext="editColumnLastToNext"
         >
           <div slot="toolbar">
             <el-button @click="add">新增</el-button>
@@ -302,11 +301,6 @@ methods: {
   updateForm(prop, val) {
     this.$set(this.form, prop, val)
   },
-  editColumnLastToNext({ placement, rowIndex }) {
-    if (placement === 'right') {
-      this.data[rowIndex + 1] && this.$refs.table.focus(rowIndex + 1)
-    }
-  },
   searchChange(val) {
     console.log(JSON.stringify(val, null, 2))
     this.searchData = val
@@ -373,7 +367,6 @@ const componentSnippet = `
   copy
   @selection-change="selectionChange"
   @search-change="searchChange"
-  @editColumnLastToNext="editColumnLastToNext"
 />
 `
 export default {
@@ -627,11 +620,6 @@ export default {
     },
     updateForm(prop, val) {
       this.$set(this.form, prop, val)
-    },
-    editColumnLastToNext({ placement, rowIndex }) {
-      if (placement === 'right') {
-        this.data[rowIndex + 1] && this.$refs.table.focus(rowIndex + 1)
-      }
     },
     searchChange(val) {
       console.log(JSON.stringify(val, null, 2))

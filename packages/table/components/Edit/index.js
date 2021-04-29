@@ -105,7 +105,7 @@ export default {
     },
     updateStatus() {
       const { table, column, row } = this
-      column && column.prop && table.updateStatus(row, column.prop)
+      column && column.prop && row && table.updateStatus(row, column.prop)
     },
     handleWindowMousedown(e) {
       const { show, $el, table } = this
@@ -203,8 +203,22 @@ export default {
       if (column && canFocus(column, cell)) {
         this.blurEvent().then(() => editCell(column, cell))
       } else {
-        shake($el, 'x')
-        table.$emit('editColumnLastToNext', { placement, rowIndex, cellIndex })
+        const { editLoop, tableData } = table
+        // loop跨行编辑
+        if (editLoop) {
+          // 跳过pending状态的行
+          const { editStore: { pendingList }, rowId } = table
+          const getNextIndex = (startIndex, endIndex) => pendingList.length ? tableData.slice(startIndex, endIndex).find(da => !(pendingList.find(d => d[rowId] === da[rowId]))) + 1 : 1
+          if (placement === 'right') {
+            const index = getNextIndex(rowIndex, rowIndex + 10)
+            index > -1 ? this.focus(rowIndex + index) : shake($el, 'x')
+          } else {
+            const index = getNextIndex(rowIndex - 10, rowIndex)
+            index > -1 ? this.focus(rowIndex - index) : shake($el, 'x')
+          }
+        } else {
+          shake($el, 'x')
+        }
       }
     },
     toY() {
@@ -369,8 +383,9 @@ export default {
     },
     focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
       if (!prop) return
-      this.rowIndex = +rowIndex
       const { table, getColumn, editCell, fixOverflowX } = this
+      const lastIndex = table.tableData.length - 1
+      this.rowIndex = +rowIndex < 0 ? 0 : +rowIndex > lastIndex ? lastIndex : +rowIndex
       const { column, cell, columnIndex } = getColumn(prop, +rowIndex)
       this.column = column
       if (cell) {

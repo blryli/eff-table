@@ -218,6 +218,7 @@ export default {
     search: Boolean,
     edit: Boolean,
     editStop: Boolean,
+    editLoop: { type: Boolean, default: true },
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
@@ -270,7 +271,6 @@ export default {
       editPopoverOpts: {},
       editStore: {
         insertList: [],
-        removeList: [],
         updateList: [],
         pendingList: [],
         oldColumnIndex: 0,
@@ -380,7 +380,6 @@ export default {
     clearStatus() {
       this.editStore = Object.assign({}, {
         insertList: [],
-        removeList: [],
         updateList: [],
         pendingList: [],
         oldColumnIndex: 0,
@@ -484,6 +483,10 @@ export default {
     },
     clearSearch() {
       this.$emit('update:form', {})
+    },
+    getEditStore() {
+      const { insertList, updateList, pendingList } = this.editStore
+      return { insertList, updateList, pendingList }
     }
   }
 }
