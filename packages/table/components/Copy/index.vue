@@ -35,7 +35,6 @@ export default {
     onListener() {
       this.table.$on('select-range-data', (textArr) => {
         this.textArr = textArr
-        console.log(this.textArr, 2222)
       })
       document.addEventListener('copy', this.onCopy, false)
     },

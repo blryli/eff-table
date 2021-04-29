@@ -140,7 +140,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>validators -  {{ validators }}</p> -->
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -272,10 +272,7 @@ export default {
       editStore: {
         insertList: [],
         updateList: [],
-        pendingList: [],
-        oldColumnIndex: 0,
-        columnIndex: 0,
-        dialogVisible: false
+        pendingList: []
       },
       pager: {
         pageNum: 1,
@@ -381,16 +378,15 @@ export default {
       this.editStore = Object.assign({}, {
         insertList: [],
         updateList: [],
-        pendingList: [],
-        oldColumnIndex: 0,
-        columnIndex: 0
+        pendingList: []
       })
     },
     updateStatus(row, prop) {
       const { tableSourceData, rowId, editStore } = this
       const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
+      const isInsert = editStore.insertList.find(d => d[rowId] === row[rowId])
       const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
-      if (prop && sourceRow) {
+      if (prop && sourceRow && !isInsert) {
         if (index === -1) {
           sourceRow[prop] !== row[prop] && editStore.updateList.push(sourceRow)
         } else {
@@ -484,9 +480,11 @@ export default {
     clearSearch() {
       this.$emit('update:form', {})
     },
+    getFullData() {
+      return this.tableData
+    },
     getEditStore() {
-      const { insertList, updateList, pendingList } = this.editStore
-      return { insertList, updateList, pendingList }
+      return this.editStore
     }
   }
 }

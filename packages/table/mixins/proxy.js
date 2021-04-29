@@ -155,8 +155,9 @@ export default {
       const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
-        const { rowIndex, prop } = errMap[0]
         // 聚焦到第一个校验不通过的单元格
+        const { id, prop } = errMap[0]
+        const rowIndex = tableData.findIndex(d => d[rowId] === id)
         this.focus(rowIndex, prop)
       }).then(success => {
         if (success) {
