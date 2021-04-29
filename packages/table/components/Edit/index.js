@@ -112,6 +112,7 @@ export default {
       if (!show || $el.contains(e.target) || table.editIsStop) return
       this.show = false
     },
+
     handleWindowKeyup(e, keysStr) {
       const { show, table, row, inTable } = this
       if (!show || table.editIsStop || !inTable(e.target)) return
@@ -365,13 +366,20 @@ export default {
       this.$el.style.height = `${height + 1}px`
     },
     close() {
-      this.baseText = null
       this.show = false
       this.blurEvent()
+      this.baseText = null
     },
     blurEvent() {
-      const { component, table } = this
+      const { component, table, rowIndex, columnIndex, column } = this
+      const { tableData } = this.table
       if (component) {
+        if (column && column.prop) {
+          const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: this.baseText }
+          if (data.oldData !== null && data.oldData !== data.newData) {
+            this.table.$emit('table-update-data', data)
+          }
+        }
         this.handleValidate()
         this.updateStatus()
         component.$emit('blur')

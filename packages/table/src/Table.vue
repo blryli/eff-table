@@ -140,7 +140,6 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>validators -  {{ validators }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -248,7 +247,8 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
-    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    editHistory: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -408,17 +408,26 @@ export default {
       })
     },
     editFileds(fileds) {
+      const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this
         const { rowIndex, columnIndex, content } = filed
         const column = visibleColumns[columnIndex] || {}
         const { prop, rules } = column
+
         if (prop) {
+          if (!filed.notUpdateTableEvent && content !== tableData[rowIndex][prop]) {
+            updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
+          }
           tableData[rowIndex][prop] = content
-          rules.length && this.validateFiled(rowIndex, prop, rules)
+          rules && rules.length && this.validateFiled(rowIndex, prop, rules)
           updateStatus(tableData[rowIndex], prop)
         }
       })
+
+      if (updateArr.length) {
+        this.$emit('table-update-data', updateArr)
+      }
     },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
