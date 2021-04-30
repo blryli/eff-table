@@ -2,32 +2,35 @@ import { getType } from './'
 /**
  * 校验规则
  */
-class Rule {
-  constructor(rule) {
-    Object.assign(this, {
-      $options: rule,
-      required: rule.required,
-      min: rule.min,
-      max: rule.max,
-      type: rule.type,
-      pattern: rule.pattern,
-      validator: rule.validator,
-      trigger: rule.trigger,
-      maxWidth: rule.maxWidth
-    })
-  }
+// class Rule {
+//   constructor(rule) {
+//     Object.assign(this, {
+//       $options: rule,
+//       required: rule.required,
+//       min: rule.min,
+//       max: rule.max,
+//       type: rule.type,
+//       pattern: rule.pattern,
+//       validator: rule.validator,
+//       trigger: rule.trigger,
+//       maxWidth: rule.maxWidth
+//     })
+//   }
+// }
+
+function getMessage(rule, message) {
+  return rule ? message : false
 }
 /**
  * 字段校验
  */
-
 export function validateFiled(rules, params) {
-  return new Promise((resolve, reject) => {
-    rules.map(rule => {
-      const { validator } = rule
+  const valildator = rules.map(rule => {
+    return new Promise((resolve, reject) => {
+      const { validator, min, max, pattern, message } = rule
+      const { id, prop, value } = params
       if (typeof validator === 'function') {
         const valid = validator(params)
-        const { id, prop } = params
         if (getType(valid) === 'Promise') {
           valid.then(message => {
             resolve({ id, prop, message })
@@ -35,9 +38,28 @@ export function validateFiled(rules, params) {
         } else {
           resolve({ id, prop, message: valid })
         }
+      } else {
+        const len = ('' + value).length
+        const Rules = {
+          required: () => !value,
+          min: () => len < Number(min) || len > Number(max),
+          max: () => len < Number(min) || len > Number(max),
+          pattern: () => !(pattern.test(value)),
+          email: () => !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)),
+          phone: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value))
+        }
+        let e = false
+        for (const key in Rules) {
+          if (rule[key]) {
+            e = getMessage(Rules[key](), message)
+            break
+          }
+        }
+        resolve({ id, prop, message: e })
       }
     })
   })
+  return Promise.all(valildator).then(res => res.find(d => d.message) || {})
 }
 
 /**

@@ -361,7 +361,6 @@ export default {
     },
     close() {
       this.show = false
-      this.blurEvent()
       this.baseText = null
     },
     blurEvent() {
