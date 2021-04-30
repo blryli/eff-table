@@ -1,32 +1,4 @@
 /**
- * * 获取 table 当前节点上下左右的节点
- * @param {element} node 当前节点
- * @param {string} placement left/top/right/bottom
- */
-export const getTableNode = function(node, placement) {
-  if (['left', 'top', 'right', 'bottom'].indexOf(placement) < 0) {
-    console.error('getTableNode(node, placement) 方法必须传入 placement 参数 left/top/right/bottom')
-    return
-  }
-
-  const config = {
-    top: 'previousSibling',
-    left: 'previousSibling',
-    right: 'nextSibling',
-    bottom: 'nextSibling'
-  }
-  const sibling = config[placement]
-  if (placement === 'top' || placement === 'bottom') {
-    const parent = node.parentNode
-    const nodeIndex = [...parent.childNodes].findIndex(d => d === node)
-    const targetRow = parent[sibling]
-    return targetRow ? targetRow.childNodes[nodeIndex] : false
-  } else {
-    return node[sibling] || false
-  }
-}
-
-/**
  * * 当前元素在区域内是否溢出
  * @param {element} node 当前节点
  * @param {element} area 区域节点

@@ -99,7 +99,7 @@ export default {
 | searchClear | search为true时有效，是否展示清空搜索按钮   | Boolean   |           | true      |
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| editLoop   | 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时无缝衔接  | Boolean    |     | true      |
+| editLoop   | 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑  | Boolean    |     | true      |
 | edit-stop| 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false| Boolean |     | false   |
 | edit-Lengthways    | 是否开启纵向快捷编辑    | Boolean      |            | true      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
@@ -180,6 +180,7 @@ value: [
 | ------------- | ------------------------- | ----------------------------- |
 | focus         | 聚焦的方法                 | index(列索引), prop(字段) |
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
+| getFullData      | 获取当前表格全量数据 |     ---          |
 | getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | Array 需要校验的数组，不传参数校验所有 |
 | validateRow | 对行进行校验的方法 | rowIndex |

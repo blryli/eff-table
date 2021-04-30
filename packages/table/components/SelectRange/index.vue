@@ -64,6 +64,9 @@ export default {
       }
     })
 
+    document.addEventListener("scroll", () => {
+      this.$set(this.toolStyle, 'display', 'none')
+    })
     document.addEventListener('paste', this.onPaste, false)
   },
   destroyed() {

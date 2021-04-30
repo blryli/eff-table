@@ -36,6 +36,9 @@ export default {
         case 'save':
           save && (typeof save === 'function' ? this.save(save) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
+        case 'refresh':
+          this.refresh()
+          break
         case 'loadChildren':
           typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : console.warn(`requst 没有传入函数 ${[code]}`)
           break
@@ -43,7 +46,14 @@ export default {
           break
       }
     },
+    loadingOpen() {
+      this.isLoading = true
+    },
+    loadingClose() {
+      this.isLoading = false
+    },
     query(query) {
+      this.loadingOpen()
       this.getList(query).then(data => {
         if (!data) data = []
         if (Array.isArray(data)) {
@@ -55,9 +65,11 @@ export default {
           this.loadTableData(data.list || [])
           Object.assign(this.pager, { pageNum, pageSize, total })
         }
+        this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
         console.error(e)
+        this.loadingClose()
       })
     },
     getList(query) {
@@ -155,8 +167,9 @@ export default {
       const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
-        const { rowIndex, prop } = errMap[0]
         // 聚焦到第一个校验不通过的单元格
+        const { id, prop } = errMap[0]
+        const rowIndex = tableData.findIndex(d => d[rowId] === id)
         this.focus(rowIndex, prop)
       }).then(success => {
         if (success) {
@@ -224,6 +237,9 @@ export default {
       this.editStore.insertList.push(...records)
       this.updateCache()
       return this.$nextTick().then(() => rowIndex)
+    },
+    refresh() {
+      this.commitProxy('query')
     }
   }
 }
