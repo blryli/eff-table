@@ -4,11 +4,12 @@ import ColumnCtrlBtn from './ColumnCtrlBtn'
 import ColumnEditBtn from './ColumnEditBtn'
 import EditHistory from './EditHistory'
 import Clear from './Clear'
+import Refresh from './Refresh'
 import { renderer, getOn } from 'pk/utils/render'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh },
   inject: ['table'],
   methods: {
     btnChange() {
@@ -21,7 +22,7 @@ export default {
   render(h) {
     const { table } = this
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory } = table
-    const { buttons = [] } = toolbarConfig || {}
+    const { buttons = [], refresh } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       const { code, on } = cur
       const event = code && getOn(on, { click: () => this.table.commitProxy(code) })
@@ -37,6 +38,9 @@ export default {
           { this.$slots.default }
         </div>
         <div class='eff-table__toobar-right'>
+          {
+            refresh && <Refresh /> || ''
+          }
           {
             editHistory && <EditHistory /> || ''
           }

@@ -36,6 +36,9 @@ export default {
         case 'save':
           save && (typeof save === 'function' ? this.save(save) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
+        case 'refresh':
+          this.refresh()
+          break
         case 'loadChildren':
           typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : console.warn(`requst 没有传入函数 ${[code]}`)
           break
@@ -43,7 +46,14 @@ export default {
           break
       }
     },
+    loadingOpen() {
+      this.isLoading = true
+    },
+    loadingClose() {
+      this.isLoading = false
+    },
     query(query) {
+      this.loadingOpen()
       this.getList(query).then(data => {
         if (!data) data = []
         if (Array.isArray(data)) {
@@ -55,9 +65,11 @@ export default {
           this.loadTableData(data.list || [])
           Object.assign(this.pager, { pageNum, pageSize, total })
         }
+        this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
         console.error(e)
+        this.loadingClose()
       })
     },
     getList(query) {
@@ -225,6 +237,9 @@ export default {
       this.editStore.insertList.push(...records)
       this.updateCache()
       return this.$nextTick().then(() => rowIndex)
+    },
+    refresh() {
+      this.commitProxy('query')
     }
   }
 }

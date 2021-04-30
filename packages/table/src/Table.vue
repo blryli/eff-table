@@ -140,10 +140,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <<<<<<< HEAD
     <!-- <p>editStore -  {{ editStore }}</p> -->
-    =======
-    >>>>>>> 6458bb1f26697d28b77f248265e51bad08443056
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />

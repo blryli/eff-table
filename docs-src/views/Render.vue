@@ -194,7 +194,8 @@ export default {
             { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
-          ]
+          ],
+          refresh: true
         },
         proxyConfig: {
           request: {
@@ -206,10 +207,9 @@ export default {
                     {
                       'id|+1': 100,
                       'input|+1': 1,
-                      'textarea': '@name',
+                      'async': '',
                       'select': '1',
                       'date': '',
-                      'tag': [],
                       'switch': '0',
                       'checkboxgroup': [],
                       'checkbox': false,
@@ -236,14 +236,23 @@ export default {
             show: true,
             prop: 'input',
             title: '输入框',
-            width: 100,
             config: { name: 'input' },
             sortable: true,
             search: {
               operator: true
             },
+            rules: [{ validator: ({ value }) => !value && '不能为空' }],
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'async',
+            title: '异步校验',
+            search: true,
+            config: { name: 'input' },
+            cellRender: {},
             rules: [{ validator: ({ value }) => {
-              return new Promise(resolve => setTimeout(() => resolve(!value && '不能为空'), 500))
+              return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 500))
             } }],
             edit: true
           },
@@ -251,9 +260,8 @@ export default {
             show: true,
             prop: 'select',
             title: '选择器',
-            width: 100,
             config: {
-              name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]
+              name: 'select', options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }]
             },
             edit: true,
             search: true
@@ -262,7 +270,6 @@ export default {
             show: true,
             prop: 'switch',
             title: '开关',
-            width: 100,
             config: { name: 'switch', defaultValue: false },
             edit: true,
             search: true
@@ -271,7 +278,6 @@ export default {
             show: true,
             prop: 'date',
             title: '日期',
-            width: 160,
             config: {
               name: 'date-picker', format: 'yyyy-MM-dd'
             },
@@ -280,22 +286,21 @@ export default {
             },
             edit: true
           },
-          {
-            show: true,
-            prop: 'tag',
-            title: '标签',
-            width: 100,
-            search: true,
-            cellRender: { name: 'tag' },
-            config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
-            edit: {
-              render: { name: 'select', props: { multiple: true }}
-            }
-          },
+          // {
+          //   show: true,
+          //   prop: 'tag',
+          //   title: '标签',
+          //   width: 100,
+          //   search: true,
+          //   cellRender: { name: 'tag' },
+          //   config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
+          //   edit: {
+          //     render: { name: 'select', props: { multiple: true }}
+          //   }
+          // },
           {
             show: true,
             title: '按钮',
-            width: 100,
             fixed: 'right',
             config: { name: 'button', children: '操作' }
           }
