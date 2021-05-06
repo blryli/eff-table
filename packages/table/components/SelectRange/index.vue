@@ -199,19 +199,19 @@ export default {
           const style = {}
 
           if (j === startColumn) {
-            style.borderLeft = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderLeft = `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (j === endColumn) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderRight = `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (i === startRow) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderTop = `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (i === endRow) {
-            style.borderBottom = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderBottom = `2px ${this.borderStyle} rgb(17 210 232)`
           }
 
           if (column) {
@@ -380,6 +380,9 @@ export default {
     height: 32px;
     transform: scale(0.5);
 
+    :hover {
+      cursor: pointer;
+    }
     .before {
       border: 3px solid rgb(17, 119, 232);
       position: absolute;
