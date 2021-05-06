@@ -258,6 +258,7 @@ export default {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       tableForm: {},
+      searchForm: [],
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
@@ -487,7 +488,15 @@ export default {
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
       this.$emit('expand-change', this.expands)
     },
+    searchChange(val) {
+      console.log('search change', JSON.stringify(val, null, 2))
+      this.searchForm = val
+      this.$emit('search-change', val)
+      if (this.proxyConfig) this.commitProxy('query')
+    },
     clearSearch() {
+      this.searchForm = []
+      this.tableForm = []
       this.$emit('update:form', {})
     },
     getFullData() {

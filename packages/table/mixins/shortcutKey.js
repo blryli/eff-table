@@ -51,7 +51,7 @@ export default {
         if (this.searchShow === false) {
           console.log('this.searchShow', this.searchShow)
           this.clearSearch()
-          this.$emit('search-change', [])
+          this.searchChange([])
         }
       }
     },

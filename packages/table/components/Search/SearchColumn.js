@@ -56,12 +56,10 @@ export default {
   },
   methods: {
     formChange(val) {
-      console.log('form change')
       this.form[this.column.prop] = val
       this.change()
     },
     searchChange(val) {
-      console.log('search change', val, this.column.prop, this.form)
       this.form[this.column.prop] = val
       this.updateForm()
     },

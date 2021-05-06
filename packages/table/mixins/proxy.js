@@ -6,6 +6,7 @@ export default {
   methods: {
     // 提交指令
     commitProxy(code) {
+      // console.log('commitProxy', code)
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save, loadChildren } = request || {}
       switch (code) {
@@ -73,10 +74,10 @@ export default {
       })
     },
     getList(query) {
-      const { pager: page, sorts, filters, tableForm } = this
+      const { pager: page, sorts, filters, searchForm } = this
       // 配置模式
       if (typeof query === 'object') {
-        const formData = Object.assign({}, tableForm)
+        const formData = Object.assign({}, { form: searchForm })
         // 处理排序条件
         const firstSort = sorts[0]
         if (firstSort) {
@@ -91,7 +92,7 @@ export default {
         return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式
-        return query({ page, sorts, filters, form: tableForm })
+        return query({ page, sorts, filters, form: searchForm })
       }
     },
     delete(deleted) {
