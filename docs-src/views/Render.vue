@@ -200,6 +200,7 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
+              console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
               const params = { ...form }
               return axios.get('url', params).catch(res => {
                 return mock.mock({

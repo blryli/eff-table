@@ -70,16 +70,16 @@ function renderTextareaEdit(h, renderOpts, params) {
 function renderselectCell(h, renderOpts, params) {
   const { props, options = [] } = renderOpts || {}
   const { row, prop } = params || {}
-  const cellLabel = row && prop && row[prop] || ''
+  const cellLabel = row && row[prop]
   const { labelKey = 'label', valueKey = 'value' } = props || {}
-  const opt = getOptions(options, params).find(d => d[valueKey] === cellLabel) || {}
+  const opt = getOptions(options, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
   return labelKey ? opt[labelKey] : cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
   const { table, data, prop, searchChange } = params
   const props = {
-    value: data[prop] || null,
+    value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择'
   }
   const on = {
@@ -249,13 +249,13 @@ function renderSwitch(h, renderOpts, params) {
   const { data, prop } = params
   const isBoolean = typeof data[prop] === 'boolean'
   const props = {
-    value: data[prop],
+    value: isBoolean ? data[prop] : '' + data[prop],
     activeValue: isBoolean ? true : '1',
     inactiveValue: isBoolean ? false : '0'
   }
   const on = getOn(renderOpts.on, {
     input: val => {
-      data[prop] = val
+      data[prop] = isBoolean ? val : '' + val
     }
   })
   return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
