@@ -8,8 +8,15 @@
       </template>
     </div>
     <div class="flex flex-direction">
-      <el-button v-if="status === 2" :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
+      <div v-if="status === 2" class="copy" :class="copyBtnType" title="复制" @click.stop="onClickCopy">
+        <div class="before">
+          <div />
+          <div />
+        </div>
+        <div class="after" />
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -64,7 +71,7 @@ export default {
       }
     })
 
-    document.addEventListener("scroll", () => {
+    document.addEventListener('scroll', () => {
       this.$set(this.toolStyle, 'display', 'none')
     })
     document.addEventListener('paste', this.onPaste, false)
@@ -316,12 +323,15 @@ export default {
 .tool {
   position: fixed;
   display: flex;
+
   .copybtn {
     margin-bottom: 10px;
   }
+
   .pastebtn {
     margin-left: 0px;
   }
+
   .sight {
     width: 14px;
     height: 14px;
@@ -329,28 +339,104 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: crosshair;
+
     div {
       background-color: rgb(17, 119, 232);
       position: absolute;
       border-radius: 4px;
     }
+
     .vertical {
-      width: 4px;
-      height: 14px;
+      width: 2px;
+      height: 10px;
+      border-top: 1px solid white;
+      border-bottom: 1px solid white;
     }
 
     .lineae {
-      width: 14px;
-      height: 4px;
+      width: 10px;
+      height: 2px;
       margin-top: -1px;
+      border-left: 1px solid white;
+      border-right: 1px solid white;
     }
   }
+
   .flex {
-    margin-left: 10px;
+    margin-left: -4px;
+    margin-top: -35px;
     display: flex;
+    position: absolute;
+    bottom: -25px;
+    right: 0px;
   }
+
   .flex-direction {
     flex-direction: column;
+  }
+
+  .copy {
+    width: 32px;
+    height: 32px;
+    transform: scale(0.5);
+
+    .before {
+      border: 3px solid rgb(17, 119, 232);
+      position: absolute;
+      top: 7px;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      background-color: white;
+      z-index: 3;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+
+      div {
+        width: 12px;
+        height: 3px;
+        background-color: rgb(17, 119, 232);
+      }
+    }
+
+    .after {
+      position: absolute;
+      border: 3px solid rgb(17, 119, 232);
+      width: 20px;
+      height: 24px;
+      left: 10px;
+      z-index: 2;
+      background-color: white;
+    }
+  }
+
+  .success {
+    .after {
+      border: 3px solid #67c23a;
+    }
+
+    .before {
+      border: 3px solid #67c23a;
+      position: absolute;
+      top: 7px;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      background-color: white;
+      z-index: 3;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+
+      div {
+        width: 12px;
+        height: 3px;
+        background-color: #67c23a;
+      }
+    }
   }
 }
 </style>

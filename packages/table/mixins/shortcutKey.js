@@ -56,20 +56,20 @@ export default {
       }
     },
     handleWindowClick(e) {
+      const { target } = e
       if (this.edit) {
-        const { target } = e
         const { edit, editPopover } = this.$refs
-        // 点击编辑以外的区域时关闭编辑框
-        // if (edit.show) {
         if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
           if (edit.show) {
             this.closeEdit()
           }
-          if (this.selectRange) {
-            this.closeSelectRange()
-          }
         }
-        // }
+      }
+
+      if (this.selectRange || this.copy) {
+        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target)) {
+          this.closeSelectRange()
+        }
       }
     }
   }
