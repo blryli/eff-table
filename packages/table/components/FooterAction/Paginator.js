@@ -22,10 +22,6 @@ export default {
     }
   },
   render(h) {
-    if (!this.total) {
-      return ''
-    }
-
     const render = renderer.get('default').renderDefault
 
     return render(h, {
