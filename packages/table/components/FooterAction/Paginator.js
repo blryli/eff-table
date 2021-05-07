@@ -22,11 +22,6 @@ export default {
     }
   },
   render(h) {
-    console.log(123123123123, this.table.pager, this.table.pager.total)
-    if (!this.total) {
-      return ''
-    }
-
     const render = renderer.get('default').renderDefault
 
     return render(h, {

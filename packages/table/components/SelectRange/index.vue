@@ -83,7 +83,8 @@ export default {
   methods: {
     close() {
       this.status = 0
-      this.handleSightRect()
+      this.handleRect(true, true)
+      this.handleRect(false, true)
     },
     onClickCopy() {
       this.copyBtnType = 'success'
@@ -185,11 +186,25 @@ export default {
           this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
-        this.handleSightRect()
+        this.handleRect(true)
       }
     },
-    handleSightRect() {
-      const { startRow, endRow, startColumn, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
+    handleRect(sight = false, close = false) {
+      let borderStyle, res
+
+      if (sight) {
+        res = this._getReac('sightStartPosition', 'sightEndPosition')
+        borderStyle = `2px ${this.borderStyle} rgb(17 210 232)`
+      } else {
+        res = this._getReac()
+        borderStyle = `2px ${this.borderStyle} #1177e8`
+      }
+
+      if (close) {
+        borderStyle = ''
+      }
+
+      const { startRow, endRow, startColumn, endColumn } = res
 
       const map = this._getColumnMap()
 
@@ -199,60 +214,32 @@ export default {
           const style = {}
 
           if (j === startColumn) {
-            style.borderLeft = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderLeft = borderStyle
           }
 
           if (j === endColumn) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderRight = borderStyle
           }
 
           if (i === startRow) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderTop = borderStyle
           }
 
           if (i === endRow) {
-            style.borderBottom = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderBottom = borderStyle
           }
 
           if (column) {
             column.style = style
-            // this.textMap[i + '-' + j] = column.text
+            if (!sight) {
+              this.textMap[i + '-' + j] = column.$el.innerText
+            }
           }
         }
       }
     },
-    handleRect() {
-      const { startRow, endRow, startColumn, endColumn } = this._getReac()
+    closeReac() {
 
-      const map = this._getColumnMap()
-
-      for (let i = startRow; i <= endRow; i++) {
-        for (let j = startColumn; j <= endColumn; j++) {
-          const column = map[i + '-' + j]
-          const style = {}
-
-          if (j === startColumn) {
-            style.borderLeft = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (j === endColumn) {
-            style.borderRight = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (i === startRow) {
-            style.borderTop = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (i === endRow) {
-            style.borderBottom = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (column) {
-            column.style = style
-            this.textMap[i + '-' + j] = column.$el.innerText
-          }
-        }
-      }
     },
     onPaste(e) {
       if (this.status !== 2) {
@@ -380,6 +367,9 @@ export default {
     height: 32px;
     transform: scale(0.5);
 
+    :hover {
+      cursor: pointer;
+    }
     .before {
       border: 3px solid rgb(17, 119, 232);
       position: absolute;

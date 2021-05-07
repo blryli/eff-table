@@ -17,6 +17,7 @@ const map = {
   'switch': 'el-switch',
   'checkbox-group': 'el-checkbox-group',
   'checkbox': 'el-checkbox',
+  'pagination': 'el-pagination',
 
   // 内置组件
   'popup': 'popup',
