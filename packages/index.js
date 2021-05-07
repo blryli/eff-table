@@ -1,16 +1,19 @@
-import Table from './table/src/Table.vue'
+import Table from './table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
+import { Form, FormLine } from './form'
 
-const components = [Table, Popup, Layout, VRender, Styles]
+const components = [Table, Popup, Layout, VRender, Form, FormLine, Styles]
 
 export {
   Table,
   Popup,
   Layout,
-  VRender
+  VRender,
+  Form,
+  FormLine
 }
 
 const install = function(Vue, opts = {}) {
