@@ -13,9 +13,9 @@ export default {
   },
   props: {
     cols: { type: Array, default: () => [] },
-    label: { type: String, default: '' },
+    title: { type: String, default: '' },
     span: { type: Number, default: 24 },
-    labelWidth: { type: String, default: '' },
+    titleWidth: { type: String, default: '' },
     required: { type: Boolean, default: false }
   },
   inject: ['form'],
@@ -68,16 +68,16 @@ export default {
     const { form, cols, lineFreeSpace, isResponse, itemGutter, rowledge } = this
     slots.forEach((slot, index) => {
       // 获取节点属性
-      let span, labelWidth
+      let span, titleWidth
       const col = cols[index]
-      const { label, path = `_${this.id}-${index + 1}_`, required = false, validator, trigger } =
+      const { title, path = `_${this.id}-${index + 1}_`, required = false, validator, trigger } =
         (cols.length && col) || {}
       if (cols.length && col) {
         span = col.span || lineFreeSpace
-        labelWidth =
-          col.labelWidth ||
-          this.labelWidth ||
-          form.labelWidth ||
+        titleWidth =
+          col.titleWidth ||
+          this.titleWidth ||
+          form.titleWidth ||
           '80px'
       } else {
         span = lineFreeSpace
@@ -99,15 +99,15 @@ export default {
         [slot]
       )
 
-      if (!this.label) {
+      if (!this.title) {
         // form-item基本布局
-        const node = label
+        const node = title
           ? h(
             'v-form-item',
             {
               attrs: {
-                label,
-                labelWidth,
+                title,
+                titleWidth,
                 required
               }
             },
@@ -126,7 +126,7 @@ export default {
           )
         )
       }
-      if (this.label) {
+      if (this.title) {
         // form-item并列布局
         const noFirst = !!abreastSlots.length
         abreastSlots.push([
@@ -145,15 +145,15 @@ export default {
       }
     })
     // 并列布局添加节点
-    if (this.label) {
-      const { label, labelWidth, required } = this
+    if (this.title) {
+      const { title, titleWidth, required } = this
       nodes.push(
         h(
           'v-form-item',
           {
             attrs: {
-              label,
-              labelWidth: labelWidth || form.labelWidth || '80px',
+              title,
+              titleWidth: titleWidth || form.titleWidth || '80px',
               required
             }
           },

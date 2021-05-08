@@ -4,7 +4,7 @@ var defaultFocusOptions = {
   prevKeys: 'shift+enter',
   nextKeys: 'enter',
   skips: [],
-  loop: false
+  loop: true
 }
 
 export default {
@@ -71,9 +71,9 @@ export default {
       !lineSlots.find(d => d.slot.$el.contains(e.target)) && _clear()
     },
     keyup(e) {
-      const { curPath, focusStop, prevKeys, nextKeys, lineSlotsPath, prevFocus, nextFocus, focus } = this
+      const { curPath, editIsStop, prevKeys, nextKeys, lineSlotsPath, prevFocus, nextFocus, focus } = this
       const keyStr = e.key || e.keyIdentifier
-      if (!curPath || focusStop || !keyStr) return
+      if (!curPath || editIsStop || !keyStr) return
       const key = keyStr.toLowerCase()
       const keys = new Set()
       const keyArr = [{ key: 'alt', down: e['altKey'] }, { key: 'control', down: e['ctrlKey'] }, { key: 'shift', down: e['shiftKey'] }]

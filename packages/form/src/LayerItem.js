@@ -12,9 +12,9 @@ export default {
     VCol
   },
   props: {
-    label: { type: String, default: '' },
+    title: { type: String, default: '' },
     span: { type: Number, default: 24 },
-    labelWidth: { type: String, default: '80px' },
+    titleWidth: { type: String, default: '80px' },
     required: { type: Boolean, default: false },
     trigger: { type: String, default: 'blur' },
     validator: Function
@@ -44,8 +44,8 @@ export default {
     // console.log(JSON.stringify(this.form.initLayer, null, 2))
     let slot = this.$slots.default[0]
     let span
-    const { form, label, path = `_${this.id}_`, required = false, validator, trigger, itemGutter, rowledge } = this
-    const labelWidth = this.labelWidth || form.labelWidth || '80px'
+    const { form, title, path = `_${this.id}_`, required = false, validator, trigger, itemGutter, rowledge } = this
+    const titleWidth = this.titleWidth || form.titleWidth || '80px'
     this.isResponse && (this.span = 24)
 
     // 添加图层
@@ -63,13 +63,13 @@ export default {
       [slot]
     )
 
-    const node = label
+    const node = title
       ? h(
         'v-form-item',
         {
           attrs: {
-            label,
-            labelWidth,
+            title,
+            titleWidth,
             required
           }
         },

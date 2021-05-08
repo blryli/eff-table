@@ -41,7 +41,7 @@ export default {
       const event = code && getOn(on, { click: e => this.btnClick(code, e, idx) })
       const opts = Object.assign({}, cur, { on: event })
       const compConf = renderer.get(opts.name)
-      return compConf ? acc.concat(compConf.renderDefault(h, opts, { table, columnIndex: idx })) : acc
+      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])
 
     return (

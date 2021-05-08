@@ -1,15 +1,13 @@
 <template>
   <div class="page-home page">
     <h2>Description</h2>
-    <el-button @click="$refs.table.sort('city', 'asc')">城市升序</el-button>
-    <el-button @click="$refs.table.sort('city', 'desc')">城市降序</el-button>
-    <el-button @click="$refs.table.clearSort()">清除排序</el-button>
     <section class="demo">
       <div class="section-content">
         <v-form
           ref="form"
           v-bind="formOptions"
         />
+        <!-- {{ formOptions.data }} -->
       </div>
     </section>
 
@@ -28,7 +26,7 @@
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
+// import mock from 'mockjs'
 
 const mainSnippet = `
 data () {
@@ -53,32 +51,58 @@ export default {
       value: 2,
       mainSnippet,
       componentSnippet,
+      input: '',
       formOptions: {
-        data: {},
-        layer: [],
+        titleWidth: '100px',
+        // data: {
+        //   name: '',
+        //   sex: '',
+        //   age: '',
+        //   height: '',
+        //   heightUnit: '1',
+        //   weight: '',
+        //   weightUnit: '1',
+        //   hobby1: '',
+        //   hobby2: '',
+        //   hobby3: ''
+        // },
         cols: [
-          { label: 'aaa', span: 8 },
-          { label: 'bbb', span: 16 }
+          { title: '名字', span: 8, prop: 'name' },
+          { span: 8, prop: 'sex', itemRender: { name: 'select', options: [{ value: '1', label: '男' }, { value: '2', label: '女' }] }},
+          { title: '年龄', span: 8, prop: 'age' },
+          { title: '身高', span: 12, children: [
+            { prop: 'height', span: 12 },
+            { prop: 'heightUnit', span: 12, itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] }}
+          ] },
+          { title: '体重', span: 12, children: [
+            { prop: 'weight', span: 12 },
+            { prop: 'weightUnit', span: 12, itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] }}
+          ] },
+          { title: '爱好', span: 16, children: [
+            { prop: 'hobby1', span: 8 },
+            { prop: 'hobby2', span: 8 },
+            { prop: 'hobby3', span: 8 }
+          ] }
         ]
       }
     }
   },
   mounted() {
     setTimeout(() => {
-      this.data = mock.mock({
-        'array|1000': [
-          {
-            'id|+1': 100,
-            'message': '@email',
-            'name': '@cname',
-            'email': '@email',
-            'city': '@city',
-            'datetime': '@datetime',
-            'index|+1': 1,
-            long: ''
-          }
-        ]
-      }).array
+      // this.data = mock.mock({
+      //   'array|1000': [
+      //     {
+      //       'id|+1': 100,
+      //       'message': '@email',
+      //       'name': '@cname',
+      //       'email': '@email',
+      //       'city': '@city',
+      //       'datetime': '@datetime',
+      //       'index|+1': 1,
+      //       long: ''
+      //     }
+      //   ]
+      // }).array
     }, 1000)
   }
 }

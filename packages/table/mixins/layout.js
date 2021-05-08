@@ -108,11 +108,18 @@ export default {
     }
   },
   methods: {
+    getBodyWidth() {
+      let node = this.$el
+      while (node.getBoundingClientRect().width === 0) {
+        node = node.parentNode
+      }
+      return node.getBoundingClientRect().width
+    },
     resize() {
       this.$nextTick(() => {
-        const { $el, minWidth, setOverflowX, scrollLeftEvent } = this
+        const { $el, setOverflowX, scrollLeftEvent } = this
         this.bodyWrapper = this.$refs.body.$el
-        this.bodyWrapperWidth = $el.getBoundingClientRect().width || minWidth
+        this.bodyWrapperWidth = this.getBodyWidth()
         setOverflowX()
         scrollLeftEvent()
         this.tableBodyEl = $el.querySelector('.eff-table__body')

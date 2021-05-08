@@ -167,7 +167,7 @@ export default {
         }
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
-        return compConf ? compConf.renderDefault(h, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
