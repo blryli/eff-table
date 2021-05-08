@@ -1,5 +1,4 @@
 import map from './map'
-
 import isObject from 'xe-utils/isObject'
 import isArray from 'xe-utils/isArray'
 

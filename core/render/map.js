@@ -20,7 +20,8 @@ const map = {
 
   // 内置组件
   'popup': 'popup',
-  'layout': 'layout'
+  'layout': 'layout',
+  'panel': 'panel'
 }
 
 export default {
