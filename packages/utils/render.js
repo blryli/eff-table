@@ -34,33 +34,36 @@ function renderCell(h, renderOpts, params) {
 
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
-  const { data, prop, searchChange } = params
+  const { vue, data, column, prop, searchChange } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
   const props = {
     value: data[prop] || null
   }
+  const attrs = {
+    placeholder: '请输入' + (column.title || '内容')
+  }
   const on = getOn(renderOpts.on, {
     input: val => {
-      data[prop] = val
+      vue.$set(data, prop, val)
     },
     change: val => {
       searchChange && searchChange(val)
     }
   })
 
-  return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
+  return render(h, renderOpts, params).mergeOpts({ props, attrs, on }).render()
 }
 
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
-  const { data, prop } = params
+  const { vue, data, prop } = params
   const props = {
     value: data[prop] || null,
     type: 'textarea'
   }
   const on = getOn(renderOpts.on, {
     input: val => {
-      data[prop] = val
+      vue.$set(data, prop, val)
     }
   })
   return render(h, renderOpts, params).setOpts('name', 'input').mergeOpts({ props, on }).render()
@@ -77,14 +80,14 @@ function renderselectCell(h, renderOpts, params) {
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
-  const { table, data, prop, searchChange } = params
+  const { root, vue, data, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : data[prop],
-    placeholder: '请选择'
+    placeholder: '请选择' + (column.title || '')
   }
   const on = {
     input: val => {
-      data[prop] = val
+      vue.$set(data, prop, val)
       searchChange && searchChange(val)
     }
   }
@@ -99,7 +102,7 @@ function renderSelect(h, renderOpts, params, renderType) {
         defaultFirstOption: true
       })
       Object.assign(on, {
-        'visible-change': table.setEditIsStop
+        'visible-change': root.setEditIsStop
       })
     }
   }
@@ -126,14 +129,14 @@ function renderdateCell(h, renderOpts, params) {
   return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
-  const { table, data, prop, searchChange } = params
+  const { root, vue, data, prop, searchChange } = params
   const props = {
     value: data[prop] || null,
     valueFormat: 'timestamp' // 时间格式默认用时间戳
   }
   const on = {
     input: val => {
-      data[prop] = val
+      vue.$set(data, prop, val)
       searchChange && searchChange(val)
     }
   }
@@ -144,8 +147,8 @@ function renderDatepicker(h, renderOpts, params, renderType) {
       })
     } else if (renderType === 'edit') {
       Object.assign(on, {
-        focus: () => table.setEditIsStop(true),
-        blur: () => table.setEditIsStop(false)
+        focus: () => root.setEditIsStop(true),
+        blur: () => root.setEditIsStop(false)
       })
     }
   }
@@ -197,21 +200,21 @@ function renderPopupEdit(h, renderOpts, params) {
 // 弹窗 dialog
 function renderDialog(h, renderOpts, params) {
   const { children, on: { save } = {}} = renderOpts
-  const { table, column, edit } = params
+  const { root, column, edit } = params
   const props = {
     visible: edit.dialogVisible,
     modal: false,
     title: column.title
   }
 
-  if (edit.dialogVisible) table.setEditIsStop(true)
+  if (edit.dialogVisible) root.setEditIsStop(true)
   function submit() {
     save && save()
     closed()
   }
   function closed() {
     edit.dialogVisible = false
-    table.setEditIsStop(false)
+    root.setEditIsStop(false)
   }
 
   const on = getOn(renderOpts.on, {
@@ -273,13 +276,13 @@ function renderSwitchSearch(h, renderOpts, params) {
 // 多选框组 checkbox-group
 function renderCheckboxGroup(h, renderOpts, params) {
   const { children = [] } = renderOpts
-  const { data, prop } = params
+  const { data, vue, prop } = params
   const props = {
     value: data[prop] || []
   }
   const on = getOn(renderOpts.on, {
     input: val => {
-      data[prop] = val
+      vue.$set(data, prop, val)
     }
   })
   const renderChildren = children.map((opts, idx) => {

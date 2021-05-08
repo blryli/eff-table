@@ -29,7 +29,7 @@ export default {
           this.checkoutSelectType()
           break
         case 'delete':
-          deleted && (typeof deleted === 'function' ? this.delete(deleted) : console.warn(`requst 没有传入函数 ${[code]}`))
+          this.delete(deleted)
           break
         case 'query':
           query && (typeof query === 'function' ? this.query(query) : console.warn(`requst 没有传入函数 ${[code]}`))
@@ -96,7 +96,7 @@ export default {
       }
     },
     delete(deleted) {
-      const { checkeds, tableData } = this
+      const { checkeds } = this
       const checkedsLen = checkeds.length
       if (!checkedsLen) {
         this.$message.warning('请至少选择一条记录！')
@@ -107,19 +107,25 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleted({ body: checkeds }).then(res => {
-          if (res.success) {
-            this.$message.success('成功删除所选记录!')
-            this.commitProxy('query')
+        if (typeof deleted === 'function') {
+          this.isLoading = true
+          deleted({ table: this, body: checkeds }).then(res => {
+            if (res.success) {
+              this.$message.success('成功删除所选记录!')
+              this.commitProxy('query')
+              this.clearSelection()
+            } else {
+              this.$message.error(res.message)
+            }
+            this.isLoading = false
+          }).catch(e => {
+            console.error(e)
             this.clearSelection()
-          } else {
-            this.$message.error(res.message)
-          }
-        }).catch(() => {
-          // this.$message.success('成功删除所选记录!')
-          this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
-          this.clearSelection()
-        })
+            this.isLoading = false
+          })
+        } else {
+          this.$message.error('requst [delete] 必须是函数!')
+        }
       })
     },
     checkoutSelectType() {
@@ -165,7 +171,6 @@ export default {
         cur = tableData.find(d => d[rowId] === cur[rowId])
         return cur && !pendingList.some(item => item === cur) ? acc.concat(cur) : acc
       }, [])
-      const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
         // 聚焦到第一个校验不通过的单元格
@@ -186,7 +191,6 @@ export default {
           }).catch(e => {
             console.error(e)
             this.isLoading = false
-            this.reloadData(currentTableData)
           })
         }
       })

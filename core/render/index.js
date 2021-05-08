@@ -1,5 +1,4 @@
 import map from './map'
-
 import XEUtils from 'xe-utils'
 
 export function getChildren(h, children, params, key) {

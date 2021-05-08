@@ -1,6 +1,8 @@
 <script>
 import Validator from 'pk/form/mixins/validator'
 import FocusControl from 'pk/form/mixins/focusControl'
+import { renderer } from 'pk/utils/render'
+
 export default {
   name: 'VForm',
   mixins: [Validator, FocusControl],
@@ -10,8 +12,8 @@ export default {
     cols: { type: Array, default: () => [] },
     rules: { type: Array, default: () => [] },
     currentPath: { type: String, default: '' },
-    labelWidth: { type: String, default: '' },
-    labelPosition: { type: String, default: '' },
+    titleWidth: { type: String, default: '' },
+    titleAlign: { type: String, default: '' },
     lineHeight: { type: String, default: '32px' },
     itemGutter: { type: Number, default: 0 },
     response: { type: Boolean, default: true },
@@ -28,24 +30,28 @@ export default {
       form: this
     }
   },
+  inject: {
+    table: { default: null }
+  },
   data() {
     return {
       layer: [],
       initLayer: Object.freeze([]),
       isResponse: false,
       validators: [],
-      inputIndex: 0
+      inputIndex: 0,
+      editIsStop: this.focusStop
     }
   },
   computed: {
     formClass() {
-      const { response, isResponse, labelPosition } = this
+      const { response, isResponse, titleAlign } = this
       let formClass = 'v-form '
       if (response && isResponse) {
         formClass += 'is-response'
       } else {
-        labelPosition &&
-        (formClass += `v-form--label-${labelPosition} `)
+        titleAlign &&
+        (formClass += `v-form--title-${titleAlign} `)
       }
       return formClass
     }
@@ -53,6 +59,9 @@ export default {
   watch: {
     value() {
       this.init()
+    },
+    focusStop(val) {
+      this.editIsStop = val
     },
     validators(data) {
       const layer = {
@@ -98,40 +107,59 @@ export default {
         })
         return acc
       }, [])
+    },
+    itemRender(col) {
+      const { $createElement, table, data } = this
+      const { prop, itemRender } = col
+      if (typeof itemRender === 'function') {
+        return itemRender($createElement, { table, form: this, data }) || ''
+      } else {
+        const renderOpts = Object.assign({ name: 'input' }, itemRender)
+        const { name } = renderOpts
+        const compConf = renderer.get(name)
+        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data, column: col, prop }) || ''
+      }
+    },
+    setEditIsStop(val) {
+      this.editIsStop = val
     }
   },
   render(h) {
-    const { cols, formClass, isResponse, width, $slots } = this
+    console.log('this.data', JSON.stringify(this.data, null, 2))
+    const { cols, formClass, isResponse, width, $slots, itemRender } = this
     return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
-      cols.map(d => h('v-form-line', { attrs: { cols: [Object.assign({}, d, { span: 24 })], span: d.span }}, [h('el-input')])),
+      cols.map(col => {
+        const { children } = col
+        if (Array.isArray(children)) {
+          return h('v-form-line', { props: Object.assign({}, col, { cols: children }) }, [children.map(d => itemRender(d))])
+        }
+        return h('v-form-line', { props: { cols: [Object.assign({}, col, { span: 24 })], span: col.span }}, [itemRender(col)])
+      }),
       $slots.default
     ])
   }
 }
 </script>
 
-<style scoped>
-.v-form::before,
-.v-form::after {
-  display: table;
-  content: "";
-}
+<style lang="scss">
+.v-form {
+  &::before, &::after{
+    display: table;
+    content: "";
+  }
+  &:after{
+    clear: both;
+  }
 
-.v-form:after {
-  clear: both;
-}
-</style>
-
-<style>
-.v-form-line:before {
-  display: table;
-  content: "";
-}
-
-.v-form-line:after {
-  display: table;
-  content: "";
-  clear: both;
+  &-line{
+    &:before, &:after{
+      display: table;
+      content: "";
+    }
+    &:after {
+      clear: both;
+    }
+  }
 }
 
 .v-form-line--abreast + .v-form-line--abreast {
@@ -140,6 +168,9 @@ export default {
 
 .v-layer{
   position: relative;
+  & :only-child{
+    width: 100%;
+  }
 }
 
 .v-layer-item--focus, .is-validator{

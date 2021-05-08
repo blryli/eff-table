@@ -416,6 +416,7 @@ export default {
           title: '名字',
           search: true,
           width: 120,
+
           edit: {
             render: (h, { prop, row }) => {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
@@ -475,6 +476,9 @@ export default {
           title: '年龄',
           width: 100,
           sortable: true,
+          rules: [{
+            required: true
+          }],
           search: {
             operator: true
           },

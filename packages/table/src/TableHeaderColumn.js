@@ -45,6 +45,9 @@ export default {
           {
             required ? <i class='eff-cell--required' /> : ''
           }
+          {
+            column.edit ? <i class='eff-icon-edit' /> : ''
+          }
           <span class='eff-cell--title'>{slot}</span>
           {
             sortable ? <span class='eff-cell--sort'>

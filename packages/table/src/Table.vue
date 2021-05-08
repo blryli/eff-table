@@ -9,7 +9,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl || columnEdit" ref="toolbar">
+    <Toolbar v-if="$slots.toolbar || fullscreen || (drag && columnControl) || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
 
@@ -359,15 +359,17 @@ export default {
   },
   methods: {
     loadTableData(data) {
+      const { editStore, rowId } = this
       this.tableData = data || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
+      editStore.insertList = []
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
 
       // 检测行主键在行数据中是否存在
-      if (data.length && !data[0].hasOwnProperty(this.rowId)) {
+      if (data.length && !data[0].hasOwnProperty(rowId)) {
         console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
       }
       return this.$nextTick()
