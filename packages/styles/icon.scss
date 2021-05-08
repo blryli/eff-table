@@ -8,6 +8,43 @@
   font-size: 16px;
   text-align: center;
 }
+.eff-icon-edit{
+  position: relative;
+  width: 10px;
+  height: 10px;
+  font-size: 10px;
+  margin-right: 2px;
+  &::before{
+    position: absolute;
+    height: 0.86em;
+    width: 0.86em;
+    top: .1em;
+    left: .02em;
+    border-radius: .2em;
+    border-width: .1em;
+    border-style: solid;
+    border-color: inherit;
+    content: " ";
+  }
+  &::after{
+    position: absolute;
+    content: " ";
+    left: .6em;
+    bottom: .3em;
+    width: 0;
+    height: .8em;
+    border-radius: 0 0 80% 80%;
+    border-width: 0 0 0 .22em;
+    border-style: solid;
+    border-color: inherit;
+    -webkit-transform: rotate(
+45deg
+);
+    transform: rotate(
+45deg
+);
+}
+}
 .eff-icon-search{
   position: relative;
   width: 14px;
