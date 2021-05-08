@@ -13,12 +13,12 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag, fixed, edit: { render: editRender } = {}} = this.column
+      const { titleClassName, drag, fixed, edit, prop } = this.column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
-      editRender && (classes += ` col-edit`)
-      if (drag === false || fixed) {
+      edit && (classes += ` col-edit`)
+      if (drag === false || fixed || !prop) {
         classes += ' is-drag--filter'
       }
       return classes
@@ -26,10 +26,10 @@ export default {
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, type, validator } = column
+    const { sortable, title, type, rules = [] } = column
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
-    const { required } = validator || {}
+    const required = Boolean(rules.find(d => d.required))
 
     return (
       <div

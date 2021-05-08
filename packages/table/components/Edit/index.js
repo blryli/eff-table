@@ -1,7 +1,7 @@
 import { getType } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
-import { getTableNode, isOverflow, shake } from './dom'
+import { isOverflow, shake } from './dom'
 
 export default {
   name: 'TableEdit',
@@ -10,8 +10,8 @@ export default {
   },
   data() {
     return {
-      column: null,
       show: false,
+      column: null,
       rowIndex: 0,
       cell: null,
       placement: '',
@@ -26,20 +26,23 @@ export default {
   },
   inject: ['table'],
   computed: {
+    row() {
+      const { table, rowIndex } = this
+      const { proxyConfig } = table
+      return (proxyConfig ? table.tableData : table.data)[rowIndex]
+    },
     editRender() {
-      const { column } = this
+      const { row, column } = this
       if (!column) return ''
       const { edit, prop, config } = column || {}
-      if (prop === 'checkbox') console.log(edit)
       if (edit) {
         const { rowIndex, table, $createElement } = this
-        const { proxyConfig } = table
+
         const columnIndex = this.getColumnIndex(column.prop)
-        const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
         const { render } = edit || {}
 
         if (this.baseText === null || this.columnIndex !== columnIndex) {
-          this.baseText = row[prop]
+          this.baseText = row && row[prop] || null
           this.columnIndex = columnIndex
         }
 
@@ -62,20 +65,18 @@ export default {
       this.dialogVisible = true
     },
     show(val) {
-      const { table, component } = this
+      const { table } = this
       if (val) {
         table.$emit('edit-open')
       } else {
-        component && component.close && component.close()
-        this.handleValidate()
-        this.updateStatus()
-        this.placement = ''
-        this.scrollNum = 0
-        this.column = null
-        this.cell = null
-        this.visible = true
-        table.$emit('edit-close')
-        table.$emit('blur')
+        this.blurEvent().then(() => {
+          this.placement = ''
+          this.scrollNum = 0
+          this.column = null
+          this.cell = null
+          this.visible = true
+          table.$emit('edit-close')
+        })
       }
     },
     'table.scrollTop'(scrollTop) {
@@ -99,31 +100,29 @@ export default {
   },
   methods: {
     handleValidate() {
-      const { prop, validator: { rule, field } = {}} = this.column || {}
-      if (typeof rule !== 'function') return
-      this.table.validateCell(this.rowIndex, field || prop, rule)
+      const { prop, rules = [] } = this.column || {}
+      if (!rules.length || !this.row) return this.$nextTick()
+      return this.table.validateFiled(this.row, prop, rules)
+    },
+    updateStatus() {
+      const { table, column, row } = this
+      column && column.prop && row && table.updateStatus(row, column.prop)
     },
     handleWindowMousedown(e) {
       const { show, $el, table } = this
       if (!show || $el.contains(e.target) || table.editIsStop) return
       this.show = false
     },
-    updateStatus() {
-      const { table, column, rowIndex } = this
-      column.prop && table.updateStatus(table.tableData[rowIndex], column.prop)
-    },
+
     handleWindowKeyup(e, keysStr) {
-      const { show, table, inTable } = this
+      const { show, table, row, inTable } = this
       if (!show || table.editIsStop || !inTable(e.target)) return
       e.stopPropagation()
       e.preventDefault()
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
 
       if (keysStr === 'escape') {
-        let data = this.table.proxyConfig ? this.table.tableData : this.table.data
-        data = data[this.rowIndex]
-
-        this.table.$set(data, this.column.prop, this.baseText)
+        row[this.column.prop] = this.baseText
         return this.close()
       }
 
@@ -134,15 +133,10 @@ export default {
           if (keysStr === str) {
             e.preventDefault()
             this.placement = placement
-            this.handleValidate()
-            this.updateStatus()
 
             // 跳下一个处理
-            const { column } = this
+            const { row, rowIndex, column } = this
             const { prop, edit: { leaveTime } = {}} = column
-            const { rowIndex, table } = this
-            const { proxyConfig } = table
-            const row = (proxyConfig ? table.tableData : table.data)[rowIndex]
             if (leaveTime) {
               if (typeof leaveTime === 'number') {
                 setTimeout(() => {
@@ -177,21 +171,13 @@ export default {
     },
     to() {
       this.handleType = 'to'
-      const { placement = 'right', table } = this
+      const { placement = 'right', table, column: { prop }} = this
       const { editLengthways } = table
 
       if (['left', 'right'].indexOf(placement) > -1) {
-        this.toX(placement)
+        this.toX()
       } else {
-        editLengthways && this.toY(placement)
-      }
-    },
-    blurEvent() {
-      const { component, componentValue } = this
-      if (component) {
-        component && componentValue !== component.value && component.$emit('change', component.value)
-        component && component.$emit('blur')
-        component.close && component.close()
+        editLengthways && this.toY(prop)
       }
     },
     canFocus(column, cell) {
@@ -200,7 +186,7 @@ export default {
       return edit && column && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
-      const { placement, rowIndex, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
+      const { placement, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
       let toCellIndex = 0
       let toColumns = []
       let column = {}
@@ -217,32 +203,43 @@ export default {
       const { cell } = getColumn(column.prop)
 
       if (column && canFocus(column, cell)) {
-        editCell(column, cell)
+        // 当前行有可聚焦元素
+        this.blurEvent().then(() => editCell(column, cell))
       } else {
-        shake($el, 'x')
-        table.$emit('editColumnLastToNext', { placement, rowIndex, cellIndex })
+        // 当前行没有可聚焦元素，进行跨行编辑
+        table.editLoop ? this.toY() : shake($el, 'x')
       }
     },
-    toY() {
-      const { placement, column, $el } = this
-      const cell = getTableNode(this.cell, placement)
-      if (cell) {
-        const colid = cell.getAttribute('data-colid')
-        const [rowIndex] = colid.split('-')
-        this.rowIndex = +rowIndex - 1
-        this.editCell(column, cell)
+    // 跳过pending状态的行
+    getSkipNum(startIndex, endIndex) {
+      const { table } = this
+      const { editStore: { pendingList }, rowId, tableData } = table
+      const byData = tableData.slice(startIndex, endIndex)
+      if (startIndex === 0) byData.reverse()
+      const pendingIds = pendingList.map(d => d[rowId])
+      if (pendingList.length) {
+        const index = byData.findIndex(da => !pendingIds.includes(da[rowId]))
+        return index === -1 ? -1 : index + 1
+      }
+      return 1
+    },
+    toY(prop) {
+      const { table, placement, rowIndex, $el } = this
+      if (['right', 'bottom'].includes(placement)) {
+        const skipNum = this.getSkipNum(rowIndex + 1, rowIndex + 10)
+        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
       } else {
-        shake($el, 'y')
+        const skipNum = this.getSkipNum(0, rowIndex)
+        skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
       }
     },
     skip(column) {
       const { edit: { skip } = {}, prop = '' } = column || {}
-      const { table, rowIndex } = this
+      const { row, rowIndex } = this
       if (skip === undefined) return false
 
       if (typeof skip === 'function') {
-        const { data, tableData, proxyConfig } = table
-        return skip({ row: (proxyConfig ? tableData : data)[rowIndex], rowIndex })
+        return skip({ row, rowIndex })
       }
       if (typeof skip !== 'boolean') {
         console.error(`${prop} 字段，skip类型必须是 function/boolean`)
@@ -252,8 +249,10 @@ export default {
 
     handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
-      this.rowIndex = rowIndex
-      this.editCell(column, cell)
+      this.blurEvent().then(() => {
+        this.rowIndex = rowIndex
+        this.editCell(column, cell)
+      })
     },
     editCell(column, cell) {
       this.scrollNum = 0
@@ -262,18 +261,13 @@ export default {
       const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
         if (cellIndex === -1 || !canFocus(column, cell)) return
-        this.blurEvent()
-
         // 处理溢出
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
-          this.table.editStore.oldColumnIndex = this.cellIndex
           this.cellIndex = cellIndex
           this.cell = getColumn(prop).cell
           this.show = true
           this.setElPos() // 设置编辑框位置
-
-          this.table.editStore.columnIndex = cellIndex
 
           this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦
@@ -366,25 +360,48 @@ export default {
       this.$el.style.height = `${height + 1}px`
     },
     close() {
-      this.baseText = null
       this.show = false
+      this.baseText = null
+    },
+    blurEvent() {
+      const { component, table, rowIndex, columnIndex, column } = this
+      const { tableData } = this.table
+      if (component) {
+        return this.handleValidate().then(res => {
+          if (column && column.prop) {
+            const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: this.baseText }
+            if (data.oldData !== null && data.oldData !== data.newData) {
+              this.table.$emit('table-update-data', data)
+            }
+          }
+          this.updateStatus()
+          const { close } = component
+          component.$emit('blur')
+          close && close()
+          table.$emit('blur')
+          return this.$nextTick()
+        })
+      }
+      return this.$nextTick()
     },
     focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
       if (!prop) return
-      this.rowIndex = +rowIndex
       const { table, getColumn, editCell, fixOverflowX } = this
-      const { column, cell, columnIndex } = getColumn(prop, +rowIndex)
+      rowIndex = Number(rowIndex)
+      const lastIndex = table.tableData.length - 1
+      this.rowIndex = rowIndex < 0 ? 0 : rowIndex > lastIndex ? lastIndex : rowIndex
+      const { column, cell, columnIndex } = getColumn(prop, rowIndex)
       this.column = column
       if (cell) {
-        setTimeout(() => editCell(column, cell))
+        setTimeout(() => this.blurEvent().then(() => editCell(column, cell)))
       } else {
         fixOverflowX(columnIndex).then(() => {
-          table.toScroll(+rowIndex).then(() => {
+          table.toScroll(rowIndex).then(() => {
             setTimeout(() => {
-              const { column, cell } = getColumn(prop, +rowIndex)
+              const { column, cell } = getColumn(prop, rowIndex)
               this.column = column
               this.handleType = 'to'
-              editCell(column, cell)
+              this.blurEvent().then(() => editCell(column, cell))
             }, 100)
           })
         })

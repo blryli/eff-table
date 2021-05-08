@@ -1,18 +1,21 @@
-import Table from './table/src/Table.vue'
+import Table from './table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import Panel from './Panel/src/Panel'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
+import { Form, FormLine } from './form'
 
-const components = [Table, Popup, Layout, Panel, VRender, Styles]
 const directives = []
+const components = [Table, Popup, Layout, VRender, Form, Panel, FormLine, Styles]
 
 export {
   Table,
   Popup,
   Layout,
   VRender,
+  Form,
+  FormLine,
   Panel
 }
 
@@ -25,7 +28,6 @@ const install = function(Vue, opts = {}) {
   })
 
   Vue.prototype.$EFF = {
-    uiPrefix: opts.uiPrefix || 'el-',
     request: opts.request
   }
 }

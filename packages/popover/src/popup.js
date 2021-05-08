@@ -23,6 +23,6 @@ export default {
     }
   },
   render(h) {
-    return <input class='eff-table__popup' value={this.content} type='button' />
+    return <div class='eff-table__popup'>{this.content}</div>
   }
 }

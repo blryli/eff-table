@@ -84,8 +84,8 @@ export default {
       this.$forceUpdate()
     },
     isChecked(row) {
-      const { rowId } = this
-      return checkedsSet.has(row[rowId])
+      const { selecteds, rowId } = this
+      return selecteds.includes(row[rowId])
     }
   }
 }

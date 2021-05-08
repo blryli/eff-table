@@ -1,204 +1,110 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
-    <section class="demo">
-      <div class="section-content">
-        <eff-table
-          ref="table"
-          v-model="columns"
-          :data="data"
-          :loading="loading"
-          drag
-          column-control
-          row-drag
-          border
-          fullscreen
-          column-edit
-        />
+    <v-render :config="config" />
+    <div class="flex-space" />
+    <panel width="100%" title="面板标题" :icon2front="true"> 我是内容 </panel>
+    <div class="flex-row">
+      <div v-drag.cnt class="flex-row" style="width:400px;height:200px;border:1px solid red">
+        <div v-drag="'bug'" class="item">item1</div>
+        <div v-drag="'default'" class="item">item2</div>
+        <div v-drag class="item">item3</div>
+        <div v-drag class="item">item4</div>
       </div>
-    </section>
-
-    <section class="snippets">
-      <Collapse>
-        <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
-        </div>
-      </Collapse>
-    </section>
+      <div class="flex-space" />
+      <div v-drag.cnt class="flex-row" style="width:400px;height:200px;border:1px solid blue" />
+    </div>
+    <div v-drag.cnt="'bug'" class="flex-row" style="width:400px;height:200px;border:1px solid red" />
+    <div class="drag-virtual-box" />
   </div>
 </template>
-
-<script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
-
-const mainSnippet = `
-data() {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        type: 'selection',
-        width: 40,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'index',
-        title: '序号',
-        width: 80,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'city',
-        title: '城市',
-        width: 140
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '名字',
-        children: [{
-          show: true,
-          prop: 'cfirst',
-          title: '姓',
-          width: 150
-        }, {
-          show: true,
-          prop: 'clast',
-          title: '名',
-          width: 150
-        }]
-      },
-      {
-        show: true,
-        prop: 'email',
-        title: '邮箱',
-        width: 150
-      },
-      {
-        show: true,
-        prop: 'phone',
-        title: '手机',
-        width: 150
-      },
-      {
-        show: true,
-        prop: 'datetime',
-        title: '核酸检测时间',
-        width: 150
-      }
-    ]
-  }
+<style>
+.item{
+  border:1px solid #eee;
+  padding:20px;
+  height:30px;
+  margin:0 10px;
 }
-`
+.drag-virtual-box{
+    width: 100px;
+    height: 80px;
+    position: absolute;
+    border: 1px dashed #ffffff;
+    left: 100px;
+    background: #a9a69e;
+    opacity: 0.5;
+    top: 200px;
+}
+</style>
+<script>
 
-const componentSnippet = `
-<eff-table
-  v-model="columns"
-  :data="data"
-  drag
-  column-control
-  row-drag
-  border
-  fullscreen
-  column-edit
-/>
-`
 export default {
   name: 'ColumnEdit',
-  components: {
-    CodeSnippet,
-    Collapse
-  },
+  components: {},
 
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
-      loading: false,
-      data: [],
-      columns: [
-        {
-          show: true,
-          type: 'selection',
-          width: 40,
-          fixed: 'left'
+      bool: true,
+      config: {
+        name: 'layout',
+        props: {
+          type: 'col',
+          width: '100%'
         },
-        {
-          show: true,
-          prop: 'index',
-          title: '序号',
-          width: 80,
-          fixed: 'left'
-        },
-        {
-          show: true,
-          prop: 'city',
-          title: '城市',
-          width: 140
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          children: [{
-            show: true,
-            prop: 'cfirst',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'clast',
-            title: '名',
-            width: 150
-          }]
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '核酸检测时间',
-          width: 150
-        }
-      ]
-    }
-  },
-  mounted() {
-    this.loading = true
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|500': [
+        children: [
           {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1,
-            'id|+1': 1
+            name: 'panel',
+            props: {
+              title: '面板标题',
+              type: 'row',
+              collapsed: false,
+              width: '300px',
+              deraction: 'horizontal'
+            },
+            children: '我是内容'
+          },
+          {
+            name: 'panel',
+            props: {
+              title: '面板标题',
+              type: 'row',
+              deraction: 'horizontal',
+              collapsed: false
+            },
+            children: '我是内容'
+          },
+          {
+            name: 'panel',
+            props: {
+              title: '面板标题',
+              type: 'row',
+              width: '300px',
+              flexibility: false,
+              collapsed: false,
+              headerTools: {
+                name: 'layout',
+                props: {
+                  type: 'col',
+                  flexibility: false,
+                  justifyContent: 'flex-end'
+                },
+                children: [
+                  {
+                    name: 'button',
+                    props: {
+                      type: 'primary',
+                      content: 'dd'
+                    },
+                    childdren: 'button'
+                  }
+                ]
+              }
+            },
+            children: '我是内容'
           }
         ]
-      }).array
-      this.loading = false
-    }, 1000)
-  }
+      }
+    }
+  },
+  mounted() {}
 }
 </script>

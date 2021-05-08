@@ -1,5 +1,4 @@
-import toDateString from 'xe-utils/toDateString'
-import isArray from 'xe-utils/isArray'
+import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
@@ -71,16 +70,16 @@ function renderTextareaEdit(h, renderOpts, params) {
 function renderselectCell(h, renderOpts, params) {
   const { props, options = [] } = renderOpts || {}
   const { row, prop } = params || {}
-  const cellLabel = row && prop && row[prop] || ''
+  const cellLabel = row && row[prop]
   const { labelKey = 'label', valueKey = 'value' } = props || {}
-  const opt = getOptions(options, params).find(d => d[valueKey] === cellLabel) || {}
+  const opt = getOptions(options, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
   return labelKey ? opt[labelKey] : cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
   const { table, data, prop, searchChange } = params
   const props = {
-    value: data[prop] || null,
+    value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择'
   }
   const on = {
@@ -124,7 +123,7 @@ function renderdateCell(h, renderOpts, params) {
   const { format } = renderOpts || {}
   const { row, prop } = params || {}
   const cellLabel = row && prop && row[prop] || ''
-  return toDateString(cellLabel, format)
+  return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { table, data, prop, searchChange } = params
@@ -231,7 +230,7 @@ function renderDialog(h, renderOpts, params) {
   const { data, prop } = params
 
   return [
-    h('input', { attrs: { value: data[prop], class: 'eff-table__popup', type: 'button' }}),
+    h('div', { attrs: { class: 'eff-table__popup' }}, data[prop]),
     render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render(),
     modal
   ]
@@ -250,13 +249,13 @@ function renderSwitch(h, renderOpts, params) {
   const { data, prop } = params
   const isBoolean = typeof data[prop] === 'boolean'
   const props = {
-    value: data[prop],
+    value: isBoolean ? data[prop] : '' + data[prop],
     activeValue: isBoolean ? true : '1',
     inactiveValue: isBoolean ? false : '0'
   }
   const on = getOn(renderOpts.on, {
     input: val => {
-      data[prop] = val
+      data[prop] = isBoolean ? val : '' + val
     }
   })
   return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
@@ -296,7 +295,7 @@ function renderTag(h, renderOpts, params) {
   const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
   const { data, prop } = params || {}
   const value = data[prop]
-  return (isArray(value) ? value : [value]).map(d => {
+  return (XEUtils.isArray(value) ? value : [value]).map(d => {
     const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
     return render(h, renderOpts, params).set('children', label).render()
   })

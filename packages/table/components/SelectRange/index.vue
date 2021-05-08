@@ -7,7 +7,16 @@
         <div class="lineae" />
       </template>
     </div>
-    <el-button v-if="status === 2" :type="copyBtnType" size="mini" class="copybtn" @click="onClickCopy">复制</el-button>
+    <div class="flex flex-direction">
+      <div v-if="status === 2" class="copy" :class="copyBtnType" title="复制" @click.stop="onClickCopy">
+        <div class="before">
+          <div />
+          <div />
+        </div>
+        <div class="after" />
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -46,6 +55,7 @@ export default {
       if (this.status === 1) {
         this.endPosition.y += scrollTop - oldTop
       }
+      this.$set(this.toolStyle, 'display', 'none')
       this.handleRect()
     }
   },
@@ -61,6 +71,9 @@ export default {
       }
     })
 
+    document.addEventListener('scroll', () => {
+      this.$set(this.toolStyle, 'display', 'none')
+    })
     document.addEventListener('paste', this.onPaste, false)
   },
   destroyed() {
@@ -70,7 +83,8 @@ export default {
   methods: {
     close() {
       this.status = 0
-      this.handleSightRect()
+      this.handleRect(true, true)
+      this.handleRect(false, true)
     },
     onClickCopy() {
       this.copyBtnType = 'success'
@@ -172,11 +186,25 @@ export default {
           this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
-        this.handleSightRect()
+        this.handleRect(true)
       }
     },
-    handleSightRect() {
-      const { startRow, endRow, startColumn, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
+    handleRect(sight = false, close = false) {
+      let borderStyle, res
+
+      if (sight) {
+        res = this._getReac('sightStartPosition', 'sightEndPosition')
+        borderStyle = `2px ${this.borderStyle} rgb(17 210 232)`
+      } else {
+        res = this._getReac()
+        borderStyle = `2px ${this.borderStyle} #1177e8`
+      }
+
+      if (close) {
+        borderStyle = ''
+      }
+
+      const { startRow, endRow, startColumn, endColumn } = res
 
       const map = this._getColumnMap()
 
@@ -186,67 +214,40 @@ export default {
           const style = {}
 
           if (j === startColumn) {
-            style.borderLeft = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderLeft = borderStyle
           }
 
           if (j === endColumn) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderRight = borderStyle
           }
 
           if (i === startRow) {
-            style.borderRight = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderTop = borderStyle
           }
 
           if (i === endRow) {
-            style.borderBottom = this.status === 0 ? `unset` : `2px ${this.borderStyle} rgb(17 210 232)`
+            style.borderBottom = borderStyle
           }
 
           if (column) {
             column.style = style
-            // this.textMap[i + '-' + j] = column.text
+            if (!sight) {
+              this.textMap[i + '-' + j] = column.$el.innerText
+            }
           }
         }
       }
     },
-    handleRect() {
-      const { startRow, endRow, startColumn, endColumn } = this._getReac()
+    closeReac() {
 
-      const map = this._getColumnMap()
-
-      for (let i = startRow; i <= endRow; i++) {
-        for (let j = startColumn; j <= endColumn; j++) {
-          const column = map[i + '-' + j]
-          const style = {}
-
-          if (j === startColumn) {
-            style.borderLeft = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (j === endColumn) {
-            style.borderRight = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (i === startRow) {
-            style.borderTop = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (i === endRow) {
-            style.borderBottom = `2px ${this.borderStyle} #1177e8`
-          }
-
-          if (column) {
-            column.style = style
-            this.textMap[i + '-' + j] = column.$el.innerText
-          }
-        }
-      }
     },
     onPaste(e) {
       if (this.status !== 2) {
         return true
       }
 
-      const { startRow, startColumn, endRow, endColumn } = this._getReac()
+      this.table.$refs.edit && this.table.$refs.edit.close()
+      const { startRow, startColumn } = this._getReac()
 
       let data = e.clipboardData.getData('text/plain')
 
@@ -309,9 +310,15 @@ export default {
 .tool {
   position: fixed;
   display: flex;
+
   .copybtn {
-    margin-left: 10px;
+    margin-bottom: 10px;
   }
+
+  .pastebtn {
+    margin-left: 0px;
+  }
+
   .sight {
     width: 14px;
     height: 14px;
@@ -319,20 +326,106 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: crosshair;
+
     div {
       background-color: rgb(17, 119, 232);
       position: absolute;
       border-radius: 4px;
     }
+
     .vertical {
-      width: 4px;
-      height: 14px;
+      width: 2px;
+      height: 10px;
+      border-top: 1px solid white;
+      border-bottom: 1px solid white;
     }
 
     .lineae {
-      width: 14px;
-      height: 4px;
+      width: 10px;
+      height: 2px;
       margin-top: -1px;
+      border-left: 1px solid white;
+      border-right: 1px solid white;
+    }
+  }
+
+  .flex {
+    margin-left: -4px;
+    margin-top: -35px;
+    display: flex;
+    position: absolute;
+    bottom: -25px;
+    right: 0px;
+  }
+
+  .flex-direction {
+    flex-direction: column;
+  }
+
+  .copy {
+    width: 32px;
+    height: 32px;
+    transform: scale(0.5);
+
+    :hover {
+      cursor: pointer;
+    }
+    .before {
+      border: 3px solid rgb(17, 119, 232);
+      position: absolute;
+      top: 7px;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      background-color: white;
+      z-index: 3;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+
+      div {
+        width: 12px;
+        height: 3px;
+        background-color: rgb(17, 119, 232);
+      }
+    }
+
+    .after {
+      position: absolute;
+      border: 3px solid rgb(17, 119, 232);
+      width: 20px;
+      height: 24px;
+      left: 10px;
+      z-index: 2;
+      background-color: white;
+    }
+  }
+
+  .success {
+    .after {
+      border: 3px solid #67c23a;
+    }
+
+    .before {
+      border: 3px solid #67c23a;
+      position: absolute;
+      top: 7px;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      background-color: white;
+      z-index: 3;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+
+      div {
+        width: 12px;
+        height: 3px;
+        background-color: #67c23a;
+      }
     }
   }
 }

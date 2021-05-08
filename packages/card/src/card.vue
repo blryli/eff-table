@@ -11,6 +11,7 @@
   >
     <div class="eff-card__header">
       <span class="eff-card__header-title">{{ title }}</span>
+      <slot name="header" />
       <i class="eff-card__header-close" type="text" @click="$emit('close')" />
     </div>
     <div ref="body" class="eff-card__body" :class="{inline: inline}">
@@ -23,7 +24,7 @@
 import { onMousemove, hasClass } from 'pk/utils/dom'
 
 export default {
-  name: 'DragCard',
+  name: 'Card',
   props: {
     title: { type: String, required: true },
     width: { type: Number, default: 250 },
@@ -33,13 +34,15 @@ export default {
     show: Boolean,
     inline: Boolean,
     addToBody: Boolean,
-    limit: { type: Number, default: 10 }
+    limit: { type: Number, default: 10 },
+    initStyle: { type: Object, default() { return { left: 0, top: 0, width: this.width, height: this.height } } }
   },
   data() {
     return {
       isAddToBody: false,
       startRect: { left: 0, top: 0, width: 0, height: 0 },
-      endRect: { left: 0, top: 0, width: this.width, height: this.height },
+      endRect: this.initStyle,
+      // endRect: { left: 0, top: 0, width: this.width, height: this.height },
       move: { x: 0, y: 0, width: 0, height: 0 },
       cursor: null,
       isDraging: false
@@ -62,6 +65,9 @@ export default {
     },
     cursor(val) {
       document.body.style.cursor = val.replace(/_[a-z]+/, '')
+    },
+    initStyle(val) {
+      this.endRect = val
     }
   },
   mounted() {

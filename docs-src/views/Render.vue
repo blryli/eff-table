@@ -45,29 +45,39 @@ data() {
       columnControl: true,
       border: true,
       fullscreen: true,
+      rowId: 'id',
+      toolbarConfig: {
+        buttons: [
+          { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
+          { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
+          { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+          { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+          { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
+        ]
+      },
       proxyConfig: {
         request: {
           query: ({ page, sorts, filters, form }) => {
             const params = { ...form }
             return axios.get('url', params).catch(res => {
-              return {
-                data: mock.mock({
-                  'array|5': [
-                    {
-                      'input|+1': 1,
-                      'textarea': '@name',
-                      'select': '1',
-                      'date': '',
-                      'switch': false,
-                      'checkboxgroup': [],
-                      'checkbox': false,
-                      'popup': '@title',
-                      'link': '@ctitle',
-                      'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                    }
-                  ]
-                }).array
-              }
+              return mock.mock({
+                'array|5': [
+                  {
+                    'id|+1': 100,
+                    'input|+1': 1,
+                    'textarea': '@name',
+                    'select': '1',
+                    'date': '',
+                    'tag': [],
+                    'switch': '0',
+                    'checkboxgroup': [],
+                    'checkbox': false,
+                    'popup': '@title',
+                    'link': '@ctitle',
+                    'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+                  }
+                ]
+              }).array
             })
           },
           delete: ({ body }) => axios.post('url', body),
@@ -77,31 +87,21 @@ data() {
       columns: [
         {
           show: true,
+          type: 'selection',
+          width: 40,
+          fixed: 'left'
+        },
+        {
+          show: true,
           prop: 'input',
           title: '输入框',
           width: 100,
           config: { name: 'input' },
+          sortable: true,
           search: {
             operator: true
           },
-          edit: true
-        },
-        {
-          show: true,
-          prop: 'textarea',
-          title: '文本框',
-          width: 100,
-          search: true,
-          edit: {
-            render: { name: 'textarea'}
-          }
-        },
-        {
-          show: true,
-          prop: 'popup',
-          title: '气泡',
-          width: 100,
-          config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
+          rules: [{ validator: ({ value }) => !value && '不能为空' }],
           edit: true
         },
         {
@@ -120,7 +120,7 @@ data() {
           prop: 'switch',
           title: '开关',
           width: 100,
-          config: { name: 'switch' },
+          config: { name: 'switch', defaultValue: false },
           edit: true,
           search: true
         },
@@ -139,45 +139,22 @@ data() {
         },
         {
           show: true,
-          prop: 'link',
-          title: '文字链接',
+          prop: 'tag',
+          title: '标签',
           width: 100,
           search: true,
-          cellRender: { name: 'link', props: { url: '' }},
+          cellRender: { name: 'tag' },
+          config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
           edit: {
-            render: { name: 'dialog', props: { visible: false }, children: [{ name: 'form' }] }
+            render: { name: 'select', props: { multiple: true }}
           }
         },
         {
           show: true,
-          prop: 'url',
-          title: '图片',
-          width: 100,
-          cellRender: { name: 'image' }
-        },
-        {
-          show: true,
-          prop: 'checkboxgroup',
-          title: '多选框组',
-          width: 160,
-          config: { name: 'checkbox-group', children: [
-            { name: 'checkbox', props: { label: '深圳' }},
-            { name: 'checkbox', props: { label: '广州' }}
-          ] }
-        },
-        {
-          show: true,
-          prop: 'checkbox',
-          title: '多选框',
-          width: 100,
-          config: { name: 'checkbox', content: '选项' }
-        },
-        {
-          show: true,
-          prop: 'button',
           title: '按钮',
           width: 100,
-          config: { name: 'button', content: '操作' }
+          fixed: 'right',
+          config: { name: 'button', children: '操作' }
         }
       ]
     }
@@ -208,8 +185,6 @@ export default {
         edit: true,
         columnControl: true,
         border: true,
-        // selectRange: true,
-        // copy: true,
         fullscreen: true,
         rowId: 'id',
         toolbarConfig: {
@@ -219,33 +194,32 @@ export default {
             { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
-          ]
+          ],
+          refresh: true
         },
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
+              console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
               const params = { ...form }
               return axios.get('url', params).catch(res => {
-                return {
-                  data: mock.mock({
-                    'array|5': [
-                      {
-                        'id|+1': 100,
-                        'input|+1': 1,
-                        'textarea': '@name',
-                        'select': '1',
-                        'date': '',
-                        'tag': [],
-                        'switch': '0',
-                        'checkboxgroup': [],
-                        'checkbox': false,
-                        'popup': '@title',
-                        'link': '@ctitle',
-                        'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                      }
-                    ]
-                  }).array
-                }
+                return mock.mock({
+                  'array|5': [
+                    {
+                      'id|+1': 100,
+                      'input|+1': 1,
+                      'async': '',
+                      'select': '1',
+                      'date': '',
+                      'switch': '0',
+                      'checkboxgroup': [],
+                      'checkbox': false,
+                      'popup': '@title',
+                      'link': '@ctitle',
+                      'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+                    }
+                  ]
+                }).array
               })
             },
             delete: ({ body }) => axios.post('url', body),
@@ -263,47 +237,35 @@ export default {
             show: true,
             prop: 'input',
             title: '输入框',
-            width: 100,
             config: { name: 'input' },
             sortable: true,
             search: {
               operator: true
             },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } },
+            rules: [
+              { required: true, message: '不能为空！' },
+              { min: 3, max: 6, message: '长度必须在3-6之间' }
+            ],
             edit: true
           },
           {
             show: true,
-            prop: 'textarea',
-            title: '文本框',
-            width: 100,
+            prop: 'async',
+            title: '异步校验',
             search: true,
-            edit: {
-              render: { name: 'textarea' }
-            },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } }
-          },
-          {
-            show: true,
-            prop: 'popup',
-            title: '气泡',
-            width: 100,
-            config: { name: 'popup', props: { content: '飘起来' }, children: ['姓名', { name: 'input' }, '年龄', function(h) {
-              return <el-input />
-            }] },
+            config: { name: 'input' },
+            cellRender: {},
+            rules: [{ validator: ({ value }) => {
+              return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 200))
+            } }],
             edit: true
           },
           {
             show: true,
             prop: 'select',
             title: '选择器',
-            width: 100,
             config: {
-              name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]
+              name: 'select', options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }]
             },
             edit: true,
             search: true
@@ -312,7 +274,6 @@ export default {
             show: true,
             prop: 'switch',
             title: '开关',
-            width: 100,
             config: { name: 'switch', defaultValue: false },
             edit: true,
             search: true
@@ -321,7 +282,6 @@ export default {
             show: true,
             prop: 'date',
             title: '日期',
-            width: 160,
             config: {
               name: 'date-picker', format: 'yyyy-MM-dd'
             },
@@ -330,57 +290,22 @@ export default {
             },
             edit: true
           },
-          {
-            show: true,
-            prop: 'link',
-            title: '文字链接',
-            width: 100,
-            search: true,
-            cellRender: { name: 'link', props: { url: '' }},
-            edit: {
-              render: { name: 'dialog', defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
-            }
-          },
-          {
-            show: true,
-            prop: 'tag',
-            title: '标签',
-            width: 100,
-            search: true,
-            cellRender: { name: 'tag' },
-            config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
-            edit: {
-              render: { name: 'select', props: { multiple: true }}
-            }
-          },
-          {
-            show: true,
-            prop: 'url',
-            title: '图片',
-            width: 100,
-            cellRender: { name: 'image' }
-          },
-          {
-            show: true,
-            prop: 'checkboxgroup',
-            title: '多选框组',
-            width: 160,
-            config: { name: 'checkbox-group', children: [
-              { name: 'checkbox', props: { label: '深圳' }},
-              { name: 'checkbox', props: { label: '广州' }}
-            ] }
-          },
-          {
-            show: true,
-            prop: 'checkbox',
-            title: '多选框',
-            width: 100,
-            config: { name: 'checkbox', children: '选项' }
-          },
+          // {
+          //   show: true,
+          //   prop: 'tag',
+          //   title: '标签',
+          //   width: 100,
+          //   search: true,
+          //   cellRender: { name: 'tag' },
+          //   config: { options: [{ value: '1', label: '选项1', type: 'success' }, { value: '2', label: '选项2', type: 'info' }] },
+          //   edit: {
+          //     render: { name: 'select', props: { multiple: true }}
+          //   }
+          // },
           {
             show: true,
             title: '按钮',
-            width: 100,
+            fixed: 'right',
             config: { name: 'button', children: '操作' }
           }
         ]

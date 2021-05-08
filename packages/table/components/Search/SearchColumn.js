@@ -1,4 +1,4 @@
-import Icon from './components/Icon.vue'
+import Icon from 'pk/icon'
 import Popover from 'packages/popover'
 import Operator from './components/Operator.vue'
 import Input from './components/Input.vue'
@@ -56,12 +56,10 @@ export default {
   },
   methods: {
     formChange(val) {
-      console.log('form change')
       this.form[this.column.prop] = val
       this.change()
     },
     searchChange(val) {
-      console.log('search change', val, this.column.prop, this.form)
       this.form[this.column.prop] = val
       this.updateForm()
     },

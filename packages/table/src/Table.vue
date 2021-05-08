@@ -180,7 +180,7 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
-import clone from 'xe-utils/clone'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'EffTable',
@@ -218,6 +218,7 @@ export default {
     search: Boolean,
     edit: Boolean,
     editStop: Boolean,
+    editLoop: { type: Boolean, default: true },
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
@@ -226,7 +227,7 @@ export default {
     columnControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
-    showSummary: Boolean,
+    showSummary: Boolean, // 合计
     searchClear: { type: Boolean, default: true },
     searchClearText: { type: String, default: '' },
     sortConfig: { type: Object, default: () => {} },
@@ -247,7 +248,8 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
-    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    editHistory: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -256,6 +258,7 @@ export default {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       tableForm: {},
+      searchForm: [],
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
@@ -270,14 +273,13 @@ export default {
       editPopoverOpts: {},
       editStore: {
         insertList: [],
-        removeList: [],
         updateList: [],
-        pendingList: [],
-        oldColumnIndex: 0,
-        columnIndex: 0,
-        dialogVisible: false
+        pendingList: []
       },
-      pager: {}
+      pager: {
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed: {
@@ -318,7 +320,7 @@ export default {
     },
     useGroupColumn() {
       const { tableData } = this
-      return tableData.find(d => typeof d.children !== 'undefined')
+      return tableData && tableData.find(d => typeof d.children !== 'undefined')
     }
   },
   watch: {
@@ -357,8 +359,8 @@ export default {
   },
   methods: {
     loadTableData(data) {
-      this.tableData = data
-      this.tableSourceData = clone(data, true)
+      this.tableData = data || []
+      this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       this.clearSelection()
       this.scrollLeftEvent()
@@ -377,22 +379,22 @@ export default {
     clearStatus() {
       this.editStore = Object.assign({}, {
         insertList: [],
-        removeList: [],
         updateList: [],
-        pendingList: [],
-        oldColumnIndex: 0,
-        columnIndex: 0
+        pendingList: []
       })
     },
     updateStatus(row, prop) {
       const { tableSourceData, rowId, editStore } = this
       const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
+      const isInsert = editStore.insertList.find(d => d[rowId] === row[rowId])
       const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
-      if (prop && sourceRow) {
-        if (sourceRow[prop] !== row[prop]) {
-          index === -1 && editStore.updateList.push(sourceRow)
+      if (prop && sourceRow && !isInsert) {
+        if (index === -1) {
+          sourceRow[prop] !== row[prop] && editStore.updateList.push(sourceRow)
         } else {
-          index === -1 && editStore.updateList.splice(index, 1)
+          if ([row].some(d => d === sourceRow)) {
+            editStore.updateList.splice(index, 1)
+          }
         }
       }
     },
@@ -404,17 +406,26 @@ export default {
       })
     },
     editFileds(fileds) {
+      const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this
         const { rowIndex, columnIndex, content } = filed
         const column = visibleColumns[columnIndex] || {}
-        const { prop, validator: { rule } = {}} = column
+        const { prop, rules } = column
+
         if (prop) {
+          if (!filed.notUpdateTableEvent && content !== tableData[rowIndex][prop]) {
+            updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
+          }
           tableData[rowIndex][prop] = content
-          rule && console.log(this.validateCell(rowIndex, prop, rule))
+          rules && rules.length && this.validateFiled(rowIndex, prop, rules)
           updateStatus(tableData[rowIndex], prop)
         }
       })
+
+      if (updateArr.length) {
+        this.$emit('table-update-data', updateArr)
+      }
     },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
@@ -477,8 +488,22 @@ export default {
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
       this.$emit('expand-change', this.expands)
     },
+    searchChange(val) {
+      console.log('search change', JSON.stringify(val, null, 2))
+      this.searchForm = val
+      this.$emit('search-change', val)
+      if (this.proxyConfig) this.commitProxy('query')
+    },
     clearSearch() {
+      this.searchForm = []
+      this.tableForm = []
       this.$emit('update:form', {})
+    },
+    getFullData() {
+      return this.tableData
+    },
+    getEditStore() {
+      return this.editStore
     }
   }
 }

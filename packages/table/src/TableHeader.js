@@ -20,6 +20,9 @@ export default {
     }
   },
   watch: {
+    'table.tableForm'(val) {
+      if (JSON.stringify(val) === '[]') this.searchData = []
+    },
     'table.scrollLeft'(val) {
       if (this.fixed) return
       this.$el.scrollLeft = val
@@ -81,7 +84,7 @@ export default {
             columns={bodyColumns}
             showSpace={showSpace}
             on-input={val => (this.searchData = val)}
-            on-change={val => table.$emit('search-change', val)}
+            on-change={table.searchChange}
           /> : ''
         }
       </div>

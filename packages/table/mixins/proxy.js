@@ -6,6 +6,7 @@ export default {
   methods: {
     // 提交指令
     commitProxy(code) {
+      // console.log('commitProxy', code)
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save, loadChildren } = request || {}
       switch (code) {
@@ -28,41 +29,55 @@ export default {
           this.checkoutSelectType()
           break
         case 'delete':
-          typeof deleted === 'function' ? this.delete(deleted) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          deleted && (typeof deleted === 'function' ? this.delete(deleted) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
         case 'query':
-          typeof query === 'function' ? this.query(query) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          query && (typeof query === 'function' ? this.query(query) : console.warn(`requst 没有传入函数 ${[code]}`))
           break
         case 'save':
-          typeof save === 'function' ? this.save(save) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          save && (typeof save === 'function' ? this.save(save) : console.warn(`requst 没有传入函数 ${[code]}`))
+          break
+        case 'refresh':
+          this.refresh()
           break
         case 'loadChildren':
-          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : this.$message.warning(`requst 没有传入函数 ${[code]}`)
+          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : console.warn(`requst 没有传入函数 ${[code]}`)
           break
         default:
           break
       }
     },
+    loadingOpen() {
+      this.isLoading = true
+    },
+    loadingClose() {
+      this.isLoading = false
+    },
     query(query) {
-      this.getList(query).then(res => {
-        const { data } = res
-        if (data.list) {
-          // 有分页
-          const { pageNum, pageSize, total } = data
-          this.loadTableData(data.list)
-          Object.assign(this.pager, { pageNum, pageSize, total })
-        } else {
+      this.loadingOpen()
+      this.getList(query).then(data => {
+        if (!data) data = []
+        if (Array.isArray(data)) {
           // 无分页
           this.loadTableData(data)
+        } else {
+          // 有分页
+          const { pageNum, pageSize, total } = data
+          this.loadTableData(data.list || [])
+          Object.assign(this.pager, { pageNum, pageSize, total })
         }
+        this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
+      }).catch(e => {
+        console.error(e)
+        this.loadingClose()
       })
     },
     getList(query) {
-      const { page, sorts, filters, tableForm } = this
+      const { pager: page, sorts, filters, searchForm } = this
       // 配置模式
       if (typeof query === 'object') {
-        const formData = Object.assign({}, tableForm)
+        const formData = Object.assign({}, { form: searchForm })
         // 处理排序条件
         const firstSort = sorts[0]
         if (firstSort) {
@@ -74,10 +89,10 @@ export default {
           formData[prop] = values.join(',')
         })
         const { getMethos, url } = query
-        return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.currentPage}`, formData })
+        return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式
-        return query({ page, sorts, filters, form: tableForm })
+        return query({ page, sorts, filters, form: searchForm })
       }
     },
     delete(deleted) {
@@ -87,24 +102,25 @@ export default {
         this.$message.warning('请至少选择一条记录！')
         return
       }
-      const del = () => {
-        this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
-        this.clearSelection()
-      }
       this.$confirm('确定要删除所选记录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        del()
-        this.$message({
-          type: 'success',
-          message: '成功删除所选记录!'
+        deleted({ body: checkeds }).then(res => {
+          if (res.success) {
+            this.$message.success('成功删除所选记录!')
+            this.commitProxy('query')
+            this.clearSelection()
+          } else {
+            this.$message.error(res.message)
+          }
+        }).catch(() => {
+          // this.$message.success('成功删除所选记录!')
+          this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
+          this.clearSelection()
         })
       })
-      // deleted({ body: checkeds }).then(res => {
-      //   del()
-      // })
     },
     checkoutSelectType() {
       this.tableColumns.forEach(v => {
@@ -149,22 +165,29 @@ export default {
         cur = tableData.find(d => d[rowId] === cur[rowId])
         return cur && !pendingList.some(item => item === cur) ? acc.concat(cur) : acc
       }, [])
+      const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
-        const { rowIndex, prop } = errMap[0]
         // 聚焦到第一个校验不通过的单元格
+        const { id, prop } = errMap[0]
+        const rowIndex = tableData.findIndex(d => d[rowId] === id)
         this.focus(rowIndex, prop)
       }).then(success => {
         if (success) {
           this.isLoading = true
-          // save({ body: tableData }).then(res => {
-          //   this.reloadData(tableData.filter(da => !pendingList.some(d => d === da)))
-          // })
-          this.reloadData(tableData.filter(da => !pendingList.some(d => d === da)))
-          this.$message.success('保存成功！')
-          setTimeout(() => {
+          save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
-          }, 200)
+            if (res.success) {
+              this.$message.success('保存成功！')
+              this.commitProxy('query')
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(e => {
+            console.error(e)
+            this.isLoading = false
+            this.reloadData(currentTableData)
+          })
         }
       })
     },
@@ -215,6 +238,9 @@ export default {
       this.editStore.insertList.push(...records)
       this.updateCache()
       return this.$nextTick().then(() => rowIndex)
+    },
+    refresh() {
+      this.commitProxy('query')
     }
   }
 }

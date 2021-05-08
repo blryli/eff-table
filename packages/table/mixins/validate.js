@@ -1,4 +1,4 @@
-import { getType } from 'pk/utils'
+import { validateFiled, validate } from 'pk/utils/validate'
 
 export default {
   data() {
@@ -7,86 +7,53 @@ export default {
     }
   },
   methods: {
-    validateCell(rowIndex, prop, rule) {
-      return new Promise((resolve, reject) => {
-        if (!prop) {
-          console.error('需要校验的字段，必须具有 prop 属性')
-          resolve()
-        }
-        const { tableData, columns, validators, tableBodyEl, rowId } = this
-        const row = tableData[rowIndex]
-        const value = row[prop]
-        const id = row[rowId]
-        if (!rule) {
-          const { validator = {}} = columns.find(d => d.prop === prop) || {}
-          if (typeof validator.rule === 'function') {
-            rule = validator.rule
-          } else {
-            resolve()
-          }
-        }
-
-        const cellIndex = columns.findIndex(d => d.prop && d.prop === prop)
-        const childNodes = tableBodyEl.childNodes[rowIndex]
-        const cell = childNodes ? childNodes.childNodes[cellIndex] : null
-
-        // 校验处理函数
-        const validate = params => {
-          const message = typeof params === 'string' ? params : params.message || ''
-          const validator = { rowIndex, rowId: id, prop, message }
-          const index = validators.findIndex(d => d.prop === prop && d.rowIndex === rowIndex)
-          index === -1 ? validators.push(validator) : validators.splice(index, 1, validator)
-          this.$emit('validate', validator, validators)
-
-          return validator
-        }
-
-        const result = rule({ value, row, rowIndex })
-        // 异步校验
-        if (getType(result) === 'Promise') {
-          cell && cell.classList.add('is-async-validator')
-          result.then(res => {
-            cell && cell.classList.remove('is-async-validator')
-            resolve(validate(res))
-          }).catch(err => {
-            cell && cell.classList.remove('is-async-validator')
-            console.error(err)
-            reject()
-          })
+    validateFiled(row, prop, rule) {
+      if (!prop) {
+        console.error('需要校验的字段，必须具有 prop 属性')
+        // resolve()
+      }
+      const { columns, validators, rowId } = this
+      const value = row[prop]
+      const id = row[rowId]
+      const column = columns.find(d => d.prop === prop) || {}
+      if (!rule) {
+        const { rules = [] } = column
+        if (Array.isArray(rules)) {
+          rule = rules
         } else {
-          resolve(validate(result))
+          // resolve()
         }
+      }
+
+      // 校验处理函数
+      // console.log({ value, row, column, id, prop })
+      return validateFiled(rule, { value, row, column, id, prop }).then(res => {
+        const index = validators.findIndex(d => d.prop === prop && d[rowId] === row[rowId])
+        if (res.message) {
+          index === -1 ? validators.push(res) : validators.splice(index, 1, res)
+        } else {
+          index > -1 && validators.splice(index, 1)
+        }
+        this.$emit('validate', res, validators)
+        return res
       })
+
+      // cell && cell.classList.add('is-async-validator') // 异步校验动效
     },
-    validate(rows) {
-      return new Promise((resolve, reject) => {
-        const { tableData, validateRow } = this
-        const validators = tableData.reduce((acc, cur, idx) => {
-          if (Array.isArray(rows) && rows.length) {
-            return rows.some(d => d === cur) ? acc.concat(validateRow(idx)) : acc
-          } else {
-            return acc.concat(validateRow(idx))
-          }
-        }, [])
-        Promise.all(validators).then(data => {
-          const messages = data.filter(d => d.message)
-          if (!messages.length) {
-            resolve(true)
-          } else {
-            reject(messages)
-          }
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    },
-    validateRow(rowIndex) {
-      const { columns, validateCell } = this
-      return columns.reduce((acc, cur) => {
-        const { prop } = cur
-        const { rule } = cur.validator || {}
-        return typeof rule === 'function' ? acc.concat(validateCell(rowIndex, prop, rule)) : acc
-      }, [])
+    validate(rows, all) {
+      const { tableData, columns, editStore } = this
+      const { insertList, updateList, pendingList } = editStore
+      let validData
+      if (rows === true) {
+        validData = tableData
+      } else if (rows) {
+        validData = Array.isArray(rows) ? rows : [rows]
+      } else {
+        validData = all ? tableData : insertList.concat(updateList)
+      }
+      validData = validData.filter(d => !pendingList.some(p => p === d))
+
+      return validate(validData, columns, this.validateFiled)
     },
     clearValidate(props) {
       const clear = prop => {

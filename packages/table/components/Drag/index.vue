@@ -105,7 +105,6 @@ export default {
       this.$emit('cardClose')
     },
     toggleCardShow(val) {
-      console.log(11111)
       val = true
       this.show = val === undefined ? !this.show : val
     },
@@ -144,7 +143,7 @@ export default {
     handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
       this.dradingTarget = null
       const columns = [...this.columns]
-      console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+      // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) => {
         const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.eff-table__header-group-title') : el
