@@ -48,7 +48,7 @@
       margin-right: 2px;
       display: inline-block;
       color: #f56c6c;
-      width: 10px;
+      width: 6px;
       height: 10px;
       line-height: 10px;
       font-weight: 400;
@@ -56,9 +56,12 @@
       &:before {
         content: "*";
         position: absolute;
-        left: 0;
+        left: 2px;
         top: 4px;
       }
+    }
+    > *  + *{
+      margin-left: 5px;
     }
   }
 
