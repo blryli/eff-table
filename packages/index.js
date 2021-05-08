@@ -1,11 +1,13 @@
 import Table from './table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
+import Panel from './Panel/src/Panel'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
 import { Form, FormLine } from './form'
 
-const components = [Table, Popup, Layout, VRender, Form, FormLine, Styles]
+const directives = []
+const components = [Table, Popup, Layout, VRender, Form, Panel, FormLine, Styles]
 
 export {
   Table,
@@ -13,10 +15,14 @@ export {
   Layout,
   VRender,
   Form,
-  FormLine
+  FormLine,
+  Panel
 }
 
 const install = function(Vue, opts = {}) {
+  directives.forEach(directive => {
+    Vue.directive(directive.name, directive)
+  })
   components.forEach(component => {
     Vue.component(component.name, component)
   })

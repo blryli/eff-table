@@ -10,7 +10,7 @@ export default {
     warp: { type: Boolean, default: false },
 
     // 可伸缩性  [row: 行布局 | col: 列布局]
-    flexibility: { type: Boolean, default: true },
+    flexibility: { type: Boolean, default: false },
 
     // 宽度
     width: String,
@@ -62,8 +62,17 @@ export default {
           click: (e) => {
             this.$emit('click', e)
           }
-        }
+        },
+        directives: [
+          {
+            name: 'drag',
+            modifiers: {
+              cnt: true
+            }
+          }
+        ]
       },
+
       this.$slots.default
     )
   }
