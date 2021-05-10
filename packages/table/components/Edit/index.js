@@ -52,7 +52,7 @@ export default {
           const renderOpts = Object.assign({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { vue: table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }

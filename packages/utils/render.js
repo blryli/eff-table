@@ -102,7 +102,7 @@ function renderSelect(h, renderOpts, params, renderType) {
         defaultFirstOption: true
       })
       Object.assign(on, {
-        'visible-change': root.setEditIsStop
+        'visible-change': vue.setEditIsStop
       })
     }
   }
@@ -147,8 +147,8 @@ function renderDatepicker(h, renderOpts, params, renderType) {
       })
     } else if (renderType === 'edit') {
       Object.assign(on, {
-        focus: () => root.setEditIsStop(true),
-        blur: () => root.setEditIsStop(false)
+        focus: () => vue.setEditIsStop(true),
+        blur: () => vue.setEditIsStop(false)
       })
     }
   }
@@ -200,21 +200,21 @@ function renderPopupEdit(h, renderOpts, params) {
 // 弹窗 dialog
 function renderDialog(h, renderOpts, params) {
   const { children, on: { save } = {}} = renderOpts
-  const { root, column, edit } = params
+  const { vue, column, edit } = params
   const props = {
     visible: edit.dialogVisible,
     modal: false,
     title: column.title
   }
 
-  if (edit.dialogVisible) root.setEditIsStop(true)
+  if (edit.dialogVisible) vue.setEditIsStop(true)
   function submit() {
     save && save()
     closed()
   }
   function closed() {
     edit.dialogVisible = false
-    root.setEditIsStop(false)
+    vue.setEditIsStop(false)
   }
 
   const on = getOn(renderOpts.on, {
