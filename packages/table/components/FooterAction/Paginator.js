@@ -10,13 +10,14 @@ export default {
   ],
   methods: {
     onSizeChange(e) {
-      this.table.pager.pageNum = e
+      console.log(e)
+      this.table.pager.pageNum = 1
+      this.table.pager.pageSize = e
       this.table.commitProxy('query')
       this.table.$emit('table-page-num-change', { pageSize: e })
     },
     onCurrentChange(e) {
-      this.table.pager.pageNum = 1
-      this.table.pager.pageSize = e
+      this.table.pager.pageNum = e
       this.table.commitProxy('query')
       this.table.$emit('table-page-size-change', { pageNum: e })
     }
