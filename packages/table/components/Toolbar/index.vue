@@ -38,9 +38,11 @@ export default {
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
-      const { code, on } = cur
-      const event = code && getOn(on, { click: e => this.btnClick(code, e, idx) })
-      const opts = Object.assign({}, cur, { on: event })
+      let { code, on } = cur
+      if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
+        on = getOn(on, { click: e => this.btnClick(code, e, idx) })
+      }
+      const opts = Object.assign({}, cur, { on })
       const compConf = renderer.get(opts.name)
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])
