@@ -1,7 +1,7 @@
 import Table from './table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
-import Panel from './Panel/src/Panel'
+import Panel from './panel/src/Panel'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
 import { Form, FormLine } from './form'

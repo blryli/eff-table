@@ -17,7 +17,7 @@
     <div class="drag-virtual-box" />
   </div>
 </template>
-<style>
+<style scoped>
 .item{
   border:1px solid #eee;
   padding:20px;
