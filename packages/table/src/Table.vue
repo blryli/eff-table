@@ -386,17 +386,35 @@ export default {
       })
     },
     updateStatus(row, prop) {
-      const { tableSourceData, rowId, editStore } = this
-      const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
-      const isInsert = editStore.insertList.find(d => d[rowId] === row[rowId])
-      const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && !isInsert) {
-        if (index === -1) {
-          sourceRow[prop] !== row[prop] && editStore.updateList.push(sourceRow)
+      if (!prop) {
+        return
+      }
+
+      const sourceRow = this.tableSourceData.find(d => d[this.rowId] === row[this.rowId])
+      if (!sourceRow) {
+        return
+      }
+
+      const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
+      if (isInsert) {
+        return
+      }
+
+      const newRow = JSON.parse(JSON.stringify(row))
+      newRow.$old = JSON.parse(JSON.stringify(sourceRow))
+      const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
+      console.log(newRow, sourceRow[prop], row[prop], index)
+
+      if (index !== -1) {
+        if (sourceRow[prop] !== row[prop]) {
+          this.editStore.updateList[index] = (newRow)
+          console.log(this.editStore.updateList, 1111)
         } else {
-          if ([row].some(d => d === sourceRow)) {
-            editStore.updateList.splice(index, 1)
-          }
+          this.editStore.updateList.splice(index, 1)
+        }
+      } else {
+        if (sourceRow[prop] !== row[prop]) {
+          this.editStore.updateList.push(newRow)
         }
       }
     },
