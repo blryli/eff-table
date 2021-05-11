@@ -62,17 +62,16 @@ export default {
           click: (e) => {
             this.$emit('click', e)
           }
-        },
-        directives: [
-          {
-            name: 'drag',
-            modifiers: {
-              cnt: true
-            }
-          }
-        ]
+        }
+        // ,directives: [
+        //   {
+        //     name: 'drag',
+        //     modifiers: {
+        //       cnt: true
+        //     }
+        //   }
+        // ]
       },
-
       this.$slots.default
     )
   }
