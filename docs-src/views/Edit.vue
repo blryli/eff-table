@@ -51,150 +51,158 @@ import mock from 'mockjs'
 import { formatDate } from '@/utils'
 
 const mainSnippet = `
-data () {
-  return {
-    data: [],
-    options: [{
-      value: '选项1',
-      label: '1'
-    }, {
-      value: '选项2',
-      label: '2'
-    }],
-    editStop: false,
-    columns: [
-      {
-        show: true,
-        type: 'index',
-        title: '序号',
-        width: 60
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '名字',
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-          }
-        }
-      },
-      {
-        show: true,
-        prop: 'async',
-        titleRender: (h, { column }) => {
-          return ['异步处理', <el-tooltip class='item' effect='dark' content='当前单元格的值被后面的值依赖，且为异步取值时必用' placement='top'>
-            <i class='el-icon el-icon-question' />
-          </el-tooltip>]
+export default {
+  name: 'Edit',
+  components: {
+    CodeSnippet,
+    Collapse
+  },
+
+  data() {
+    return {
+      mainSnippet,
+      componentSnippet,
+      data: [],
+      options: [{
+        value: '选项1',
+        label: '1'
+      }, {
+        value: '选项2',
+        label: '2'
+      }],
+      editStop: false,
+      columns: [
+        {
+          show: true,
+          type: 'index',
+          title: '序号',
+          width: 60
         },
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-input value={row[prop]} placeholder='number' on-input={val => (row[prop] = val)} />
+        {
+          show: true,
+          prop: 'name',
+          title: '名字',
+          config: {
+            defaultValue: '123'
           },
-          leaveTime: ({ prop, row }) => {
-            return new Promise(resolve => {
-              setTimeout(() => resolve(), row[prop] || 0)
-            })
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
           }
-        }
-      },
-      {
-        show: true,
-        prop: 'switch',
-        titleRender: (h, { column }) => {
-          return ['开关', <el-tooltip class='item' effect='dark' content='控制动态skip：有值打开，没值禁用' placement='top'>
-            <i class='el-icon el-icon-question' />
-          </el-tooltip>]
         },
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-          }
-        }
-      },
-      {
-        show: true,
-        prop: 'dynamic',
-        title: '动态skip',
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-input
-              value={row[prop]}
-              disabled={!row.switch}
-              on-input={val => (row[prop] = val)}
-            />
+        {
+          show: true,
+          prop: 'async',
+          titleRender: (h, { column }) => {
+            return ['异步处理', <el-tooltip class='item' effect='dark' content='当前单元格的值为异步取值，且被后面的值依赖时必用' placement='top'>
+              <i class='el-icon el-icon-question' />
+            </el-tooltip>]
           },
-          skip: ({ row }) => !row.switch
-        }
-      },
-      {
-        show: true,
-        prop: 'select',
-        title: '选择器',
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-select
-              value={row[prop]}
-              automaticDropdown={true}
-              filterable={true}
-              defaultFirstOption={true}
-              on-visible-change={this.visibleChange}
-              on-input={val => (row[prop] = val)}
-            >
-              {
-                this.options.map(item => {
-                  return <el-option
-                    key={item.value}
-                    title={item.title}
-                    value={item.value}>
-                  </el-option>
-                })
-              }
-            </el-select>
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} placeholder='number' on-input={val => (row[prop] = val)} />
+            },
+            leaveTime: ({ prop, row }) => {
+              return new Promise(resolve => {
+                setTimeout(() => resolve(), row[prop] || 0)
+              })
+            }
           }
-        }
-      },
-      {
-        show: true,
-        prop: 'date',
-        title: '日期',
-        cellRender: (h, { prop, row }) => {
-          return formatDate(row[prop], 'yyyy-MM-dd')
         },
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-date-picker
-              value={row[prop]}
-              on-input={val => (row[prop] = val)}
-              on-focus={val => this.visibleChange(true)}
-              on-blur={val => this.visibleChange(false)}
-              type='date'
-            />
+        {
+          show: true,
+          prop: 'switch',
+          titleRender: (h, { column }) => {
+            return ['开关', <el-tooltip class='item' effect='dark' content='控制动态skip：有值打开，没值禁用' placement='top'>
+              <i class='el-icon el-icon-question' />
+            </el-tooltip>]
+          },
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'dynamic',
+          title: '动态skip',
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input
+                value={row[prop]}
+                disabled={!row.switch}
+                on-input={val => (row[prop] = val)}
+              />
+            },
+            skip: ({ row }) => !row.switch
+          }
+        },
+        {
+          show: true,
+          prop: 'select',
+          title: '选择器',
+          options: [{ label: 1, value: 2 }],
+          config: {
+            optionsFunc: this.asdf,
+            options: []
+          },
+          edit: {
+            render: {
+              cascade: true,
+              cascadeCol: 'name',
+              name: 'select'
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          cellRender: (h, { prop, row }) => {
+            return formatDate(row[prop], 'yyyy-MM-dd')
+          },
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-date-picker
+                value={row[prop]}
+                on-input={val => (row[prop] = val)}
+                on-focus={val => this.visibleChange(true)}
+                on-blur={val => this.visibleChange(false)}
+                type='date'
+              />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'end',
+          title: '回车编辑下一行',
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
           }
         }
-      },
-      {
-        show: true,
-        prop: 'end',
-        title: '回车编辑下一行',
-        edit: {
-          render: (h, { prop, row }) => {
-            return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-          }
-        }
-      }
-    ]
+      ]
+    }
   },
   mounted() {
     this.getData()
   },
   methods: {
+    asdf(val) {
+      return new Promise(resolve => {
+        if (val == '陈涛') { resolve([{ label: '123', value: '123' }, { label: 333 }]) } else { resolve([{ label: '123', value: '123' }]) }
+      })
+    },
     visibleChange(val) {
       this.editStop = val
     },
     getData() {
       this.data = mock.mock({
-        'array|500': [
+        'array|2': [
           {
             'id|+1': 1,
             'name': '@cname',
@@ -209,17 +217,7 @@ data () {
       }).array
     },
     add() {
-      this.data.push(mock.mock({
-        'id': this.data.length,
-        'name': '',
-        'select': '',
-        'async': '',
-        'date': '',
-        'switch': '',
-        'end': '',
-        'dynamic': ''
-      }))
-      this.$refs.table.focus(this.data.length - 1)
+      this.$refs.table.commitProxy('add')
     },
     focus() {
       this.$refs.table.focus(9)
@@ -338,26 +336,16 @@ export default {
           show: true,
           prop: 'select',
           title: '选择器',
+          options: [{ label: 1, value: 2 }],
+          config: {
+            optionsFunc: this.asdf,
+            options: []
+          },
           edit: {
-            render: (h, { prop, row }) => {
-              return <el-select
-                value={row[prop]}
-                automaticDropdown={true}
-                filterable={true}
-                defaultFirstOption={true}
-                on-visible-change={this.visibleChange}
-                on-change={val => (row[prop] = val)}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
+            render: {
+              cascade: true,
+              cascadeCol: 'name',
+              name: 'select'
             }
           }
         },
@@ -397,6 +385,11 @@ export default {
     this.getData()
   },
   methods: {
+    asdf(val) {
+      return new Promise(resolve => {
+        if (val == '陈涛') { resolve([{ label: '123', value: '123' }, { label: 333 }]) } else { resolve([{ label: '123', value: '123' }]) }
+      })
+    },
     visibleChange(val) {
       this.editStop = val
     },
@@ -418,7 +411,6 @@ export default {
     },
     add() {
       this.$refs.table.commitProxy('add')
-      // this.$refs.table.focus(this.data.length - 1)
     },
     focus() {
       this.$refs.table.focus(9)

@@ -102,14 +102,28 @@ function renderSelect(h, renderOpts, params, renderType) {
         defaultFirstOption: true
       })
       Object.assign(on, {
-        'visible-change': vue.setEditIsStop
+        'visible-change': (isExpend) => {
+          if (isExpend) {
+            if (renderOpts.cascade && renderOpts.cascadeCol && renderOpts.optionsFunc) {
+              const promise = renderOpts.optionsFunc(params.row[renderOpts.cascadeCol])
+
+              if (promise.__proto__ === Promise.prototype) {
+                promise.then(options => {
+                  renderOpts.options.splice(0, 10000, ...options)
+                })
+              } else {
+                renderOpts.options.splice(0, 10000, ...promise)
+              }
+            }
+          }
+          vue.setEditIsStop(isExpend)
+        }
       })
     }
   }
 
   const ons = getOn(renderOpts.on, on)
 
-  // 渲染options
   const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
   const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
   return render(h, renderOpts, params).mergeOpts({ props, on: ons }).set('children', optionsRender).render()
