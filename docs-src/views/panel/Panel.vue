@@ -14,7 +14,6 @@
       <div v-drag.cnt class="flex-row" style="width:400px;height:200px;border:1px solid blue" />
     </div>
     <div v-drag.cnt="'bug'" class="flex-row" style="width:400px;height:200px;border:1px solid red" />
-    <div class="drag-virtual-box" />
   </div>
 </template>
 <style scoped>
@@ -24,21 +23,12 @@
   height:30px;
   margin:0 10px;
 }
-.drag-virtual-box{
-    width: 100px;
-    height: 80px;
-    position: absolute;
-    border: 1px dashed #ffffff;
-    left: 100px;
-    background: #a9a69e;
-    opacity: 0.5;
-    top: 200px;
-}
+
 </style>
 <script>
 
 export default {
-  name: 'ColumnEdit',
+  name: 'ColumnEdit1',
   components: {},
 
   data() {

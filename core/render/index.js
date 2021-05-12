@@ -11,7 +11,7 @@ export function getChildren(h, children, params, key) {
       return getChildren(h, fn, params)
     } else if (XEUtils.isArray(children)) {
       return children.map((child, idx) => {
-        return getChildren(h, child, params, idx)
+        return child.constructor.name === 'VNode' ? child : getChildren(h, child, params, idx)
       })
     } else if (XEUtils.isObject(children)) {
       const { children: childs } = children
@@ -63,7 +63,6 @@ class Render {
     const { name, tag, defaultSlot } = opts
     if (!opts.props) opts.props = {}
     if (!opts.props.size) opts.props.size = 'mini'
-
     return h(tag || map.get(name), opts, [children, defaultSlot])
   }
 }
