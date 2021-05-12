@@ -277,6 +277,9 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
+          config: {
+            defaultValue: '123'
+          },
           edit: {
             render: (h, { prop, row }) => {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
@@ -399,7 +402,7 @@ export default {
     },
     getData() {
       this.data = mock.mock({
-        'array|500': [
+        'array|2': [
           {
             'id|+1': 1,
             'name': '@cname',
@@ -414,17 +417,8 @@ export default {
       }).array
     },
     add() {
-      this.data.push(mock.mock({
-        'id': this.data.length,
-        'name': '',
-        'select': '',
-        'async': '',
-        'date': '',
-        'switch': '',
-        'end': '',
-        'dynamic': ''
-      }))
-      this.$refs.table.focus(this.data.length - 1)
+      this.$refs.table.commitProxy('add')
+      // this.$refs.table.focus(this.data.length - 1)
     },
     focus() {
       this.$refs.table.focus(9)
