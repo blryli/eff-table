@@ -92,8 +92,10 @@ export default {
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
-      const sourceRow = updateList.find(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && !this.eqCellValue(sourceRow, row, prop)) {
+      const sourceRow = updateList.find(d => {
+        return d.$old[rowId] === row[rowId]
+      })
+      if (prop && sourceRow && !this.eqCellValue(sourceRow.$old, row, prop)) {
         classes += ' is--dirty'
       }
       if (className) {

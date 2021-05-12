@@ -374,8 +374,11 @@ export default {
       }
       return this.$nextTick()
     },
-    reloadData(data) {
+    reloadData(data = null) {
       this.clearStatus()
+      if (!data) {
+        data = this.data
+      }
       this.loadTableData(data)
     },
     clearStatus() {
