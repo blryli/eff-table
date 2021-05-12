@@ -3,10 +3,13 @@ export default {
   // 页面布局容器组件
   name: 'layout',
   props: {
+    // 布局类型
+    mode: { type: String, default: 'flex' },
+
     // 布局方式  [row: 行布局 | col: 列布局 ]
     type: { type: String, default: 'row' },
 
-    // 布局方式  [row: 行布局 | col: 列布局]
+    // 是否支持换行
     warp: { type: Boolean, default: false },
 
     // 可伸缩性  [row: 行布局 | col: 列布局]
