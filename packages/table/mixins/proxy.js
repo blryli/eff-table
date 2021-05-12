@@ -110,13 +110,9 @@ export default {
         if (typeof deleted === 'function') {
           this.isLoading = true
           deleted({ table: this, body: checkeds }).then(res => {
-            if (res.success) {
-              this.$message.success('成功删除所选记录!')
-              this.commitProxy('query')
-              this.clearSelection()
-            } else {
-              this.$message.error(res.message)
-            }
+            this.$message.success('成功删除所选记录!')
+            this.commitProxy('query')
+            this.clearSelection()
             this.isLoading = false
           }).catch(e => {
             console.error(e)
@@ -182,12 +178,8 @@ export default {
           this.isLoading = true
           save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
-            if (res.success) {
-              this.$message.success('保存成功！')
-              this.commitProxy('query')
-            } else {
-              this.$message.error(res.message)
-            }
+            this.$message.success('保存成功！')
+            this.commitProxy('query')
           }).catch(e => {
             console.error(e)
             this.isLoading = false
