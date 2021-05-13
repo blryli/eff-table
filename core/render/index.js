@@ -42,7 +42,7 @@ class Render {
   mergeOpts(opts) {
     for (const key in opts) {
       const opt = opts[key]
-      this.opts[key] = Object.assign({}, opt, this.opts[key])
+      this.opts[key] = Object.assign({}, this.opts[key], opt)
     }
     return this
   }

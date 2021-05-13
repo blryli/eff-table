@@ -2,15 +2,17 @@ import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
+let oldData = null
+
 // 合并事件，如果有相同的方法，内部方法先于外部方法执行
-export function getOn(on, events) {
+export function getOn(on, events, params = []) {
   if (typeof on !== 'object') return events
   const ons = Object.assign({}, on, events)
   for (const key in events) {
     if (on[key]) {
       ons[key] = val => {
-        events[key](val)
-        on[key](val)
+        events[key](val, params)
+        on[key](val, params)
       }
     }
   }
@@ -42,14 +44,20 @@ function renderVModel(h, renderOpts, params) {
   const attrs = {
     placeholder: '请输入' + (column.title || '内容')
   }
+
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       vue.$set(data, prop, val)
     },
     change: val => {
       searchChange && searchChange(val)
+    },
+    blur: v => {
+      oldData = null
     }
-  })
+  }, onParams)
 
   return render(h, renderOpts, params).mergeOpts({ props, attrs, on }).render()
 }

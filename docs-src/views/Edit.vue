@@ -281,8 +281,11 @@ export default {
             defaultValue: '123'
           },
           edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            'render': {
+              'name': 'input',
+              'on': {
+                'change': this.asdf
+              }
             }
           }
         },
@@ -387,12 +390,8 @@ export default {
     this.getData()
   },
   methods: {
-    asdf(obj) {
-      return new Promise(resolve => {
-        if (obj.row.name == '陈涛') {
-          resolve([{ label: '123', value: '123' }, { label: 333 }])
-        } else { resolve([{ label: '123', value: '123' }]) }
-      })
+    asdf(obj, params) {
+      console.log(obj, params, 123456)
     },
     visibleChange(val) {
       this.editStop = val
