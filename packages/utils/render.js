@@ -105,7 +105,7 @@ function renderSelect(h, renderOpts, params, renderType) {
         'visible-change': (isExpend) => {
           if (isExpend) {
             if (renderOpts.cascade && renderOpts.cascadeCol && renderOpts.optionsFunc) {
-              const promise = renderOpts.optionsFunc(params.row[renderOpts.cascadeCol])
+              const promise = renderOpts.optionsFunc({ row: params.row })
 
               if (promise.__proto__ === Promise.prototype) {
                 promise.then(options => {

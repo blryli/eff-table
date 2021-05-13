@@ -65,9 +65,10 @@ data() {
             return <el-input value={row[prop]} on-input={val => (row[prop] = val)}></el-input>
           }
         },
-        rules: {
-          rule: ({ value }) => !value && '名字不能为空'
-        }
+          rules: [{
+            pattern: /^\s$/g,
+            message: '不答应'
+          }]
       },
       {
         show: true,
@@ -181,7 +182,10 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          rules: [{ validator: ({ value }) => !value && '名字不能为空' }]
+          rules: [{
+            pattern: /^\s$/g,
+            message: '不答应'
+          }]
         },
         {
           show: true,
@@ -203,9 +207,15 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          rules: [{ validator: ({ value }) => new Promise(resolve => setTimeout(() => {
-            resolve(value < 170 && '身高不能低于170')
-          }, 1000)) }]
+          rules: [
+            {
+              validator: ({ value }) => new Promise(resolve => setTimeout(() => {
+                resolve(value < 170 && '身高不能低于170')
+              }, 1000))
+
+            }
+
+          ]
         }
       ]
     }

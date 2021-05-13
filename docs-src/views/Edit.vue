@@ -192,9 +192,11 @@ export default {
     this.getData()
   },
   methods: {
-    asdf(val) {
+    asdf(obj) {
       return new Promise(resolve => {
-        if (val == '陈涛') { resolve([{ label: '123', value: '123' }, { label: 333 }]) } else { resolve([{ label: '123', value: '123' }]) }
+        if (obj.row.name == '陈涛') {
+          resolve([{ label: '123', value: '123' }, { label: 333 }])
+        } else { resolve([{ label: '123', value: '123' }]) }
       })
     },
     visibleChange(val) {
@@ -385,9 +387,11 @@ export default {
     this.getData()
   },
   methods: {
-    asdf(val) {
+    asdf(obj) {
       return new Promise(resolve => {
-        if (val == '陈涛') { resolve([{ label: '123', value: '123' }, { label: 333 }]) } else { resolve([{ label: '123', value: '123' }]) }
+        if (obj.row.name == '陈涛') {
+          resolve([{ label: '123', value: '123' }, { label: 333 }])
+        } else { resolve([{ label: '123', value: '123' }]) }
       })
     },
     visibleChange(val) {
