@@ -30,6 +30,9 @@ export function validateFiled(rules, params) {
       const { validator, min, max, pattern, message } = rule
       const { id, prop, value } = params
       if (typeof validator === 'function') {
+        if (params.value === null) {
+          params.value = ''
+        }
         const valid = validator(params)
         if (getType(valid) === 'Promise') {
           valid.then(message => {
