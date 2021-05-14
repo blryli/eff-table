@@ -69,11 +69,18 @@ function renderTextareaEdit(h, renderOpts, params) {
     value: data[prop] || null,
     type: 'textarea'
   }
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       vue.$set(data, prop, val)
+    },
+    change: v => {},
+    blur: v => {
+      oldData = null
     }
-  })
+  }, onParams)
+
   return render(h, renderOpts, params).setOpts('name', 'input').mergeOpts({ props, on }).render()
 }
 
@@ -97,7 +104,10 @@ function renderSelect(h, renderOpts, params, renderType) {
     input: val => {
       vue.$set(data, prop, val)
       searchChange && searchChange(val)
-    }
+    },
+    change: v => {},
+    blur: v => { oldData = null }
+
   }
   if (renderType) {
     Object.assign(props, {
@@ -130,7 +140,9 @@ function renderSelect(h, renderOpts, params, renderType) {
     }
   }
 
-  const ons = getOn(renderOpts.on, on)
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
+  const ons = getOn(renderOpts.on, on, onParams)
 
   const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
   const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
@@ -160,7 +172,12 @@ function renderDatepicker(h, renderOpts, params, renderType) {
     input: val => {
       vue.$set(data, prop, val)
       searchChange && searchChange(val)
+    },
+    change: v => {},
+    blur: v => {
+      oldData = null
     }
+
   }
   if (renderType) {
     if (renderType === 'search') {
@@ -175,7 +192,9 @@ function renderDatepicker(h, renderOpts, params, renderType) {
     }
   }
 
-  const ons = getOn(renderOpts.on, on)
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
+  const ons = getOn(renderOpts.on, on, onParams)
 
   return render(h, renderOpts, params).mergeOpts({ props, on: ons }).render()
 }
@@ -278,11 +297,17 @@ function renderSwitch(h, renderOpts, params) {
     activeValue: isBoolean ? true : '1',
     inactiveValue: isBoolean ? false : '0'
   }
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       data[prop] = isBoolean ? val : '' + val
+    },
+    change: v => {},
+    blur: v => {
+      oldData = null
     }
-  })
+  }, onParams)
   return render(h, renderOpts, params).mergeOpts({ props }).setOpts('on', on).render()
 }
 
@@ -302,11 +327,17 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const props = {
     value: data[prop] || []
   }
+  oldData = oldData === null ? params.row[params.prop] : oldData
+  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       vue.$set(data, prop, val)
+    },
+    change: v => {},
+    blur: v => {
+      oldData = null
     }
-  })
+  }, onParams)
   const renderChildren = children.map((opts, idx) => {
     const { label } = opts.props || {}
     const childrenOpts = Object.assign({}, { children: label }, opts)
