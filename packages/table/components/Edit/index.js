@@ -103,11 +103,14 @@ export default {
       const { prop, rules = [] } = this.column || {}
       if (!rules.length || !this.row) return this.$nextTick()
 
+      const promiseArr = []
       this.columns.forEach(v => {
         if (v.rules && v.prop) {
-          this.table.validateFiled(this.row, v.prop, v.rules)
+          promiseArr.push(this.table.validateFiled(this.row, v.prop, v.rules))
         }
       })
+
+      return Promise.all(promiseArr)
     },
     updateStatus() {
       const { table, column, row } = this
