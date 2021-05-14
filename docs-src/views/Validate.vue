@@ -183,18 +183,8 @@ export default {
             }
           },
           rules: [{
-            validator: ({
-              value,
-              row,
-              rowIndex
-            }) => {
-              const _message = ''
-              console.log(!/^asdf$/g.test(value), value, 11111)
-              if (!/^\S+$/g.test(value)) {
-                eval(' _message = `请选择指派条件`')
-                return '请选择指派条件'
-              }
-            }
+            required: true,
+            message: ''
           }]
         },
         {

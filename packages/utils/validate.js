@@ -27,7 +27,11 @@ function getMessage(rule, message) {
 export function validateFiled(rules, params) {
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
-      const { validator, min, max, pattern, message } = rule
+      let { validator, min, max, pattern, message } = rule
+      if (message === '') {
+        message += ' '
+      }
+
       const { id, prop, value } = params
       if (typeof validator === 'function') {
         if (params.value === null) {
@@ -54,6 +58,9 @@ export function validateFiled(rules, params) {
         let e = false
         for (const key in Rules) {
           if (rule[key]) {
+            if (key === 'required') {
+              message = '该字段必填'
+            }
             e = getMessage(Rules[key](), message)
             break
           }
