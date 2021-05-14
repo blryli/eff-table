@@ -102,7 +102,12 @@ export default {
     handleValidate() {
       const { prop, rules = [] } = this.column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-      return this.table.validateFiled(this.row, prop, rules)
+
+      this.columns.forEach(v => {
+        if (v.rules && v.prop) {
+          this.table.validateFiled(this.row, v.prop, v.rules)
+        }
+      })
     },
     updateStatus() {
       const { table, column, row } = this
