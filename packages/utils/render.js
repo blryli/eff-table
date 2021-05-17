@@ -45,7 +45,9 @@ function renderVModel(h, renderOpts, params) {
     placeholder: '请输入' + (column.title || '内容')
   }
 
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
@@ -69,7 +71,9 @@ function renderTextareaEdit(h, renderOpts, params) {
     value: data[prop] || null,
     type: 'textarea'
   }
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
@@ -140,7 +144,9 @@ function renderSelect(h, renderOpts, params, renderType) {
     }
   }
 
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const ons = getOn(renderOpts.on, on, onParams)
 
@@ -192,7 +198,9 @@ function renderDatepicker(h, renderOpts, params, renderType) {
     }
   }
 
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const ons = getOn(renderOpts.on, on, onParams)
 
@@ -297,7 +305,9 @@ function renderSwitch(h, renderOpts, params) {
     activeValue: isBoolean ? true : '1',
     inactiveValue: isBoolean ? false : '0'
   }
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
@@ -327,7 +337,9 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const props = {
     value: data[prop] || []
   }
-  oldData = oldData === null ? params.row[params.prop] : oldData
+  if (params.row) {
+    oldData = oldData === null ? params.row[params.prop] : oldData
+  }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
