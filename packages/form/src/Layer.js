@@ -1,13 +1,9 @@
 
-import VPopover from './popover'
-import VText from './Text'
-import VTriangle from './Triangle'
+import VPopover from 'pk/popover'
 export default {
   name: 'VLayer',
   components: {
-    VPopover,
-    VText,
-    VTriangle
+    VPopover
   },
   props: {
     path: { type: String, default: '' },
@@ -30,20 +26,6 @@ export default {
     }
   },
   methods: {
-    // 计算叛逆列表
-    addBetrayer(betrayer) {
-      const { betraye } = this
-      betrayer.id &&
-        !betraye[betrayer.placement].find(d => d === betrayer.id) &&
-        betraye[betrayer.placement].push(betrayer.id)
-    },
-    removeBetrayer(betrayer) {
-      const { betraye } = this
-      const index = betraye[betrayer.placement].findIndex(
-        d => d === betrayer.id
-      )
-      index !== -1 && betraye[betrayer.placement].splice(index, 1)
-    },
     // 加载图层
     handleLoadLayer() {
       if (!this.loadLayer) {
@@ -52,15 +34,9 @@ export default {
     }
   },
   render(h) {
-    const placementObj = {
-      left: [],
-      right: [],
-      top: [],
-      bottom: []
-    }
     const layers = []
     let layerClassStr = 'v-layer'
-    const { path, betraye, addBetrayer, removeBetrayer, handleLoadLayer } = this
+    const { path, handleLoadLayer } = this
     this.layer.forEach(layerItem => {
       let layer = {}
       const referenceId = path // 参考点id
@@ -74,11 +50,7 @@ export default {
         if (!type || type === 'popover') {
           !placement && (placement = 'top')
           disabled = disabled === true || show === false ? 1 : 0 // 是否禁用
-          const placementId = `${path}/${placement}/${placementObj[placement].length + 1}`
-          placementObj[placement].push({
-            id: placementId,
-            disabled: disabled
-          })
+          const placementId = `${path}/${placement}`
 
           // 图层懒加载
           if (layerItem.showAlways || this.loadLayer) {
@@ -87,13 +59,7 @@ export default {
               attrs: {
                 referenceId, placementId, message, placement, disabled, effect,
                 trigger, visibleArrow, borderColor, showAlways, enterable, popoverClass, hideDelay,
-                path,
-                betraye,
-                placementObj: placementObj
-              },
-              on: {
-                addBetrayer,
-                removeBetrayer
+                path
               }
             })
             layers.push(layer)

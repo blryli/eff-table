@@ -9,13 +9,13 @@
       @mouseleave="mouseleaveWrap"
     >
       <div v-if="visibleArrow" class="v-popover__arrow" />
-      <v-slot :data="data" />
+      <!-- <v-slot :data="data" /> -->
     </div>
   </transition>
 </template>
 
 <script>
-import VSlot from './Slot'
+// import VSlot from './Slot'
 import {
   on,
   off,
@@ -29,7 +29,7 @@ function $(params) {
 
 export default {
   name: 'VPopover',
-  components: { VSlot },
+  // components: { VSlot },
   props: {
     referenceId: {
       type: String,
