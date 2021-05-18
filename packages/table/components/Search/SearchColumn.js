@@ -179,7 +179,7 @@ export default {
               on-mouseenter={handleMouseenter}
               on-mouseleave={handleMouseleave}
             >
-              <Icon icon={type} operator={operators} />
+              <Icon icon={type} />
               <Popover
                 ref='popover'
                 placement='bottom'

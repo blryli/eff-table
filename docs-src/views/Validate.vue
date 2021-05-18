@@ -196,7 +196,7 @@ export default {
               return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
             }
           },
-          rules: [{ validator: ({ value }) => value > 50 && '年龄不能大于50' }]
+          rules: [{ validator: ({ value }) => value < 50 && '年龄不能大于50' }]
         },
         {
           show: true,
