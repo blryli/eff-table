@@ -110,8 +110,8 @@ export default {
   methods: {
     getBodyWidth() {
       let node = this.$el
-      while (node.getBoundingClientRect().width === 0) {
-        node = node.parentNode
+      while (node && node.getBoundingClientRect().width === 0) {
+        node = node.parentNode || this.$el
       }
       return node.getBoundingClientRect().width
     },

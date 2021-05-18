@@ -8,12 +8,10 @@ let oldData = null
 export function getOn(on, events, params = []) {
   if (typeof on !== 'object') return events
   const ons = Object.assign({}, on, events)
-  for (const key in events) {
-    if (on[key]) {
-      ons[key] = val => {
-        events[key](val, params)
-        on[key](val, params)
-      }
+  for (const key in ons) {
+    ons[key] = (...ags) => {
+      events[key] && events[key](ags, params)
+      on[key] && on[key](ags, params)
     }
   }
   return ons
@@ -79,7 +77,6 @@ function renderTextareaEdit(h, renderOpts, params) {
     input: val => {
       vue.$set(data, prop, val)
     },
-    change: v => {},
     blur: v => {
       oldData = null
     }
@@ -109,7 +106,6 @@ function renderSelect(h, renderOpts, params, renderType) {
       vue.$set(data, prop, val)
       searchChange && searchChange(val)
     },
-    change: v => {},
     blur: v => { oldData = null }
 
   }
@@ -179,7 +175,6 @@ function renderDatepicker(h, renderOpts, params, renderType) {
       vue.$set(data, prop, val)
       searchChange && searchChange(val)
     },
-    change: v => {},
     blur: v => {
       oldData = null
     }
@@ -313,7 +308,6 @@ function renderSwitch(h, renderOpts, params) {
     input: val => {
       data[prop] = isBoolean ? val : '' + val
     },
-    change: v => {},
     blur: v => {
       oldData = null
     }
@@ -345,7 +339,6 @@ function renderCheckboxGroup(h, renderOpts, params) {
     input: val => {
       vue.$set(data, prop, val)
     },
-    change: v => {},
     blur: v => {
       oldData = null
     }

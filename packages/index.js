@@ -4,10 +4,11 @@ import Layout from './layout/src/layout'
 import Panel from './panel/src/Panel'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
-import { Form, FormLine } from './form'
+import Form from './form'
+import FormItem from './form-item'
 
 const directives = []
-const components = [Table, Popup, Layout, VRender, Form, Panel, FormLine, Styles]
+const components = [Table, Popup, Layout, VRender, Form, FormItem, Panel, Styles]
 
 export {
   Table,
@@ -15,7 +16,7 @@ export {
   Layout,
   VRender,
   Form,
-  FormLine,
+  FormItem,
   Panel
 }
 

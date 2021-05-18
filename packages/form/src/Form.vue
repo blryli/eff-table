@@ -2,15 +2,16 @@
 import Validator from 'pk/form/mixins/validator'
 import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
+import VFormItem from './form-item'
 
 export default {
   name: 'VForm',
+  components: { VFormItem },
   mixins: [Validator, FocusControl],
   props: {
     value: { type: Array, default: () => [] },
     data: { type: [Object, Array], default: () => [] },
     cols: { type: Array, default: () => [] },
-    rules: { type: Array, default: () => [] },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     titleAlign: { type: String, default: '' },
@@ -35,8 +36,6 @@ export default {
   },
   data() {
     return {
-      layer: [],
-      initLayer: Object.freeze([]),
       isResponse: false,
       validators: [],
       inputIndex: 0,
@@ -62,21 +61,10 @@ export default {
     },
     focusStop(val) {
       this.editIsStop = val
-    },
-    validators(data) {
-      const layer = {
-        id: '_validator',
-        show: true,
-        data
-      }
-      const index = this.layer.findIndex(d => d.id === '_validator')
-      index === -1 ? this.layer.push(layer) : this.layer.splice(index, 1, layer)
-      this.$emit('input', this.layer)
     }
   },
   created() {
     this.formLines = []
-    this.init()
   },
   mounted() {
     // 响应式处理
@@ -85,29 +73,6 @@ export default {
     }
   },
   methods: {
-    init() {
-      this.layer = this.value
-      this.initLayer = Object.freeze(this.formationLayer())
-    },
-    formationLayer() {
-      return (this.layer || []).reduce((acc, cur) => {
-        const show = cur.show === undefined ? true : cur.show;
-        (cur.data || []).forEach(da => {
-          da.id = cur.id
-          const layer = { ...cur.view, ...da, ...{ show }}
-          const findIndex = acc.findIndex(l => l.path === da.path)
-          if (findIndex === -1) {
-            acc.push({
-              path: da.path,
-              layer: [layer]
-            })
-          } else {
-            acc[findIndex].layer.push(layer)
-          }
-        })
-        return acc
-      }, [])
-    },
     itemRender(col) {
       const { $createElement, table, data } = this
       const { prop, itemRender } = col
@@ -126,14 +91,15 @@ export default {
   },
   render(h) {
     console.log('this.data', JSON.stringify(this.data, null, 2))
-    const { cols, formClass, isResponse, width, $slots, itemRender } = this
+    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender } = this
     return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
       cols.map(col => {
-        const { children } = col
-        if (Array.isArray(children)) {
-          return h('v-form-line', { props: Object.assign({}, col, { cols: children }) }, [children.map(d => itemRender(d))])
-        }
-        return h('v-form-line', { props: { cols: [Object.assign({}, col, { span: 24 })], span: col.span }}, [itemRender(col)])
+        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px' })
+        return h('v-form-item', {
+          props,
+          class: 'v-form-item',
+          style: { padding: `0 ${itemGutter}`, marginBottom: rowledge }
+        }, [itemRender(col)])
       }),
       $slots.default
     ])
@@ -160,21 +126,5 @@ export default {
       clear: both;
     }
   }
-}
-
-.v-form-line--abreast + .v-form-line--abreast {
-  margin-left: -1px;
-}
-
-.v-layer{
-  position: relative;
-  & :only-child{
-    width: 100%;
-  }
-}
-
-.v-layer-item--focus, .is-validator{
-  position: relative;
-  z-index: 1;
 }
 </style>
