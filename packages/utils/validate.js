@@ -25,6 +25,8 @@ function getMessage(rule, message) {
  * 字段校验
  */
 export function validateFiled(rules, params) {
+  const hasRequire = rules.find(v => v.required)
+
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
       let { validator, min, max, pattern, message } = rule
@@ -37,6 +39,11 @@ export function validateFiled(rules, params) {
         if (params.value === null) {
           params.value = ''
         }
+
+        if (!hasRequire && !value) {
+          resolve({ id, prop, message: false })
+        }
+
         const valid = validator(params)
         if (getType(valid) === 'Promise') {
           valid.then(message => {
@@ -58,10 +65,15 @@ export function validateFiled(rules, params) {
         let e = false
         for (const key in Rules) {
           if (rule[key]) {
-            if (key === 'required') {
+            if (key === 'required' && message !== ' ') {
               message = '该字段必填'
             }
+
             e = getMessage(Rules[key](), message)
+
+            if (key !== 'required' && !hasRequire && !value) {
+              e = false
+            }
             break
           }
         }
