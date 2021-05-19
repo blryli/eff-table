@@ -6,7 +6,8 @@ export default {
   },
   computed: {
     sorts() {
-      return [this.curSort]
+      const { curSort } = this
+      return curSort.prop ? [curSort] : []
     }
   },
   methods: {

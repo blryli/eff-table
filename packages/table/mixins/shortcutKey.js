@@ -51,25 +51,25 @@ export default {
         if (this.searchShow === false) {
           console.log('this.searchShow', this.searchShow)
           this.clearSearch()
-          this.$emit('search-change', [])
+          this.searchChange([])
         }
       }
     },
     handleWindowClick(e) {
+      const { target } = e
       if (this.edit) {
-        const { target } = e
         const { edit, editPopover } = this.$refs
-        // 点击编辑以外的区域时关闭编辑框
-        // if (edit.show) {
-        if (!this.$refs.body.$el.contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
+        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
           if (edit.show) {
             this.closeEdit()
           }
-          if (this.selectRange) {
-            this.closeSelectRange()
-          }
         }
-        // }
+      }
+
+      if (this.selectRange || this.copy) {
+        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target)) {
+          this.closeSelectRange()
+        }
       }
     }
   }

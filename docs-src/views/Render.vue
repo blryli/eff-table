@@ -200,6 +200,7 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
+              console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
               const params = { ...form }
               return axios.get('url', params).catch(res => {
                 return mock.mock({
@@ -241,7 +242,10 @@ export default {
             search: {
               operator: true
             },
-            rules: [{ validator: ({ value }) => !value && '不能为空' }],
+            rules: [
+              { required: true },
+              { min: 3, max: 6 }
+            ],
             edit: true
           },
           {
@@ -252,7 +256,7 @@ export default {
             config: { name: 'input' },
             cellRender: {},
             rules: [{ validator: ({ value }) => {
-              return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 500))
+              return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 200))
             } }],
             edit: true
           },

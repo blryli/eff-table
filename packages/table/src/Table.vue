@@ -9,7 +9,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <Toolbar v-if="$slots.toolbar || fullscreen || drag && columnControl || columnEdit" ref="toolbar">
+    <Toolbar v-if="$slots.toolbar || fullscreen || (drag && columnControl) || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
 
@@ -170,7 +170,7 @@ import shortcutKey from '../mixins/shortcutKey'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
-import Popover from 'packages/popover'
+import Popover from 'pk/popover'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import FooterAction from '../components/FooterAction'
@@ -258,6 +258,7 @@ export default {
         return { ...{ width: d.width || 0 }, ...d }
       }),
       tableForm: {},
+      searchForm: [],
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
@@ -358,21 +359,26 @@ export default {
   },
   methods: {
     loadTableData(data) {
+      const { editStore, rowId } = this
       this.tableData = data || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
+      editStore.insertList = []
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
 
       // 检测行主键在行数据中是否存在
-      if (data.length && !data[0].hasOwnProperty(this.rowId)) {
+      if (data.length && !data[0].hasOwnProperty(rowId)) {
         console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
       }
       return this.$nextTick()
     },
-    reloadData(data) {
+    reloadData(data = null) {
       this.clearStatus()
+      if (!data) {
+        data = this.data
+      }
       this.loadTableData(data)
     },
     clearStatus() {
@@ -383,17 +389,28 @@ export default {
       })
     },
     updateStatus(row, prop) {
-      const { tableSourceData, rowId, editStore } = this
-      const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId])
-      const isInsert = editStore.insertList.find(d => d[rowId] === row[rowId])
-      const index = editStore.updateList.findIndex(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && !isInsert) {
-        if (index === -1) {
-          sourceRow[prop] !== row[prop] && editStore.updateList.push(sourceRow)
+      if (!prop) return
+
+      const sourceRow = this.tableSourceData.find(d => d[this.rowId] === row[this.rowId])
+      if (!sourceRow) return
+
+      const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
+      if (isInsert) return
+
+      const newRow = JSON.parse(JSON.stringify(row))
+      newRow.$old = JSON.parse(JSON.stringify(sourceRow))
+      const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
+      // console.log(newRow, sourceRow[prop], row[prop], index)
+
+      if (index !== -1) {
+        if (sourceRow[prop] !== row[prop]) {
+          this.editStore.updateList[index] = (newRow)
         } else {
-          if ([row].some(d => d === sourceRow)) {
-            editStore.updateList.splice(index, 1)
-          }
+          this.editStore.updateList.splice(index, 1)
+        }
+      } else {
+        if (sourceRow[prop] !== row[prop]) {
+          this.editStore.updateList.push(newRow)
         }
       }
     },
@@ -417,7 +434,7 @@ export default {
             updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
           }
           tableData[rowIndex][prop] = content
-          rules && rules.length && this.validateFiled(rowIndex, prop, rules)
+          rules && rules.length && this.validateField(rowIndex, prop, rules)
           updateStatus(tableData[rowIndex], prop)
         }
       })
@@ -487,7 +504,15 @@ export default {
       index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
       this.$emit('expand-change', this.expands)
     },
+    searchChange(val) {
+      console.log('search change', JSON.stringify(val, null, 2))
+      this.searchForm = val
+      this.$emit('search-change', val)
+      if (this.proxyConfig) this.commitProxy('query')
+    },
     clearSearch() {
+      this.searchForm = []
+      this.tableForm = []
       this.$emit('update:form', {})
     },
     getFullData() {

@@ -5,30 +5,46 @@ import ColumnEditBtn from './ColumnEditBtn'
 import EditHistory from './EditHistory'
 import Clear from './Clear'
 import Refresh from './Refresh'
+import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh, Search },
   inject: ['table'],
+  data() {
+    return {
+      load: true
+    }
+  },
   methods: {
     btnChange() {
       this.table.$refs.drag.toggleCardShow()
     },
     btnEdit() {
       this.table.$refs.columnEdit.toggleCardShow()
+    },
+    btnClick(code, e, index) {
+      this.load = false
+      code && this.table.commitProxy(code)
+      this.$nextTick(() => {
+        this.load = true
+      })
     }
   },
   render(h) {
-    const { table } = this
+    const { table, load } = this
+    if (!load) return ''
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory } = table
-    const { buttons = [], refresh } = toolbarConfig || {}
+    const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
-      const { code, on } = cur
-      const event = code && getOn(on, { click: () => this.table.commitProxy(code) })
-      const opts = Object.assign({}, cur, { on: event })
+      let { code, on } = cur
+      if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
+        on = getOn(on, { click: e => this.btnClick(code, e, idx) })
+      }
+      const opts = Object.assign({}, cur, { on })
       const compConf = renderer.get(opts.name)
-      return compConf ? acc.concat(compConf.renderDefault(h, opts, { table, columnIndex: idx })) : acc
+      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])
 
     return (
@@ -38,6 +54,9 @@ export default {
           { this.$slots.default }
         </div>
         <div class='eff-table__toobar-right'>
+          {
+            diySearch && <Search /> || ''
+          }
           {
             refresh && <Refresh /> || ''
           }

@@ -1,5 +1,4 @@
 import map from './map'
-
 import XEUtils from 'xe-utils'
 
 export function getChildren(h, children, params, key) {
@@ -12,7 +11,7 @@ export function getChildren(h, children, params, key) {
       return getChildren(h, fn, params)
     } else if (XEUtils.isArray(children)) {
       return children.map((child, idx) => {
-        return getChildren(h, child, params, idx)
+        return child.constructor.name === 'VNode' ? child : getChildren(h, child, params, idx)
       })
     } else if (XEUtils.isObject(children)) {
       const { children: childs } = children
@@ -43,7 +42,7 @@ class Render {
   mergeOpts(opts) {
     for (const key in opts) {
       const opt = opts[key]
-      this.opts[key] = Object.assign({}, opt, this.opts[key])
+      this.opts[key] = Object.assign({}, this.opts[key], opt)
     }
     return this
   }
@@ -64,11 +63,13 @@ class Render {
     const { name, tag, defaultSlot } = opts
     if (!opts.props) opts.props = {}
     if (!opts.props.size) opts.props.size = 'mini'
-
     return h(tag || map.get(name), opts, [children, defaultSlot])
   }
 }
 
 export function render(h, renderOpts, params) {
+  if (params && typeof (params._beforeRender_) === 'function') {
+    params._beforeRender_(renderOpts)
+  }
   return new Render(h, renderOpts, params)
 }

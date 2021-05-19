@@ -1,4 +1,4 @@
-import { validateFiled, validate } from 'pk/utils/validate'
+import { validateField, validate } from 'pk/utils/validate'
 
 export default {
   data() {
@@ -7,7 +7,7 @@ export default {
     }
   },
   methods: {
-    validateFiled(row, prop, rule) {
+    validateField(row, prop, rule) {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
         // resolve()
@@ -27,7 +27,7 @@ export default {
 
       // 校验处理函数
       // console.log({ value, row, column, id, prop })
-      return validateFiled(rule, { value, row, column, id, prop }).then(res => {
+      return validateField(rule, { value, row, column, id, prop }).then(res => {
         const index = validators.findIndex(d => d.prop === prop && d[rowId] === row[rowId])
         if (res.message) {
           index === -1 ? validators.push(res) : validators.splice(index, 1, res)
@@ -53,7 +53,7 @@ export default {
       }
       validData = validData.filter(d => !pendingList.some(p => p === d))
 
-      return validate(validData, columns, this.validateFiled)
+      return validate(validData, columns, this.validateField)
     },
     clearValidate(props) {
       const clear = prop => {

@@ -20,6 +20,9 @@ export default {
     }
   },
   watch: {
+    'table.tableForm'(val) {
+      if (JSON.stringify(val) === '[]') this.searchData = []
+    },
     'table.scrollLeft'(val) {
       if (this.fixed) return
       this.$el.scrollLeft = val
@@ -81,7 +84,7 @@ export default {
             columns={bodyColumns}
             showSpace={showSpace}
             on-input={val => (this.searchData = val)}
-            on-change={val => table.$emit('search-change', val)}
+            on-change={table.searchChange}
           /> : ''
         }
       </div>
@@ -178,7 +181,9 @@ export default {
     moveing(moveX = 0, moveY) {
       if (!this.dragingTarget) return
       this.isDraging = true
-      this.moveX = moveX
+
+      const columnIndex = this.dragingTarget.dataset.colidx
+      const column = this.visibleColumns[columnIndex]
 
       const { table } = this
       const line = table.$refs.line
@@ -186,9 +191,28 @@ export default {
       const tableEl = table.$refs.table
       const { left: tableLeft, height: tableHeight, top: tableTop } = tableEl.getBoundingClientRect()
       const { left: columnLeft } = this.dragingTarget.getBoundingClientRect()
-      const minLeft = columnLeft + 40
+      let minLeft = columnLeft + 50
+
+      if (column.edit) {
+        minLeft += 16
+      }
+
+      if (column.sortable) {
+        minLeft += 20
+      }
+
+      const required = column.rules && Boolean(column.rules.find(d => d.required))
+
+      if (required) {
+        minLeft += 12
+      }
+
+      if (minLeft <= this.startX + moveX) {
+        this.moveX = moveX
+      }
       const endLeft = this.startX + this.moveX
       const left = Math.max(minLeft, endLeft, tableLeft)
+
       line.style.cssText = `left:${left}px;top:${tableTop}px;height:${tableHeight}px;`
     },
     end() {

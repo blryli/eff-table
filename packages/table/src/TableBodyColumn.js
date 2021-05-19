@@ -27,64 +27,6 @@ export default {
       groupStatus: 0
     }
   },
-  render(h) {
-    const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
-    const { type } = column
-    // row[columnIndex] summary合计列
-
-    let slot
-    if (type === 'expand') {
-      slot = this.expandRender(h)
-    } else if (row[columnIndex] !== undefined) {
-      slot = row[columnIndex]
-    } else if (type === 'selection') {
-      slot = this.renderSelection(h)
-    } else if (type === 'radio') {
-      slot = this.renderRadio(h)
-    } else {
-      slot = this.cellRender(h)
-    }
-
-    let groupEl = ''
-    if ((row.children && row.children.length || row.hasChildren) && column.prop === this.groupKey) {
-      if (this.groupStatus < 3) {
-        this.groupStatus = this.table.columnGroupIds.indexOf(this.row[this.table.rowId]) === -1 ? 1 : 2
-      }
-
-      groupEl = <span class={{ 'eff-icon-expand': true, 'is--expanded': this.groupStatus === 2 }} on-click={e => this.groupClick(e)} />
-
-      if (this.groupStatus === 3) {
-        groupEl = <div class='icon-loading'>
-          {
-            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
-              return <div>
-                <span class='blank'></span>
-              </div>
-            })
-          }
-        </div>
-      }
-    }
-
-    return (
-      <div
-        class={this.columnClass}
-        key={this.groupFloor + '-' + rowIndex + '-' + columnIndex}
-        style={getStyle()}
-        on-mouseenter={event => handleMouseenter(event, slot)}
-        on-mouseleave={event => handleMouseleave(event, slot)}
-
-        on-mouseup={event => handleMouseUp(event)}
-        on-mousedown={event => handleMouseDown(event)}
-        on-mousemove={event => handleMousemove(event)}
-      >
-        {groupEl}
-        <div ref='cell' class='eff-cell'>
-          <span class='eff-cell--label'>{slot}</span>
-        </div>
-      </div>
-    )
-  },
   computed: {
     columnClass() {
       let classes = `eff-table__column`
@@ -92,8 +34,10 @@ export default {
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
-      const sourceRow = updateList.find(d => d[rowId] === row[rowId])
-      if (prop && sourceRow && !this.eqCellValue(sourceRow, row, prop)) {
+      const sourceRow = updateList.find(d => {
+        return d.$old[rowId] === row[rowId]
+      })
+      if (prop && sourceRow && !this.eqCellValue(sourceRow.$old, row, prop)) {
         classes += ' is--dirty'
       }
       if (className) {
@@ -167,7 +111,7 @@ export default {
         }
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
-        return compConf ? compConf.renderDefault(h, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
@@ -218,8 +162,8 @@ export default {
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     },
     /**
- * 单元格的值为：'' | null | undefined 时都属于空值
- */
+     * 单元格的值为：'' | null | undefined 时都属于空值
+     */
     eqCellNull(cellValue) {
       return cellValue === '' || XEUtils.eqNull(cellValue)
     },
@@ -235,5 +179,63 @@ export default {
       }
       return XEUtils.isEqual(val1, val2)
     }
+  },
+  render(h) {
+    const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
+    const { type } = column
+    // row[columnIndex] summary合计列
+
+    let slot
+    if (type === 'expand') {
+      slot = this.expandRender(h)
+    } else if (row[columnIndex] !== undefined) {
+      slot = row[columnIndex]
+    } else if (type === 'selection') {
+      slot = this.renderSelection(h)
+    } else if (type === 'radio') {
+      slot = this.renderRadio(h)
+    } else {
+      slot = this.cellRender(h)
+    }
+
+    let groupEl = ''
+    if ((row.children && row.children.length || row.hasChildren) && column.prop === this.groupKey) {
+      if (this.groupStatus < 3) {
+        this.groupStatus = this.table.columnGroupIds.indexOf(this.row[this.table.rowId]) === -1 ? 1 : 2
+      }
+
+      groupEl = <span class={{ 'eff-icon-expand': true, 'is--expanded': this.groupStatus === 2 }} on-click={e => this.groupClick(e)} />
+
+      if (this.groupStatus === 3) {
+        groupEl = <div class='icon-loading'>
+          {
+            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
+              return <div>
+                <span class='blank'></span>
+              </div>
+            })
+          }
+        </div>
+      }
+    }
+
+    return (
+      <div
+        class={this.columnClass}
+        key={this.groupFloor + '-' + rowIndex + '-' + columnIndex}
+        style={getStyle()}
+        on-mouseenter={event => handleMouseenter(event, slot)}
+        on-mouseleave={event => handleMouseleave(event, slot)}
+
+        on-mouseup={event => handleMouseUp(event)}
+        on-mousedown={event => handleMouseDown(event)}
+        on-mousemove={event => handleMousemove(event)}
+      >
+        {groupEl}
+        <div ref='cell' class='eff-cell'>
+          <span class='eff-cell--label'>{slot}</span>
+        </div>
+      </div>
+    )
   }
 }

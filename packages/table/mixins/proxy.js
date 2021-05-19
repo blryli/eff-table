@@ -6,6 +6,7 @@ export default {
   methods: {
     // 提交指令
     commitProxy(code) {
+      // console.log('commitProxy', code)
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save, loadChildren } = request || {}
       switch (code) {
@@ -28,7 +29,7 @@ export default {
           this.checkoutSelectType()
           break
         case 'delete':
-          deleted && (typeof deleted === 'function' ? this.delete(deleted) : console.warn(`requst 没有传入函数 ${[code]}`))
+          this.delete(deleted)
           break
         case 'query':
           query && (typeof query === 'function' ? this.query(query) : console.warn(`requst 没有传入函数 ${[code]}`))
@@ -73,10 +74,10 @@ export default {
       })
     },
     getList(query) {
-      const { pager: page, sorts, filters, tableForm } = this
+      const { pager: page, sorts, filters, searchForm } = this
       // 配置模式
       if (typeof query === 'object') {
-        const formData = Object.assign({}, tableForm)
+        const formData = Object.assign({}, { form: searchForm })
         // 处理排序条件
         const firstSort = sorts[0]
         if (firstSort) {
@@ -91,11 +92,11 @@ export default {
         return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式
-        return query({ page, sorts, filters, form: tableForm })
+        return query({ page, sorts, filters, form: searchForm })
       }
     },
     delete(deleted) {
-      const { checkeds, tableData } = this
+      const { checkeds } = this
       const checkedsLen = checkeds.length
       if (!checkedsLen) {
         this.$message.warning('请至少选择一条记录！')
@@ -106,19 +107,21 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleted({ body: checkeds }).then(res => {
-          if (res.success) {
+        if (typeof deleted === 'function') {
+          this.isLoading = true
+          deleted({ table: this, body: checkeds }).then(res => {
             this.$message.success('成功删除所选记录!')
             this.commitProxy('query')
             this.clearSelection()
-          } else {
-            this.$message.error(res.message)
-          }
-        }).catch(() => {
-          // this.$message.success('成功删除所选记录!')
-          this.reloadData(tableData.filter(da => !checkeds.some(d => d === da)))
-          this.clearSelection()
-        })
+            this.isLoading = false
+          }).catch(e => {
+            console.error(e)
+            this.clearSelection()
+            this.isLoading = false
+          })
+        } else {
+          this.$message.error('requst [delete] 必须是函数!')
+        }
       })
     },
     checkoutSelectType() {
@@ -164,7 +167,6 @@ export default {
         cur = tableData.find(d => d[rowId] === cur[rowId])
         return cur && !pendingList.some(item => item === cur) ? acc.concat(cur) : acc
       }, [])
-      const currentTableData = tableData.filter(da => !pendingList.some(d => d === da))
       validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
         // 聚焦到第一个校验不通过的单元格
@@ -176,16 +178,11 @@ export default {
           this.isLoading = true
           save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
-            if (res.success) {
-              this.$message.success('保存成功！')
-              this.commitProxy('query')
-            } else {
-              this.$message.error(res.message)
-            }
+            this.$message.success('保存成功！')
+            this.commitProxy('query')
           }).catch(e => {
             console.error(e)
             this.isLoading = false
-            this.reloadData(currentTableData)
           })
         }
       })

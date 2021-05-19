@@ -75,7 +75,7 @@ export default {
 
       for (const key in column.borderStyle) {
         if (Object.hasOwnProperty.call(column.borderStyle, key)) {
-          const v = column.borderStyle[key];
+          const v = column.borderStyle[key]
           style[key] = v
         }
       }

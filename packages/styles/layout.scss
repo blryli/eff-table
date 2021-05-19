@@ -20,3 +20,9 @@
 .no-shrink{
   flex-shrink: 0;
 }
+
+.flex-space{
+  flex-grow: 1;
+  min-width:5px;
+  min-height:5px;
+}

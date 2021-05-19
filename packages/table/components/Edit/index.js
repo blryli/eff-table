@@ -52,7 +52,7 @@ export default {
           const renderOpts = Object.assign({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { vue: table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }
@@ -102,7 +102,15 @@ export default {
     handleValidate() {
       const { prop, rules = [] } = this.column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-      return this.table.validateFiled(this.row, prop, rules)
+
+      const promiseArr = []
+      this.columns.forEach(v => {
+        if (v.rules && v.prop) {
+          promiseArr.push(this.table.validateField(this.row, v.prop, v.rules))
+        }
+      })
+
+      return Promise.all(promiseArr)
     },
     updateStatus() {
       const { table, column, row } = this
@@ -361,7 +369,6 @@ export default {
     },
     close() {
       this.show = false
-      this.blurEvent()
       this.baseText = null
     },
     blurEvent() {

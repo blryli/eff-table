@@ -99,7 +99,10 @@ export default {
       this.momentPlacement = val
     }
   },
-  inject: ['table'],
+  inject: {
+    table: { default: null },
+    form: { default: null }
+  },
   mounted() {
   },
   beforeDestroy() {
@@ -147,7 +150,7 @@ export default {
       }
     },
     calculateCoordinate() {
-      const { addedBody, $el, reference, isFixed, popoverAddedBody, changeDirection } = this
+      const { addedBody, $el, reference, isFixed, table, form, popoverAddedBody, changeDirection } = this
       !addedBody && popoverAddedBody()
       const popover = $el
       const referenceRect = getDomClientRect(reference)
@@ -169,7 +172,7 @@ export default {
           console.error('Wrong placement must top/bottom')
           break
       }
-      const { left: tLeft, top: tTop } = getDomClientRect(this.table.$el)
+      const { left: tLeft, top: tTop } = getDomClientRect((form || table).$el)
       popover.style.left = left - (isFixed ? 0 : tLeft) + 'px'
       popover.style.top = top - (isFixed ? 0 : tTop) + 'px'
     },
@@ -206,7 +209,7 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          this.vslot || $slots.default || (message || []).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          this.vslot || $slots.default || (Array.isArray(message) ? message : [message]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='eff-table__popover-arrow' />
       </div>

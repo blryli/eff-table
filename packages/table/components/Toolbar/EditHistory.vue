@@ -86,7 +86,6 @@ export default {
       this.stack.splice(this.currentIndex + 1)
       this.stack.push(res)
       this.currentIndex = this.stack.length - 1
-      console.log(this.stack, 123456)
     }
   }
 }

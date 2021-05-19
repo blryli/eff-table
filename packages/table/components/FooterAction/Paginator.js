@@ -10,23 +10,19 @@ export default {
   ],
   methods: {
     onSizeChange(e) {
-      this.table.pager.pageNum = e
+      console.log(e)
+      this.table.pager.pageNum = 1
+      this.table.pager.pageSize = e
       this.table.commitProxy('query')
       this.table.$emit('table-page-num-change', { pageSize: e })
     },
     onCurrentChange(e) {
-      this.table.pager.pageNum = 1
-      this.table.pager.pageSize = e
+      this.table.pager.pageNum = e
       this.table.commitProxy('query')
       this.table.$emit('table-page-size-change', { pageNum: e })
     }
   },
   render(h) {
-    console.log(123123123123, this.table.pager, this.table.pager.total)
-    if (!this.total) {
-      return ''
-    }
-
     const render = renderer.get('default').renderDefault
 
     return render(h, {
