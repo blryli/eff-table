@@ -243,8 +243,8 @@ export default {
               operator: true
             },
             rules: [
-              { required: true, message: '不能为空！' },
-              { min: 3, max: 6, message: '长度必须在3-6之间' }
+              { required: true },
+              { min: 3, max: 6 }
             ],
             edit: true
           },

@@ -72,18 +72,73 @@ export default {
         //   hobby3: ''
         // },
         cols: [
-          { title: '名字', prop: 'name', span: 8, itemRender: { name: 'input' }},
-          { title: '性别', prop: 'sex', span: 8, itemRender: { name: 'select', options: [{ value: '1', label: '男' }, { value: '2', label: '女' }] }},
-          { title: '年龄', prop: 'age', span: 8, itemRender: { name: 'input' }},
+          {
+            title: '名字',
+            prop: 'name',
+            span: 8,
+            itemRender: { name: 'input' },
+            rules: [{ required: true }]
+          },
+          {
+            title: '性别',
+            prop: 'sex',
+            span: 8,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: '男' },
+              { value: '2',
+                label: '女' }] }
+          },
+          {
+            title: '年龄',
+            prop: 'age',
+            span: 8,
+            itemRender: { name: 'input' }
+          },
 
-          { title: '身高', prop: 'height', span: 7, itemRender: { name: 'input' }},
-          { prop: 'heightUnit', span: 5, itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] }},
-          { title: '体重', prop: 'weight', span: 7, itemRender: { name: 'input' }},
-          { prop: 'weightUnit', span: 5, itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] }},
+          {
+            title: '身高',
+            prop: 'height',
+            span: 7,
+            itemRender: { name: 'input' },
+            cascader: 'heightUnit'
+          },
+          { prop: 'heightUnit',
+            span: 5,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: 'cm' },
+              { value: '2',
+                label: 'm' }] }
+          },
+          {
+            title: '体重',
+            prop: 'weight',
+            span: 7,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'weightUnit',
+            span: 5,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: 'kg' },
+              { value: '2',
+                label: 'g' }] }
+          },
 
-          { title: '爱好', prop: 'hobby1', span: 10, itemRender: { name: 'input' }},
-          { prop: 'hobby2', span: 7, itemRender: { name: 'input' }},
-          { prop: 'hobby3', span: 7, itemRender: { name: 'input' }}
+          {
+            title: '爱好',
+            prop: 'hobby1',
+            span: 10,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'hobby2',
+            span: 7,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'hobby3',
+            span: 7,
+            itemRender: { name: 'input' }}
         ]
       }
     }

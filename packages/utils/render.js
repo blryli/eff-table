@@ -96,7 +96,7 @@ function renderselectCell(h, renderOpts, params) {
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
-  const { root, vue, data, column, prop, searchChange } = params
+  const { root, vue, data = {}, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择' + (column.title || '')

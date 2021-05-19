@@ -170,7 +170,7 @@ import shortcutKey from '../mixins/shortcutKey'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
-import Popover from 'packages/popover'
+import Popover from 'pk/popover'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import FooterAction from '../components/FooterAction'
@@ -389,29 +389,22 @@ export default {
       })
     },
     updateStatus(row, prop) {
-      if (!prop) {
-        return
-      }
+      if (!prop) return
 
       const sourceRow = this.tableSourceData.find(d => d[this.rowId] === row[this.rowId])
-      if (!sourceRow) {
-        return
-      }
+      if (!sourceRow) return
 
       const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
-      if (isInsert) {
-        return
-      }
+      if (isInsert) return
 
       const newRow = JSON.parse(JSON.stringify(row))
       newRow.$old = JSON.parse(JSON.stringify(sourceRow))
       const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
-      console.log(newRow, sourceRow[prop], row[prop], index)
+      // console.log(newRow, sourceRow[prop], row[prop], index)
 
       if (index !== -1) {
         if (sourceRow[prop] !== row[prop]) {
           this.editStore.updateList[index] = (newRow)
-          console.log(this.editStore.updateList, 1111)
         } else {
           this.editStore.updateList.splice(index, 1)
         }
@@ -441,7 +434,7 @@ export default {
             updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
           }
           tableData[rowIndex][prop] = content
-          rules && rules.length && this.validateFiled(rowIndex, prop, rules)
+          rules && rules.length && this.validateField(rowIndex, prop, rules)
           updateStatus(tableData[rowIndex], prop)
         }
       })

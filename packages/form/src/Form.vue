@@ -3,14 +3,15 @@ import Validator from 'pk/form/mixins/validator'
 import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
+import Popover from 'pk/popover'
 
 export default {
   name: 'VForm',
-  components: { VFormItem },
+  components: { VFormItem, Popover },
   mixins: [Validator, FocusControl],
   props: {
     value: { type: Array, default: () => [] },
-    data: { type: [Object, Array], default: () => [] },
+    data: { type: Object, default: () => {} },
     cols: { type: Array, default: () => [] },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
@@ -36,10 +37,11 @@ export default {
   },
   data() {
     return {
+      form: this.data || {},
       isResponse: false,
-      validators: [],
       inputIndex: 0,
-      editIsStop: this.focusStop
+      editIsStop: this.focusStop,
+      popoverOpts: {}
     }
   },
   computed: {
@@ -59,6 +61,9 @@ export default {
     value() {
       this.init()
     },
+    data(val) {
+      this.form = val || {}
+    },
     focusStop(val) {
       this.editIsStop = val
     }
@@ -74,34 +79,42 @@ export default {
   },
   methods: {
     itemRender(col) {
-      const { $createElement, table, data } = this
+      const { $createElement, table, form } = this
       const { prop, itemRender } = col
       if (typeof itemRender === 'function') {
-        return itemRender($createElement, { table, form: this, data }) || ''
+        return itemRender($createElement, { table, form: this, data: form }) || ''
       } else {
         const renderOpts = Object.assign({ name: 'input' }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
-        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data, column: col, prop }) || ''
+        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data: form, column: col, prop }) || ''
       }
     },
     setEditIsStop(val) {
       this.editIsStop = val
-    }
+    },
+    tipShow(opts) {
+      this.$refs.popover.doShow()
+      this.popoverOpts = opts
+    },
+    tipClose() {
+      this.$refs.popover.doHide()
+    },
+    resetField() {}
   },
   render(h) {
-    console.log('this.data', JSON.stringify(this.data, null, 2))
-    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender } = this
+    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, form, popoverOpts } = this
     return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
       cols.map(col => {
-        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px' })
+        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px', data: form })
         return h('v-form-item', {
           props,
           class: 'v-form-item',
           style: { padding: `0 ${itemGutter}`, marginBottom: rowledge }
         }, [itemRender(col)])
       }),
-      $slots.default
+      $slots.default,
+      h('Popover', { ref: 'popover', attrs: popoverOpts })
     ])
   }
 }
@@ -109,6 +122,7 @@ export default {
 
 <style lang="scss">
 .v-form {
+  position: relative;
   &::before, &::after{
     display: table;
     content: "";
