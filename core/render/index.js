@@ -68,5 +68,8 @@ class Render {
 }
 
 export function render(h, renderOpts, params) {
+  if (typeof (params._beforeRender_) === 'function') {
+    params._beforeRender_(renderOpts)
+  }
   return new Render(h, renderOpts, params)
 }
