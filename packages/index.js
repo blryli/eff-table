@@ -2,6 +2,7 @@ import Table from './table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import Panel from './panel/src/Panel'
+import { render } from 'core/render'
 import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
 import Form from './form'
@@ -14,6 +15,7 @@ export {
   Table,
   Popup,
   Layout,
+  render,
   VRender,
   Form,
   FormItem,
