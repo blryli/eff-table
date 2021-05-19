@@ -184,7 +184,7 @@ value: [
 | getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | Array 需要校验的数组，不传参数校验所有 |
 | validateRow | 对行进行校验的方法 | rowIndex |
-| validateFiled | 对单元格进行校验的方法 | rowIndex, prop |
+| validateField | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|

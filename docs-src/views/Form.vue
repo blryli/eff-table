@@ -7,6 +7,11 @@
           ref="form"
           v-bind="formOptions"
         />
+        <v-form>
+          <v-form-item title="aaa" :span="8">
+            <el-input />
+          </v-form-item>
+        </v-form>
         <!-- {{ formOptions.data }} -->
       </div>
     </section>
@@ -53,7 +58,7 @@ export default {
       componentSnippet,
       input: '',
       formOptions: {
-        titleWidth: '100px',
+        // titleWidth: '100px',
         // data: {
         //   name: '',
         //   sex: '',
@@ -67,22 +72,73 @@ export default {
         //   hobby3: ''
         // },
         cols: [
-          { title: '名字', span: 8, prop: 'name' },
-          { span: 8, prop: 'sex', itemRender: { name: 'select', options: [{ value: '1', label: '男' }, { value: '2', label: '女' }] }},
-          { title: '年龄', span: 8, prop: 'age' },
-          { title: '身高', span: 12, children: [
-            { prop: 'height', span: 12 },
-            { prop: 'heightUnit', span: 12, itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] }}
-          ] },
-          { title: '体重', span: 12, children: [
-            { prop: 'weight', span: 12 },
-            { prop: 'weightUnit', span: 12, itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] }}
-          ] },
-          { title: '爱好', span: 16, children: [
-            { prop: 'hobby1', span: 8 },
-            { prop: 'hobby2', span: 8 },
-            { prop: 'hobby3', span: 8 }
-          ] }
+          {
+            title: '名字',
+            prop: 'name',
+            span: 8,
+            itemRender: { name: 'input' },
+            rules: [{ required: true }]
+          },
+          {
+            title: '性别',
+            prop: 'sex',
+            span: 8,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: '男' },
+              { value: '2',
+                label: '女' }] }
+          },
+          {
+            title: '年龄',
+            prop: 'age',
+            span: 8,
+            itemRender: { name: 'input' }
+          },
+
+          {
+            title: '身高',
+            prop: 'height',
+            span: 7,
+            itemRender: { name: 'input' },
+            cascader: 'heightUnit'
+          },
+          { prop: 'heightUnit',
+            span: 5,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: 'cm' },
+              { value: '2',
+                label: 'm' }] }
+          },
+          {
+            title: '体重',
+            prop: 'weight',
+            span: 7,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'weightUnit',
+            span: 5,
+            itemRender: { name: 'select',
+              options: [{ value: '1',
+                label: 'kg' },
+              { value: '2',
+                label: 'g' }] }
+          },
+
+          {
+            title: '爱好',
+            prop: 'hobby1',
+            span: 10,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'hobby2',
+            span: 7,
+            itemRender: { name: 'input' }
+          },
+          { prop: 'hobby3',
+            span: 7,
+            itemRender: { name: 'input' }}
         ]
       }
     }

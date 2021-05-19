@@ -24,17 +24,13 @@ function getMessage(rule, message) {
 /**
  * 字段校验
  */
-export function validateFiled(rules, params) {
+export function validateField(rules, params) {
   const hasRequire = rules.find(v => v.required)
 
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
-      let { validator, min, max, pattern, message } = rule
-      if (message === '') {
-        message += ' '
-      }
-
-      const { id, prop, value } = params
+      const { validator, min, max, pattern, message } = rule
+      const { id, prop, value, column: { title }} = params
       if (typeof validator === 'function') {
         if (params.value === null) {
           params.value = ''
@@ -54,27 +50,21 @@ export function validateFiled(rules, params) {
         }
       } else {
         const len = ('' + value).length
-        const Rules = {
-          required: () => !value,
-          min: () => len < Number(min) || len > Number(max),
-          max: () => len < Number(min) || len > Number(max),
-          pattern: () => !(pattern.test(value)),
-          email: () => !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)),
-          phone: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value))
-        }
+        const minMaxMessage = `${title}${min && max ? '长度必须在' + min + '到' + max + '之间' : min ? '长度不能小于' + min : max ? '长度不能大于' + max : '校验不通过'}`
+        const validRules = [
+          { type: 'required', rule: () => !value, message: `${title}不能为空` },
+          { type: 'min', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
+          { type: 'max', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
+          { type: 'pattern', rule: () => !(pattern.test(value)), message: `${title}校验不通过` },
+          { type: 'email', rule: () => !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)), message: `请输入正确的邮箱` },
+          { type: 'phone', rule: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value)), message: `请输入正确的手机号` }
+        ]
         let e = false
-        for (const key in Rules) {
-          if (rule[key]) {
-            if (key === 'required' && message !== ' ') {
-              message = '该字段必填'
-            }
-
-            e = getMessage(Rules[key](), message)
-
-            if (key !== 'required' && !hasRequire && !value) {
-              e = false
-            }
-            break
+        const valid = validRules.find(valid => Object.keys(rule).includes(valid.type))
+        if (valid) {
+          e = getMessage(valid.rule(), message || valid.message)
+          if (valid.type !== 'required' && !hasRequire && !value) {
+            e = false
           }
         }
         resolve({ id, prop, message: e })
@@ -88,13 +78,13 @@ export function validateFiled(rules, params) {
  * 通用校验
  */
 
-export function validate(rows, columns, validateFiled) {
+export function validate(rows, columns, validateField) {
   return new Promise((resolve, reject) => {
     const rules = rows.reduce((acc, row) =>
       acc.concat(
         columns.reduce((acc, cur) => {
           const { prop, rules = [] } = cur
-          return rules.length ? acc.concat(validateFiled(row, prop, rules)) : acc
+          return rules.length ? acc.concat(validateField(row, prop, rules)) : acc
         }, [])
       ),
     [])

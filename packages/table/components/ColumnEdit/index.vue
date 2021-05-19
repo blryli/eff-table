@@ -211,7 +211,6 @@ export default {
       const from = this[fromArea + 'List'].splice(fromIndex, 1)[0]
       this[this.willDragInArea + 'List'].splice(parseInt(this.willDragInIndex) + 1, 0, from)
 
-      console.log(this.willDragInIndex + 1, 12345)
       this.willDragInArea = ''
       this.willDragInIndex = -2
     },

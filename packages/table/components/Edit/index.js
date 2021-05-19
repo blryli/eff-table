@@ -106,7 +106,7 @@ export default {
       const promiseArr = []
       this.columns.forEach(v => {
         if (v.rules && v.prop) {
-          promiseArr.push(this.table.validateFiled(this.row, v.prop, v.rules))
+          promiseArr.push(this.table.validateField(this.row, v.prop, v.rules))
         }
       })
 

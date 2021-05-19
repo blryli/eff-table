@@ -14,7 +14,6 @@
 
 <script>
 import DiySearch from 'packages/search'
-console.log(DiySearch, 123)
 export default {
   name: 'Search',
   inject: ['table'],

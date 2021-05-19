@@ -1,10 +1,9 @@
 import VFormItem from './FormItem'
-import VFormLineSlot from './FormLineSlot'
+import VFormLineSlot from './form-item-slot'
 import VLayer from './Layer'
 import VCol from './Col'
 export default {
   name: 'VFormLine',
-  componentName: 'VFormLine',
   components: {
     VFormItem,
     VFormLineSlot,
