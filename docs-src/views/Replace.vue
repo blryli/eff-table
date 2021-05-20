@@ -100,16 +100,18 @@ data() {
 `
 
 const componentSnippet = `
-<eff-table
-  v-model="columns"
-  :data="data"
-  drag
-  column-control
-  row-drag
-  border
-  fullscreen
-  column-edit
-/>
+ <eff-table
+    ref="table"
+    v-model="columns"
+    :data="data"
+    :loading="loading"
+    drag
+    column-control
+    row-drag
+    border
+    fullscreen
+    show-replace
+  />
 `
 export default {
   name: 'Replace',
