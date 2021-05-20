@@ -10,9 +10,8 @@ export default {
   components: { VFormItem, Popover },
   mixins: [Validator, FocusControl],
   props: {
-    value: { type: Array, default: () => [] },
-    data: { type: Object, default: () => {} },
-    cols: { type: Array, default: () => [] },
+    data: { type: Object, default: () => ({}) },
+    cols: { type: Array, default: () => ([]) },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     titleAlign: { type: String, default: '' },
@@ -24,6 +23,7 @@ export default {
     focusOptions: { type: Object, default: () => {} },
     focusTextAllSelected: { type: Boolean, default: true },
     width: { type: String, default: '' },
+    mseeageType: { type: String, default: '' },
     focusStop: Boolean,
     focusPause: Boolean
   },
@@ -37,7 +37,6 @@ export default {
   },
   data() {
     return {
-      form: this.data || {},
       isResponse: false,
       inputIndex: 0,
       editIsStop: this.focusStop,
@@ -58,18 +57,12 @@ export default {
     }
   },
   watch: {
-    value() {
-      this.init()
-    },
-    data(val) {
-      this.form = val || {}
-    },
     focusStop(val) {
       this.editIsStop = val
     }
   },
   created() {
-    this.formLines = []
+    this.init()
   },
   mounted() {
     // 响应式处理
@@ -78,16 +71,22 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.cols.forEach(col => {
+        !(col.prop in this.data) && this.$set(this.data, col.prop, null)
+      })
+      // console.log('data', JSON.stringify(this.data, null, 2))
+    },
     itemRender(col) {
-      const { $createElement, table, form } = this
+      const { $createElement, table, data } = this
       const { prop, itemRender } = col
       if (typeof itemRender === 'function') {
-        return itemRender($createElement, { table, form: this, data: form }) || ''
+        return itemRender($createElement, { table, form: this, data }) || ''
       } else {
         const renderOpts = Object.assign({ name: 'input' }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
-        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data: form, column: col, prop }) || ''
+        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data, column: col, prop }) || ''
       }
     },
     setEditIsStop(val) {
@@ -100,13 +99,16 @@ export default {
     tipClose() {
       this.$refs.popover.doHide()
     },
+    clearStatus() {
+      this.$emit('clearStatus')
+    },
     resetField() {}
   },
   render(h) {
-    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, form, popoverOpts } = this
+    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
     return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
       cols.map(col => {
-        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px', data: form })
+        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px', data })
         return h('v-form-item', {
           props,
           class: 'v-form-item',
@@ -139,6 +141,18 @@ export default {
     &:after {
       clear: both;
     }
+  }
+
+  .is--dirty::before{
+    content: "";
+    top: -3px;
+    left: -5px;
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #f56c6c transparent transparent;
+    transform: rotate(45deg);
+    z-index: 1;
   }
 }
 </style>

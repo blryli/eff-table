@@ -10,8 +10,8 @@ export function getOn(on, events, params = []) {
   const ons = Object.assign({}, on, events)
   for (const key in ons) {
     ons[key] = (...ags) => {
-      events[key] && events[key](ags, params)
-      on[key] && on[key](ags, params)
+      events[key] && events[key](...ags, params)
+      on[key] && on[key](...ags, params)
     }
   }
   return ons

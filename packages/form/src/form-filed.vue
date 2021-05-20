@@ -1,15 +1,17 @@
 <template>
   <div
-    :class="{'is--message': message}"
+    :class="{'v-form-filed': true, 'is--dirty': isDirty}"
     @mouseenter="handlerNodeMouseenter"
     @mouseleave="handlerNodeMouseleave"
   >
     <slot v-bind="$attrs" />
+    <div v-if="msgType === 'text' && message" class="v-form-filed--message">{{ message }}</div>
   </div>
 </template>
 
 <script>
 import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/dom'
+import { eqCellValue } from 'pk/utils/dom'
 
 export default {
   name: 'VFormFiled',
@@ -21,22 +23,39 @@ export default {
     validatorStyle: {
       type: Object,
       default: () => ({ borderColor: '#F56C6C' })
-    },
-    mseeageType: { type: String, default: 'popover' }
+    }
   },
   data() {
     return {
       handlerNode: null,
       input: null,
       component: null,
-      message: ''
+      message: '',
+      initValue: null,
+      isDirty: false
     }
   },
   inject: {
-    form: {}
+    form: { default: null },
+    table: { default: null }
+  },
+  computed: {
+    msgType() {
+      const { form, table } = this
+      return form && (form.messageType || 'text') || table && 'popover' || 'text'
+    },
+    root() {
+      const { form, table } = this
+      return form || table
+    }
+  },
+  created() {
+    // !(this.prop in this.data) && this.$set(this.data, this.prop, null)
+    this.form.$on('clearStatus', this.updateField)
   },
   mounted() {
     const { cascader } = this
+    this.initValue = this.data[this.prop] || null
     cascader && (Array.isArray(this.cascader) ? this.cascader : [this.cascader]).forEach(d => {
       this.$watch(`data.${d}`, () => {
         console.log('cascader change')
@@ -61,7 +80,7 @@ export default {
   methods: {
     init() {
       this.component = getOneChildComponent(this)
-      const { form, prop, component, trigger, $el, onFocus, onBlur, inputValidateField } = this
+      const { form, prop, component, trigger = 'change', $el, onFocus, onBlur, inputValidateField } = this
       if (this.$children.length && component) {
         // 如果组件存在并且有 getInput 方法
         if (component.getInput) {
@@ -101,20 +120,23 @@ export default {
       this.inputValidateField()
     },
     inputValidateField() {
-      const { form, data, prop, rules } = this
-      rules.length && form.validateField(data, prop, rules).then(res => {
+      const { root, data, prop, rules } = this
+      rules.length && root.validateField(data, prop, rules).then(res => {
         this.message = res.message
         this.setNodeStyle()
+        this.updateStatus()
       })
     },
     handlerNodeMouseenter(e) {
-      const { mseeageType, handlerNode, message } = this
-      if (mseeageType === 'popover') {
-        message && this.form.tipShow({ reference: handlerNode, message: [{ type: 'error', message }] })
+      const { msgType, handlerNode, message } = this
+      if (msgType === 'popover') {
+        message && this.root.tipShow({ reference: handlerNode, message: [{ type: 'error', message }] })
       }
     },
     handlerNodeMouseleave(e) {
-      this.form.tipClose()
+      if (this.msgType === 'popover') {
+        this.root.tipClose()
+      }
     },
     setNodeStyle() {
       const { handlerNode, message, validatorStyle } = this
@@ -122,7 +144,30 @@ export default {
         const style = validatorStyle[key]
         handlerNode.style[key] = message ? style : ''
       }
+    },
+    updateStatus() {
+      const { data = {}, prop, initValue } = this
+      this.isDirty = !eqCellValue({ [prop]: initValue }, data, prop)
+    },
+    updateField() {
+      const { data, prop } = this
+      this.initValue = data[prop]
     }
   }
 }
 </script>
+
+<style lang="scss">
+.v-form-filed{
+  position: relative;
+  &--message {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding-top: 4px;
+    line-height: 1.2;
+    color: #F56C6C;
+    font-size: 12px;
+  }
+}
+</style>
