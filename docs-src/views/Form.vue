@@ -7,11 +7,15 @@
           ref="form"
           v-bind="formOptions"
         />
-        <v-form>
-          <v-form-item title="aaa" :span="8">
+        <el-button type="primary" @click="validate">校 验</el-button>
+        <el-button type="primary" @click="clearValidate">清除校验</el-button>
+        <el-button type="primary" @click="save">保 存</el-button>
+
+        <!-- <v-form>
+          <v-form-item title="aaa" prop="aa" :span="8">
             <el-input />
           </v-form-item>
-        </v-form>
+        </v-form> -->
         <!-- {{ formOptions.data }} -->
       </div>
     </section>
@@ -77,23 +81,28 @@ export default {
             prop: 'name',
             span: 8,
             itemRender: { name: 'input' },
-            rules: [{ required: true }]
+            rules: [
+              { required: true },
+              { min: 3 }
+            ]
           },
           {
             title: '性别',
             prop: 'sex',
             span: 8,
-            itemRender: { name: 'select',
-              options: [{ value: '1',
-                label: '男' },
-              { value: '2',
-                label: '女' }] }
+            itemRender: {
+              name: 'select',
+              options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
+            }
           },
           {
             title: '年龄',
             prop: 'age',
             span: 8,
-            itemRender: { name: 'input' }
+            itemRender: { name: 'input' },
+            rules: [
+              { min: 1, max: 3 }
+            ]
           },
 
           {
@@ -101,7 +110,10 @@ export default {
             prop: 'height',
             span: 7,
             itemRender: { name: 'input' },
-            cascader: 'heightUnit'
+            cascader: 'heightUnit',
+            rules: [
+              { max: 3 }
+            ]
           },
           { prop: 'heightUnit',
             span: 5,
@@ -160,6 +172,17 @@ export default {
       //   ]
       // }).array
     }, 1000)
+  },
+  methods: {
+    save() {
+      this.$refs.form.clearStatus()
+    },
+    validate() {
+      this.$refs.form.validate().catch(e => console.log(e))
+    },
+    clearValidate() {
+      this.$refs.form.clearValidate()
+    }
   }
 }
 </script>

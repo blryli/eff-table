@@ -3,8 +3,8 @@ import { render } from './'
 export default {
   name: 'VRender',
   props: {
-    config: { type: Object, default: () => {} },
-    context: { type: Object, default: () => {} }
+    config: { type: Object, default: () => ({}) },
+    context: { type: Object, default: () => ({}) }
   },
   render(h) {
     const { config, context, $slots } = this

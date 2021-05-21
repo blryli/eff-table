@@ -18,6 +18,7 @@
           border
           select-range
           copy
+          show-replace
           @selection-change="selectionChange"
           @search-change="searchChange"
         >
@@ -365,6 +366,7 @@ const componentSnippet = `
   border
   select-range
   copy
+  show-replace
   @selection-change="selectionChange"
   @search-change="searchChange"
 />

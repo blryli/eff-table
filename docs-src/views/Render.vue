@@ -211,12 +211,7 @@ export default {
                       'async': '',
                       'select': '1',
                       'date': '',
-                      'switch': '0',
-                      'checkboxgroup': [],
-                      'checkbox': false,
-                      'popup': '@title',
-                      'link': '@ctitle',
-                      'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+                      'switch': '0'
                     }
                   ]
                 }).array
@@ -265,7 +260,7 @@ export default {
             prop: 'select',
             title: '选择器',
             config: {
-              name: 'select', options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }]
+              name: 'select', options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }], on: { change: this.selectChange }
             },
             edit: true,
             search: true
@@ -310,6 +305,15 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    selectChange(ags, params) {
+      console.log(ags, params)
+      const row = { ...params.row }
+      row.async = '1111111'
+
+      this.$refs.table.updateRow(row)
     }
   }
 }

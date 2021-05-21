@@ -124,7 +124,7 @@ export default {
         const content = map[this.sightStartPosition.rowIndex + '-' + this.sightStartPosition.columnIndex].$el.innerText
 
         const updateArr = this.handleUpdateData(content, 'sightStartPosition', 'sightEndPosition')
-        this.table.$emit('edit-fileds', updateArr)
+        this.table.$emit('edit-fields', updateArr)
       }
 
       this.copyBtnType = 'primary'
@@ -267,7 +267,7 @@ export default {
         })
       })
 
-      this.table.$emit('edit-fileds', updateArr)
+      this.table.$emit('edit-fields', updateArr)
     },
     handleUpdateData(content, startKey = 'startPosition', endKey = 'endPosition') {
       const updateArr = []

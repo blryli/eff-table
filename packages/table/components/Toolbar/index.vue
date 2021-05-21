@@ -7,6 +7,7 @@ import Clear from './Clear'
 import Refresh from './Refresh'
 import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
+import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 
 export default {
   name: 'Toolbar',
@@ -35,7 +36,7 @@ export default {
   render(h) {
     const { table, load } = this
     if (!load) return ''
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory } = table
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory, showReplace } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       let { code, on } = cur
@@ -54,6 +55,9 @@ export default {
           { this.$slots.default }
         </div>
         <div class='eff-table__toobar-right'>
+          {
+            showReplace && <ReplaceCtrlBtnVue /> || ''
+          }
           {
             diySearch && <Search /> || ''
           }
