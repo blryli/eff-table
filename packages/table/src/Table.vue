@@ -419,24 +419,18 @@ export default {
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
       const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
-      // console.log(newRow, sourceRow[prop], row[prop], index)
-      if ([sourceRow].some(d => d === row)) {
+      let isSome = true
+      for (const key in sourceRow) {
+        if (row[key] !== sourceRow[key]) {
+          isSome = false
+          break
+        }
+      }
+      if (isSome) {
         this.editStore.updateList.splice(index, 1)
       } else {
         this.editStore.updateList.splice(index, 1, newRow)
       }
-
-      // if (index !== -1) {
-      //   if (sourceRow[prop] !== row[prop]) {
-      //     this.editStore.updateList[index] = (newRow)
-      //   } else {
-      //     this.editStore.updateList.splice(index, 1)
-      //   }
-      // } else {
-      //   if (sourceRow[prop] !== row[prop]) {
-      //     this.editStore.updateList.push(newRow)
-      //   }
-      // }
     },
     // 更新数据行map
     updateCache() {
