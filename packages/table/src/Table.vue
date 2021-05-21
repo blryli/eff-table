@@ -134,6 +134,11 @@
       @row-change="dragRowChange"
     />
 
+    <replace
+      v-if="replaceControl"
+      ref="replace"
+      :init-columns.sync="tableColumns"
+    />
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -183,6 +188,7 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
+import Replace from '../components/Replace/index'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -200,7 +206,8 @@ export default {
     SelectRange,
     Copy,
     ColumnEdit,
-    FooterAction
+    FooterAction,
+    Replace
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -253,7 +260,8 @@ export default {
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    editHistory: { type: Boolean, default: () => false }
+    editHistory: { type: Boolean, default: () => false },
+    showReplace: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -283,7 +291,8 @@ export default {
       pager: {
         pageNum: 1,
         pageSize: 10
-      }
+      },
+      replaceControl: false
     }
   },
   computed: {
@@ -538,7 +547,7 @@ export default {
       return this.tableData
     },
     getEditStore() {
-      return this.editStore
+      return this.editStore.source
     }
   }
 }
