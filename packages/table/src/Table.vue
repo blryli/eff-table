@@ -148,7 +148,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>editStore -  {{ editStore }}</p>
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -284,6 +284,7 @@ export default {
       popoverOpts: {},
       editPopoverOpts: {},
       editStore: {
+        editRow: {},
         insertList: [],
         updateList: [],
         pendingList: []
