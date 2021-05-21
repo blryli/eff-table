@@ -15,11 +15,12 @@
       <div class="main">
         <div class="center" :style="centerStyle">
           <div class="list area-center flex justify-around">
-            <template v-for="(v, i) in selectList">
-              <div :key="i" class="mmitem flex flex-direction align-center padding-sm">
-                <ReplaceItem ref="item" :column="v" :options="v.options" />
-              </div>
-            </template>
+            <v-form
+              class="full-width"
+              :cols="formCols"
+              :data="data"
+            />
+
           </div>
         </div>
         <div class="right" :style="rightStyle">
@@ -45,14 +46,18 @@
 </template>
 
 <script>
+import vForm from 'pk/form/src/form'
+// import vFormField from 'pk/form/src/form-field'
+import vFormItem from 'pk/form/src/form-item'
+// import vCol from 'pk/form/src/col'
+
 import Card from 'pk/card'
 import Sortable from 'pk/utils/sortable'
 import { deepClone } from 'pk/utils/index'
-import ReplaceItem from './item'
 
 export default {
   name: 'TableReplace',
-  components: { Card, ReplaceItem },
+  components: { Card, vForm, vFormItem },
   props: {
     initColumns: { type: Array, default: () => [] },
     columnControl: Boolean
@@ -68,7 +73,8 @@ export default {
       realColumns: [],
       searchInput: '',
       replaceInput: '',
-      showAll: false
+      showAll: false,
+      data: {}
     }
   },
   inject: ['table'],
@@ -87,7 +93,16 @@ export default {
       return 'auto'
     },
     rightStyle() {
-      return { width: 1 ? '25%' : '60px' }
+      return { width: true ? '25%' : '60px' }
+    },
+    formCols() {
+      const cols = []
+      this.selectList.map((v, k) => {
+        cols.push({ prop: 'search' + k, itemRender: { name: 'select', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
+        cols.push({ span: 10, placeholder: '请输入填充内容', prop: 'replace' + k })
+      })
+
+      return cols
     }
   },
   watch: {
@@ -110,8 +125,6 @@ export default {
           })
         }
         call(val)
-
-        console.log(val, 123)
       }
     },
     selectList: {
@@ -160,6 +173,7 @@ export default {
 
   },
   methods: {
+
     openSelectWindow(v) {
       v.openSelect = !v.openSelect
       this.$forceUpdate()
@@ -198,31 +212,32 @@ export default {
       } else {
         this.insertSelectList(v)
       }
-
-      console.log(this.selectList)
     },
     confirm() {
       this.table.tableData.forEach(row => {
-        this.$refs.item.forEach(item => {
-          if (!item.obj.selectValue) {
+        this.selectList.forEach((item, key) => {
+          const searchValue = this.data['search' + key]
+          const replaceValue = this.data['replace' + key]
+
+          if (!searchValue) {
             return
           }
 
           let willReplace = false
-          if (item.obj.selectValue === '全部') {
+          if (searchValue === '全部') {
             willReplace = true
-          } else if (item.obj.selectValue === '空值') {
+          } else if (searchValue === '空值') {
             if (!row[item.column.prop]) {
               willReplace = true
             }
           } else {
-            if (row[item.column.prop] === item.obj.selectValue) {
+            if (row[item.prop] === searchValue) {
               willReplace = true
             }
           }
 
           if (willReplace) {
-            row[item.column.prop] = item.obj.replaceValue
+            row[item.prop] = replaceValue
           }
         })
       })
@@ -330,7 +345,6 @@ export default {
 
   .mmitem {
     width: 100%;
-    margin-bottom: 20px;
     .selectWindow {
       position: absolute;
       left: 0;
