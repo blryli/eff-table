@@ -3,17 +3,13 @@ import XEUtils from 'xe-utils'
 
 export function getChildren(h, children, params, key) {
   if (children) {
-    if (typeof children === 'function') {
-      const fn = children(h, params)
-      if (fn.constructor.name === 'VNode') {
-        return fn
-      }
-      return getChildren(h, fn, params)
-    } else if (XEUtils.isArray(children)) {
-      return children.map((child, idx) => {
-        return child.constructor.name === 'VNode' ? child : getChildren(h, child, params, idx)
-      })
-    } else if (XEUtils.isObject(children)) {
+    if (children.constructor.name === 'VNode') return children
+
+    if (XEUtils.isFunction(children)) return getChildren(h, children(h, params), params)
+
+    if (XEUtils.isArray(children)) return children.map((child, idx) => getChildren(h, child, params, idx))
+
+    if (XEUtils.isObject(children)) {
       const { children: childs } = children
       const childrenRender = getChildren(h, childs, params)
       const opts = Object.assign({}, children, { key, children: childrenRender })

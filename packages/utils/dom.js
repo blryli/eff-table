@@ -1,3 +1,4 @@
+import XEUtils from 'xe-utils'
 /**
  * 防抖函数
  * @param fn 事件触发的操作
@@ -212,5 +213,26 @@ export const getTextWidth = function(node) {
   const rangeWidth = range.getBoundingClientRect().width
   const padding = parseInt(getStyle(node, 'padding-left')) + parseInt(getStyle(node, 'padding-right'))
   return padding + rangeWidth
+}
+
+/**
+     * 单元格的值为：'' | null | undefined 时都属于空值
+     */
+export const eqCellNull = function(cellValue) {
+  return cellValue === '' || XEUtils.eqNull(cellValue)
+}
+
+export const eqCellValue = function(row1, row2, field) {
+  const val1 = XEUtils.get(row1, field)
+  const val2 = XEUtils.get(row2, field)
+
+  if (eqCellNull(val1) && eqCellNull(val2)) {
+    return true
+  }
+  if (XEUtils.isString(val1) || XEUtils.isNumber(val1)) {
+    /* eslint-disable eqeqeq */
+    return val1 == val2
+  }
+  return XEUtils.isEqual(val1, val2)
 }
 

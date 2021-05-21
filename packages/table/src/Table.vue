@@ -9,6 +9,9 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
+
+    <!-- <VForm v-bind="formConfig" /> -->
+
     <Toolbar v-if="$slots.toolbar || fullscreen || (drag && columnControl) || columnEdit" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
@@ -131,6 +134,11 @@
       @row-change="dragRowChange"
     />
 
+    <replace
+      v-if="replaceControl"
+      ref="replace"
+      :init-columns.sync="tableColumns"
+    />
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -140,7 +148,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <p>editStore -  {{ editStore }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -180,6 +188,7 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
+import Replace from '../components/Replace/index'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -197,7 +206,8 @@ export default {
     SelectRange,
     Copy,
     ColumnEdit,
-    FooterAction
+    FooterAction,
+    Replace
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -245,11 +255,13 @@ export default {
     messages: { type: Array, default: () => [] },
     selectRange: Boolean,
     copy: Boolean,
+    formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    editHistory: { type: Boolean, default: () => false }
+    editHistory: { type: Boolean, default: () => false },
+    showReplace: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -279,7 +291,8 @@ export default {
       pager: {
         pageNum: 1,
         pageSize: 10
-      }
+      },
+      replaceControl: false
     }
   },
   computed: {
@@ -352,10 +365,10 @@ export default {
       const { expand } = $scopedSlots || $slots
       this.expand = expand
     })
-    this.$on('edit-fileds', this.editFileds)
+    this.$on('edit-fields', this.editField)
   },
   beforeDestroy() {
-    this.$off('edit-fileds', this.editFileds)
+    this.$off('edit-fields', this.editField)
   },
   methods: {
     loadTableData(data) {
@@ -388,6 +401,21 @@ export default {
         pendingList: []
       })
     },
+    updateRow(row) {
+      const { rowId } = this
+      const rowIndex = this.tableData.findIndex(d => d[rowId] === row[rowId])
+      this.$set(this.tableData, rowIndex, row)
+      const fields = []
+      for (const prop in row) {
+        const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
+        columnIndex > -1 && fields.push({
+          rowIndex,
+          columnIndex,
+          content: row[prop]
+        })
+      }
+      this.editField(fields)
+    },
     updateStatus(row, prop) {
       if (!prop) return
 
@@ -397,22 +425,27 @@ export default {
       const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
       if (isInsert) return
 
-      const newRow = JSON.parse(JSON.stringify(row))
-      newRow.$old = JSON.parse(JSON.stringify(sourceRow))
+      const newRow = { ...row }
+      newRow.$old = { ...sourceRow }
       const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
       // console.log(newRow, sourceRow[prop], row[prop], index)
-
-      if (index !== -1) {
-        if (sourceRow[prop] !== row[prop]) {
-          this.editStore.updateList[index] = (newRow)
-        } else {
-          this.editStore.updateList.splice(index, 1)
-        }
+      if ([sourceRow].some(d => d === row)) {
+        this.editStore.updateList.splice(index, 1)
       } else {
-        if (sourceRow[prop] !== row[prop]) {
-          this.editStore.updateList.push(newRow)
-        }
+        this.editStore.updateList.splice(index, 1, newRow)
       }
+
+      // if (index !== -1) {
+      //   if (sourceRow[prop] !== row[prop]) {
+      //     this.editStore.updateList[index] = (newRow)
+      //   } else {
+      //     this.editStore.updateList.splice(index, 1)
+      //   }
+      // } else {
+      //   if (sourceRow[prop] !== row[prop]) {
+      //     this.editStore.updateList.push(newRow)
+      //   }
+      // }
     },
     // 更新数据行map
     updateCache() {
@@ -421,7 +454,8 @@ export default {
         this.tableDataMap.set(d[rowId], d)
       })
     },
-    editFileds(fileds) {
+    editField(fileds) {
+      console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this
@@ -519,7 +553,7 @@ export default {
       return this.tableData
     },
     getEditStore() {
-      return this.editStore
+      return this.editStore.source
     }
   }
 }

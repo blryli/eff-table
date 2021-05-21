@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import VCol from './col'
+import VCol from './Col'
 import FormFiled from 'pk/form-filed'
 
 export default {

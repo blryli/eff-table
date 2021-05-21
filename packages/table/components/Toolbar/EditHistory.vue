@@ -60,7 +60,7 @@ export default {
       })
 
       this.currentIndex -= 1
-      this.table.$emit('edit-fileds', data)
+      this.table.$emit('edit-fields', data)
     },
     next() {
       if (this.currentIndex === this.stack.length - 1) {
@@ -80,7 +80,7 @@ export default {
       })
 
       console.log(data, 54321)
-      this.table.$emit('edit-fileds', data)
+      this.table.$emit('edit-fields', data)
     },
     onDataChange(res) {
       this.stack.splice(this.currentIndex + 1)

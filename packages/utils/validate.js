@@ -30,7 +30,7 @@ export function validateField(rules, params) {
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
       const { validator, min, max, pattern, message } = rule
-      const { id, prop, value, column: { title }} = params
+      const { id, prop, value } = params
       if (typeof validator === 'function') {
         if (params.value === null) {
           params.value = ''
@@ -50,19 +50,19 @@ export function validateField(rules, params) {
         }
       } else {
         const len = ('' + value).length
-        const minMaxMessage = `${title}${min && max ? '长度必须在' + min + '到' + max + '之间' : min ? '长度不能小于' + min : max ? '长度不能大于' + max : '校验不通过'}`
+        const minMaxMessage = `${min && max ? '长度必须在' + min + '到' + max : min ? '长度不能小于' + min : max ? '长度不能大于' + max : ''}个字符`
         const validRules = [
-          { type: 'required', rule: () => !value, message: `${title}不能为空` },
+          { type: 'required', rule: () => !value, message: `不能为空` },
           { type: 'min', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
           { type: 'max', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
-          { type: 'pattern', rule: () => !(pattern.test(value)), message: `${title}校验不通过` },
+          { type: 'pattern', rule: () => !(pattern.test(value)), message: `校验不通过` },
           { type: 'email', rule: () => !(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)), message: `请输入正确的邮箱` },
           { type: 'phone', rule: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value)), message: `请输入正确的手机号` }
         ]
         let e = false
         const valid = validRules.find(valid => Object.keys(rule).includes(valid.type))
         if (valid) {
-          e = getMessage(valid.rule(), message || valid.message)
+          e = getMessage(valid.rule(), message || valid.message || '校验不通过')
           if (valid.type !== 'required' && !hasRequire && !value) {
             e = false
           }
@@ -79,6 +79,7 @@ export function validateField(rules, params) {
  */
 
 export function validate(rows, columns, validateField) {
+  console.log(rows)
   return new Promise((resolve, reject) => {
     const rules = rows.reduce((acc, row) =>
       acc.concat(

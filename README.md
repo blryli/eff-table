@@ -110,6 +110,7 @@ export default {
 | copy       | 是否开启复制功能    | Boolean |       |       |
 | edit-history       | 是否开启前进后退功能    | Boolean |       |       |
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
+| showReplace       | 替换和填充功能    | Boolean |       |       |
 ```js
 value: [
   {
