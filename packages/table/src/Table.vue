@@ -302,7 +302,7 @@ export default {
         pageSize: 10
       },
       replaceControl: false,
-      sortControl: true
+      sortControl: false
     }
   },
   computed: {
