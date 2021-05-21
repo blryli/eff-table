@@ -11,6 +11,7 @@
           v-model="columns"
           :data="data"
           fullscreen
+          show-sort
         />
       </div>
     </section>

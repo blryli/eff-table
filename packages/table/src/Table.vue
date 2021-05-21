@@ -139,6 +139,11 @@
       ref="replace"
       :init-columns.sync="tableColumns"
     />
+    <sort
+      v-if="sortControl"
+      ref="sort"
+      :init-columns.sync="tableColumns"
+    />
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -189,6 +194,7 @@ import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
 import Replace from '../components/Replace/index'
+import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -207,7 +213,8 @@ export default {
     Copy,
     ColumnEdit,
     FooterAction,
-    Replace
+    Replace,
+    Sort
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -261,7 +268,8 @@ export default {
     rowId: { type: String, default: 'id' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     editHistory: { type: Boolean, default: () => false },
-    showReplace: { type: Boolean, default: () => false }
+    showReplace: { type: Boolean, default: () => false },
+    showSort: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -292,7 +300,8 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      replaceControl: false
+      replaceControl: false,
+      sortControl: true
     }
   },
   computed: {
