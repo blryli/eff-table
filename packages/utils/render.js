@@ -96,7 +96,7 @@ function renderselectCell(h, renderOpts, params) {
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
-  const { root, vue, data = {}, column, prop, searchChange } = params
+  const { vue, data = {}, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择' + (column.title || '')
@@ -128,7 +128,7 @@ function renderSelect(h, renderOpts, params, renderType) {
             if (renderOpts.cascade && renderOpts.cascadeCol && renderOpts.optionsFunc) {
               const promise = renderOpts.optionsFunc({ row: params.row })
 
-              if (promise.__proto__ === Promise.prototype) {
+              if (XEUtils.isPromise(promise)) {
                 promise.then(options => {
                   renderOpts.options.splice(0, 10000, ...options)
                 })
@@ -168,7 +168,7 @@ function renderdateCell(h, renderOpts, params) {
   return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
-  const { root, vue, data, prop, searchChange } = params
+  const { vue, data, prop, searchChange } = params
   const props = {
     value: data[prop] || null,
     valueFormat: 'timestamp' // 时间格式默认用时间戳
