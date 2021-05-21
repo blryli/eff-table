@@ -26,6 +26,7 @@
       />
       <v-render v-if="headerTools.name" :config="headerTools" @click.native.stop />
       <i
+        v-if="collapsed"
         class="el-icon-arrow-right"
         :class="{ icon2front: icon2front }"
         @click="collapse('horizontal')"
