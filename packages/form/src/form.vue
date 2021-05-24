@@ -107,6 +107,7 @@ export default {
   render(h) {
     const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
     return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
+      $slots.before,
       cols.map(col => {
         const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px', data })
         return h('v-form-item', {

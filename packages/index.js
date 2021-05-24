@@ -7,6 +7,7 @@ import VRender from 'core/render/render'
 import Styles from './styles/index.vue'
 import Form from './form'
 import FormItem from './form-item'
+import FormField from './form-field'
 
 const directives = []
 const components = [Table, Popup, Layout, VRender, Form, FormItem, Panel, Styles]
@@ -19,6 +20,7 @@ export {
   VRender,
   Form,
   FormItem,
+  FormField,
   Panel
 }
 

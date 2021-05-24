@@ -14,12 +14,13 @@ import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/do
 import { eqCellValue } from 'pk/utils/dom'
 
 export default {
-  name: 'VFormFiled',
+  name: 'VFormField',
   props: {
     prop: { type: String, default: '' },
-    data: { type: Object, default: () => {} },
+    data: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
     cascader: { type: [String, Array], default: '' },
+    readyOnly: Boolean,
     validatorStyle: {
       type: Object,
       default: () => ({ borderColor: '#F56C6C' })
@@ -30,7 +31,6 @@ export default {
       handlerNode: null,
       input: null,
       component: null,
-      message: '',
       initValue: null,
       isDirty: false
     }
@@ -47,10 +47,20 @@ export default {
     root() {
       const { form, table } = this
       return form || table
+    },
+    message() {
+      const { root, prop } = this
+      return (root.validators.find(d => d.prop === prop) || {}).message
+    }
+  },
+  watch: {
+    message(val) {
+      this.$nextTick(() => {
+        this.setNodeStyle()
+      })
     }
   },
   created() {
-    // !(this.prop in this.data) && this.$set(this.data, this.prop, null)
     this.form.$on('clearStatus', this.updateField)
   },
   mounted() {
@@ -122,8 +132,6 @@ export default {
     inputValidateField() {
       const { root, data, prop, rules } = this
       rules.length && root.validateField(data, prop, rules).then(res => {
-        this.message = res.message
-        this.setNodeStyle()
         this.updateStatus()
       })
     },

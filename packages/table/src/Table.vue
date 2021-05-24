@@ -139,6 +139,11 @@
       ref="replace"
       :init-columns.sync="tableColumns"
     />
+    <sort
+      v-if="sortControl"
+      ref="sort"
+      :init-columns.sync="tableColumns"
+    />
     <!-- 编辑 -->
     <edit
       v-if="edit"
@@ -148,7 +153,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>editStore -  {{ editStore }}</p>
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -189,6 +194,7 @@ import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import ColumnEdit from '../components/ColumnEdit/index'
 import Replace from '../components/Replace/index'
+import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -207,7 +213,8 @@ export default {
     Copy,
     ColumnEdit,
     FooterAction,
-    Replace
+    Replace,
+    Sort
   },
   mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
   provide() {
@@ -261,7 +268,8 @@ export default {
     rowId: { type: String, default: 'id' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     editHistory: { type: Boolean, default: () => false },
-    showReplace: { type: Boolean, default: () => false }
+    showReplace: { type: Boolean, default: () => false },
+    showSort: { type: Boolean, default: () => false }
   },
   data() {
     return {
@@ -284,6 +292,7 @@ export default {
       popoverOpts: {},
       editPopoverOpts: {},
       editStore: {
+        editRow: {},
         insertList: [],
         updateList: [],
         pendingList: []
@@ -292,7 +301,8 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      replaceControl: false
+      replaceControl: false,
+      sortControl: false
     }
   },
   computed: {
@@ -428,24 +438,18 @@ export default {
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
       const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
-      // console.log(newRow, sourceRow[prop], row[prop], index)
-      if ([sourceRow].some(d => d === row)) {
+      let isSome = true
+      for (const key in sourceRow) {
+        if (row[key] !== sourceRow[key]) {
+          isSome = false
+          break
+        }
+      }
+      if (isSome) {
         this.editStore.updateList.splice(index, 1)
       } else {
         this.editStore.updateList.splice(index, 1, newRow)
       }
-
-      // if (index !== -1) {
-      //   if (sourceRow[prop] !== row[prop]) {
-      //     this.editStore.updateList[index] = (newRow)
-      //   } else {
-      //     this.editStore.updateList.splice(index, 1)
-      //   }
-      // } else {
-      //   if (sourceRow[prop] !== row[prop]) {
-      //     this.editStore.updateList.push(newRow)
-      //   }
-      // }
     },
     // 更新数据行map
     updateCache() {

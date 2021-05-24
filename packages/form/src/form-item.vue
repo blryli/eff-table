@@ -2,7 +2,7 @@
   <v-col :span="form.isResponse ? 24 : span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
     <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': lineHeight}">
       <label v-if="title" class="v-form-item__title" :style="{flex: `0 0 ${titleWidth}`}">{{ title }}</label>
-      <FormFiled
+      <FormField
         class="v-form-item__content"
         :prop="prop"
         :data="data"
@@ -10,18 +10,18 @@
         :cascader="cascader"
       >
         <slot />
-      </FormFiled>
+      </FormField>
     </div>
   </v-col>
 </template>
 
 <script>
-import VCol from './Col'
-import FormFiled from 'pk/form-filed'
+import VCol from './col'
+import FormField from './form-field'
 
 export default {
   name: 'VFormItem',
-  components: { VCol, FormFiled },
+  components: { VCol, FormField },
   props: {
     prop: { type: String, default: '' },
     title: { type: String, default: '' },

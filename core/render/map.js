@@ -12,8 +12,6 @@ const map = {
   'popover': 'el-popover',
   'tooltip': 'el-tooltip',
   'dialog': 'el-dialog',
-  'form': 'el-form',
-  'form-item': 'el-form-item',
   'switch': 'el-switch',
   'checkbox-group': 'el-checkbox-group',
   'checkbox': 'el-checkbox',
@@ -22,7 +20,9 @@ const map = {
   // 内置组件
   'popup': 'popup',
   'layout': 'layout',
-  'panel': 'panel'
+  'panel': 'panel',
+  'form': 'v-form',
+  'form-item': 'v-form-item'
 }
 
 export default {

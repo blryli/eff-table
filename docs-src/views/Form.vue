@@ -178,7 +178,7 @@ export default {
       this.$refs.form.clearStatus()
     },
     validate() {
-      this.$refs.form.validate()
+      this.$refs.form.validate().catch(e => console.log(e))
     },
     clearValidate() {
       this.$refs.form.clearValidate()

@@ -8,10 +8,11 @@ import Refresh from './Refresh'
 import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
+import SortCtrlBtn from './SortCtrlBtn.vue'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh, Search },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh, Search, SortCtrlBtn },
   inject: ['table'],
   data() {
     return {
@@ -36,7 +37,7 @@ export default {
   render(h) {
     const { table, load } = this
     if (!load) return ''
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory, showReplace } = table
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory, showReplace, showSort } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       let { code, on } = cur
@@ -55,6 +56,9 @@ export default {
           { this.$slots.default }
         </div>
         <div class='eff-table__toobar-right'>
+          {
+            showSort && <SortCtrlBtn /> || ''
+          }
           {
             showReplace && <ReplaceCtrlBtnVue /> || ''
           }

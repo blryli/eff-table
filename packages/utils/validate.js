@@ -79,7 +79,6 @@ export function validateField(rules, params) {
  */
 
 export function validate(rows, columns, validateField) {
-  console.log(rows)
   return new Promise((resolve, reject) => {
     const rules = rows.reduce((acc, row) =>
       acc.concat(
