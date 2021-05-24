@@ -75,7 +75,7 @@ export default {
         //   hobby2: '',
         //   hobby3: ''
         // },
-        cols: [
+        columns: [
           {
             title: '名字',
             prop: 'name',

@@ -11,10 +11,10 @@ export default {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
       }
-      const { cols, validators, rowId } = this
+      const { columns, validators, rowId } = this
       const value = row[prop]
       const id = row[rowId]
-      const column = cols.find(d => d.prop === prop) || {}
+      const column = columns.find(d => d.prop === prop) || {}
       if (!rule) {
         const { rules = [] } = column
         if (Array.isArray(rules)) {
@@ -38,8 +38,8 @@ export default {
       // cell && cell.classList.add('is-async-validator') // 异步校验动效
     },
     validate() {
-      const { data, cols } = this
-      return validate([data], cols, this.validateField)
+      const { data, columns } = this
+      return validate([data], columns, this.validateField)
     },
     clearValidate(props) {
       const clear = prop => {
