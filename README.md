@@ -193,6 +193,8 @@ value: [
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
+| updateRow | 更新行数据，参数是 row，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |-|
+| editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
 
 ### Events
 | 事件名称 | 说明                   | 回调参数                    |
@@ -240,3 +242,11 @@ value: [
 | arrowdown     | 编辑模式下聚焦下方单元格 | 
 | arrowup       | 编辑模式下聚焦上方单元格 | 
 | control + b   | 搜索模式下切换搜索行隐藏/展示，默认会清空搜索条件 | 
+
+### 更新日志
+
+#### 2021-5
+
+-  editStore 方法增加 editRow 对象
+
+-  增加更新行数据的方法 updateRow

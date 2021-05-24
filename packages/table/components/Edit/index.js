@@ -12,7 +12,7 @@ export default {
     return {
       show: false,
       column: null,
-      rowIndex: 0,
+      rowIndex: null,
       cell: null,
       placement: '',
       component: null,
@@ -61,7 +61,8 @@ export default {
     component() {
       this.dialogVisible = true
     },
-    rowIndex() {
+    rowIndex(val) {
+      this.table.editStore.editRow = val === null ? {} : this.table.tableData[val]
       this.dialogVisible = true
     },
     show(val) {
@@ -72,6 +73,7 @@ export default {
         this.blurEvent().then(() => {
           this.placement = ''
           this.scrollNum = 0
+          this.rowIndex = null
           this.column = null
           this.cell = null
           this.visible = true

@@ -1,6 +1,6 @@
 {
   "name": "eff-table",
-  "version": "1.0.58",
+  "version": "1.0.60",
   "description": "is a efficient table",
   "keywords": [
     "vue",
@@ -41,6 +41,7 @@
   "dependencies": {
     "eff-table": "^1.0.35",
     "vue": "^2.6.10",
+    "vuedraggable": "^2.24.3",
     "xe-utils": "3.0.0"
   },
   "devDependencies": {

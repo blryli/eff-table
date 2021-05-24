@@ -2,7 +2,7 @@
   <div class="drag-table">
     <card
       :show="true"
-      title="批量替换"
+      title="自定义排序"
       :init-style="cardStyle"
       @close="close"
     >
@@ -14,13 +14,35 @@
       </template>
       <div class="main">
         <div class="center" :style="centerStyle">
-          <div class="list area-center flex justify-around">
-            <v-form
-              class="full-width"
-              :cols="formCols"
-              :data="data"
-            />
+          <div class="list area-center flex justify-around full-width">
+              <draggable
+                class="tags-view-draggable full-width"
+                v-model="selectList"
+                handle=".tags-view-item"
+                :forceFallback="false"
+                group="cloumnSort"
+                animation="500"
+              >
+                <div class="tags-view-item full-width" v-for="(v, k) in selectList" :key="k">
+                  <v-form
+                    class="full-width flex padding-left padding-top"
+                    :cols="[{ prop: 'search' + k, itemRender: { name: 'select', options: [{label: '正序', value: 1}, {label: '倒叙', value: 2}] }, placeholder: '请选择排序方式', options: [{ label: 1, value: 1 }], title: v.title, span: 18 }]"
+                    :data="data[k]"
+                  >
+                  <template v-slot:before>
+                      <div
+                        class="eff-table__sort flex justify-between fl margin-top-sm"
+                        title="自定义排序"
+                        style="cursor: n-resize;"
+                      >
+                        <div class="eff-table__sort-left" />
+                        <div class="eff-table__sort-right" />
+                      </div>
+                  </template>
+                  </v-form>
 
+                </div>
+              </draggable>
           </div>
         </div>
         <div class="right" :style="rightStyle">
@@ -46,9 +68,11 @@
 </template>
 
 <script>
+
 import vForm from 'pk/form/src/form'
+
+import Draggable from "vuedraggable"
 // import vFormField from 'pk/form/src/form-field'
-import vFormItem from 'pk/form/src/form-item'
 // import vCol from 'pk/form/src/col'
 
 import Card from 'pk/card'
@@ -56,8 +80,8 @@ import Sortable from 'pk/utils/sortable'
 import { deepClone } from 'pk/utils/index'
 
 export default {
-  name: 'TableReplace',
-  components: { Card, vForm, vFormItem },
+  name: 'TableSort',
+  components: { Card, vForm, Draggable },
   props: {
     initColumns: { type: Array, default: () => [] },
     columnControl: Boolean
@@ -98,8 +122,7 @@ export default {
     formCols() {
       const cols = []
       this.selectList.map((v, k) => {
-        cols.push({ prop: 'search' + k, itemRender: { name: 'select', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
-        cols.push({ span: 10, placeholder: '请输入填充内容', prop: 'replace' + k })
+        cols.push({ prop: 'search' + k, itemRender: { name: 'switch', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
       })
 
       return cols
@@ -251,7 +274,7 @@ export default {
       this.selectList = []
     },
     close() {
-      this.table.replaceControl = false
+      this.table.sortControl = false
     },
     replace() {
 
@@ -263,6 +286,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.tags-view-item {
+  height: 45px;
+}
 .main {
   display: flex;
   // flex-direction: column;
