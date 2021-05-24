@@ -101,6 +101,9 @@ function renderSelect(h, renderOpts, params, renderType) {
     value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择' + (column.title || '')
   }
+  if (renderOpts.placeholder) {
+    props.placeholder = renderOpts.placeholder
+  }
   const on = {
     input: val => {
       vue.$set(data, prop, val)
