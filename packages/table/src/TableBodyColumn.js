@@ -1,5 +1,6 @@
 import VCheckbox from 'pk/checkbox'
 import VRadio from 'pk/radio'
+import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 
@@ -16,7 +17,7 @@ export default {
     groupFloor: { type: Number, default: 0 },
     groupKey: { type: String, default: '' }
   },
-  components: { VCheckbox, VRadio },
+  components: { VCheckbox, VRadio, FormField },
   inject: ['table'],
   data() {
     return {
@@ -163,7 +164,7 @@ export default {
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
-    const { type } = column
+    const { prop, type, config, rules, edit: { render } = {}} = column
     // row[columnIndex] summary合计列
 
     let slot
@@ -200,6 +201,8 @@ export default {
       }
     }
 
+    const { cascade, cascadeFields, cascadeMethod } = Object.assign({}, config, render)
+
     return (
       <div
         class={this.columnClass}
@@ -214,7 +217,8 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          <span class='eff-cell--label'>{slot}</span>
+          {h('form-field', { props: { data: row, prop, cascade, cascadeFields, cascadeMethod, rules }}, slot)}
+          {/* <FormField {...config} class='eff-cell--label'>{slot}</FormField> */}
         </div>
       </div>
     )

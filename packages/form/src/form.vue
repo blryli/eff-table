@@ -11,7 +11,7 @@ export default {
   mixins: [Validator, FocusControl],
   props: {
     data: { type: Object, default: () => ({}) },
-    cols: { type: Array, default: () => ([]) },
+    columns: { type: Array, default: () => ([]) },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     titleAlign: { type: String, default: '' },
@@ -72,21 +72,21 @@ export default {
   },
   methods: {
     init() {
-      this.cols.forEach(col => {
-        !(col.prop in this.data) && this.$set(this.data, col.prop, null)
+      this.columns.forEach(column => {
+        !(column.prop in this.data) && this.$set(this.data, column.prop, null)
       })
       // console.log('data', JSON.stringify(this.data, null, 2))
     },
-    itemRender(col) {
+    itemRender(column) {
       const { $createElement, table, data } = this
-      const { prop, itemRender } = col
+      const { prop, itemRender } = column
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {
         const renderOpts = Object.assign({ name: 'input' }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
-        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data, column: col, prop }) || ''
+        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, vue: this, data, column, prop }) || ''
       }
     },
     setEditIsStop(val) {
@@ -105,16 +105,15 @@ export default {
     resetField() {}
   },
   render(h) {
-    const { cols, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
-    return h('div', { class: formClass, style: { width: isResponse ? '' : width }}, [
-      $slots.before,
-      cols.map(col => {
-        const props = Object.assign({}, col, { titleWidth: this.titleWidth || '80px', data })
+    const { columns, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
+    return h('layout', { class: formClass, style: { width: isResponse ? '' : width }}, [
+      columns.map(column => {
+        const props = Object.assign({}, column, { titleWidth: this.titleWidth || '80px', data, column })
         return h('v-form-item', {
           props,
           class: 'v-form-item',
           style: { padding: `0 ${itemGutter}`, marginBottom: rowledge }
-        }, [itemRender(col)])
+        }, [itemRender(column)])
       }),
       $slots.default,
       h('Popover', { ref: 'popover', attrs: popoverOpts })

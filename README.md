@@ -81,6 +81,7 @@ export default {
 | value   | columns数组       | array        |              | []      |
 | data   | table 数据       | array        |              | []     |
 | form   | 搜索数据       | Object        |              | {}      |
+| rowId   | 行主键       | String        |              | id      |
 | height    | Table 的高度    | number      |            | 400      |
 | max-height    | Table 最大高度    | number      |            | -      |
 | row-height    | 列高度    | number      |            | 36      |
@@ -193,7 +194,7 @@ value: [
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
-| updateRow | 更新行数据，参数是 row，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |-|
+| updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
 | editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
 
 ### Events

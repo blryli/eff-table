@@ -18,8 +18,11 @@ export default {
   props: {
     prop: { type: String, default: '' },
     data: { type: Object, default: () => ({}) },
+    column: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
-    cascader: { type: [String, Array], default: '' },
+    cascade: Boolean,
+    cascadeFields: { type: Array, default: () => ([]) },
+    cascadeMethod: { type: Function, default: () => {} },
     readyOnly: Boolean,
     validatorStyle: {
       type: Object,
@@ -51,24 +54,31 @@ export default {
     message() {
       const { root, prop } = this
       return (root.validators.find(d => d.prop === prop) || {}).message
+    },
+    isInput() {
+      const { name = 'input' } = this.column.itemRender || {}
+      return ['input', 'textarea'].includes(name)
     }
   },
   watch: {
     message(val) {
-      this.$nextTick(() => {
-        this.setNodeStyle()
-      })
+      if (this.form) {
+        this.$nextTick(() => {
+          this.setNodeStyle()
+        })
+      }
     }
   },
   created() {
-    this.form.$on('clearStatus', this.updateField)
+    console.log(this.$attrs)
+    this.root.$on('clearStatus', this.updateField)
   },
   mounted() {
-    const { cascader } = this
+    const { cascade, cascadeFields, data, prop, cascadeMethod } = this
     this.initValue = this.data[this.prop] || null
-    cascader && (Array.isArray(this.cascader) ? this.cascader : [this.cascader]).forEach(d => {
-      this.$watch(`data.${d}`, () => {
-        console.log('cascader change')
+    cascade && cascadeFields.forEach(d => {
+      this.watcher = this.$watch(`data.${d}`, () => {
+        cascadeMethod({ data, prop })
       })
     })
     this.$nextTick(() => {
@@ -76,44 +86,60 @@ export default {
     })
   },
   beforeDestroy() {
-    const { input, trigger, inputValidateField, component, onFocus, onBlur } = this
+    this.watcher = null
+    const { input, component, onFocus, onBlur, onChange, onVisibleChange } = this
     if (input) {
       off(input, 'focus', onFocus)
       off(input, 'blur', onBlur)
-      off(input, trigger, inputValidateField)
+      off(input, 'change', onChange)
     }
-    if (this.$children.length && component && !component.getInput) {
+    if (this.$children.length && component) {
       component.$off('focus', () => onFocus(component))
       component.$off('blur', onBlur)
+      component.$off('change', onChange)
+      component.$off('visible-change', onVisibleChange)
     }
   },
   methods: {
     init() {
       this.component = getOneChildComponent(this)
-      const { form, prop, component, trigger = 'change', $el, onFocus, onBlur, inputValidateField } = this
+      const { component, $el, onFocus, onBlur, onChange, onVisibleChange } = this
       if (this.$children.length && component) {
-        // 如果组件存在并且有 getInput 方法
+        // 如果是组件存在并且有 getInput 方法
         if (component.getInput) {
           this.handlerNode = this.input = component.getInput()
-        } else {
-          component.$on('focus', () => onFocus(component))
-          component.$on('blur', onBlur)
-          this.$on.apply(component, [trigger, inputValidateField])
-          this.handlerNode = getOneChildNode(component.$el) || component.$el
         }
+        component.$on('focus', () => onFocus(component))
+        component.$on('blur', onBlur)
+        this.handlerNode = getOneChildNode(component.$el) || component.$el
+        component.$on('change', onChange)
+        component.$on('visible-change', onVisibleChange)
       } else {
         // 如果不是组件，获取第一个 input
         this.input = getOneChildNode($el)
         this.handlerNode = this.input || $el
-      }
-      const { input } = this
-      if (this.input) {
         // 监听 blur/change 事件，触发校验
-        on(input, 'focus', () => onFocus())
-        on(input, 'blur', () => onBlur())
-        on(input, trigger, inputValidateField)
+        const { input } = this
+        if (input) {
+          on(input, 'focus', onFocus)
+          on(input, 'blur', onBlur)
+          on(input, 'change', onChange)
+        }
       }
-      form.focusOpen && form.$emit('line-slot-change', { prop, slot: this, input })
+    },
+    onChange(val) {
+      const { cascade, data, column, isInput, prop, cascadeMethod } = this
+      this.root.$emit('field.change', prop)
+      console.log('onChange', val)
+
+      if (isInput) {
+        if (cascade) {
+          cascadeMethod({ data, column, prop })
+        }
+      }
+    },
+    onVisibleChange(val) {
+      console.log('onVisibleChange', val)
     },
     onFocus(component) {
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
@@ -125,6 +151,7 @@ export default {
       }
     },
     onBlur() {
+      console.log('onBlur')
       const { form, prop } = this
       form.focusOpen && form.$emit('on-blur', prop)
       this.inputValidateField()
