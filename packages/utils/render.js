@@ -1,4 +1,5 @@
 import XEUtils from 'xe-utils'
+import { getType } from 'pk/utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
@@ -95,8 +96,8 @@ function renderselectCell(h, renderOpts, params) {
   return labelKey ? opt[labelKey] : cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
-  const { options = [] } = renderOpts
-  const { vue, data = {}, column, prop, searchChange } = params
+  const { options = [], cascade, optionsFunc } = renderOpts
+  const { vue, data = {}, table, row, sourceRow, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择' + (column.title || '')
@@ -123,17 +124,18 @@ function renderSelect(h, renderOpts, params, renderType) {
         defaultFirstOption: true
       })
       Object.assign(on, {
-        'visible-change': (isExpend) => {
+        'visible-change': (isExpend, val) => {
           if (isExpend) {
-            if (renderOpts.cascade && renderOpts.cascadeCol && renderOpts.optionsFunc) {
-              const promise = renderOpts.optionsFunc({ row: params.row })
-
-              if (XEUtils.isPromise(promise)) {
-                promise.then(options => {
-                  renderOpts.options.splice(0, 10000, ...options)
-                })
-              } else {
-                renderOpts.options.splice(0, 10000, ...promise)
+            if (cascade && optionsFunc) {
+              const promise = optionsFunc({ row, sourceRow, editStore: table.editStore })
+              if (promise) {
+                if (getType(promise) === 'Promise') {
+                  promise.then(options => {
+                    renderOpts.options.splice(0, 10000, ...options)
+                  })
+                } else {
+                  renderOpts.options.splice(0, 10000, ...promise)
+                }
               }
             }
           }
@@ -151,6 +153,7 @@ function renderSelect(h, renderOpts, params, renderType) {
 
   const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
   const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+
   return render(h, renderOpts, params).mergeOpts({ props, on: ons }).set('children', optionsRender).render()
 }
 function renderSelectSearch(h, renderOpts, params) {

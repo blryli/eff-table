@@ -267,9 +267,10 @@ export default {
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
     rowId: { type: String, default: 'id' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    editHistory: { type: Boolean, default: () => false },
-    showReplace: { type: Boolean, default: () => false },
-    showSort: { type: Boolean, default: () => false }
+    editHistory: Boolean,
+    showReplace: Boolean,
+    showSort: Boolean,
+    beforeInsert: { type: Function, default: () => {} } // 插入数据前的钩子函数
   },
   data() {
     return {

@@ -111,7 +111,6 @@ export default {
         const props = Object.assign({}, column, { titleWidth: this.titleWidth || '80px', data, column })
         return h('v-form-item', {
           props,
-          class: 'v-form-item',
           style: { padding: `0 ${itemGutter}`, marginBottom: rowledge }
         }, [itemRender(column)])
       }),
@@ -125,6 +124,9 @@ export default {
 <style lang="scss">
 .v-form {
   position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   &::before, &::after{
     display: table;
     content: "";

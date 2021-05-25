@@ -5,11 +5,11 @@
       <FormField
         class="v-form-item__content"
         :prop="prop"
-        :data="data"
+        :row="data"
         :column="column"
         :rules="rules"
         :cascade="cascade"
-        :cascade-fields="cascadeFields"
+        :cascade-field="cascadeField"
         :cascade-method="cascadeMethod"
       >
         <slot />
@@ -33,8 +33,7 @@ export default {
     data: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
     cascade: Boolean,
-    cascadeFields: { type: Array, default: () => ([]) },
-    cascadeMethod: { type: Function, default: () => {} }
+    optionsFunc: { type: Function, default: () => {} }
   },
   data() {
     return {}

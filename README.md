@@ -112,6 +112,7 @@ export default {
 | edit-history       | 是否开启前进后退功能    | Boolean |       |       |
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 | showReplace       | 替换和填充功能    | Boolean |       |       |
+| before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
 ```js
 value: [
   {
@@ -140,6 +141,7 @@ value: [
       render: (h, {row, rowIndex, column, columnIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
+      disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
       leaveTime: 0 // number | function({ row, rowIndex }) {return Promise} 需要延时或异步处理完值再离开时使用，为函数时返回值必须是promise
     }
@@ -251,3 +253,7 @@ value: [
 -  editStore 方法增加 editRow 对象
 
 -  增加更新行数据的方法 updateRow
+
+-  增加插入数据前的钩子函数 beforeInsert
+
+-  edit配置增加 disabled 动态禁用单元格编辑

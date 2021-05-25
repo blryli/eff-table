@@ -17,12 +17,10 @@ export default {
   name: 'VFormField',
   props: {
     prop: { type: String, default: '' },
-    data: { type: Object, default: () => ({}) },
+    row: { type: Object, default: () => ({}) },
+    rowIndex: { type: Number, default: null },
     column: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
-    cascade: Boolean,
-    cascadeFields: { type: Array, default: () => ([]) },
-    cascadeMethod: { type: Function, default: () => {} },
     readyOnly: Boolean,
     validatorStyle: {
       type: Object,
@@ -70,17 +68,10 @@ export default {
     }
   },
   created() {
-    console.log(this.$attrs)
     this.root.$on('clearStatus', this.updateField)
   },
   mounted() {
-    const { cascade, cascadeFields, data, prop, cascadeMethod } = this
-    this.initValue = this.data[this.prop] || null
-    cascade && cascadeFields.forEach(d => {
-      this.watcher = this.$watch(`data.${d}`, () => {
-        cascadeMethod({ data, prop })
-      })
-    })
+    this.initValue = this.row[this.prop] || null
     this.$nextTick(() => {
       this.init()
     })
@@ -128,14 +119,11 @@ export default {
       }
     },
     onChange(val) {
-      const { cascade, data, column, isInput, prop, cascadeMethod } = this
-      this.root.$emit('field.change', prop)
-      console.log('onChange', val)
+      const { isInput } = this
 
-      if (isInput) {
-        if (cascade) {
-          cascadeMethod({ data, column, prop })
-        }
+      // 非input校验
+      if (!isInput) {
+        this.handleValidate()
       }
     },
     onVisibleChange(val) {
@@ -151,14 +139,16 @@ export default {
       }
     },
     onBlur() {
-      console.log('onBlur')
-      const { form, prop } = this
+      const { form, prop, isInput } = this
       form.focusOpen && form.$emit('on-blur', prop)
-      this.inputValidateField()
+      // input/textare校验
+      if (isInput) {
+        this.handleValidate()
+      }
     },
-    inputValidateField() {
-      const { root, data, prop, rules } = this
-      rules.length && root.validateField(data, prop, rules).then(res => {
+    handleValidate() {
+      const { root, row, prop, rules } = this
+      rules.length && root.validateField(row, prop, rules).then(res => {
         this.updateStatus()
       })
     },
@@ -181,12 +171,12 @@ export default {
       }
     },
     updateStatus() {
-      const { data = {}, prop, initValue } = this
-      this.isDirty = !eqCellValue({ [prop]: initValue }, data, prop)
+      const { row = {}, prop, initValue } = this
+      this.isDirty = !eqCellValue({ [prop]: initValue }, row, prop)
     },
     updateField() {
-      const { data, prop } = this
-      this.initValue = data[prop]
+      const { row, prop } = this
+      this.initValue = row[prop]
     }
   }
 }

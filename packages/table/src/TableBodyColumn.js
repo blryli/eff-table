@@ -111,7 +111,8 @@ export default {
         }
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        const sourceRow = table.tableSourceData[rowIndex]
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
@@ -164,7 +165,7 @@ export default {
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
-    const { prop, type, config, rules, edit: { render } = {}} = column
+    const { type } = column
     // row[columnIndex] summary合计列
 
     let slot
@@ -201,8 +202,6 @@ export default {
       }
     }
 
-    const { cascade, cascadeFields, cascadeMethod } = Object.assign({}, config, render)
-
     return (
       <div
         class={this.columnClass}
@@ -217,8 +216,8 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          {h('form-field', { props: { data: row, prop, cascade, cascadeFields, cascadeMethod, rules }}, slot)}
-          {/* <FormField {...config} class='eff-cell--label'>{slot}</FormField> */}
+          {slot}
+          {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
         </div>
       </div>
     )
