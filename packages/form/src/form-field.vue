@@ -17,9 +17,10 @@ export default {
   name: 'VFormField',
   props: {
     prop: { type: String, default: '' },
-    data: { type: Object, default: () => ({}) },
+    row: { type: Object, default: () => ({}) },
+    rowIndex: { type: Number, default: null },
+    column: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
-    cascader: { type: [String, Array], default: '' },
     readyOnly: Boolean,
     validatorStyle: {
       type: Object,
@@ -51,69 +52,82 @@ export default {
     message() {
       const { root, prop } = this
       return (root.validators.find(d => d.prop === prop) || {}).message
+    },
+    isInput() {
+      const { name = 'input' } = this.column.itemRender || {}
+      return ['input', 'textarea'].includes(name)
     }
   },
   watch: {
     message(val) {
-      this.$nextTick(() => {
-        this.setNodeStyle()
-      })
+      if (this.form) {
+        this.$nextTick(() => {
+          this.setNodeStyle()
+        })
+      }
     }
   },
   created() {
-    this.form.$on('clearStatus', this.updateField)
+    this.root.$on('clearStatus', this.updateField)
   },
   mounted() {
-    const { cascader } = this
-    this.initValue = this.data[this.prop] || null
-    cascader && (Array.isArray(this.cascader) ? this.cascader : [this.cascader]).forEach(d => {
-      this.$watch(`data.${d}`, () => {
-        console.log('cascader change')
-      })
-    })
+    this.initValue = this.row[this.prop] || null
     this.$nextTick(() => {
       this.init()
     })
   },
   beforeDestroy() {
-    const { input, trigger, inputValidateField, component, onFocus, onBlur } = this
+    this.watcher = null
+    const { input, component, onFocus, onBlur, onChange, onVisibleChange } = this
     if (input) {
       off(input, 'focus', onFocus)
       off(input, 'blur', onBlur)
-      off(input, trigger, inputValidateField)
+      off(input, 'change', onChange)
     }
-    if (this.$children.length && component && !component.getInput) {
+    if (this.$children.length && component) {
       component.$off('focus', () => onFocus(component))
       component.$off('blur', onBlur)
+      component.$off('change', onChange)
+      component.$off('visible-change', onVisibleChange)
     }
   },
   methods: {
     init() {
       this.component = getOneChildComponent(this)
-      const { form, prop, component, trigger = 'change', $el, onFocus, onBlur, inputValidateField } = this
+      const { component, $el, onFocus, onBlur, onChange, onVisibleChange } = this
       if (this.$children.length && component) {
-        // 如果组件存在并且有 getInput 方法
+        // 如果是组件存在并且有 getInput 方法
         if (component.getInput) {
           this.handlerNode = this.input = component.getInput()
-        } else {
-          component.$on('focus', () => onFocus(component))
-          component.$on('blur', onBlur)
-          this.$on.apply(component, [trigger, inputValidateField])
-          this.handlerNode = getOneChildNode(component.$el) || component.$el
         }
+        component.$on('focus', () => onFocus(component))
+        component.$on('blur', onBlur)
+        this.handlerNode = getOneChildNode(component.$el) || component.$el
+        component.$on('change', onChange)
+        component.$on('visible-change', onVisibleChange)
       } else {
         // 如果不是组件，获取第一个 input
         this.input = getOneChildNode($el)
         this.handlerNode = this.input || $el
-      }
-      const { input } = this
-      if (this.input) {
         // 监听 blur/change 事件，触发校验
-        on(input, 'focus', () => onFocus())
-        on(input, 'blur', () => onBlur())
-        on(input, trigger, inputValidateField)
+        const { input } = this
+        if (input) {
+          on(input, 'focus', onFocus)
+          on(input, 'blur', onBlur)
+          on(input, 'change', onChange)
+        }
       }
-      form.focusOpen && form.$emit('line-slot-change', { prop, slot: this, input })
+    },
+    onChange(val) {
+      const { isInput } = this
+
+      // 非input校验
+      if (!isInput) {
+        this.handleValidate()
+      }
+    },
+    onVisibleChange(val) {
+      console.log('onVisibleChange', val)
     },
     onFocus(component) {
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
@@ -125,13 +139,16 @@ export default {
       }
     },
     onBlur() {
-      const { form, prop } = this
+      const { form, prop, isInput } = this
       form.focusOpen && form.$emit('on-blur', prop)
-      this.inputValidateField()
+      // input/textare校验
+      if (isInput) {
+        this.handleValidate()
+      }
     },
-    inputValidateField() {
-      const { root, data, prop, rules } = this
-      rules.length && root.validateField(data, prop, rules).then(res => {
+    handleValidate() {
+      const { root, row, prop, rules } = this
+      rules.length && root.validateField(row, prop, rules).then(res => {
         this.updateStatus()
       })
     },
@@ -154,12 +171,12 @@ export default {
       }
     },
     updateStatus() {
-      const { data = {}, prop, initValue } = this
-      this.isDirty = !eqCellValue({ [prop]: initValue }, data, prop)
+      const { row = {}, prop, initValue } = this
+      this.isDirty = !eqCellValue({ [prop]: initValue }, row, prop)
     },
     updateField() {
-      const { data, prop } = this
-      this.initValue = data[prop]
+      const { row, prop } = this
+      this.initValue = row[prop]
     }
   }
 }

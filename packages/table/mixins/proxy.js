@@ -212,6 +212,7 @@ export default {
           return acc
         }, {})
         Object.assign(records, { [rowId]: `row_${tableData.length}` })
+        this.beforeInsert(records)
       }
       if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
@@ -220,6 +221,7 @@ export default {
       if (checkedsLen) {
         rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
+
       if (!rowIndex) {
         this.tableData.unshift(...records)
         rowIndex = 0

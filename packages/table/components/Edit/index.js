@@ -40,6 +40,7 @@ export default {
 
         const columnIndex = this.getColumnIndex(column.prop)
         const { render } = edit || {}
+        const sourceRow = table.tableSourceData[rowIndex]
 
         if (this.baseText === null || this.columnIndex !== columnIndex) {
           this.baseText = row && row[prop] || null
@@ -47,12 +48,12 @@ export default {
         }
 
         if (typeof render === 'function') {
-          return render($createElement, { row, rowIndex, column, columnIndex, prop }) || ''
+          return render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop }) || ''
         } else {
           const renderOpts = Object.assign({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { vue: table, data: row, row, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { table, vue: table, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }
@@ -104,15 +105,7 @@ export default {
     handleValidate() {
       const { prop, rules = [] } = this.column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-
-      const promiseArr = []
-      this.columns.forEach(v => {
-        if (v.rules && v.prop) {
-          promiseArr.push(this.table.validateField(this.row, v.prop, v.rules))
-        }
-      })
-
-      return Promise.all(promiseArr)
+      return this.table.validateField(this.row, prop, rules)
     },
     updateStatus() {
       const { table, column, row } = this
@@ -191,9 +184,9 @@ export default {
       }
     },
     canFocus(column, cell) {
-      const { type, edit } = column
+      const { type, edit = {}} = column
       const types = ['selection', 'index']
-      return edit && column && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
+      return edit && column && column.prop && !this.disabled(column) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
       const { placement, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
@@ -221,7 +214,7 @@ export default {
       }
     },
     // 跳过pending状态的行
-    getSkipNum(startIndex, endIndex) {
+    getSkipPendingNum(startIndex, endIndex) {
       const { table } = this
       const { editStore: { pendingList }, rowId, tableData } = table
       const byData = tableData.slice(startIndex, endIndex)
@@ -236,10 +229,10 @@ export default {
     toY(prop) {
       const { table, placement, rowIndex, $el } = this
       if (['right', 'bottom'].includes(placement)) {
-        const skipNum = this.getSkipNum(rowIndex + 1, rowIndex + 10)
+        const skipNum = this.getSkipPendingNum(rowIndex + 1, rowIndex + 10)
         skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
       } else {
-        const skipNum = this.getSkipNum(0, rowIndex)
+        const skipNum = this.getSkipPendingNum(0, rowIndex)
         skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
       }
     },
@@ -255,6 +248,19 @@ export default {
         console.error(`${prop} 字段，skip类型必须是 function/boolean`)
       }
       return skip || false
+    },
+    disabled(column) {
+      const { edit: { disabled } = {}, prop = '' } = column || {}
+      const { row, rowIndex } = this
+      if (disabled === undefined) return false
+
+      if (typeof disabled === 'function') {
+        return disabled({ row, rowIndex })
+      }
+      if (typeof disabled !== 'boolean') {
+        console.error(`${prop} 字段，disabled类型必须是 function/boolean`)
+      }
+      return disabled || false
     },
 
     handleEditCell({ column, cell, rowIndex }) {
@@ -377,6 +383,7 @@ export default {
       const { component, table, rowIndex, columnIndex, column } = this
       const { tableData } = this.table
       if (component) {
+        column && column.prop && table.$emit('field.change', column.prop, rowIndex)
         return this.handleValidate().then(res => {
           if (column && column.prop) {
             const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: this.baseText }

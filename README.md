@@ -81,6 +81,7 @@ export default {
 | value   | columns数组       | array        |              | []      |
 | data   | table 数据       | array        |              | []     |
 | form   | 搜索数据       | Object        |              | {}      |
+| rowId   | 行主键       | String        |              | id      |
 | height    | Table 的高度    | number      |            | 400      |
 | max-height    | Table 最大高度    | number      |            | -      |
 | row-height    | 列高度    | number      |            | 36      |
@@ -111,6 +112,7 @@ export default {
 | edit-history       | 是否开启前进后退功能    | Boolean |       |       |
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 | showReplace       | 替换和填充功能    | Boolean |       |       |
+| before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
 ```js
 value: [
   {
@@ -139,6 +141,7 @@ value: [
       render: (h, {row, rowIndex, column, columnIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
+      disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
       skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
       leaveTime: 0 // number | function({ row, rowIndex }) {return Promise} 需要延时或异步处理完值再离开时使用，为函数时返回值必须是promise
     }
@@ -193,7 +196,7 @@ value: [
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
-| updateRow | 更新行数据，参数是 row，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |-|
+| updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
 | editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
 
 ### Events
@@ -250,3 +253,7 @@ value: [
 -  editStore 方法增加 editRow 对象
 
 -  增加更新行数据的方法 updateRow
+
+-  增加插入数据前的钩子函数 beforeInsert
+
+-  edit配置增加 disabled 动态禁用单元格编辑

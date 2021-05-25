@@ -75,7 +75,7 @@ export default {
         //   hobby2: '',
         //   hobby3: ''
         // },
-        cols: [
+        columns: [
           {
             title: '名字',
             prop: 'name',
@@ -93,7 +93,10 @@ export default {
             itemRender: {
               name: 'select',
               options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
-            }
+            },
+            rules: [
+              { required: true }
+            ]
           },
           {
             title: '年龄',
@@ -110,7 +113,6 @@ export default {
             prop: 'height',
             span: 7,
             itemRender: { name: 'input' },
-            cascader: 'heightUnit',
             rules: [
               { max: 3 }
             ]
@@ -121,13 +123,19 @@ export default {
               options: [{ value: '1',
                 label: 'cm' },
               { value: '2',
-                label: 'm' }] }
+                label: 'm' }] },
+            rules: [
+              { required: true }
+            ]
           },
           {
             title: '体重',
             prop: 'weight',
             span: 7,
-            itemRender: { name: 'input' }
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
           },
           { prop: 'weightUnit',
             span: 5,
@@ -135,22 +143,37 @@ export default {
               options: [{ value: '1',
                 label: 'kg' },
               { value: '2',
-                label: 'g' }] }
+                label: 'g' }] },
+            rules: [
+              { required: true }
+            ]
           },
 
           {
             title: '爱好',
             prop: 'hobby1',
             span: 10,
-            itemRender: { name: 'input' }
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
           },
-          { prop: 'hobby2',
+          {
+            prop: 'hobby2',
             span: 7,
-            itemRender: { name: 'input' }
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
           },
-          { prop: 'hobby3',
+          {
+            prop: 'hobby3',
             span: 7,
-            itemRender: { name: 'input' }}
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
+          }
         ]
       }
     }

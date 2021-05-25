@@ -1,5 +1,6 @@
 import VCheckbox from 'pk/checkbox'
 import VRadio from 'pk/radio'
+import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 
@@ -16,7 +17,7 @@ export default {
     groupFloor: { type: Number, default: 0 },
     groupKey: { type: String, default: '' }
   },
-  components: { VCheckbox, VRadio },
+  components: { VCheckbox, VRadio, FormField },
   inject: ['table'],
   data() {
     return {
@@ -114,7 +115,8 @@ export default {
         }
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        const sourceRow = table.tableSourceData[rowIndex]
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
@@ -218,7 +220,8 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          <span class='eff-cell--label'>{slot}</span>
+          {slot}
+          {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
         </div>
       </div>
     )

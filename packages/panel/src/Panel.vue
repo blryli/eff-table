@@ -1,16 +1,5 @@
 <template>
-  <layout
-    class="panel"
-    type="row"
-    :width="calWidth"
-    :height="height"
-    :flexibility="flexibility"
-    :class="{
-      collapsed: isCollapsed,
-      vertical: deraction == 'vertical',
-      horizontal: deraction == 'horizontal',
-    }"
-  >
+  <layout class="panel">
     <div
       class="panel-header flex-row"
       :class="{ collapsible: collapsible }"
@@ -24,24 +13,18 @@
         v-show="!isCollapsed || deraction === 'vertical'"
         class="flex-space"
       />
-      <v-render v-if="headerTools.name" :config="headerTools" @click.native.stop />
+      <!-- <v-render v-if="headerTools.name" :config="headerTools" @click.native.stop /> -->
+      <slot name="header" />
       <i
-        v-if="collapsed"
+        v-if="collapsible"
         class="el-icon-arrow-right"
         :class="{ icon2front: icon2front }"
         @click="collapse('horizontal')"
       />
     </div>
-    <layout
-      v-if="!isCollapsed"
-      class="panel-content"
-      :type="type"
-      :warp="warp"
-      :flexibility="true"
-      :justify-content="justifyContent"
-    >
+    <div v-show="!isCollapsed" class="panel-content">
       <slot />
-    </layout>
+    </div>
   </layout>
 </template>
 <script>
@@ -64,44 +47,22 @@ export default {
     // 是否前置操作图标
     icon2front: { type: Boolean, default: false },
 
-    // 布局方式  [row: 行布局 | col: 列布局 ]
-    type: { type: String, default: 'row' },
-
-    // 是否自动换行
-    warp: { type: Boolean, default: false },
-
-    // 可伸缩性  [row: 行布局 | col: 列布局]
-    flexibility: { type: Boolean, default: false },
-    // 宽度
-    // eslint-disable-next-line vue/require-default-prop
-    width: String,
-
-    // 高度
-    // eslint-disable-next-line vue/require-default-prop
-    height: String,
-
     // 头部工具栏
     headerTools: {
       type: Object,
       default() {
-        return {}
-      }
-    },
+        return {
 
-    // 内容区 主轴上的对齐方式  flex-start | flex-end | center | space-between | space-around
-    justifyContent: { type: String, default: 'flex-start' }
+        }
+      }
+    }
   },
   data() {
     return {
-      isCollapsed: this.collapsed,
-      iWidth: this.width
+      isCollapsed: this.collapsed
     }
   },
-  computed: {
-    calWidth: function() {
-      return this.iWidth || this.width
-    }
-  },
+
   watch: {
     collapsed(val) {
       this.isCollapsed = val
@@ -116,6 +77,7 @@ export default {
             this.iWidth = this.isCollapsed ? '45px' : ''
           }
           this.$emit('update:collapsed', this.isCollapsed)
+          this.$emit('change', this.isCollapsed)
         }
       }
     }

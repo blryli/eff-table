@@ -1,35 +1,39 @@
 <template>
-  <v-col :span="form.isResponse ? 24 : span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
+  <layout :span="form.isResponse ? 24 : span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
     <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': lineHeight}">
       <label v-if="title" class="v-form-item__title" :style="{flex: `0 0 ${titleWidth}`}">{{ title }}</label>
       <FormField
         class="v-form-item__content"
         :prop="prop"
-        :data="data"
+        :row="data"
+        :column="column"
         :rules="rules"
-        :cascader="cascader"
+        :cascade="cascade"
+        :cascade-field="cascadeField"
+        :cascade-method="cascadeMethod"
       >
         <slot />
       </FormField>
     </div>
-  </v-col>
+  </layout>
 </template>
 
 <script>
-import VCol from './col'
 import FormField from './form-field'
 
 export default {
   name: 'VFormItem',
-  components: { VCol, FormField },
+  components: { FormField },
   props: {
     prop: { type: String, default: '' },
+    column: { type: Object, default: () => ({}) },
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     span: { type: Number, default: 24 },
-    data: { type: Object, default: () => {} },
+    data: { type: Object, default: () => ({}) },
     rules: { type: Array, default: () => [] },
-    cascader: { type: [String, Array], default: '' }
+    cascade: Boolean,
+    optionsFunc: { type: Function, default: () => {} }
   },
   data() {
     return {}
