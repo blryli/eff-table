@@ -80,6 +80,10 @@ export default {
     getStyle() {
       const defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
       const paddingLeft = { paddingLeft: this.groupFloor * 28 + 'px' }
+
+      if (this.row.rowIsSum) {
+        this.style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
+      }
       return Object.assign(defaultStyle, this.style, paddingLeft)
     },
     renderSelection(h) {
