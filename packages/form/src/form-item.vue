@@ -8,9 +8,6 @@
         :row="data"
         :column="column"
         :rules="rules"
-        :cascade="cascade"
-        :cascade-field="cascadeField"
-        :cascade-method="cascadeMethod"
       >
         <slot />
       </FormField>

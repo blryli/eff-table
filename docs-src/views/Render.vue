@@ -179,6 +179,7 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
+      options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }],
       tableOptions: {
         search: true,
         drag: true,
@@ -261,12 +262,7 @@ export default {
             title: '选择器',
             config: {
               name: 'select',
-              options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }],
-              on: {
-                change: (val, val2) => {
-                  console.log(val, val2)
-                }
-              }
+              options: () => this.options
             },
             edit: true,
             search: true,

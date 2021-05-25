@@ -99,16 +99,12 @@ export default {
       />
     },
     cellRender(h) {
-      const { table, row, rowIndex, column, columnIndex, disabled } = this
+      const { table, row, rowIndex, column, columnIndex } = this
       const { cellRender, prop, config, type } = column
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
         const renderOpts = Object.assign({}, config, cellRender)
-        if (disabled) {
-          if (!renderOpts.props) renderOpts.props = {}
-          renderOpts.props.disabled = true
-        }
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
