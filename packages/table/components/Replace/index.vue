@@ -17,7 +17,7 @@
           <div class="list area-center flex justify-around">
             <v-form
               class="full-width"
-              :columns="formCols"
+              :columns="formColumns"
               :data="data"
             />
 
@@ -47,9 +47,6 @@
 
 <script>
 import vForm from 'pk/form/src/form'
-// import vFormField from 'pk/form/src/form-field'
-import vFormItem from 'pk/form/src/form-item'
-// import vCol from 'pk/form/src/col'
 
 import Card from 'pk/card'
 import Sortable from 'pk/utils/sortable'
@@ -57,7 +54,7 @@ import { deepClone } from 'pk/utils/index'
 
 export default {
   name: 'TableReplace',
-  components: { Card, vForm, vFormItem },
+  components: { Card, vForm },
   props: {
     initColumns: { type: Array, default: () => [] },
     columnControl: Boolean
@@ -93,16 +90,16 @@ export default {
       return 'auto'
     },
     rightStyle() {
-      return { width: true ? '25%' : '60px' }
+      return { width: '25%' }
     },
-    formCols() {
-      const cols = []
+    formColumns() {
+      const columns = []
       this.selectList.map((v, k) => {
-        cols.push({ prop: 'search' + k, itemRender: { name: 'select', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
-        cols.push({ span: 10, placeholder: '请输入填充内容', prop: 'replace' + k })
+        columns.push({ prop: 'search' + k, itemRender: { name: 'select', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
+        columns.push({ span: 10, placeholder: '请输入填充内容', prop: 'replace' + k })
       })
 
-      return cols
+      return columns
     }
   },
   watch: {
@@ -136,7 +133,7 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
+    const { offsetHeight, offsetTop, offsetLeft } = this.table.$el
     this.cardStyle = {
       top: offsetTop,
       left: offsetLeft,

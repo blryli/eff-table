@@ -32,7 +32,7 @@ Vue.use(VFormLayer)
 
 ```html
 <v-form>
-  <v-form-line :cols="[{ title: '名字' },{ title: '年龄' }]">
+  <v-form-line :columns="[{ title: '名字' },{ title: '年龄' }]">
     <input v-model="form.name" />
     <input v-model="form.age" />
   </v-form-line>
@@ -44,7 +44,7 @@ Vue.use(VFormLayer)
 ```html
 <v-form v-model="layer">
   <v-form-line
-    :cols="[{ title: '名字', path: '/name' },{ title: '年龄', path: '/age'}]">
+    :columns="[{ title: '名字', path: '/name' },{ title: '年龄', path: '/age'}]">
     <input v-model="form.name" />
     <input v-model="form.age" />
   </v-form-line>
@@ -52,7 +52,7 @@ Vue.use(VFormLayer)
 
 <v-layer>
   <v-layer-group
-    :cols="[{ title: '名字', path: '/name' },{ title: '年龄', path: '/age'}]">
+    :columns="[{ title: '名字', path: '/name' },{ title: '年龄', path: '/age'}]">
     <input v-model="form.name" />
     <input v-model="form.age" />
   </v-layer-group>
@@ -95,7 +95,7 @@ export default {
 ```html
 <v-form ref="form" :data="form" v-model="layer">
   <v-form-line
-    :cols="[{path: '/error', title: '名字', validator: rules.error},
+    :columns="[{path: '/error', title: '名字', validator: rules.error},
             {path: '/async', title: '年龄', validator: rules.async}]">
     <input v-model="form.error" />
     <input v-model="form.async" />
@@ -107,14 +107,14 @@ export default {
   <el-table :data="data">
     <el-table-column title="必填校验">
       <template slot-scope="scope">
-        <v-form-line :cols="[{path: `/${scope.$index}/error`, validator: rules.error}]">
+        <v-form-line :columns="[{path: `/${scope.$index}/error`, validator: rules.error}]">
             <el-input slot="reference" v-model="scope.row.error"/>
         </v-form-line>
       </template>
     </el-table-column>
     <el-table-column title="年龄">
       <template slot-scope="scope">
-        <v-form-line :cols="[{path: `/${scope.$index}/age`}]">
+        <v-form-line :columns="[{path: `/${scope.$index}/age`}]">
           <el-input v-model="scope.row.age"/>
         </v-form-line>
       </template>
@@ -347,14 +347,14 @@ focusOptions: { // object
 
 | 参数        | 说明                                                                     | 类型   | 默认值 |
 | ----------- | ------------------------------------------------------------------------ | ------ | ------ |
-| cols        | item 布局配置                                                            | array  | []     |
+| columns        | item 布局配置                                                            | array  | []     |
 | title       | 子节点并排展示时使用，form-line 设置 title 后，子节点设置的 title 将失效 | string | -      |
 | title-width | 表单域标签的宽度                                                         | string | -      |
 | required    | 是否在 title 文字前面显示必填 * 符号                                  | boolean | false     |
 | span        | form-line 在一行分成 24 份中所占的份数                                   | number | 24     |
 
 ```js
-cols: [ // array
+columns: [ // array
   {
     title: 'title', // string
     // 标签文本

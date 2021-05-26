@@ -117,15 +117,15 @@ export default {
       return 'auto'
     },
     rightStyle() {
-      return { width: true ? '25%' : '60px' }
+      return { width: '25%' }
     },
-    formCols() {
-      const cols = []
+    formColumns() {
+      const columns = []
       this.selectList.map((v, k) => {
-        cols.push({ prop: 'search' + k, itemRender: { name: 'switch', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
+        columns.push({ prop: 'search' + k, itemRender: { name: 'switch', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
       })
 
-      return cols
+      return columns
     }
   },
   watch: {
@@ -159,7 +159,7 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
+    const { offsetHeight, offsetTop, offsetLeft } = this.table.$el
     this.cardStyle = {
       top: offsetTop,
       left: offsetLeft,
