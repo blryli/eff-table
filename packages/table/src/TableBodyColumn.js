@@ -3,6 +3,7 @@ import VRadio from 'pk/radio'
 import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableBodyColumn',
@@ -108,7 +109,7 @@ export default {
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
-        const renderOpts = Object.assign({}, config, cellRender)
+        const renderOpts = XEUtils.merge({}, config, cellRender)
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]

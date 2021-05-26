@@ -28,9 +28,7 @@ export default {
     titleWidth: { type: String, default: '' },
     span: { type: Number, default: 24 },
     data: { type: Object, default: () => ({}) },
-    rules: { type: Array, default: () => [] },
-    cascade: Boolean,
-    optionsFunc: { type: Function, default: () => {} }
+    rules: { type: Array, default: () => [] }
   },
   data() {
     return {}
