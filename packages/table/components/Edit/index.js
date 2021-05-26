@@ -2,6 +2,7 @@ import { getType } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableEdit',
@@ -50,7 +51,9 @@ export default {
         if (typeof render === 'function') {
           return render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop }) || ''
         } else {
-          const renderOpts = Object.assign({ name: 'input' }, config, render)
+          const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
+          console.log({ config, render })
+          console.log('renderOpts', JSON.stringify(renderOpts, null, 2))
           const { name } = renderOpts
           const compConf = renderer.get(name)
           return compConf && compConf.renderEdit($createElement, renderOpts, { table, vue: table, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''

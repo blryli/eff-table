@@ -1,5 +1,4 @@
 import XEUtils from 'xe-utils'
-import { getType } from 'pk/utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
 
@@ -96,8 +95,8 @@ function renderselectCell(h, renderOpts, params) {
   return labelKey ? opt[labelKey] : cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
-  const { options = [], cascade, optionsFunc } = renderOpts
-  const { vue, data = {}, table, row, sourceRow, column, prop, searchChange } = params
+  const { options = [] } = renderOpts
+  const { vue, data = {}, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : data[prop],
     placeholder: '请选择' + (column.title || '')
@@ -125,20 +124,6 @@ function renderSelect(h, renderOpts, params, renderType) {
       })
       Object.assign(on, {
         'visible-change': (isExpend, val) => {
-          if (isExpend) {
-            if (cascade && optionsFunc) {
-              const promise = optionsFunc({ row, sourceRow, editStore: table.editStore })
-              if (promise) {
-                if (getType(promise) === 'Promise') {
-                  promise.then(options => {
-                    renderOpts.options.splice(0, 10000, ...options)
-                  })
-                } else {
-                  renderOpts.options.splice(0, 10000, ...promise)
-                }
-              }
-            }
-          }
           vue.setEditIsStop(isExpend)
         }
       })

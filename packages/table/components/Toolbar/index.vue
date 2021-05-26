@@ -40,7 +40,8 @@ export default {
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory, showReplace, showSort } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
-      let { code, on } = cur
+      const { code } = cur
+      let { on } = cur
       if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
         on = getOn(on, { click: e => this.btnClick(code, e, idx) })
       }

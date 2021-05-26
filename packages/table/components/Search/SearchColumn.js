@@ -5,6 +5,7 @@ import Input from './components/Input.vue'
 import RangeInput from './components/RangeInput.vue'
 import { getType } from 'pk/utils'
 import { renderer } from 'pk/utils/render'
+import XEUtils from 'xe-utils'
 
 const isDate = val => getType(val) === 'Date'
 
@@ -131,7 +132,7 @@ export default {
         if (typeof render === 'function') {
           slot = render(h, { prop, column, columnIndex })
         } else {
-          const renderOpts = Object.assign({}, config, render || {})
+          const renderOpts = XEUtils.merge({}, config, render || {})
           const { name } = renderOpts
           const compConf = renderer.get(name)
           if (compConf && typeof compConf.renderSearch === 'function') {
@@ -144,7 +145,7 @@ export default {
           if (rangeRender === 'function') {
             rangeSlot = rangeRender(h, { prop, column, columnIndex })
           } else {
-            const renderOpts = Object.assign({}, config, render)
+            const renderOpts = XEUtils.merge({}, config, render)
             const { name, type } = renderOpts
             const compConf = renderer.get(name || type)
             if (compConf && compConf.renderSearchRange) {
