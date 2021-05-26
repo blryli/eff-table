@@ -1,4 +1,4 @@
-import Form from './src/Form.vue'
+import Form from './src/form.vue'
 
 Form.install = (vue) => {
   vue.component(Form.name, Form)
