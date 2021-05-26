@@ -388,7 +388,7 @@ export default {
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
         return this.handleValidate().then(res => {
-          if (column && column.prop) {
+          if (column && column.prop && rowIndex !== null) {
             const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: this.baseText }
             if (data.oldData !== null && data.oldData !== data.newData) {
               this.table.$emit('table-update-data', data)

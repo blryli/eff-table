@@ -558,7 +558,7 @@ export default {
       return this.tableData
     },
     getEditStore() {
-      return this.editStore.source
+      return this.editStore
     }
   }
 }
