@@ -15,34 +15,34 @@
       <div class="main">
         <div class="center" :style="centerStyle">
           <div class="list area-center flex justify-around full-width">
-              <draggable
-                class="tags-view-draggable full-width"
-                v-model="selectList"
-                handle=".tags-view-item"
-                :forceFallback="false"
-                group="cloumnSort"
-                animation="500"
-              >
-                <div class="tags-view-item full-width" v-for="(v, k) in selectList" :key="k">
-                  <v-form
-                    class="full-width flex padding-left padding-top"
-                    :cols="[{ prop: 'search' + k, itemRender: { name: 'select', options: [{label: '正序', value: 1}, {label: '倒叙', value: 2}] }, placeholder: '请选择排序方式', options: [{ label: 1, value: 1 }], title: v.title, span: 18 }]"
-                    :data="data[k]"
-                  >
+            <draggable
+              v-model="selectList"
+              class="tags-view-draggable full-width"
+              handle=".tags-view-item"
+              :force-fallback="false"
+              group="cloumnSort"
+              animation="500"
+            >
+              <div v-for="(v, k) in selectList" :key="k" class="tags-view-item full-width">
+                <v-form
+                  class="full-width flex padding-left padding-top"
+                  :columns="[{ prop: 'search' + k, itemRender: { name: 'select', options: [{label: '正序', value: 1}, {label: '倒叙', value: 2}] }, placeholder: '请选择排序方式', options: [{ label: 1, value: 1 }], title: v.title, span: 18 }]"
+                  :data="data[k]"
+                >
                   <template v-slot:before>
-                      <div
-                        class="eff-table__sort flex justify-between fl margin-top-sm"
-                        title="自定义排序"
-                        style="cursor: n-resize;"
-                      >
-                        <div class="eff-table__sort-left" />
-                        <div class="eff-table__sort-right" />
-                      </div>
+                    <div
+                      class="eff-table__sort flex justify-between fl margin-top-sm"
+                      title="自定义排序"
+                      style="cursor: n-resize;"
+                    >
+                      <div class="eff-table__sort-left" />
+                      <div class="eff-table__sort-right" />
+                    </div>
                   </template>
-                  </v-form>
+                </v-form>
 
-                </div>
-              </draggable>
+              </div>
+            </draggable>
           </div>
         </div>
         <div class="right" :style="rightStyle">
@@ -71,7 +71,7 @@
 
 import vForm from 'pk/form/src/form'
 
-import Draggable from "vuedraggable"
+import Draggable from 'vuedraggable'
 // import vFormField from 'pk/form/src/form-field'
 // import vCol from 'pk/form/src/col'
 

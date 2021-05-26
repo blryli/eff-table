@@ -17,7 +17,7 @@
           <div class="list area-center flex justify-around">
             <v-form
               class="full-width"
-              :cols="formCols"
+              :columns="formCols"
               :data="data"
             />
 
