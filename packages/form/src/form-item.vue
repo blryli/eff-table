@@ -1,12 +1,10 @@
 <template>
   <layout :span="form.isResponse ? 24 : span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
-    <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': lineHeight}">
-      <label v-if="title" class="v-form-item__title" :style="{flex: `0 0 ${titleWidth}`}">{{ title }}</label>
+    <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': form.lineHeight}">
+      <label v-if="title" class="v-form-item__title" :style="{flex: `0 0 ${tWidth}`}">{{ title }}</label>
       <FormField
         class="v-form-item__content"
         :prop="prop"
-        :row="data"
-        :column="column"
         :rules="rules"
       >
         <slot />
@@ -22,13 +20,11 @@ export default {
   name: 'VFormItem',
   components: { FormField },
   props: {
-    prop: { type: String, default: '' },
-    column: { type: Object, default: () => ({}) },
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     span: { type: Number, default: 24 },
-    data: { type: Object, default: () => ({}) },
-    rules: { type: Array, default: () => [] }
+    rules: { type: Array, default: () => [] },
+    prop: { type: String, default: '' }
   },
   data() {
     return {}
@@ -38,8 +34,9 @@ export default {
     required() {
       return Boolean(this.rules.find(d => d.required))
     },
-    lineHeight() {
-      return this.form.lineHeight
+    tWidth() {
+      const { titleWidth, form } = this
+      return titleWidth || form.titleWidth || '80px'
     }
   }
 }
@@ -115,10 +112,6 @@ export default {
   flex: 1 !important;
   text-align: left;
   padding-right: 0;
-}
-
-.is-response .v-form-line--abreast + .v-form-line--abreast {
-  margin-left: 0;
 }
 </style>
 

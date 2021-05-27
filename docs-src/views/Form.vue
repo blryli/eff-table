@@ -11,11 +11,31 @@
         <el-button type="primary" @click="clearValidate">清除校验</el-button>
         <el-button type="primary" @click="save">保 存</el-button>
 
-        <!-- <v-form>
-          <v-form-item title="aaa" prop="aa" :span="8">
-            <el-input />
+        <v-form :data="data">
+          <v-form-item
+            title="名字"
+            prop="name"
+            :span="8"
+            :rules=" [
+              { type: 'phone' }
+            ]"
+          >
+            <el-input v-model="data.name" />
           </v-form-item>
-        </v-form> -->
+          <v-form-item
+            title="select"
+            prop="select"
+            :span="8"
+            :rules=" [
+              { required: true, trigger: 'change' }
+            ]"
+          >
+            <el-select v-model="data.select" clearable>
+              <el-option label="11" value="11" />
+              <el-option label="22" value="22" />
+            </el-select>
+          </v-form-item>
+        </v-form>
         <!-- {{ formOptions.data }} -->
       </div>
     </section>
@@ -61,20 +81,20 @@ export default {
       mainSnippet,
       componentSnippet,
       input: '',
+      data: {
+        name: '',
+        sex: '',
+        age: '',
+        height: '',
+        heightUnit: '1',
+        weight: '',
+        weightUnit: '1',
+        hobby1: '',
+        hobby2: '',
+        hobby3: ''
+      },
       formOptions: {
         // titleWidth: '100px',
-        // data: {
-        //   name: '',
-        //   sex: '',
-        //   age: '',
-        //   height: '',
-        //   heightUnit: '1',
-        //   weight: '',
-        //   weightUnit: '1',
-        //   hobby1: '',
-        //   hobby2: '',
-        //   hobby3: ''
-        // },
         columns: [
           {
             title: '名字',
@@ -95,7 +115,7 @@ export default {
               options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
             },
             rules: [
-              { required: true }
+              { required: true, trigger: 'change' }
             ]
           },
           {

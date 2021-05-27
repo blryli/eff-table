@@ -179,7 +179,7 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
-      options: [{ value1: '1', label1: '名称1' }, { value1: '2', label1: '名称2' }],
+      options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }],
       tableOptions: {
         search: true,
         drag: true,

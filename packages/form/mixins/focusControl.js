@@ -10,8 +10,8 @@ var defaultFocusOptions = {
 export default {
   data() {
     return {
-      lineSlots: Object.freeze([]),
-      curPath: null,
+      itemSlots: Object.freeze([]),
+      curprop: null,
       direction: null
     }
   },
@@ -38,42 +38,42 @@ export default {
       if (!this.focusCtrl.prevKeys) return ''
       return this.focusCtrl.nextKeys.toLowerCase().split('+').sort().toString()
     },
-    revLineSlots() {
-      return [...this.lineSlots].reverse()
+    revItemSlots() {
+      return [...this.itemSlots].reverse()
     },
-    lineSlotsPath() {
-      return this.lineSlots.map(d => d.path)
+    itemSlotsProp() {
+      return this.itemSlots.map(d => d.prop)
     }
   },
   methods: {
     lineSlotChange(obj) {
-      const lineSlots = [...this.lineSlots]
-      const index = lineSlots.findIndex(d => d.path === obj.path)
-      index === -1 ? lineSlots.push(obj) : lineSlots.splice(index, 1, obj)
-      this.lineSlots = Object.freeze(lineSlots)
-      // console.log(JSON.stringify(this.lineSlots.map(d => d.path), null, 2))
+      const itemSlots = [...this.itemSlots]
+      const index = itemSlots.findIndex(d => d.prop === obj.prop)
+      index === -1 ? itemSlots.push(obj) : itemSlots.splice(index, 1, obj)
+      this.itemSlots = Object.freeze(itemSlots)
+      // console.log(JSON.stringify(this.itemSlots.map(d => d.prop), null, 2))
     },
-    onFocus(path) {
+    onFocus(prop) {
       setTimeout(() => {
-        this.curPath = path
-        this.$emit('focus', path)
+        this.curprop = prop
+        this.$emit('focus', prop)
       }, 50)
     },
-    onBlur(path) {
-      this.$emit('blur', path)
+    onBlur(prop) {
+      this.$emit('blur', prop)
     },
     _clear() {
-      this.curPath = null
+      this.curprop = null
     },
     click(e) {
-      const { curPath, lineSlots, _clear } = this
-      if (!curPath) return
-      !lineSlots.find(d => d.slot.$el.contains(e.target)) && _clear()
+      const { curprop, itemSlots, _clear } = this
+      if (!curprop) return
+      !itemSlots.find(d => d.slot.$el.contains(e.target)) && _clear()
     },
     keyup(e) {
-      const { curPath, editIsStop, prevKeys, nextKeys, lineSlotsPath, prevFocus, nextFocus, focus } = this
+      const { curprop, editIsStop, prevKeys, nextKeys, itemSlotsProp, prevFocus, nextFocus, focus } = this
       const keyStr = e.key || e.keyIdentifier
-      if (!curPath || editIsStop || !keyStr) return
+      if (!curprop || editIsStop || !keyStr) return
       const key = keyStr.toLowerCase()
       const keys = new Set()
       const keyArr = [{ key: 'alt', down: e['altKey'] }, { key: 'control', down: e['ctrlKey'] }, { key: 'shift', down: e['shiftKey'] }]
@@ -82,48 +82,48 @@ export default {
       })
       keys.add(key)
       const keysStr = Array.from(keys).sort().toString()
-      keysStr === prevKeys && prevFocus(curPath) // 上一个
-      keysStr === nextKeys && nextFocus(curPath) // 下一个
+      keysStr === prevKeys && prevFocus(curprop) // 上一个
+      keysStr === nextKeys && nextFocus(curprop) // 下一个
 
       // table上下键控制focus
-      if (/\/\d\//.test(curPath)) {
-        const getPath = sign => curPath.replace(/\/(\d)\//, (match, p1) => `/${+p1 + sign}/`)
-        const prevPath = getPath(-1)
-        const nextPath = getPath(1)
-        keysStr === 'arrowup' && lineSlotsPath.includes(prevPath) && focus(prevPath)
-        keysStr === 'arrowdown' && lineSlotsPath.includes(nextPath) && focus(nextPath)
+      if (/\/\d\//.test(curprop)) {
+        const getprop = sign => curprop.replace(/\/(\d)\//, (match, p1) => `/${+p1 + sign}/`)
+        const prevprop = getprop(-1)
+        const nextprop = getprop(1)
+        keysStr === 'arrowup' && itemSlotsProp.includes(prevprop) && focus(prevprop)
+        keysStr === 'arrowdown' && itemSlotsProp.includes(nextprop) && focus(nextprop)
       }
-      this.$emit('keyup', keysStr, curPath, e)
+      this.$emit('keyup', keysStr, curprop, e)
     },
-    prevFocus(curPath = this.curPath) {
-      const { revLineSlots, nextNodeFocus } = this
+    prevFocus(curprop = this.curprop) {
+      const { revItemSlots, nextNodeFocus } = this
       this.direction = 'prev'
-      nextNodeFocus(curPath, revLineSlots)
+      nextNodeFocus(curprop, revItemSlots)
     },
-    nextFocus(curPath = this.curPath) {
-      const { lineSlots, nextNodeFocus } = this
+    nextFocus(curprop = this.curprop) {
+      const { itemSlots, nextNodeFocus } = this
       this.direction = 'next'
-      nextNodeFocus(curPath, lineSlots)
+      nextNodeFocus(curprop, itemSlots)
     },
-    nextNodeFocus(curPath, lineSlots) {
-      const index = lineSlots.findIndex(d => d.path === curPath) || 0
+    nextNodeFocus(curprop, itemSlots) {
+      const index = itemSlots.findIndex(d => d.prop === curprop) || 0
       if (index === -1) return
       let nextIndex
-      const len = lineSlots.length
-      const curConponent = getOneChildComponent(lineSlots[index].slot)
+      const len = itemSlots.length
+      const curConponent = getOneChildComponent(itemSlots[index].slot)
 
       const handleBlur = () => { // 处理失焦
         if (curConponent) {
           curConponent.blur && curConponent.blur()
           curConponent.handleClose && curConponent.handleClose()
         } else {
-          const slotInput = lineSlots[index].input
+          const slotInput = itemSlots[index].input
           slotInput && slotInput.blur && slotInput.blur()
         }
       }
 
       for (let i = index + 1; i < len; i++) {
-        const slot = lineSlots[i]
+        const slot = itemSlots[i]
         if (this._isCanFocus(slot)) {
           nextIndex = i
           break
@@ -133,10 +133,10 @@ export default {
       // 如果下一个节点是最后一个或是剩下的节点存在，且都为不可操作的节点
       if (index === len - 1 || nextIndex === undefined) {
         if (this.focusCtrl.loop) {
-          nextIndex = lineSlots.findIndex(slot => this._isCanFocus(slot))
+          nextIndex = itemSlots.findIndex(slot => this._isCanFocus(slot))
         } else {
           const event = this.direction === 'prev' ? 'first-focused-node-prev' : 'last-focused-node-next'
-          this.$emit(event, this.curPath)
+          this.$emit(event, this.curprop)
           this._clear()
           handleBlur()
           return
@@ -144,7 +144,7 @@ export default {
       }
 
       const ev = this.direction === 'prev' ? 'focus-prev' : 'focus-next'
-      this.$emit(ev, this.curPath)
+      this.$emit(ev, this.curprop)
 
       if (this.focusPause) return
 
@@ -152,38 +152,38 @@ export default {
       nextIndex !== index && handleBlur()
 
       try {
-        const focusNode = this.getFocusNode(nextIndex, lineSlots)
+        const focusNode = this.getFocusNode(nextIndex, itemSlots)
         focusNode && focusNode.focus && focusNode.focus()
       } catch (error) {
         console.error(error)
       }
     },
-    getFocusNode(index, lineSlots = this.lineSlots) {
-      const nextSlot = lineSlots[index]
+    getFocusNode(index, itemSlots = this.itemSlots) {
+      const nextSlot = itemSlots[index]
       const nextComponent = getOneChildComponent(nextSlot.slot)
       return nextSlot && (nextComponent || nextSlot.input)
     },
     // 如果节点存在，disabled 不为 true，并且不在跳过字段列表，则判断为可聚焦
     _isCanFocus(lineSlot) {
-      const { path, slot, input } = lineSlot
+      const { prop, slot, input } = lineSlot
       const component = getOneChildComponent(slot)
-      return (!path || path && !this.focusCtrl.skips.find(p => p === path)) && (component && !component.disabled || !component && input && !input.disabled)
+      return (!prop || prop && !this.focusCtrl.skips.find(p => p === prop)) && (component && !component.disabled || !component && input && !input.disabled)
     },
-    focus(path) {
-      this.getInput(path).focus && this.getInput(path).focus()
+    focus(prop) {
+      this.getInput(prop).focus && this.getInput(prop).focus()
     },
-    blur(path) {
-      this.getInput(path).blur && this.getInput(path).blur()
+    blur(prop) {
+      this.getInput(prop).blur && this.getInput(prop).blur()
     },
-    select(path) {
-      this.getInput(path).select && this.getInput(path).select()
+    select(prop) {
+      this.getInput(prop).select && this.getInput(prop).select()
     },
-    getInput(path) {
-      const { lineSlots, _isCanFocus, getFocusNode } = this
-      if (path && !lineSlots.find(d => d.slot.path === path)) {
-        console.error(`focus方法传入的path [${path}] 没有定义`)
+    getInput(prop) {
+      const { itemSlots, _isCanFocus, getFocusNode } = this
+      if (prop && !itemSlots.find(d => d.slot.prop === prop)) {
+        console.error(`focus方法传入的prop [${prop}] 没有定义`)
       }
-      const index = path ? lineSlots.findIndex(d => d.path === path) : lineSlots.findIndex(d => _isCanFocus(d))
+      const index = prop ? itemSlots.findIndex(d => d.prop === prop) : itemSlots.findIndex(d => _isCanFocus(d))
       if (index === -1) return
       return getFocusNode(index)
     }
