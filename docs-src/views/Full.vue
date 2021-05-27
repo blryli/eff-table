@@ -19,6 +19,11 @@
           select-range
           copy
           show-replace
+          column-edit
+          edit-history
+          show-sort
+          :toolbar-config="{diySearch: diySearch}"
+          :footer-action-config="{showPager: true, showBorder: true}"
           @selection-change="selectionChange"
           @search-change="searchChange"
         >
@@ -404,6 +409,10 @@ export default {
       }],
       data: [],
       list: [],
+      diySearch: {
+        fields: ['field1', 'field2', 'field3'],
+        op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
+      },
       selectionIndexs: [],
       columns: [
         {
@@ -581,6 +590,12 @@ export default {
   mounted() {
     setTimeout(() => {
       this.getData()
+      this.$refs.table.$set(this.$refs.table, 'pager', {
+        pageNum: 1,
+        pageSize: 10,
+        total: 1000
+      })
+      console.log(this.$refs.table.pager)
     }, 50)
   },
   methods: {
@@ -619,6 +634,7 @@ export default {
           }
         ]
       }).array
+
       this.list = [...this.data]
     },
     visibleChange(val) {

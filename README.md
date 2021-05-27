@@ -198,6 +198,8 @@ value: [
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 | updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
 | editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
+| copyFromChecked | 把选择的行数据复制到粘贴板 ||
+
 
 ### Events
 | 事件名称 | 说明                   | 回调参数                    |

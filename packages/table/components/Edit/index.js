@@ -4,6 +4,8 @@ import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
 import XEUtils from 'xe-utils'
 
+let globalBaseText
+let globalColumnIndex
 export default {
   name: 'TableEdit',
   props: {
@@ -43,10 +45,14 @@ export default {
         const { render } = edit || {}
         const sourceRow = table.tableSourceData[rowIndex]
 
-        if (this.baseText === null || this.columnIndex !== columnIndex) {
-          this.baseText = row && row[prop] || null
+        // debugger
+
+        if (globalBaseText === null || globalColumnIndex !== columnIndex) {
+          globalBaseText = row && row[prop] || null
           this.columnIndex = columnIndex
+          globalColumnIndex = columnIndex
         }
+        console.log(this, this.baseText, 123)
 
         if (typeof render === 'function') {
           return render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop }) || ''
@@ -381,17 +387,18 @@ export default {
       this.baseText = null
     },
     blurEvent() {
+      console.log(this, this.baseText, 333)
       const { component, table, rowIndex, columnIndex, column } = this
       const { tableData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
-        return this.handleValidate().then(res => {
-          if (column && column.prop && rowIndex !== null) {
-            const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: this.baseText }
-            if (data.oldData !== null && data.oldData !== data.newData) {
-              this.table.$emit('table-update-data', data)
-            }
+        if (column && column.prop && rowIndex !== null) {
+          const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: globalBaseText }
+          if (data.oldData !== null && data.oldData !== data.newData) {
+            this.table.$emit('table-update-data', data)
           }
+        }
+        return this.handleValidate().then(res => {
           this.updateStatus()
           const { close } = component
           component.$emit('blur')

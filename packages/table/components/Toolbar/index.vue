@@ -58,6 +58,9 @@ export default {
         </div>
         <div class='eff-table__toobar-right'>
           {
+            editHistory && <EditHistory /> || ''
+          }
+          {
             showSort && <SortCtrlBtn /> || ''
           }
           {
@@ -68,9 +71,6 @@ export default {
           }
           {
             refresh && <Refresh /> || ''
-          }
-          {
-            editHistory && <EditHistory /> || ''
           }
           {
             search && searchClear && <Clear /> || ''
