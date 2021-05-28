@@ -93,18 +93,19 @@ export default {
     resetField() {}
   },
   render(h) {
-    const { columns, titleAlign, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
+    const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts } = this
     return h('layout', {
       class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : ''],
-      style: { width: width }
+      style: {
+        width: width,
+        'margin-left': itemGutter ? `-${itemGutter / 2}px` : '',
+        'margin-right': itemGutter ? `-${itemGutter / 2}px` : ''
+      }
     },
     [
       columns.map(column => {
         const props = Object.assign({}, column, { data, column })
-        return h('v-form-item', {
-          props,
-          style: { padding: `0 ${itemGutter}`, marginBottom: rowledge }
-        }, [itemRender(column)])
+        return h('v-form-item', { props }, [itemRender(column)])
       }),
       $slots.default,
       h('Popover', { ref: 'popover', attrs: popoverOpts })

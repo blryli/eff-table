@@ -1,12 +1,19 @@
 <template>
-  <layout :span="span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
-    <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': form.lineHeight}">
-      <label v-if="title || form.titleAlign === 'top'" class="v-form-item__title" :style="{flex: `0 0 ${tWidth}`}">{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
-      <FormField
-        class="v-form-item__content"
-        :prop="prop"
-        :rules="rules"
-      >
+  <layout
+    :span="span"
+    :style="{ padding: form.itemGutter ? `0 ${form.itemGutter / 2}px` : '', marginBottom: form.rowledge }"
+  >
+    <div
+      class="v-form-item"
+      :class="{'is-required': required}"
+      :style="{'--lineHeight': form.lineHeight}"
+    >
+      <label
+        v-if="title || form.titleAlign === 'top'"
+        class="v-form-item__title"
+        :style="{flex: `0 0 ${tWidth}`}"
+      >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
+      <FormField class="v-form-item__content" :prop="prop" :rules="rules">
         <slot />
       </FormField>
     </div>
@@ -22,7 +29,7 @@ export default {
   props: {
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
-    span: { type: Number, default: 24 },
+    span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' }
   },
@@ -32,7 +39,7 @@ export default {
   inject: ['form'],
   computed: {
     required() {
-      return Boolean(this.rules.find(d => d.required))
+      return Boolean(this.rules.find((d) => d.required))
     },
     tWidth() {
       const { titleWidth, form } = this
@@ -61,7 +68,7 @@ export default {
   .vue-popover-trigger {
     position: relative;
   }
-  &.is-required>.v-form-item__title:before {
+  &.is-required > .v-form-item__title:before {
     content: "*";
     line-height: var(--lineHeight);
     color: #f52b2b;
@@ -82,14 +89,15 @@ export default {
     position: relative;
     line-height: var(--lineHeight);
     font-size: 14px;
-    &::before, &::after{
+    &::before,
+    &::after {
       display: table;
       content: "";
     }
-    &::after{
+    &::after {
       clear: both;
     }
-    & :only-child{
+    & :only-child {
       width: 100%;
     }
   }
@@ -104,11 +112,13 @@ export default {
 }
 
 /* 响应式布局 */
-.v-form--title-top .v-form-item, .is-response .v-form-item {
+.v-form--title-top .v-form-item,
+.is-response .v-form-item {
   flex-direction: column;
 }
 
-.v-form--title-top .v-form-item__title, .is-response .v-form-item__title {
+.v-form--title-top .v-form-item__title,
+.is-response .v-form-item__title {
   flex: 1 !important;
   text-align: left;
   padding-right: 0;

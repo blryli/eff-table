@@ -10,9 +10,18 @@
       </section>
     </header>
 
-    <keep-alive>
-      <router-view />
-    </keep-alive>
+    <div class="body">
+      <div class="menu">
+        <!-- <h2 class="menu-title">表格</h2>
+        <router-link to="d.path">aaaa</router-link>
+        <h2 class="menu-title">表单</h2> -->
+      </div>
+      <div class="container">
+        <keep-alive>
+          <router-view />
+        </keep-alive>
+      </div>
+    </div>
 
     <section class="more">
       <div class="section-content">
@@ -55,6 +64,18 @@ header {
   .description {
     color: white;
     margin-top: 24px;
+  }
+}
+
+.body{
+  position: relative;
+  .menu{
+    position: fixed;
+    left: 0;
+    top: 88px;
+  }
+  .container{
+    width: 100%;
   }
 }
 
