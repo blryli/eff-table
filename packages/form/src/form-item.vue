@@ -1,7 +1,7 @@
 <template>
-  <layout :span="form.isResponse ? 24 : span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
+  <layout :span="span" :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}">
     <div class="v-form-item" :class="{'is-required': required}" :style="{'--lineHeight': form.lineHeight}">
-      <label v-if="title" class="v-form-item__title" :style="{flex: `0 0 ${tWidth}`}">{{ title }}</label>
+      <label v-if="title || form.titleAlign === 'top'" class="v-form-item__title" :style="{flex: `0 0 ${tWidth}`}">{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
       <FormField
         class="v-form-item__content"
         :prop="prop"

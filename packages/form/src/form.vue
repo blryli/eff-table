@@ -14,10 +14,9 @@ export default {
     columns: { type: Array, default: () => ([]) },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
-    titleAlign: { type: String, default: '' },
+    titleAlign: { type: String, default: 'right' },
     lineHeight: { type: String, default: '32px' },
     itemGutter: { type: Number, default: 0 },
-    response: { type: Boolean, default: true },
     rowledge: { type: String, default: '24px' },
     focusOpen: { type: Boolean, default: true },
     focusOptions: { type: Object, default: () => {} },
@@ -37,7 +36,6 @@ export default {
   },
   data() {
     return {
-      isResponse: false,
       inputIndex: 0,
       editIsStop: this.focusStop,
       popoverOpts: {}
@@ -45,14 +43,10 @@ export default {
   },
   computed: {
     formClass() {
-      const { response, isResponse, titleAlign } = this
+      const { titleAlign } = this
       let formClass = 'v-form '
-      if (response && isResponse) {
-        formClass += 'is-response'
-      } else {
-        titleAlign &&
+      titleAlign &&
         (formClass += `v-form--title-${titleAlign} `)
-      }
       return formClass
     }
   },
@@ -63,12 +57,6 @@ export default {
   },
   created() {
     this.init()
-  },
-  mounted() {
-    // 响应式处理
-    if (this.response) {
-      (window.innerWidth || document.documentElement.clientWidth) <= 768 && (this.isResponse = true)
-    }
   },
   methods: {
     init() {
@@ -105,8 +93,12 @@ export default {
     resetField() {}
   },
   render(h) {
-    const { columns, formClass, isResponse, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
-    return h('layout', { class: formClass, style: { width: isResponse ? '' : width }}, [
+    const { columns, titleAlign, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts } = this
+    return h('layout', {
+      class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : ''],
+      style: { width: width }
+    },
+    [
       columns.map(column => {
         const props = Object.assign({}, column, { data, column })
         return h('v-form-item', {
