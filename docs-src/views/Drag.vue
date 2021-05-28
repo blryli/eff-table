@@ -109,7 +109,7 @@ const componentSnippet = `
 />
 `
 export default {
-  name: '',
+  name: 'Drag',
   components: {
     CodeSnippet,
     Collapse

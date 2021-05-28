@@ -52,7 +52,6 @@ export default {
           this.columnIndex = columnIndex
           globalColumnIndex = columnIndex
         }
-        console.log(this, this.baseText, 123)
 
         if (typeof render === 'function') {
           return render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop }) || ''
@@ -81,7 +80,6 @@ export default {
         this.blurEvent().then(() => {
           this.placement = ''
           this.scrollNum = 0
-          this.rowIndex = null
           this.column = null
           this.cell = null
           this.visible = true
@@ -387,7 +385,6 @@ export default {
       this.baseText = null
     },
     blurEvent() {
-      console.log(this, this.baseText, 333)
       const { component, table, rowIndex, columnIndex, column } = this
       const { tableData } = this.table
       if (component) {

@@ -28,7 +28,7 @@
 <script>
 
 export default {
-  name: 'ColumnEdit1',
+  name: 'Panel',
   components: {},
 
   data() {

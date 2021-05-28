@@ -12,8 +12,25 @@
       <div class="menu">
         <router-link class="menu-list" to="/Start">Start</router-link>
         <h3 class="menu-title">表格</h3>
-        <router-link class="menu-list" to="/">Drag 拖动</router-link>
+        <router-link class="menu-list" to="/">Base 基础表格</router-link>
+        <router-link class="menu-list" to="/Drag">Drag 拖动</router-link>
         <router-link class="menu-list" to="/Edit">Edit 编辑</router-link>
+        <router-link class="menu-list" to="/Search">Search 搜索</router-link>
+        <router-link class="menu-list" to="/Validate">Validate 校验</router-link>
+        <router-link class="menu-list" to="/Virtual">Virtual 虚拟滚动</router-link>
+        <router-link class="menu-list" to="/Copy">Copy 复制</router-link>
+        <router-link class="menu-list" to="/ColumnEdit">ColumnEdit 列控制</router-link>
+        <router-link class="menu-list" to="/DiySearch">DiySearch 高级搜索</router-link>
+        <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
+        <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
+        <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
+        <router-link class="menu-list" to="/GroupColumn">GroupColumn 树</router-link>
+        <router-link class="menu-list" to="/History">History 记录</router-link>
+        <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
+        <router-link class="menu-list" to="/Replace">Replace 批量替换</router-link>
+        <router-link class="menu-list" to="/SmallSum">SmallSum 小计</router-link>
+        <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
+        <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>
         <router-link class="menu-list" to="/Form">layout 布局</router-link>
       </div>
@@ -54,12 +71,18 @@ body {
 }
 
 .header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 60px;
   background: $primary-color;
   padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 10;
 
   h2 {
     margin: 0;
@@ -85,12 +108,16 @@ body {
 
 .body{
   position: relative;
+  margin-top: 60px;
 }
 .menu{
   position: fixed;
   left: 0;
-  top: 80px;
+  top: 60px;
+  max-height: calc(100% - 60px);
   padding: 20px;
+  overflow: auto;
+  font-size: 14px;
   box-sizing: border-box;
   &-list{
     display: block;
@@ -99,7 +126,7 @@ body {
 }
 .container{
   width: 100%;
-  padding-left: 60px;
+  padding-left: 150px;
   box-sizing: border-box;
 }
 
@@ -128,7 +155,7 @@ a {
   text-decoration: none;
   cursor: pointer;
 
-  &:hover {
+  &:hover, &.router-link-exact-active {
     color: $primary-color;
   }
 }
@@ -146,7 +173,7 @@ a {
 
 @media (max-width: 1200px) {
   .container{
-    padding-left: 120px;
+    padding-left: 190px;
   }
 }
 </style>
