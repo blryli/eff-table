@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Drag 拖动</h2>
     <section class="demo">
       <div class="section-content">
         <eff-table
