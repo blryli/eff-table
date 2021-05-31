@@ -153,7 +153,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>editStore -  {{ editStore }}</p>
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -274,7 +274,7 @@ export default {
   },
   data() {
     return {
-      tableData: this.loadTableData(this.data),
+      tableData: [],
       tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
@@ -389,7 +389,6 @@ export default {
         !d[rowId] && (d._rowId = i)
         return d
       }) || []
-      console.log(this.tableData)
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       editStore.insertList = []
