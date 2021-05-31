@@ -27,7 +27,6 @@
         <label
           v-if="title || form.titleAlign === 'top'"
           class="v-form-item__title"
-          :style="{flex: `0 0 ${tWidth}`}"
         >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
       </div>
       <FormField
@@ -58,11 +57,13 @@ export default {
   },
   data() {
     return {
-      showMessage: false
     }
   },
-  inject: ['form'],
+  inject: ['form', 'table'],
   computed: {
+    root() {
+      return this.form || this.table
+    },
     required() {
       return Boolean(this.rules.find((d) => d.required))
     },
@@ -76,16 +77,20 @@ export default {
   },
   methods: {
     messageEnter(e) {
-      this.showMessage = true
+      const message = this.titlePrefix.message
+      this.root.tipShow({ reference: e.toElement, 'popoverClass': 'v-form-popover', message: [{ message }] })
     },
     messageLeave(e) {
-      this.showMessage = false
+      this.root.tipClose()
     }
   }
 }
 </script>
 
 <style lang="scss">
+.v-form-popover {
+  font-size: 12px;
+}
 .v-form-item {
   width: 100%;
   display: flex;
