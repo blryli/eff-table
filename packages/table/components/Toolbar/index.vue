@@ -9,6 +9,7 @@ import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
@@ -45,7 +46,7 @@ export default {
       if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
         on = getOn(on, { click: e => this.btnClick(code, e, idx) })
       }
-      const opts = Object.assign({}, cur, { on })
+      const opts = XEUtils.merge({}, cur, { props: { size: 'mini' }, on })
       const compConf = renderer.get(opts.name)
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])

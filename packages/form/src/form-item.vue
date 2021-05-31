@@ -1,7 +1,7 @@
 <template>
   <layout
-    :span="form.isResponse ? 24 : span"
-    :style="{'margin-left': '-' + form.itemGutter, 'margin-right': '-' + form.itemGutter}"
+    :span="span"
+    :style="{ padding: form.itemGutter ? `0 ${form.itemGutter / 2}px` : '', marginBottom: form.rowledge }"
   >
     <div
       class="v-form-item"
@@ -25,17 +25,17 @@
 
         </template>
         <label
-          v-if="title"
+          v-if="title || form.titleAlign === 'top'"
           class="v-form-item__title"
-        >
-          {{ title }}
-        </label>
+          :style="{flex: `0 0 ${tWidth}`}"
+        >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
       </div>
       <FormField
         class="v-form-item__content"
         :prop="prop"
         :rules="rules"
       >
+
         <slot />
       </FormField>
     </div>
@@ -51,7 +51,7 @@ export default {
   props: {
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
-    span: { type: Number, default: 24 },
+    span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' },
     titlePrefix: { type: Object, default: () => { return null } }
@@ -64,7 +64,7 @@ export default {
   inject: ['form'],
   computed: {
     required() {
-      return Boolean(this.rules.find(d => d.required))
+      return Boolean(this.rules.find((d) => d.required))
     },
     tWidth() {
       const { titleWidth, form } = this

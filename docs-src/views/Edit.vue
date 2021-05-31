@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Edit 编辑</h2>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -380,96 +380,6 @@ export default {
               'on': {
                 'change': this.asdf
               }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name1',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'textarea',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name2',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'select',
-              'on': {
-                'change': this.asdf
-              },
-              options: [{ label: 123, value: 123 }]
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name3',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'switch',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name4',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'date-picker',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name5',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'checkbox-group',
-              'on': {
-                'change': this.asdf
-              },
-              children: [
-                {
-                  'name': 'select',
-                  'on': {
-                    'change': this.asdf
-                  },
-                  options: [{ label: 123, value: 123 }]
-                }
-              ]
             }
           }
         },

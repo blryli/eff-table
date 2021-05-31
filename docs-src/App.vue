@@ -1,24 +1,46 @@
 <template>
   <div id="app">
-    <header>
-      <h1>{{ config.name }}</h1>
+    <div class="header">
+      <h2>{{ config.name }}</h2>
       <div class="command">npm install --save {{ config.name }}</div>
-      <section class="nav">
-        <router-link v-for="d in routes" :key="d.path" :to="d.path">{{ d.name }}</router-link>
+      <div class="nav">
         <a :href="`https://github.com/${config.author}/${config.name}#usage`">文档</a>
-        <!-- <a @click="toggleFullscreen">切换全屏</a> -->
-      </section>
-    </header>
-
-    <keep-alive>
-      <router-view />
-    </keep-alive>
-
-    <section class="more">
-      <div class="section-content">
-        了解 <a :href="`https://github.com/${config.author}/${config.name}`">更多</a>!
       </div>
-    </section>
+    </div>
+
+    <div class="body">
+      <div class="menu">
+        <router-link class="menu-list" to="/Start">Start</router-link>
+        <h3 class="menu-title">表格</h3>
+        <router-link class="menu-list" to="/">Base 基础表格</router-link>
+        <router-link class="menu-list" to="/Drag">Drag 拖动</router-link>
+        <router-link class="menu-list" to="/Edit">Edit 编辑</router-link>
+        <router-link class="menu-list" to="/Search">Search 搜索</router-link>
+        <router-link class="menu-list" to="/Validate">Validate 校验</router-link>
+        <router-link class="menu-list" to="/Virtual">Virtual 虚拟滚动</router-link>
+        <router-link class="menu-list" to="/Copy">Copy 复制</router-link>
+        <router-link class="menu-list" to="/ColumnEdit">ColumnEdit 列控制</router-link>
+        <router-link class="menu-list" to="/DiySearch">DiySearch 高级搜索</router-link>
+        <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
+        <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
+        <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
+        <router-link class="menu-list" to="/GroupColumn">GroupColumn 树</router-link>
+        <router-link class="menu-list" to="/History">History 记录</router-link>
+        <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
+        <router-link class="menu-list" to="/Replace">Replace 批量替换</router-link>
+        <router-link class="menu-list" to="/SmallSum">SmallSum 小计</router-link>
+        <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
+        <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
+        <h3 class="menu-title">表单</h3>
+        <router-link class="menu-list" to="/Form">layout 布局</router-link>
+      </div>
+      <div class="container">
+        <keep-alive>
+          <router-view />
+        </keep-alive>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -48,14 +70,64 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-header {
+.header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
   background: $primary-color;
-  padding: 20px 20px 20px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 10;
 
-  .description {
+  h2 {
+    margin: 0;
     color: white;
-    margin-top: 24px;
+    font-weight: normal;
+    text-align: center;
   }
+
+  .nav {
+    color: white;
+    box-sizing: border-box;
+    a {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        opacity: .8;
+      }
+    }
+  }
+}
+
+.body{
+  position: relative;
+  margin-top: 60px;
+}
+.menu{
+  position: fixed;
+  left: 0;
+  top: 60px;
+  max-height: calc(100% - 60px);
+  padding: 20px;
+  overflow: auto;
+  font-size: 14px;
+  box-sizing: border-box;
+  &-list{
+    display: block;
+    line-height: 36px;
+  }
+}
+.container{
+  width: 100%;
+  padding-left: 150px;
+  box-sizing: border-box;
 }
 
 .page{
@@ -64,66 +136,27 @@ header {
   padding: 20px;
 }
 
-section {
-  .section-content {
-    margin: 0 42px;
-    padding: 20px 0;
-    box-sizing: border-box;
-  }
-
-  &.nav {
-    text-align: center;
-    background: $primary-color;
-    padding: 20px 20px 0;
-    @include h-box;
-    @include box-center;
-    flex-wrap: wrap;
-
-    a {
-      margin-bottom: 10px;
-      display: inline-block;
-      padding: 0 16px;
-      height: 36px;
-      line-height: 36px;
-      color: white;
-      background: lighten($primary-color, 10%);
-      border-radius: 3px;
-
-      &:hover {
-        background: lighten($primary-color, 20%);
-      }
-
-      &:not(:last-child) {
-        margin-right: 8px;
-      }
-    }
-  }
-}
-
 .collapse {
   .section-content {
     padding: 12px 0 40px 0;
   }
 }
 
-h1 {
-  margin-top: 0;
-  color: white;
-  font-weight: normal;
-  text-align: center;
-}
-
 h2 {
   font-weight: normal;
 }
 
+h3{
+  color: #444;
+}
+
 a {
-  color: $primary-color;
+  color: #333;
   text-decoration: none;
   cursor: pointer;
 
-  &:hover {
-    color: lighten($primary-color, 10%);
+  &:hover, &.router-link-exact-active {
+    color: $primary-color;
   }
 }
 
@@ -138,38 +171,9 @@ a {
   box-sizing: border-box;
 }
 
-.snippet {
-  margin: 16px 0;
+@media (max-width: 1200px) {
+  .container{
+    padding-left: 190px;
+  }
 }
-
-.plus {
-  text-align: center;
-  color: $primary-color;
-  font-size: 32px;
-  margin: 12px;
-}
-
-.snippets {
-  background: #f7f7f7;
-  border: 1px solid #f7f7f7;
-  margin-bottom: 42px;
-  border-radius: 0 0 3px 3px;
-}
-
-.demo {
-  background: white;
-  margin-top: 12px;
-  border: 1px solid #eee;
-  border-radius: 3px 3px 0 0;
-}
-
-.more {
-  font-size: 24px;
-  text-align: center;
-  background: lighten($primary-color, 45%);
-}
-button{
-  outline: none;
-}
-
 </style>
