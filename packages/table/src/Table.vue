@@ -153,7 +153,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <p>editStore -  {{ editStore }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -265,7 +265,7 @@ export default {
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
-    rowId: { type: String, default: 'id' }, // 行主键
+    rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     editHistory: Boolean,
     showReplace: Boolean,
@@ -274,7 +274,7 @@ export default {
   },
   data() {
     return {
-      tableData: [...this.data],
+      tableData: this.loadTableData(this.data),
       tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
@@ -383,19 +383,19 @@ export default {
   },
   methods: {
     loadTableData(data) {
+      if (!data.length) return []
       const { editStore, rowId } = this
-      this.tableData = data || []
+      this.tableData = data.map((d, i) => {
+        !d[rowId] && (d._rowId = i)
+        return d
+      }) || []
+      console.log(this.tableData)
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       editStore.insertList = []
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
-
-      // 检测行主键在行数据中是否存在
-      if (data.length && !data[0].hasOwnProperty(rowId)) {
-        console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
-      }
       return this.$nextTick()
     },
     reloadData(data = null) {

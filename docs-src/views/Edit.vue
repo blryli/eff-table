@@ -51,275 +51,7 @@ import mock from 'mockjs'
 import { formatDate } from '@/utils'
 
 const mainSnippet = `
-export default {
-  name: 'Edit',
-  components: {
-    CodeSnippet,
-    Collapse
-  },
 
-  data() {
-    return {
-      mainSnippet,
-      componentSnippet,
-      data: [],
-      options: [{
-        value: '选项1',
-        label: '1'
-      }, {
-        value: '选项2',
-        label: '2'
-      }],
-      editStop: false,
-      columns: [
-        {
-          show: true,
-          type: 'index',
-          title: '序号',
-          width: 60
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'input',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name1',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'textarea',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name2',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'select',
-              'on': {
-                'change': this.asdf
-              },
-              options: [{ label: 123, value: 123 }]
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name3',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'switch',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name4',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'date-picker',
-              'on': {
-                'change': this.asdf
-              }
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'name5',
-          title: '名字',
-          config: {
-            defaultValue: '123'
-          },
-          edit: {
-            'render': {
-              'name': 'checkbox-group',
-              'on': {
-                'change': this.asdf
-              },
-              children: [
-                {
-                  'name': 'select',
-                  'on': {
-                    'change': this.asdf
-                  },
-                  options: [{ label: 123, value: 123 }]
-                }
-              ]
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'async',
-          titleRender: (h, { column }) => {
-            return ['异步处理', <el-tooltip class='item' effect='dark' content='当前单元格的值为异步取值，且被后面的值依赖时必用' placement='top'>
-              <i class='el-icon el-icon-question' />
-            </el-tooltip>]
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} placeholder='number' on-input={val => (row[prop] = val)} />
-            },
-            leaveTime: ({ prop, row }) => {
-              return new Promise(resolve => {
-                setTimeout(() => resolve(), row[prop] || 0)
-              })
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'switch',
-          titleRender: (h, { column }) => {
-            return ['开关', <el-tooltip class='item' effect='dark' content='控制动态skip：有值打开，没值禁用' placement='top'>
-              <i class='el-icon el-icon-question' />
-            </el-tooltip>]
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'dynamic',
-          title: '动态skip',
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input
-                value={row[prop]}
-                disabled={!row.switch}
-                on-input={val => (row[prop] = val)}
-              />
-            },
-            skip: ({ row }) => !row.switch
-          }
-        },
-        {
-          show: true,
-          prop: 'select',
-          title: '选择器',
-          options: [{ label: 1, value: 2 }],
-          config: {
-            optionsFunc: this.asdf,
-            options: []
-          },
-          edit: {
-            render: {
-              cascade: true,
-              cascadeCol: 'name',
-              name: 'select'
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'date',
-          title: '日期',
-          cellRender: (h, { prop, row }) => {
-            return formatDate(row[prop], 'yyyy-MM-dd')
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-date-picker
-                value={row[prop]}
-                on-input={val => (row[prop] = val)}
-                on-focus={val => this.visibleChange(true)}
-                on-blur={val => this.visibleChange(false)}
-                type='date'
-              />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'end',
-          title: '回车编辑下一行',
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        }
-      ]
-    }
-  },
-  mounted() {
-    this.getData()
-  },
-  methods: {
-    asdf(obj, params) {
-      console.log(obj, params, 123456)
-    },
-    visibleChange(val) {
-      this.editStop = val
-    },
-    getData() {
-      this.data = mock.mock({
-        'array|2': [
-          {
-            'id|+1': 1,
-            'name': '@cname',
-            'name1': '@cname',
-            'name2': '@cname',
-            'name3': '@cname',
-            'name4': '@cname',
-            'name5': '@cname',
-            'async': '',
-            'select': '',
-            'date': '',
-            'switch': '',
-            'end': '',
-            'dynamic': ''
-          }
-        ]
-      }).array
-    },
-    add() {
-      this.$refs.table.commitProxy('add')
-    },
-    focus() {
-      this.$refs.table.focus(9)
-    }
-  }
-}
 `
 
 const componentSnippet = `
@@ -375,11 +107,8 @@ export default {
             defaultValue: '123'
           },
           edit: {
-            'render': {
-              'name': 'input',
-              'on': {
-                'change': this.asdf
-              }
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} placeholder='number' on-input={val => (row[prop] = val)} />
             }
           }
         },
@@ -484,9 +213,6 @@ export default {
     this.getData()
   },
   methods: {
-    asdf(obj, params) {
-      console.log(obj, params, 123456)
-    },
     visibleChange(val) {
       this.editStop = val
     },
@@ -496,11 +222,6 @@ export default {
           {
             'id|+1': 1,
             'name': '@cname',
-            'name1': '@cname',
-            'name2': '@cname',
-            'name3': '@cname',
-            'name4': '@cname',
-            'name5': '@cname',
             'async': '',
             'select': '',
             'date': '',
@@ -512,7 +233,7 @@ export default {
       }).array
     },
     add() {
-      this.$refs.table.commitProxy('add')
+      this.$refs.table.commitProxy('add_focus')
     },
     focus() {
       this.$refs.table.focus(9)

@@ -5,6 +5,13 @@
 export const getType = function(params) {
   return Object.prototype.toString.call(params).match(/ (\w+)]/)[1]
 }
+/**
+ * * 获取行主键
+ * @param {params} params
+ */
+export const getRowId = function(table, row) {
+  return row[table.rowId || '_rowId'] || ''
+}
 
 /**
  * * 键盘组合键

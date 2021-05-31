@@ -31,8 +31,7 @@ export default {
   computed: {
     row() {
       const { table, rowIndex } = this
-      const { proxyConfig } = table
-      return (proxyConfig ? table.tableData : table.data)[rowIndex]
+      return table.tableData[rowIndex]
     },
     editRender() {
       const { row, column } = this

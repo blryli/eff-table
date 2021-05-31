@@ -200,7 +200,7 @@ export default {
      * @param {RowIndex} rowIndex 指定行
      */
     insert(records, rowIndex) {
-      const { checkeds, columns, tableData, rowId } = this
+      const { checkeds, columns, tableData, rowId, beforeInsert } = this
       if (!records) {
         records = columns.reduce((acc, column) => {
           const { type, prop } = column
@@ -212,7 +212,7 @@ export default {
           return acc
         }, {})
         Object.assign(records, { [rowId]: `row_${tableData.length}` })
-        this.beforeInsert(records)
+        beforeInsert(records)
       }
       if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
