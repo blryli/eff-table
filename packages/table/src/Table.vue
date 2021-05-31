@@ -274,7 +274,7 @@ export default {
   },
   data() {
     return {
-      tableData: this.loadTableData(this.data),
+      tableData: [],
       tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
@@ -390,7 +390,6 @@ export default {
         !d[rowId] && (d._rowId = i)
         return d
       }) || []
-      console.log(this.tableData)
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       editStore.insertList = []
