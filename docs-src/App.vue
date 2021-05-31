@@ -160,6 +160,10 @@ a {
   }
 }
 
+.primary{
+  color: $primary-color;
+}
+
 .command {
   background: darken($primary-color, 10%);
   color: white;
