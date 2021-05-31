@@ -44,10 +44,9 @@
 
 <script>
 import FormField from './form-field'
-import { render as Render } from 'core/render'
 export default {
   name: 'VFormItem',
-  components: { FormField, Render },
+  components: { FormField },
   props: {
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
