@@ -225,7 +225,8 @@ export default {
             itemRender: { name: 'input' },
             rules: [
               { max: 3 }
-            ]
+            ],
+            titlePrefix: { message: '帮助信息', icon: 'question' /* ooh | question*/}
           },
           { prop: 'heightUnit',
             span: 5,
