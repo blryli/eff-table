@@ -153,7 +153,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <p>editStore -  {{ editStore }}</p>
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -303,7 +303,8 @@ export default {
         pageSize: 10
       },
       replaceControl: false,
-      sortControl: false
+      sortControl: false,
+      tableSourceData: []
     }
   },
   computed: {
