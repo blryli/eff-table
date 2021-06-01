@@ -5,7 +5,7 @@
       <span class="primary">drag</span> 属性设置为
       <span class="primary"> true </span>，开启列拖动功能，
       <span class="primary">column-control</span> 属性设置为
-      <span class="primary"> true </span>，点击功能图标<ColumnCtrl />开启列控制功能(显示/隐藏)
+      <span class="primary"> true </span>，点击功能图标 <ColumnCtrl /> 开启列控制功能(显示/隐藏)
     </p>
     <section class="demo">
       <div class="section-content">

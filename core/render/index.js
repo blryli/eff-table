@@ -38,7 +38,11 @@ class Render {
   mergeOpts(opts) {
     for (const key in opts) {
       const opt = opts[key]
-      this.opts[key] = Object.assign({}, this.opts[key], opt)
+      let option = this.opts[key]
+      if (key === 'props' && typeof this.opts[key] === 'function') {
+        option = option(this.params) || {}
+      }
+      this.opts[key] = Object.assign({}, option, opt)
     }
     return this
   }
