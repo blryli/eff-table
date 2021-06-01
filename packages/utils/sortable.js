@@ -48,7 +48,7 @@ export default class Sortable {
   on_mousedown(e) {
     if (e.button === 0) {
       const target = this.getDragNode(e.target)
-      if (this.isFilter(target) || target === this.el) return
+      if (this.isFilter(target, e.target) || target === this.el) return
       this.downTarget = target
       this.downTarget && this.downTarget.setAttribute('draggable', true)
     }
@@ -166,10 +166,10 @@ export default class Sortable {
     return childNodes.length && index > -1 ? index : 0
   }
 
-  isFilter(target) {
+  isFilter(target, child) {
     const { filter } = this.options
     const filters = [filter, 'is--space', 'eff-empty-text']
-    return filters.find(d => target.classList.contains(d))
+    return filters.find(d => target.classList.contains(d)) || filters.find(d => child.classList.contains(d))
   }
 
   getDragNode(el) {

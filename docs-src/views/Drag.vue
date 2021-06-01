@@ -1,6 +1,11 @@
 <template>
   <div class="page-home page">
     <h2>Drag 拖动</h2>
+    <p>
+      <span class="primary">drag</span> 属性设置为
+      <span class="primary"> true </span>，开启拖动功能
+      <ColumnCtrl />
+    </p>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -34,6 +39,7 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
+import ColumnCtrl from 'pk/icon/src/columnCtrl'
 
 const mainSnippet = `
 data() {
@@ -113,7 +119,8 @@ export default {
   name: 'Drag',
   components: {
     CodeSnippet,
-    Collapse
+    Collapse,
+    ColumnCtrl
   },
 
   data() {

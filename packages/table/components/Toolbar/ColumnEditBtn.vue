@@ -39,9 +39,6 @@ export default {
   }
   &:hover{
     cursor: pointer;
-    .eff-table__column-edit__point:first-child {
-        // animation: identifier 1s ease-in-out infinite;
-    }
   }
 }
 
