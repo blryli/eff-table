@@ -154,7 +154,7 @@ export default {
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: totalHeight + 'px' }} />
         <div
-          class='eff-table__body'
+          class='eff-table__body '
           style={bodyStyle}
         >
           {

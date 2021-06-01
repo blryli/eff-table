@@ -137,26 +137,16 @@
     height: 7px;
     border-bottom: 1px solid #888;
     border-right: 1px solid #888;
-    -webkit-transform: rotate(
-312deg
-) skew(
-14deg
-,
-25deg
-);
-    transform: rotate(
-312deg
-) skew(
-14deg
-,
-25deg
-);
+    -webkit-transform: rotate(312deg) skew(14deg,
+        25deg);
+    transform: rotate(312deg) skew(14deg,
+        25deg);
     left: 0px;
     top: 1px;
   }
 
   &::after {
- position: absolute;
+    position: absolute;
     content: "";
     display: inline-block;
     bottom: 2px;
@@ -164,12 +154,8 @@
     width: 10px;
     height: 1px;
     background-color: #888;
-    -webkit-transform: rotate(
-337deg
-);
-    transform: rotate(
-337deg
-);
+    -webkit-transform: rotate(337deg);
+    transform: rotate(337deg);
   }
 }
 
@@ -187,26 +173,16 @@
     height: 7px;
     border-bottom: 1px solid #888;
     border-right: 1px solid #888;
-    -webkit-transform: rotate(
-312deg
-) skew(
-14deg
-,
-25deg
-);
-    transform: rotate(
-312deg
-) skew(
-14deg
-,
-25deg
-);
+    -webkit-transform: rotate(312deg) skew(14deg,
+        25deg);
+    transform: rotate(312deg) skew(14deg,
+        25deg);
     left: 0px;
     top: 1px;
   }
 
   &::after {
- position: absolute;
+    position: absolute;
     content: "";
     display: inline-block;
     bottom: 2px;
@@ -214,12 +190,8 @@
     width: 10px;
     height: 1px;
     background-color: #888;
-    -webkit-transform: rotate(
-337deg
-);
-    transform: rotate(
-337deg
-);
+    -webkit-transform: rotate(337deg);
+    transform: rotate(337deg);
   }
 }
 
@@ -264,24 +236,20 @@
   justify-content: space-around;
 
   &::before {
-   position: absolute;
+    position: absolute;
     content: "";
     display: block;
     width: 13px;
     height: 1px;
     background-color: #888;
-    -webkit-transform: rotate(
-90deg
-);
-    transform: rotate(
-114deg
-);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(114deg);
     top: 6px;
     left: 1px;
   }
 
   &::after {
-position: absolute;
+    position: absolute;
     content: "";
     display: block;
     bottom: 4px;
@@ -307,12 +275,8 @@ position: absolute;
     height: 7px;
     border-radius: 61%;
     border-top: 1px solid #888;
-    -webkit-transform: rotate(
-317deg
-);
-    transform: rotate(
-295deg
-);
+    -webkit-transform: rotate(317deg);
+    transform: rotate(295deg);
     border-right: 2px solid #888;
     top: 4px;
     left: 1px;
@@ -326,14 +290,62 @@ position: absolute;
     height: 7px;
     border-radius: 61%;
     border-top: 1px solid #888;
-    -webkit-transform: rotate(
-71deg
-);
-    transform: rotate(
-104deg
-);
+    -webkit-transform: rotate(71deg);
+    transform: rotate(104deg);
     border-right: 2px solid #888;
     left: 6px;
     top: 3px;
+  }
+}
+
+.eff-icon-drag {
+  widows: 14px;
+  height: 14px;
+
+  &__stub {
+    width: 2px;
+    height: 7px;
+    background: #888;
+    position: absolute;
+    top: 3px;
+    left: 2px;
+
+    &::before {
+      position: relative;
+      content: '';
+      border: 3px solid transparent;
+      border-bottom: 4px solid #888;
+      top: -18px;
+      left: -2px;
+    }
+
+    &::after {
+      position: relative;
+      content: '';
+      border: 3px solid transparent;
+      border-top: 4px solid #888;
+      top: 12px;
+      left: -8px;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 6px;
+    border-top: 2px solid #888;
+    right: 0px;
+    border-bottom: 2px solid #888;
+    top: 3px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    border-top: 2px solid #888;
+    right: 0px;
+    top: 7px;
   }
 }
