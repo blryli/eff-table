@@ -169,7 +169,7 @@ export default class Sortable {
   isFilter(target, child) {
     const { filter } = this.options
     const filters = [filter, 'is--space', 'eff-empty-text']
-    return filters.find(d => target.classList.contains(d)) || filters.find(d => child.classList.contains(d))
+    return filters.find(d => target.classList.contains(d)) || child && filters.find(d => child.classList.contains(d))
   }
 
   getDragNode(el) {

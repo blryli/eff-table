@@ -269,6 +269,10 @@ export default {
 
     handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
+      if (!column.edit) {
+        this.close()
+        return
+      }
       this.blurEvent().then(() => {
         this.rowIndex = rowIndex
         this.editCell(column, cell)

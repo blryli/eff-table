@@ -201,6 +201,9 @@ value: [
 | updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
 | editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
 | copyFromChecked | 把选择的行数据复制到粘贴板 ||
+| getInsertList | 获取新增的数据 ||
+| getUpdateList | 获取更新的数据 ||
+| getPendingList | 获取伪删除的数据 ||
 
 
 ### Events
@@ -261,3 +264,11 @@ value: [
 -  增加插入数据前的钩子函数 beforeInsert
 
 -  edit配置增加 disabled 动态禁用单元格编辑
+
+#### 2021-6
+
+-  增加 getInsertList 方法，获取新增的数据
+
+-  增加 getUpdateList 方法，获取更新的数据
+
+-  增加 getPendingList 方法，获取伪删除的数据

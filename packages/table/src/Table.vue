@@ -153,7 +153,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <p>editStore -  {{ editStore }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -449,7 +449,7 @@ export default {
       if (isSome) {
         this.editStore.updateList.splice(index, 1)
       } else {
-        this.editStore.updateList.splice(index, 1, newRow)
+        index === -1 ? this.editStore.updateList.push(newRow) : this.editStore.updateList.splice(index, 1, newRow)
       }
     },
     // 更新数据行map
@@ -460,7 +460,7 @@ export default {
       })
     },
     editField(fileds) {
-      console.log('fileds', JSON.stringify(fileds, null, 2))
+      // console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this
