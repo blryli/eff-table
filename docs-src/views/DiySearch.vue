@@ -7,6 +7,7 @@
           v-model="columns"
           :data="list"
           :form.sync="form"
+          :max-height="400"
           search
           fullscreen
           border

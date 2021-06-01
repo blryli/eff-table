@@ -13,6 +13,7 @@
         <eff-table
           ref="table"
           v-bind="tableOptions"
+          :max-height="400"
         />
       </div>
     </section>

@@ -252,7 +252,7 @@ export default {
     sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
     height: { type: Number, default: 0 },
-    maxHeight: { type: Number, default: 400 },
+    maxHeight: { type: Number, default: 0 },
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
     showHeader: { type: Boolean, default: true },

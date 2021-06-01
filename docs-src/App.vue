@@ -125,8 +125,10 @@ body {
   }
 }
 .container{
-  width: 100%;
+  width: 100vw;
+  height: calc(100vh - 60px);
   padding-left: 150px;
+  overflow: auto;
   box-sizing: border-box;
 }
 

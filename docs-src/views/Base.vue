@@ -17,7 +17,9 @@
     <h2>Border 边框</h2>
     <p><span class="primary">border</span> 属性设置为<span class="primary"> true </span>显示竖边框</p>
     <section class="demo">
-      <div class="section-content" />
+      <div class="section-content">
+        <eff-table v-model="columns" :data="data" border />
+      </div>
     </section>
 
     <section class="snippets">
@@ -74,7 +76,6 @@ const snippet = [
   }
   `
 ]
-import mock from 'mockjs'
 export default {
   name: '',
   components: {
@@ -111,23 +112,10 @@ export default {
         }
       ],
       data: [
+        { name: '张三', sex: '男', phone: '13715201314' },
+        { name: '李四', sex: '男', phone: '13715201314' }
       ]
     }
-  },
-  mounted() {
-    this.loading = true
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|500': [
-          {
-            'name': '@city',
-            'sex': '@cfirst',
-            'phone': '@clast'
-          }
-        ]
-      }).array
-      this.loading = false
-    }, 1000)
   }
 }
 </script>

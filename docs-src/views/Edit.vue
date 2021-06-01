@@ -6,6 +6,7 @@
         <eff-table
           ref="table"
           v-model="columns"
+          :max-height="400"
           :data="data"
           edit
           :edit-stop="editStop"

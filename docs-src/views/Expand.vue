@@ -8,6 +8,7 @@
           v-model="columns"
           :data="data"
           :loading="loading"
+          :max-height="400"
           border
           drag
           edit
