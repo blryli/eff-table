@@ -1,27 +1,22 @@
 <template>
-  <div
-    v-if="table.columnControlText"
-    class="eff-toobar--text"
-    @click="$emit('change')"
-  >{{ table.columnControlText }}</div>
-  <ColumnCtrl
-    v-else
+  <span
+    class="eff-table__column-ctrl"
     title="列显示隐藏"
-    @click="$emit('change')"
-  />
+  >
+    <div class="eff-table__column-ctrl__front" />
+    <div class="eff-table__column-ctrl__end" />
+  </span>
 </template>
 
 <script>
-import ColumnCtrl from 'pk/icon/src/columnCtrl'
 export default {
-  name: 'ColumnCtrlBtn',
-  components: { ColumnCtrl },
-  inject: ['table']
+  name: 'ColumnCtrlIcon'
 }
 </script>
 
 <style lang="scss">
 .eff-table__column-ctrl{
+  display: inline-block;
   position: relative;
   width: 16px;
   height: 16px;

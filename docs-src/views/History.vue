@@ -9,6 +9,7 @@
           :data="data"
           edit
           :edit-stop="editStop"
+          :max-height="400"
           fullscreen
           border
           copy

@@ -8,10 +8,12 @@
           v-model="columns"
           :data="data"
           :loading="loading"
+          :max-height="400"
           border
           drag
           edit
           fullscreen
+          row-drag
         >
           <template #expand="{row}">
             <el-form label-position="left" inline>
@@ -191,11 +193,11 @@ export default {
         'array|100': [
           {
             'id|+1': 1,
-            'city': '@city',
-            'name': '@name',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
+            city: '@city',
+            name: '@name',
+            email: '@email',
+            datetime: '@datetime',
+            phone: '13888888888',
             'index|+1': 1
           }
         ]

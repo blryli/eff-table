@@ -5,7 +5,8 @@ export default {
     return {
       selecteds: [],
       selectionAll: false,
-      indeterminate: false
+      indeterminate: false,
+      isCopyFunc: false
     }
   },
   computed: {
@@ -25,6 +26,10 @@ export default {
     }
   },
   methods: {
+    copyFromChecked() {
+      this.isCopyFunc = true
+      document.execCommand('copy')
+    },
     getCheckRows() {
       return this.checkeds
     },

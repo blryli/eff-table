@@ -18,11 +18,29 @@ export default {
   },
   methods: {
     onCopy(e) {
-      if (!this.textArr.length) {
+      let textArr
+      if (this.table.isCopyFunc) {
+        this.table.isCopyFunc = false
+
+        const tmpArr = []
+        this.table.selecteds.forEach(rowIndex => {
+          const data = this.table.tableData[rowIndex]
+          const arr = []
+          this.table.columns.forEach(column => {
+            column.prop && data[column.prop] && arr.push(data[column.prop])
+          })
+
+          tmpArr.push(arr)
+        })
+        textArr = tmpArr
+      } else {
+        textArr = this.textArr
+      }
+      if (!textArr.length) {
         return true
       }
 
-      const textArr = this.textArr.map(v => {
+      textArr = textArr.map(v => {
         return v.join('\t ')
       })
 

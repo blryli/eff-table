@@ -13,6 +13,7 @@
         <eff-table
           ref="table"
           v-bind="tableOptions"
+          :max-height="400"
         />
       </div>
     </section>
@@ -179,6 +180,7 @@ export default {
     return {
       mainSnippet,
       componentSnippet,
+      options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }],
       tableOptions: {
         search: true,
         drag: true,
@@ -253,7 +255,7 @@ export default {
             rules: [{ validator: ({ value }) => {
               return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 200))
             } }],
-            edit: true
+            edit: { disabled: ({ row, rowIndex }) => (row.select === '2') }
           },
           {
             show: true,
@@ -261,13 +263,13 @@ export default {
             title: '选择器',
             config: {
               name: 'select',
-              cascade: true,
-              cascadeFields: ['input'],
-              cascadeMethod: (val) => console.log(val),
-              options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }]
+              options: () => this.options
             },
             edit: true,
-            search: true
+            search: true,
+            rules: [
+              { required: true }
+            ]
           },
           {
             show: true,

@@ -1,11 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Drag 拖动</h2>
-    <p>
-      <span class="primary">drag</span> 属性设置为
-      <span class="primary"> true </span>，开启拖动功能
-      <ColumnCtrl />
-    </p>
+    <h2>Description</h2>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -19,6 +14,7 @@
           row-drag
           border
           fullscreen
+          column-edit
         />
       </div>
     </section>
@@ -39,7 +35,6 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
-import ColumnCtrl from 'pk/icon/src/columnCtrl'
 
 const mainSnippet = `
 data() {
@@ -113,14 +108,14 @@ const componentSnippet = `
   row-drag
   border
   fullscreen
+  column-edit
 />
 `
 export default {
-  name: 'Drag',
+  name: 'SmallSum',
   components: {
     CodeSnippet,
-    Collapse,
-    ColumnCtrl
+    Collapse
   },
 
   data() {
@@ -199,10 +194,12 @@ export default {
             'datetime': '@datetime',
             'phone': '13888888888',
             'index|+1': 1,
-            'id|+1': 1
+            'id|+1': 1,
+            'rowIsSum': false
           }
         ]
       }).array
+      this.data[3].rowIsSum = true
       this.loading = false
     }, 1000)
   }

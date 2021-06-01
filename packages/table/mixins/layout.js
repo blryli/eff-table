@@ -76,7 +76,6 @@ export default {
       const { height, maxHeight, isScreenfull, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
-      const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || 400
       const toolbarHeight = toolbar ? rowHeight : 0
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const searchHeight = search ? rowHeight : 0
@@ -84,6 +83,7 @@ export default {
       const footerActionHeight = footerAction ? rowHeight : 0
       const dataHeight = tableData.length ? tableData.length * rowHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
+      const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0
       if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
@@ -110,7 +110,7 @@ export default {
   methods: {
     getBodyWidth() {
       let node = this.$el
-      while (node && node.getBoundingClientRect().width === 0) {
+      while (node && node.parentNode && node.getBoundingClientRect().width === 0) {
         node = node.parentNode || this.$el
       }
       return node.getBoundingClientRect().width

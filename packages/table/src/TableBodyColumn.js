@@ -3,6 +3,7 @@ import VRadio from 'pk/radio'
 import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableBodyColumn',
@@ -29,7 +30,7 @@ export default {
   },
   computed: {
     columnClass() {
-      let classes = `eff-table__column`
+      let classes = `eff-table__column ` + (this.column.type === 'drag' ? '' : 'is-drag--filter')
       const { row, column, rowIndex, columnIndex, table } = this
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
@@ -80,6 +81,10 @@ export default {
     getStyle() {
       const defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
       const paddingLeft = { paddingLeft: this.groupFloor * 28 + 'px' }
+
+      if (this.row.rowIsSum) {
+        this.style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
+      }
       return Object.assign(defaultStyle, this.style, paddingLeft)
     },
     renderSelection(h) {
@@ -99,24 +104,31 @@ export default {
       />
     },
     cellRender(h) {
-      const { table, row, rowIndex, column, columnIndex, disabled } = this
+      const { table, row, rowIndex, column, columnIndex } = this
       const { cellRender, prop, config, type } = column
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
-        const renderOpts = Object.assign({}, config, cellRender)
-        if (disabled) {
-          if (!renderOpts.props) renderOpts.props = {}
-          renderOpts.props.disabled = true
-        }
+        const renderOpts = XEUtils.merge({}, config, cellRender)
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        const sourceRow = table.tableSourceData[rowIndex]
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
       const { expanded, disabled, expandClick } = this
-      return <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
+      const expand = <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
+
+      if (this.table.drag && this.table.rowDrag) {
+        return [this.dragRender(), expand]
+      }
+      return expand
+    },
+    dragRender() {
+      return <span class={{ 'eff-icon-drag': true }}>
+        <span class='eff-icon-drag__stub'></span>
+      </span>
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
@@ -164,12 +176,14 @@ export default {
   },
   render(h) {
     const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
-    const { prop, type, config, rules, edit: { render } = {}} = column
+    const { type } = column
     // row[columnIndex] summary合计列
 
     let slot
     if (type === 'expand') {
       slot = this.expandRender(h)
+    } else if (type === 'drag') {
+      slot = this.dragRender(h)
     } else if (row[columnIndex] !== undefined) {
       slot = row[columnIndex]
     } else if (type === 'selection') {
@@ -201,8 +215,6 @@ export default {
       }
     }
 
-    const { cascade, cascadeFields, cascadeMethod } = Object.assign({}, config, render)
-
     return (
       <div
         class={this.columnClass}
@@ -217,8 +229,8 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          {h('form-field', { props: { data: row, prop, cascade, cascadeFields, cascadeMethod, rules }}, slot)}
-          {/* <FormField {...config} class='eff-cell--label'>{slot}</FormField> */}
+          {slot}
+          {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
         </div>
       </div>
     )

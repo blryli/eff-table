@@ -154,7 +154,7 @@ export default {
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: totalHeight + 'px' }} />
         <div
-          class='eff-table__body'
+          class='eff-table__body '
           style={bodyStyle}
         >
           {
@@ -165,7 +165,7 @@ export default {
               const dom = [<TableBodyRow
                 key={rowIndex}
                 row={row}
-                row-index={rowIndex}
+                row-index={key}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 messages={formatValidators[row[rowId]]}

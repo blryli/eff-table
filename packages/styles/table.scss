@@ -310,7 +310,7 @@
 .eff-table__body-row{
   &:last-child{
     .eff-table__column{
-      border-bottom: 1px solid transparent;
+      border-bottom: none;
     }
   }
   &.is--hover{
@@ -362,19 +362,6 @@
   }
 }
 
-.eff-table__body-row:last-child{
-  .eff-table__column{
-    border-bottom: 1px solid #ddd;
-  }
-}
-
-.is-overflow--y{
-  .eff-table__body-row:last-child{
-    .eff-table__column{
-      border-bottom: none;
-    }
-  }
-}
 .eff-table__body-wrapper{
   overflow-x: hidden;
   overflow-y: hidden;

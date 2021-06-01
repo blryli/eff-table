@@ -9,10 +9,12 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-
     <!-- <VForm v-bind="formConfig" /> -->
 
-    <Toolbar v-if="$slots.toolbar || fullscreen || (drag && columnControl) || columnEdit" ref="toolbar">
+    <Toolbar
+      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnEdit"
+      ref="toolbar"
+    >
       <slot name="toolbar" />
     </Toolbar>
 
@@ -110,7 +112,10 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager" ref="footerAction">
+    <FooterAction
+      v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager"
+      ref="footerAction"
+    >
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
@@ -134,25 +139,13 @@
       @row-change="dragRowChange"
     />
 
-    <replace
-      v-if="replaceControl"
-      ref="replace"
-      :init-columns.sync="tableColumns"
-    />
-    <sort
-      v-if="sortControl"
-      ref="sort"
-      :init-columns.sync="tableColumns"
-    />
+    <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
+    <sort v-if="sortControl" ref="sort" :init-columns.sync="tableColumns" />
     <!-- 编辑 -->
-    <edit
-      v-if="edit"
-      ref="edit"
-      :columns="bodyColumns"
-    />
+    <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
-    <p>bodyWidth{{ bodyWidth }}</p> -->
+    <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
@@ -167,7 +160,6 @@
     <Loading :visible="isLoading" />
     <SelectRange v-if="selectRange || copy" ref="selectRange" />
     <copy v-if="copy" />
-
   </div>
 </template>
 
@@ -216,7 +208,16 @@ export default {
     Replace,
     Sort
   },
-  mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
+  mixins: [
+    Column,
+    Layout,
+    Selection,
+    validate,
+    sort,
+    virtual,
+    shortcutKey,
+    proxy
+  ],
   provide() {
     return {
       table: this
@@ -265,15 +266,16 @@ export default {
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
-    rowId: { type: String, default: 'id' }, // 行主键
+    rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    editHistory: { type: Boolean, default: () => false },
-    showReplace: { type: Boolean, default: () => false },
-    showSort: { type: Boolean, default: () => false }
+    editHistory: Boolean,
+    showReplace: Boolean,
+    showSort: Boolean,
+    beforeInsert: { type: Function, default: () => {} } // 插入数据前的钩子函数
   },
   data() {
     return {
-      tableData: [...this.data],
+      tableData: [],
       tableColumns: this.columns.map(d => {
         return { ...{ width: d.width || 0 }, ...d }
       }),
@@ -302,12 +304,32 @@ export default {
         pageSize: 10
       },
       replaceControl: false,
-      sortControl: false
+      sortControl: false,
+      tableSourceData: []
     }
   },
   computed: {
     visibleColumns() {
-      return this.tableColumns.filter(d => d.show !== false)
+      let arr = this.tableColumns.filter(d => d.show !== false)
+      if (this.drag && this.rowDrag) {
+        if (arr[0].type !== 'expand') {
+          arr.unshift({
+            show: true,
+            type: 'drag',
+            width: 40,
+            fixed: 'left'
+          })
+        } else {
+          arr = arr.map(v => {
+            if (v.type === 'expand') {
+              v.fixed = 'left'
+              v.width = 46
+            }
+            return v
+          })
+        }
+      }
+      return arr
     },
     bodyColumns() {
       const plat = arr => {
@@ -320,7 +342,9 @@ export default {
           return acc.concat(cur)
         }, [])
       }
-      return plat(this.visibleColumns)
+      const arr = plat(this.visibleColumns)
+
+      return arr
     },
     style() {
       const style = {}
@@ -382,19 +406,19 @@ export default {
   },
   methods: {
     loadTableData(data) {
+      if (!data.length) return []
       const { editStore, rowId } = this
-      this.tableData = data || []
+      this.tableData =
+        data.map((d, i) => {
+          !d[rowId] && (d._rowId = i)
+          return d
+        }) || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       editStore.insertList = []
       this.clearSelection()
       this.scrollLeftEvent()
       this.resize()
-
-      // 检测行主键在行数据中是否存在
-      if (data.length && !data[0].hasOwnProperty(rowId)) {
-        console.error('行数据中不存在主键[id]时，必须指定一个具有唯一性的属性 rowId 做为行主键！')
-      }
       return this.$nextTick()
     },
     reloadData(data = null) {
@@ -405,11 +429,14 @@ export default {
       this.loadTableData(data)
     },
     clearStatus() {
-      this.editStore = Object.assign({}, {
-        insertList: [],
-        updateList: [],
-        pendingList: []
-      })
+      this.editStore = Object.assign(
+        {},
+        {
+          insertList: [],
+          updateList: [],
+          pendingList: []
+        }
+      )
     },
     updateRow(row) {
       const { rowId } = this
@@ -418,26 +445,33 @@ export default {
       const fields = []
       for (const prop in row) {
         const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
-        columnIndex > -1 && fields.push({
-          rowIndex,
-          columnIndex,
-          content: row[prop]
-        })
+        columnIndex > -1 &&
+          fields.push({
+            rowIndex,
+            columnIndex,
+            content: row[prop]
+          })
       }
       this.editField(fields)
     },
     updateStatus(row, prop) {
       if (!prop) return
 
-      const sourceRow = this.tableSourceData.find(d => d[this.rowId] === row[this.rowId])
+      const sourceRow = this.tableSourceData.find(
+        d => d[this.rowId] === row[this.rowId]
+      )
       if (!sourceRow) return
 
-      const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
+      const isInsert = this.editStore.insertList.find(
+        d => d[this.rowId] === row[this.rowId]
+      )
       if (isInsert) return
 
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
-      const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
+      const index = this.editStore.updateList.findIndex(
+        d => d[this.rowId] === row[this.rowId]
+      )
       let isSome = true
       for (const key in sourceRow) {
         if (row[key] !== sourceRow[key]) {
@@ -468,8 +502,16 @@ export default {
         const { prop, rules } = column
 
         if (prop) {
-          if (!filed.notUpdateTableEvent && content !== tableData[rowIndex][prop]) {
-            updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
+          if (
+            !filed.notUpdateTableEvent &&
+            content !== tableData[rowIndex][prop]
+          ) {
+            updateArr.push({
+              rowIndex,
+              columnIndex,
+              newData: content,
+              oldData: tableData[rowIndex][prop]
+            })
           }
           tableData[rowIndex][prop] = content
           rules && rules.length && this.validateField(rowIndex, prop, rules)
@@ -498,7 +540,9 @@ export default {
     },
     handleDragend(column) {
       const { tableColumns } = this
-      const index = tableColumns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      const index = tableColumns.findIndex(
+        d => column.prop === d.prop && column.title === d.title
+      )
       if (index > -1) {
         tableColumns[index] = column
         this.tableColumns = [...tableColumns]
@@ -557,7 +601,7 @@ export default {
       return this.tableData
     },
     getEditStore() {
-      return this.editStore.source
+      return this.editStore
     }
   }
 }

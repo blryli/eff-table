@@ -37,7 +37,7 @@ export default {
     //         nest(cur.children, index + 1, i)
     //         childrenLen += cur.children.length - 1
     //       }
-    //       cur.colspan = cur.children && cur.children.length || 1
+    //       cur.columnspan = cur.children && cur.children.length || 1
     //       cur.index = i + childrenLen + childStartIndex
     //       if (childStartIndex) cur.parent = childStartIndex
     //       return acc.concat([cur])

@@ -13,6 +13,8 @@ export const routes = routerFileKeys.reduce((acc, file) => {
   return acc.concat({ path: `/${name}`, name: fileName, component })
 }, [])
 
+// console.log('routes', JSON.stringify(routes.map(d => ({ path: d.path, name: d.name })), null, 2))
+
 const router = new VueRouter({ routes })
 
 export default router

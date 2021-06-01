@@ -13,9 +13,11 @@ const map = {
   'tooltip': 'el-tooltip',
   'dialog': 'el-dialog',
   'switch': 'el-switch',
-  'checkbox-group': 'el-checkbox-group',
   'checkbox': 'el-checkbox',
+  'checkbox-group': 'el-checkbox-group',
   'pagination': 'el-pagination',
+  'radio': 'el-radio',
+  'radio-group': 'el-radio-group',
 
   // 内置组件
   'popup': 'popup',

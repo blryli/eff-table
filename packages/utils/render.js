@@ -92,7 +92,7 @@ function renderselectCell(h, renderOpts, params) {
   const cellLabel = row && row[prop]
   const { labelKey = 'label', valueKey = 'value' } = props || {}
   const opt = getOptions(options, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
-  return labelKey ? opt[labelKey] : cellLabel
+  return labelKey && opt[labelKey] || cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { options = [] } = renderOpts
@@ -123,20 +123,7 @@ function renderSelect(h, renderOpts, params, renderType) {
         defaultFirstOption: true
       })
       Object.assign(on, {
-        'visible-change': (isExpend) => {
-          if (isExpend) {
-            if (renderOpts.cascade && renderOpts.cascadeCol && renderOpts.optionsFunc) {
-              const promise = renderOpts.optionsFunc({ row: params.row })
-
-              if (XEUtils.isPromise(promise)) {
-                promise.then(options => {
-                  renderOpts.options.splice(0, 10000, ...options)
-                })
-              } else {
-                renderOpts.options.splice(0, 10000, ...promise)
-              }
-            }
-          }
+        'visible-change': (isExpend, val) => {
           vue.setEditIsStop(isExpend)
         }
       })
@@ -151,6 +138,7 @@ function renderSelect(h, renderOpts, params, renderType) {
 
   const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
   const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+
   return render(h, renderOpts, params).mergeOpts({ props, on: ons }).set('children', optionsRender).render()
 }
 function renderSelectSearch(h, renderOpts, params) {
