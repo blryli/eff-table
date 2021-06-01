@@ -25,6 +25,12 @@
         </div>
       </Collapse>
     </section>
+
+    <custom-search 
+      :visible.sync="searchVisible"
+      @search="customSearch"
+      @select-remote="getSelectOptions"
+    />
   </div>
 </template>
 
@@ -197,6 +203,7 @@ export default {
       componentSnippet,
       searchData: [],
       form: {},
+      searchVisible: true,
       options: [{
         value: '男',
         label: '男'
@@ -392,6 +399,12 @@ export default {
         })
       }
       this.list = list
+    },
+    customSearch(searchData) {
+      console.log(searchData)
+    },
+    getSelectOptions(apiSource) {
+      console.log(apiSource)
     }
   }
 }
