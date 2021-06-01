@@ -9,10 +9,12 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-
     <!-- <VForm v-bind="formConfig" /> -->
 
-    <Toolbar v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnEdit" ref="toolbar">
+    <Toolbar
+      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnEdit"
+      ref="toolbar"
+    >
       <slot name="toolbar" />
     </Toolbar>
 
@@ -110,7 +112,10 @@
       <!-- footer存在时的 body 滚动 -->
       <ScrollX v-if="showSummary && overflowX" />
     </div>
-    <FooterAction v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager" ref="footerAction">
+    <FooterAction
+      v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager"
+      ref="footerAction"
+    >
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
@@ -134,25 +139,13 @@
       @row-change="dragRowChange"
     />
 
-    <replace
-      v-if="replaceControl"
-      ref="replace"
-      :init-columns.sync="tableColumns"
-    />
-    <sort
-      v-if="sortControl"
-      ref="sort"
-      :init-columns.sync="tableColumns"
-    />
+    <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
+    <sort v-if="sortControl" ref="sort" :init-columns.sync="tableColumns" />
     <!-- 编辑 -->
-    <edit
-      v-if="edit"
-      ref="edit"
-      :columns="bodyColumns"
-    />
+    <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
-    <p>bodyWidth{{ bodyWidth }}</p> -->
+    <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
@@ -167,7 +160,6 @@
     <Loading :visible="isLoading" />
     <SelectRange v-if="selectRange || copy" ref="selectRange" />
     <copy v-if="copy" />
-
   </div>
 </template>
 
@@ -216,7 +208,16 @@ export default {
     Replace,
     Sort
   },
-  mixins: [Column, Layout, Selection, validate, sort, virtual, shortcutKey, proxy],
+  mixins: [
+    Column,
+    Layout,
+    Selection,
+    validate,
+    sort,
+    virtual,
+    shortcutKey,
+    proxy
+  ],
   provide() {
     return {
       table: this
@@ -309,7 +310,26 @@ export default {
   },
   computed: {
     visibleColumns() {
-      return this.tableColumns.filter(d => d.show !== false)
+      let arr = this.tableColumns.filter(d => d.show !== false)
+      if (this.drag && this.rowDrag) {
+        if (arr[0].type !== 'expand') {
+          arr.unshift({
+            show: true,
+            type: 'drag',
+            width: 40,
+            fixed: 'left'
+          })
+        } else {
+          arr = arr.map(v => {
+            if (v.type === 'expand') {
+              v.fixed = 'left'
+              v.width = 46
+            }
+            return v
+          })
+        }
+      }
+      return arr
     },
     bodyColumns() {
       const plat = arr => {
@@ -322,7 +342,9 @@ export default {
           return acc.concat(cur)
         }, [])
       }
-      return plat(this.visibleColumns)
+      const arr = plat(this.visibleColumns)
+
+      return arr
     },
     style() {
       const style = {}
@@ -386,10 +408,11 @@ export default {
     loadTableData(data) {
       if (!data.length) return []
       const { editStore, rowId } = this
-      this.tableData = data.map((d, i) => {
-        !d[rowId] && (d._rowId = i)
-        return d
-      }) || []
+      this.tableData =
+        data.map((d, i) => {
+          !d[rowId] && (d._rowId = i)
+          return d
+        }) || []
       this.tableSourceData = XEUtils.clone(data, true)
       this.updateCache()
       editStore.insertList = []
@@ -406,11 +429,14 @@ export default {
       this.loadTableData(data)
     },
     clearStatus() {
-      this.editStore = Object.assign({}, {
-        insertList: [],
-        updateList: [],
-        pendingList: []
-      })
+      this.editStore = Object.assign(
+        {},
+        {
+          insertList: [],
+          updateList: [],
+          pendingList: []
+        }
+      )
     },
     updateRow(row) {
       const { rowId } = this
@@ -419,26 +445,33 @@ export default {
       const fields = []
       for (const prop in row) {
         const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
-        columnIndex > -1 && fields.push({
-          rowIndex,
-          columnIndex,
-          content: row[prop]
-        })
+        columnIndex > -1 &&
+          fields.push({
+            rowIndex,
+            columnIndex,
+            content: row[prop]
+          })
       }
       this.editField(fields)
     },
     updateStatus(row, prop) {
       if (!prop) return
 
-      const sourceRow = this.tableSourceData.find(d => d[this.rowId] === row[this.rowId])
+      const sourceRow = this.tableSourceData.find(
+        d => d[this.rowId] === row[this.rowId]
+      )
       if (!sourceRow) return
 
-      const isInsert = this.editStore.insertList.find(d => d[this.rowId] === row[this.rowId])
+      const isInsert = this.editStore.insertList.find(
+        d => d[this.rowId] === row[this.rowId]
+      )
       if (isInsert) return
 
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
-      const index = this.editStore.updateList.findIndex(d => d[this.rowId] === row[this.rowId])
+      const index = this.editStore.updateList.findIndex(
+        d => d[this.rowId] === row[this.rowId]
+      )
       let isSome = true
       for (const key in sourceRow) {
         if (row[key] !== sourceRow[key]) {
@@ -469,8 +502,16 @@ export default {
         const { prop, rules } = column
 
         if (prop) {
-          if (!filed.notUpdateTableEvent && content !== tableData[rowIndex][prop]) {
-            updateArr.push({ rowIndex, columnIndex, newData: content, oldData: tableData[rowIndex][prop] })
+          if (
+            !filed.notUpdateTableEvent &&
+            content !== tableData[rowIndex][prop]
+          ) {
+            updateArr.push({
+              rowIndex,
+              columnIndex,
+              newData: content,
+              oldData: tableData[rowIndex][prop]
+            })
           }
           tableData[rowIndex][prop] = content
           rules && rules.length && this.validateField(rowIndex, prop, rules)
@@ -499,7 +540,9 @@ export default {
     },
     handleDragend(column) {
       const { tableColumns } = this
-      const index = tableColumns.findIndex(d => column.prop === d.prop && column.title === d.title)
+      const index = tableColumns.findIndex(
+        d => column.prop === d.prop && column.title === d.title
+      )
       if (index > -1) {
         tableColumns[index] = column
         this.tableColumns = [...tableColumns]

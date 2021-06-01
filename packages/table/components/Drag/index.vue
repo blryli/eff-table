@@ -1,11 +1,6 @@
 <template>
   <div class="drag-table">
-    <card
-      v-if="columnControl"
-      :show="show"
-      title="列控制"
-      @close="close"
-    >
+    <card v-if="columnControl" :show="show" title="列控制" @close="close">
       <div v-for="(d, i) in hiddenColumns" :key="i">{{ d.title }}</div>
     </card>
   </div>
@@ -52,9 +47,21 @@ export default {
   },
   inject: ['table'],
   mounted() {
+    this.$watch('table.overflowX', (newVal, oldVal) => {
+      if (!oldVal && newVal) {
+        this.setRowHandle(true)
+      }
+    })
+
     this.$nextTick(() => {
-      const { drag, rowDrag, $el } = this.table
-      const { handleDragend, handleDragenter, handleEnd, handleRowEnd, columnControl, $el: cardEl } = this
+      const { drag, $el } = this.table
+      const {
+        handleDragend,
+        handleDragenter,
+        handleEnd,
+        columnControl,
+        $el: cardEl
+      } = this
       const id = Math.floor(Math.random() * 100000)
       if (drag) {
         this.columnSortable = new Sortable({
@@ -68,16 +75,8 @@ export default {
           dragenter: handleDragenter,
           onEnd: handleEnd
         })
-        if (rowDrag) {
-          this.rowSortable = new Sortable({
-            el: $el.querySelector('.eff-table__body'),
-            filter: 'is-drag--filter',
-            dragImage: {
-              height: 30
-            },
-            onEnd: handleRowEnd
-          })
-        }
+
+        this.setRowHandle(false)
       }
       if (columnControl) {
         setTimeout(() => {
@@ -103,6 +102,21 @@ export default {
     close() {
       this.show = false
       this.$emit('cardClose')
+    },
+    setRowHandle(left = false) {
+      console.log(left, 123)
+      if (this.table.rowDrag) {
+        const body = left ? this.table.$refs.leftBody : this.table.$refs.body
+        console.log(body, 123)
+        this.rowSortable = new Sortable({
+          el: body.$el.querySelector('.eff-table__body'),
+          filter: 'is-drag--filter',
+          dragImage: {
+            height: 30
+          },
+          onEnd: this.handleRowEnd
+        })
+      }
     },
     toggleCardShow(val) {
       val = true
@@ -146,11 +160,15 @@ export default {
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
 
       const some = (column, el) => {
-        const { innerText } = hasClass(el, 'eff-table__header-group') ? el.querySelector('.eff-table__header-group-title') : el
+        const { innerText } = hasClass(el, 'eff-table__header-group')
+          ? el.querySelector('.eff-table__header-group-title')
+          : el
         return column.title && column.title.trim() === innerText.trim()
       }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
-      if (oldIndex < 0) { return console.error(`没有找到title为 ${fromEl.innerText} 的节点`) }
+      if (oldIndex < 0) {
+        return console.error(`没有找到title为 ${fromEl.innerText} 的节点`)
+      }
 
       if (hasClass(toEl, 'is-drag--filter')) {
         console.log('该列不能做拖动操作！')
@@ -185,7 +203,9 @@ export default {
           columns.splice(oldIndex, 1)
           if (hasClass(toEl, 'is--space')) {
             const index = columns.findIndex(d => d.fixed === 'right')
-            index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
+            index > -1
+              ? columns.splice(index, 0, oldItem)
+              : columns.push(oldItem)
           } else {
             const newIndex = columns.findIndex(d => some(d, toEl))
             columns.splice(newIndex, 0, oldItem)

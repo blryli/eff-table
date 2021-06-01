@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     columnClass() {
-      let classes = `eff-table__column`
+      let classes = `eff-table__column ` + (this.column.type === 'drag' ? '' : 'is-drag--filter')
       const { row, column, rowIndex, columnIndex, table } = this
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
@@ -118,7 +118,17 @@ export default {
     },
     expandRender() {
       const { expanded, disabled, expandClick } = this
-      return <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
+      const expand = <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
+
+      if (this.table.drag && this.table.rowDrag) {
+        return [this.dragRender(), expand]
+      }
+      return expand
+    },
+    dragRender() {
+      return <span class={{ 'eff-icon-drag': true }}>
+        <span class='eff-icon-drag__stub'></span>
+      </span>
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
@@ -172,6 +182,8 @@ export default {
     let slot
     if (type === 'expand') {
       slot = this.expandRender(h)
+    } else if (type === 'drag') {
+      slot = this.dragRender(h)
     } else if (row[columnIndex] !== undefined) {
       slot = row[columnIndex]
     } else if (type === 'selection') {
