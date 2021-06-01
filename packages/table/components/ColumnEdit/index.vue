@@ -11,8 +11,8 @@
     >
       <template slot="header">
         <div>
-          <el-button type="default" size="mini" @click="resetColumns"> 还原 </el-button>
-          <el-button type="success" size="mini" @click="save"> 保存 </el-button>
+          <el-button type="default" size="mini" @click="resetColumns">还原</el-button>
+          <el-button type="success" size="mini" @click="save">保存</el-button>
         </div>
       </template>
       <div class="main">
@@ -20,25 +20,51 @@
           左固定
           <div class="list area-left" :data-key="leftList.length - 1">
             <template v-for="(d, i) in leftList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
+              <div
+                :key="i"
+                :data-key="i"
+                class="item"
+                :class="d.show ? 'sel' : ''"
+                @click.stop="clickShow(d)"
+              >
                 <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'left' ? 'sel': ''" />
+              <div
+                :key="'-'+i"
+                :data-key="i"
+                class="blank"
+                :class="willDragInIndex == i && willDragInArea == 'left' ? 'sel': ''"
+              />
             </template>
             <template v-if="!leftList.length">
-              <div :data-key="-1" class="blank" :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'sel': ''" />
+              <div
+                :data-key="-1"
+                class="blank"
+                :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'sel': ''"
+              />
             </template>
           </div>
         </div>
         <div class="center" :style="centerStyle">
           <div class="list area-center" :data-key="centerList.length - 1">
             <template v-for="(d, i) in centerList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
+              <div
+                :key="i"
+                :data-key="i"
+                class="item"
+                :class="d.show ? 'sel' : ''"
+                @click.stop="clickShow(d)"
+              >
                 <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'center' ? 'sel': ''" />
+              <div
+                :key="'-'+i"
+                :data-key="i"
+                class="blank"
+                :class="willDragInIndex == i && willDragInArea == 'center' ? 'sel': ''"
+              />
             </template>
           </div>
         </div>
@@ -46,14 +72,29 @@
           右固定
           <div class="list area-right" :data-key="rightList.length - 1">
             <template v-for="(d, i) in rightList">
-              <div :key="i" :data-key="i" class="item" :class="d.show ? 'sel' : ''" @click.stop="clickShow(d)">
+              <div
+                :key="i"
+                :data-key="i"
+                class="item"
+                :class="d.show ? 'sel' : ''"
+                @click.stop="clickShow(d)"
+              >
                 <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
-              <div :key="'-'+i" :data-key="i" class="blank" :class="willDragInIndex == i && willDragInArea == 'right' ? 'sel': ''" />
+              <div
+                :key="'-'+i"
+                :data-key="i"
+                class="blank"
+                :class="willDragInIndex == i && willDragInArea == 'right' ? 'sel': ''"
+              />
             </template>
             <template v-if="!rightList.length">
-              <div :data-key="-1" class="blank" :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'sel': ''" />
+              <div
+                :data-key="-1"
+                class="blank"
+                :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'sel': ''"
+              />
             </template>
           </div>
         </div>
@@ -119,10 +160,16 @@ export default {
     }
 
     this.$nextTick(() => {
-      const { handleDragend, handleDragenter, handleEnd, columnControl, $el: cardEl } = this
+      const {
+        handleDragend,
+        handleDragenter,
+        handleEnd,
+        columnControl,
+        $el: cardEl
+      } = this
       const id = Math.floor(Math.random() * 100000)
       if (columnControl) {
-        const calback = (className) => {
+        const calback = className => {
           setTimeout(() => {
             this.cradsSortable = new Sortable({
               el: cardEl.querySelector(className),
@@ -143,9 +190,7 @@ export default {
       }
     })
   },
-  beforeDestroy() {
-
-  },
+  beforeDestroy() {},
   methods: {
     columnsInit(val) {
       const columns = deepClone(val)
@@ -174,8 +219,8 @@ export default {
       callback(this.centerList)
       callback(this.rightList, 'right')
 
-      this.value = this.columns
-      this.$emit('update:initColumns', this.columns)
+      this.value = columns
+      this.$emit('update:initColumns', columns)
       this.close()
     },
     clickShow(item) {
@@ -198,18 +243,21 @@ export default {
       this.show = false
       this.$emit('cardClose')
     },
-    reset() {
-
-    },
-    confirm() {
-
-    },
+    reset() {},
+    confirm() {},
     handleEnd(e) {
-      const fromArea = e.fromEl.parentElement.className.replace('list area-', '')
+      const fromArea = e.fromEl.parentElement.className.replace(
+        'list area-',
+        ''
+      )
       const fromIndex = e.fromEl.dataset.key
 
       const from = this[fromArea + 'List'].splice(fromIndex, 1)[0]
-      this[this.willDragInArea + 'List'].splice(parseInt(this.willDragInIndex) + 1, 0, from)
+      this[this.willDragInArea + 'List'].splice(
+        parseInt(this.willDragInIndex) + 1,
+        0,
+        from
+      )
 
       this.willDragInArea = ''
       this.willDragInIndex = -2
@@ -253,10 +301,10 @@ export default {
       font-size: 16px;
     }
   }
-    .sel {
-    background-color: #409EFF;
-      color: white;
-    }
+  .sel {
+    background-color: #409eff;
+    color: white;
+  }
 }
 
 .left {
@@ -296,5 +344,4 @@ export default {
 .blank.sel {
   background-color: rgba($color: #0bc7ff, $alpha: 0.6);
 }
-
 </style>
