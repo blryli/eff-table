@@ -145,7 +145,7 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
-    <p>bodyWidth{{ bodyWidth }}</p> -->
+    <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
@@ -406,7 +406,6 @@ export default {
   },
   methods: {
     loadTableData(data) {
-      if (!data.length) return []
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
@@ -482,7 +481,9 @@ export default {
       if (isSome) {
         this.editStore.updateList.splice(index, 1)
       } else {
-        index === -1 ? this.editStore.updateList.push(newRow) : this.editStore.updateList.splice(index, 1, newRow)
+        index === -1
+          ? this.editStore.updateList.push(newRow)
+          : this.editStore.updateList.splice(index, 1, newRow)
       }
     },
     // 更新数据行map
