@@ -7,7 +7,7 @@
       <span class="primary">column-control</span> 属性设置为
       <span class="primary"> true </span>，点击功能图标<ColumnCtrl />开启列控制功能(显示/隐藏)
     </p>
-    <!-- <section class="demo">
+    <section class="demo">
       <div class="section-content">
         <eff-table
           ref="table"
@@ -22,14 +22,13 @@
           fullscreen
         />
       </div>
-    </section> -->
+    </section>
 
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="snippet[0]" />
+          <CodeSnippet class="javascript" :code="snippet[1]" />
         </div>
       </Collapse>
     </section>
