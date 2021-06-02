@@ -160,14 +160,11 @@ const jsCode = `
   export default {
     data() {
       return {
-        data: [],
         columns: [
           {
             show: true,
-            type: 'index',
-            title: '序号',
-            width: 80,
-            fixed: 'left'
+            prop: 'id',
+            title: 'ID'
           },
           {
             show: true,
@@ -182,9 +179,14 @@ const jsCode = `
           {
             show: true,
             prop: 'phone',
-            title: '手机',
-            width: 150
+            title: '手机'
           }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
         ]
       }
     }
@@ -211,9 +213,8 @@ export default {
       columns: [
         {
           show: true,
-          type: 'index',
-          width: 80,
-          fixed: 'left'
+          prop: 'id',
+          title: 'ID'
         },
         {
           show: true,
@@ -228,13 +229,14 @@ export default {
         {
           show: true,
           prop: 'phone',
-          title: '手机',
-          width: 150
+          title: '手机'
         }
       ],
       data: [
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '男', phone: '13715201314' }
+        { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
       ]
     }
   }

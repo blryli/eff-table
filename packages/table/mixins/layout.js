@@ -23,11 +23,12 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table__container'
-      const { overflowX, overflowY, border, heights } = this
+      const { overflowX, overflowY, border, stripe, heights } = this
       const { bodyHeight, dataHeight } = heights
       overflowX && (tClass += ' is-overflow--x')
       overflowY && (tClass += ' is-overflow--y')
-      border && (tClass += ' is-border')
+      border && (tClass += ' is--border')
+      stripe && (tClass += ' is--stripe')
       bodyHeight === dataHeight && (tClass += ' is-bottom--coincide')
       return tClass
     },

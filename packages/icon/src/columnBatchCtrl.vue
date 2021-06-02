@@ -1,10 +1,10 @@
 <template>
-  <span
+  <div
     class="eff-table--batch-control"
     title="列编辑显示隐藏"
   >
     <span v-for="v in 9" :key="v" class="eff-table--batch-control__point" />
-  </span>
+  </div>
 </template>
 
 <script>
@@ -16,20 +16,18 @@ export default {
 
 <style lang="scss">
 .eff-table--batch-control{
-  display: inline-block;
+  display: inline-flex;
+  flex-wrap: wrap;
   position: relative;
   width: 16px;
   height: 16px;
+  vertical-align: middle;
   box-sizing: border-box;
-  // display: flex;
-  // flex-wrap: wrap;
   &__point {
-    display: inline-block;
-    width: 3px;
-    height: 3px;
+    width: 26%;
+    height: 26%;
     margin-right: 7%;
     background-color: #888;
-    line-height: 1.2;
     border-radius: 10px;
   }
   &:hover{

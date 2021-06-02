@@ -232,6 +232,7 @@ export default {
     data: { type: Array, default: () => [] },
     form: { type: Object, default: () => {} },
     border: Boolean,
+    stripe: Boolean,
     drag: Boolean,
     search: Boolean,
     edit: Boolean,
