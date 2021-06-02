@@ -20,7 +20,7 @@
           select-range
           copy
           show-replace
-          column-edit
+          column-batch-control
           edit-history
           show-sort
           :toolbar-config="{diySearch: diySearch}"

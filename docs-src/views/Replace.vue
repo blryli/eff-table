@@ -14,7 +14,7 @@
           row-drag
           border
           fullscreen
-          column-edit
+          column-batch-control
           show-replace
         />
       </div>

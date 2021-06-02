@@ -19,7 +19,7 @@
         <router-link class="menu-list" to="/Validate">Validate 校验</router-link>
         <router-link class="menu-list" to="/Virtual">Virtual 虚拟滚动</router-link>
         <router-link class="menu-list" to="/Copy">Copy 复制</router-link>
-        <router-link class="menu-list" to="/ColumnEdit">ColumnEdit 列控制</router-link>
+        <router-link class="menu-list" to="/columnBatchControl">columnBatchControl 列控制</router-link>
         <router-link class="menu-list" to="/DiySearch">DiySearch 高级搜索</router-link>
         <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
@@ -65,6 +65,7 @@ export default {
 body {
   background: white;
   margin: 0;
+  font-size: 14px;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -147,9 +148,8 @@ body {
 h2 {
   font-weight: normal;
 }
-
-h3{
-  color: #444;
+h3 {
+  color: #666
 }
 
 a {
@@ -175,6 +175,12 @@ a {
   border-radius: 2px;
   padding: 12px 24px;
   box-sizing: border-box;
+}
+
+.hint{
+  padding-left: 10px;
+  border-left: 3px solid $primary-color;
+  line-height: 24px;
 }
 
 @media (max-width: 1200px) {

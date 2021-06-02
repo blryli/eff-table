@@ -3,6 +3,7 @@ import VRadio from 'pk/radio'
 import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
+import RowDrag from 'pk/icon/src/rowDrag'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -18,7 +19,7 @@ export default {
     groupFloor: { type: Number, default: 0 },
     groupKey: { type: String, default: '' }
   },
-  components: { VCheckbox, VRadio, FormField },
+  components: { VCheckbox, VRadio, FormField, RowDrag },
   inject: ['table'],
   data() {
     return {
@@ -38,9 +39,13 @@ export default {
       const sourceRow = updateList.find(d => {
         return d.$old[rowId] === row[rowId]
       })
+      // 状态
       if (prop && sourceRow && !eqCellValue(sourceRow.$old, row, prop)) {
         classes += ' is--dirty'
       }
+      // 消息
+      if (message) classes += ' is--message'
+      // class
       if (className) {
         if (typeof className === 'function') {
           const c = className({ row, column, rowIndex, columnIndex })
@@ -49,7 +54,6 @@ export default {
           classes += ` ${className}`
         }
       }
-      if (message) classes += ' is--message'
       if (cellClassName) {
         if (typeof cellClassName === 'function') {
           const c = cellClassName({ row, column, rowIndex, columnIndex })
@@ -121,14 +125,9 @@ export default {
       const expand = <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
 
       if (this.table.drag && this.table.rowDrag) {
-        return [this.dragRender(), expand]
+        return [<RowDrag />, expand]
       }
       return expand
-    },
-    dragRender() {
-      return <span class={{ 'eff-icon-drag': true }}>
-        <span class='eff-icon-drag__stub'></span>
-      </span>
     },
     handleMouseenter(event, slot) {
       if (this.$parent.summary) return
@@ -183,7 +182,7 @@ export default {
     if (type === 'expand') {
       slot = this.expandRender(h)
     } else if (type === 'drag') {
-      slot = this.dragRender(h)
+      slot = <RowDrag />
     } else if (row[columnIndex] !== undefined) {
       slot = row[columnIndex]
     } else if (type === 'selection') {

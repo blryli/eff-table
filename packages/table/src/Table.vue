@@ -12,7 +12,7 @@
     <!-- <VForm v-bind="formConfig" /> -->
 
     <Toolbar
-      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnEdit"
+      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnBatchControl"
       ref="toolbar"
     >
       <slot name="toolbar" />
@@ -129,11 +129,11 @@
       @row-change="dragRowChange"
     />
 
-    <column-edit
+    <column-batch-control
       v-if="border && drag"
-      ref="columnEdit"
+      ref="columnBatchControl"
       :init-columns.sync="tableColumns"
-      :column-control="columnEdit"
+      :column-control="columnBatchControl"
       @cardClose="handleCardClose"
       @change="dargChange"
       @row-change="dragRowChange"
@@ -184,7 +184,7 @@ import ScrollX from '../components/ScrollX'
 import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
-import ColumnEdit from '../components/ColumnEdit/index'
+import columnBatchControl from '../components/columnBatchControl/index'
 import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
@@ -203,7 +203,7 @@ export default {
     Loading,
     SelectRange,
     Copy,
-    ColumnEdit,
+    columnBatchControl,
     FooterAction,
     Replace,
     Sort
@@ -240,9 +240,9 @@ export default {
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
-    columnEdit: Boolean,
-    columnEditText: { type: String, default: '' },
     columnControlText: { type: String, default: '' },
+    columnBatchControl: Boolean,
+    columnBatchControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean, // 合计

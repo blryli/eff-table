@@ -14,7 +14,7 @@
           row-drag
           border
           fullscreen
-          column-edit
+          column-batch-control
           :proxy-config="{ request: { loadChildren, query} }"
         />
       </div>
@@ -204,7 +204,7 @@ const componentSnippet = `
   row-drag
   border
   fullscreen
-  column-edit
+  column-batch-control
   :proxy-config="{ request: { loadChildren, query} }"
 />
 `

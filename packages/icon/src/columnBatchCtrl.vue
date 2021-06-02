@@ -1,40 +1,35 @@
 <template>
-  <div
-    v-if="table.columnEditText"
-    class="eff-toobar--text"
-    @click="$emit('change')"
-  >{{ table.columnEditText }}</div>
-  <div
-    v-else
-    class="eff-table__column-edit"
+  <span
+    class="eff-table--batch-control"
     title="列编辑显示隐藏"
-    @click="$emit('change')"
   >
-    <div v-for="v in 9" :key="v" class="eff-table__column-edit__point" />
-  </div>
+    <span v-for="v in 9" :key="v" class="eff-table--batch-control__point" />
+  </span>
 </template>
 
 <script>
 export default {
-  name: 'ColumnEditBtn',
+  name: 'ColumnBatchControlIcon',
   inject: ['table']
 }
 </script>
 
 <style lang="scss">
-.eff-table__column-edit{
+.eff-table--batch-control{
+  display: inline-block;
   position: relative;
   width: 16px;
   height: 16px;
   box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
-  // justify-content: space-between;
+  // display: flex;
+  // flex-wrap: wrap;
   &__point {
-    width: 26%;
-    height: 26%;
+    display: inline-block;
+    width: 3px;
+    height: 3px;
     margin-right: 7%;
     background-color: #888;
+    line-height: 1.2;
     border-radius: 10px;
   }
   &:hover{

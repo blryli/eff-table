@@ -9,8 +9,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="html" :code="snippet[0]" />
-          <CodeSnippet class="javascript" :code="snippet[1]" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -25,8 +25,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="html" :code="snippet[0]" />
-          <CodeSnippet class="javascript" :code="snippet[1]" />
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -37,11 +37,14 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
-const snippet = [
-  `
+const htmlCode = `
   <eff-table v-model="columns" :data="data" /> 
-  `,
   `
+const htmlCode1 = `
+  <eff-table v-model="columns" :data="data" border /> 
+  `
+
+const jsCode = `
   export default {
     data() {
       return {
@@ -75,7 +78,6 @@ const snippet = [
     }
   }
   `
-]
 export default {
   name: '',
   components: {
@@ -85,8 +87,9 @@ export default {
 
   data() {
     return {
-      snippet,
-      loading: false,
+      htmlCode,
+      htmlCode1,
+      jsCode,
       columns: [
         {
           show: true,

@@ -7,7 +7,7 @@
   <ColumnCtrl
     v-else
     title="列显示隐藏"
-    @click="$emit('change')"
+    @click.native="$emit('change')"
   />
 </template>
 

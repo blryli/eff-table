@@ -14,7 +14,7 @@
           row-drag
           border
           fullscreen
-          column-edit
+          column-batch-control
         />
       </div>
     </section>
@@ -108,7 +108,7 @@ const componentSnippet = `
   row-drag
   border
   fullscreen
-  column-edit
+  column-batch-control
 />
 `
 export default {
