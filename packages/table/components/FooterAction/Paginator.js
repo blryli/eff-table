@@ -10,7 +10,6 @@ export default {
   ],
   methods: {
     onSizeChange(e) {
-      console.log(e)
       this.table.pager.pageNum = 1
       this.table.pager.pageSize = e
       this.table.commitProxy('query')

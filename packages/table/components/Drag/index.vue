@@ -104,10 +104,8 @@ export default {
       this.$emit('cardClose')
     },
     setRowHandle(left = false) {
-      console.log(left, 123)
       if (this.table.rowDrag) {
         const body = left ? this.table.$refs.leftBody : this.table.$refs.body
-        console.log(body, 123)
         this.rowSortable = new Sortable({
           el: body.$el.querySelector('.eff-table__body'),
           filter: 'is-drag--filter',

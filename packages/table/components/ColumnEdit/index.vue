@@ -233,10 +233,8 @@ export default {
         item.fixed = type
       }
       this.$forceUpdate()
-      console.log(item)
     },
     toggleCardShow(e) {
-      console.log(this.cardStyle, 333)
       this.show = !this.show
     },
     close() {
