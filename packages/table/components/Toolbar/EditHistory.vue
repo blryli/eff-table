@@ -79,7 +79,6 @@ export default {
         return v
       })
 
-      console.log(data, 54321)
       this.table.$emit('edit-fields', data)
     },
     onDataChange(res) {

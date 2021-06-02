@@ -55,10 +55,7 @@ export default {
   },
   mounted() {
     setTimeout(v => {
-      console.log(this.fields)
-      console.log(window.asdf = this.table.$el, 111)
       const { offsetHeight, clientWidth, offsetLeft, offsetTop } = this.table.$el
-      console.log(offsetHeight, clientWidth, offsetLeft, offsetTop, 1111)
       this.cardStyle = {
         top: offsetTop + offsetHeight,
         left: offsetLeft + 20,

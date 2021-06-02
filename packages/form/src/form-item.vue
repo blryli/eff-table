@@ -72,7 +72,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.titlePrefix)
   },
   methods: {
     messageEnter(e) {
