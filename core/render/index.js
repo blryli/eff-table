@@ -38,11 +38,7 @@ class Render {
   mergeOpts(opts) {
     for (const key in opts) {
       const opt = opts[key]
-      let option = this.opts[key]
-      if (key === 'props' && typeof this.opts[key] === 'function') {
-        option = option(this.params) || {}
-      }
-      this.opts[key] = Object.assign({}, option, opt)
+      this.opts[key] = Object.assign({}, this.opts[key], opt)
     }
     return this
   }
@@ -68,6 +64,10 @@ class Render {
 export function render(h, renderOpts, params) {
   if (params && typeof (params._beforeRender_) === 'function') {
     params._beforeRender_(renderOpts, h)
+  }
+  const { props } = renderOpts
+  if (props && typeof props === 'function') {
+    renderOpts.props = props(params)
   }
   return new Render(h, renderOpts, params)
 }
