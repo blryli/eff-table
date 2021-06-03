@@ -184,6 +184,16 @@ a {
   background-color: $primary-bg-color;
 }
 
+.mr-10{
+  margin-right: 10px;
+}
+.ml-10{
+  margin-left: 10px;
+}
+.ml-20{
+  margin-left: 20px;
+}
+
 @media (max-width: 1200px) {
   .container{
     padding-left: 190px;
