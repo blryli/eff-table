@@ -165,7 +165,7 @@ export default {
               const dom = [<TableBodyRow
                 key={rowIndex}
                 row={row}
-                row-index={key}
+                row-index={rowIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 messages={formatValidators[row[rowId]]}

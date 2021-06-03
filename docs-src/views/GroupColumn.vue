@@ -13,7 +13,7 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-model="columns" :data="data" :proxy-config="{request: {loadChildren}}" />
+        <eff-table ref="table" v-model="columns" :data="data" :proxy-config="{request: {loadChildren}}" :max-height="400" />
       </div>
     </section>
 

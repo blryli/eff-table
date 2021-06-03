@@ -7,7 +7,9 @@
       <span class="primary"> true </span><br>
     </p>
     <p>
-      可以通过<span class="primary">ctrl+c</span>复制，<span class="primary">ctrl+v</span>粘贴，也可以选择一块区域后点击<span class="primary">右下角图标</span>进行复制
+      1、可以通过<span class="primary">ctrl+c</span>复制，<span class="primary">ctrl+v</span>粘贴，也可以选择一块区域后点击<span class="primary">右下角图标</span>进行复制
+      <br>
+      2、选择一个单元格后，单元格的右下角有一个<span class="primary">十字标</span>，拖动即可把这个单元格的数据，复制到拖动覆盖的区域
     </p>
     <section class="demo">
       <div class="section-content">
