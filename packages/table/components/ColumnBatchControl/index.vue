@@ -151,7 +151,7 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
+    const { offsetHeight, clientWidth } = this.table.$el
     this.cardStyle = {
       bottom: 0,
       right: 0,
