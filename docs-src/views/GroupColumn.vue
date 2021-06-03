@@ -1,22 +1,19 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>GroupColumn 树</h2>
+    <p class="hint">
+      树分为两种情况，同步和异步：<br>
+      同步是在
+      <span class="primary">v-model</span>的字段里 加入<span class="primary">children</span>字段
+      <br>
+      异步是在
+      <span class="primary">v-model</span>的字段里 加入<span class="primary">hasChildren</span>字段，
+      并且要提供一个<span class="primary">callback</span>给<span class="primary">proxy-config.request.loadChildren</span>
+    </p>
+
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          ref="table"
-          v-model="columns"
-          :data="data"
-          :loading="loading"
-          :max-height="400"
-          drag
-          column-control
-          row-drag
-          border
-          fullscreen
-          column-batch-control
-          :proxy-config="{ request: { loadChildren, query} }"
-        />
+        <eff-table ref="table" v-model="columns" :data="data" :proxy-config="{request: {loadChildren}}" />
       </div>
     </section>
 
@@ -37,12 +34,31 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
+[
+  {
+    id: 1, index: 1, city: '城市1',
+    children: [{
+      id: 1, index: 1, city: '城市11'
+    }]
+  },
+  {
+    id: 1, index: 1, city: '城市2',
+    children: [{
+      id: 1, index: 1, city: '城市21', children: [{
+        id: 1, index: 1, city: '城市211'
+      }]
+    }]
+  },
+  {
+    id: 1, index: 1, city: '城市1', hasChildren: true
+  }
+]
+
 const mainSnippet = `
- data() {
+ export default {
+  data() {
     return {
-      mainSnippet,
-      componentSnippet,
-      loading: false,
+      {id: 1, index: 1, city: '城市'， children: {id: 1, index: 1, city: '城市'}}
       data: [],
       columns: [
         {
@@ -63,150 +79,25 @@ const mainSnippet = `
           prop: 'city',
           title: '城市',
           width: 140
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          children: [{
-            show: true,
-            prop: 'cfirst',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'clast',
-            title: '名',
-            width: 150
-          }]
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '核酸检测时间',
-          width: 150
         }
       ]
     }
-  },
-  mounted() {
-    this.loading = true
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|500': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1,
-            'id|+1': 1
-          }
-        ]
-      }).array
-      this.loading = false
-
-      this.data[0].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 501,
-            'id|+1': 501
-          }
-        ]
-      }).array
-
-      this.data[1].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1601,
-            'id|+1': 1601
-          }
-        ]
-      }).array
-
-      this.data[1].children[0].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1630,
-            'id|+1': 1630
-          }
-        ]
-      }).array
-
-      this.data[2].hasChildren = true
-    }, 1000)
   },
   methods: {
     loadChildren(tree, resolve) {
       setTimeout(() => {
         resolve(mock.mock({
-          'array|5': [
-            {
-              'city': '@city',
-              'cfirst': '@cfirst',
-              'clast': '@clast',
-              'email': '@email',
-              'datetime': '@datetime',
-              'phone': '13888888888',
-              'index|+1': 1630,
-              'id|+1': 1630
-            }
+          'array|3': [{ 'city': '@city', 'index|+1': 1630, 'id|+1': 1630 }
           ]
         }).array)
       }, 1000)
-    },
-    query: ({ page, sorts, filters, form }) => {
-      return new Promise((res) => { res() })
     }
   }
+}
 `
 
 const componentSnippet = `
-<eff-table
-  ref="table"
-  v-model="columns"
-  :data="data"
-  :loading="loading"
-  drag
-  column-control
-  row-drag
-  border
-  fullscreen
-  column-batch-control
-  :proxy-config="{ request: { loadChildren, query} }"
-/>
+  <eff-table ref="table" v-model="columns" :data="data" />
 `
 export default {
   name: 'GroupColumn',
@@ -240,40 +131,6 @@ export default {
           prop: 'city',
           title: '城市',
           width: 140
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          children: [{
-            show: true,
-            prop: 'cfirst',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'clast',
-            title: '名',
-            width: 150
-          }]
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          width: 150
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '核酸检测时间',
-          width: 150
         }
       ]
     }
@@ -282,63 +139,15 @@ export default {
     this.loading = true
     setTimeout(() => {
       this.data = mock.mock({
-        'array|20': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1,
-            'id|+1': 1
-          }
+        'array|3': [
+          { 'city': '@city', 'index|+1': 1, 'id|+1': 1 }
         ]
       }).array
       this.loading = false
 
       this.data[0].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 501,
-            'id|+1': 501
-          }
-        ]
-      }).array
-
-      this.data[1].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1601,
-            'id|+1': 1601
-          }
-        ]
-      }).array
-
-      this.data[1].children[0].children = mock.mock({
-        'array|5': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1630,
-            'id|+1': 1630
-          }
+        'array|3': [
+          { 'city': '@city', 'index|+1': 501, 'id|+1': 501 }
         ]
       }).array
 
@@ -349,23 +158,10 @@ export default {
     loadChildren(tree, resolve) {
       setTimeout(() => {
         resolve(mock.mock({
-          'array|5': [
-            {
-              'city': '@city',
-              'cfirst': '@cfirst',
-              'clast': '@clast',
-              'email': '@email',
-              'datetime': '@datetime',
-              'phone': '13888888888',
-              'index|+1': 1630,
-              'id|+1': 1630
-            }
+          'array|3': [{ 'city': '@city', 'index|+1': 1630, 'id|+1': 1630 }
           ]
         }).array)
       }, 1000)
-    },
-    query: ({ page, sorts, filters, form }) => {
-      return new Promise((res) => { res() })
     }
   }
 }

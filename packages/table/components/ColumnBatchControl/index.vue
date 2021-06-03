@@ -153,8 +153,8 @@ export default {
     this.realColumns = deepClone(this.initColumns)
     const { offsetHeight, clientWidth, offsetTop, offsetLeft } = this.table.$el
     this.cardStyle = {
-      top: offsetTop + 80,
-      left: offsetLeft + 20,
+      bottom: 0,
+      right: 0,
       width: clientWidth - 40,
       height: offsetHeight < 300 ? 300 : offsetHeight
     }
