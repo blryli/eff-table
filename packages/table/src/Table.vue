@@ -12,7 +12,7 @@
     <!-- <VForm v-bind="formConfig" /> -->
 
     <Toolbar
-      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnBatchControl"
+      v-if="toolbarConfig || $slots.toolbar || fullscreen || showReplace || (drag && columnControl) || columnBatchControl"
       ref="toolbar"
     >
       <slot name="toolbar" />
