@@ -31,7 +31,7 @@
     <h3>列控制</h3>
     <p>
       <span class="primary">column-control</span> 属性设置为
-      <span class="primary"> true </span>，点击功能图标 <ColumnCtrl /> 开启列控制功能(显示/隐藏)
+      <span class="primary"> true </span>，点击功能图标 <ColumnCtrl /> 开启列控制功能（显示/隐藏）
     </p>
     <section class="demo">
       <div class="section-content">
@@ -57,7 +57,7 @@
     <h3>列批量控制</h3>
     <p>
       <span class="primary">column-batch-control</span> 属性设置为
-      <span class="primary"> true </span>，点击功能图标 <ColumnBatchCtrl /> 开启列批量控制功能(显示/隐藏)
+      <span class="primary"> true </span>，点击功能图标 <ColumnBatchCtrl /> 开启列批量控制功能（显示/隐藏、排序、列固定）
     </p>
     <section class="demo">
       <div class="section-content">

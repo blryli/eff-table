@@ -36,13 +36,12 @@ export default {
     display: inline-block;
     width: 16px;
     height: 16px;
-    transition: transform .3s ease-in-out;
     transform-origin: center 10px;
     &::before{
       content: '';
       position: absolute;
-      left: 3px;
-      top: 8px;
+      left: 2px;
+      top: 7px;
       border: 6px solid transparent;
       border-top-color: #999;
     }

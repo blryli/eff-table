@@ -1,6 +1,34 @@
 <template>
   <div class="page-home page">
     <h2>Edit 编辑</h2>
+    <p class="hint">
+      编辑前置条件<br>
+      <span class="primary">edit</span> 属性设置为
+      <span class="primary"> true </span><br>
+    </p>
+    <p>列 <span class="primary">edit</span> 属性设置为
+      <span class="primary"> true </span>，该列表头会显示可编辑列&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标
+    </p>
+    <section class="demo">
+      <div class="section-content">
+        <eff-table
+          ref="table"
+          v-model="columns"
+          :data="data"
+          edit
+          border
+        />
+      </div>
+    </section>
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
+        </div>
+      </Collapse>
+    </section>
+    <h2>Edit 编辑</h2>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -10,9 +38,7 @@
           :data="data"
           edit
           :edit-stop="editStop"
-          fullscreen
           border
-          copy
         >
           <div slot="toolbar">
             <el-button @click="add">新增</el-button>
@@ -37,7 +63,6 @@
       <Collapse>
         <div class="section-content">
           <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
           <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
         </div>
       </Collapse>
@@ -51,9 +76,52 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 import { formatDate } from '@/utils'
 
-const mainSnippet = `
+const htmlCode = `
+  <eff-table
+    ref="table"
+    v-model="columns"
+    :data="data"
+    edit
+    border
+  />
+  `
 
-`
+const jsCode = `
+  export default {
+    data() {
+      return {
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机'
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
+      }
+    }
+  }
+  `
 
 const componentSnippet = `
 <eff-table
@@ -82,9 +150,9 @@ export default {
 
   data() {
     return {
-      mainSnippet,
+      htmlCode,
+      jsCode,
       componentSnippet,
-      data: [],
       options: [{
         value: '选项1',
         label: '1'
@@ -94,6 +162,37 @@ export default {
       }],
       editStop: false,
       columns: [
+        {
+          show: true,
+          prop: 'id',
+          title: 'ID'
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '名字',
+          edit: true
+        },
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别',
+          edit: true
+        },
+        {
+          show: true,
+          prop: 'phone',
+          title: '手机',
+          edit: true
+        }
+      ],
+      data: [
+        { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+      ],
+      columns1: [
         {
           show: true,
           type: 'index',
@@ -207,7 +306,8 @@ export default {
             }
           }
         }
-      ]
+      ],
+      data1: []
     }
   },
   mounted() {
@@ -218,7 +318,7 @@ export default {
       this.editStop = val
     },
     getData() {
-      this.data = mock.mock({
+      this.data1 = mock.mock({
         'array|2': [
           {
             'id|+1': 1,
