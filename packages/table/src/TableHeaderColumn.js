@@ -13,11 +13,11 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag, fixed, edit, prop } = this.column
+      const { titleClassName, drag, fixed, prop } = this.column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
-      edit && (classes += ` col-edit`)
+      // edit && (classes += ` col-edit`)
       if (drag === false || fixed || !prop) {
         classes += ' is-drag--filter'
       }
@@ -46,7 +46,7 @@ export default {
             required ? <i class='eff-cell--required' /> : ''
           }
           {
-            column.edit ? <i class='eff-icon-edit' /> : ''
+            column.edit ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           <span class='eff-cell--title'>{slot}</span>
           {
