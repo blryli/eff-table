@@ -2,12 +2,30 @@
   <div class="page-home page">
     <h2>Edit 编辑</h2>
     <p class="hint">
-      编辑前置条件<br>
+      前置条件：
       <span class="primary">edit</span> 属性设置为
       <span class="primary"> true </span><br>
+      编辑用的是唯一的悬浮框，对比旧方式性能高。<br>
+      旨在尽量让用户脱离鼠标对表格进行快速编辑，快捷键
+      <el-tag class="ml-10">enter</el-tag> 右
+      <el-tooltip effect="dark" content="聚焦右侧可编辑单元格，在当前行最后一个可编辑单元格按下enter时，自动聚焦下一行第一个可编辑单元格" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
+      <el-tag class="ml-20">shift</el-tag> + <el-tag>enter</el-tag> 左
+      <el-tooltip effect="dark" content="聚焦左侧可编辑单元格，在当前行第一个可编辑单元格按下shift+enter时，自动聚焦上一行第一个可编辑单元格" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
+      <el-tag class="ml-20">arrowup</el-tag> 上
+      <el-tooltip effect="dark" content="聚焦当前列上方可编辑单元格，在顶部按下 arrowup 时，有触顶提示" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
+      <el-tag class="ml-20">arrowdown</el-tag> 下
+      <el-tooltip effect="dark" content="聚焦当前列下方可编辑单元格，在底部按下 arrowdown 时，有触底提示" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
     </p>
     <p>列 <span class="primary">edit</span> 属性设置为
-      <span class="primary"> true </span>，该列表头会显示可编辑列&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标
+      <span class="primary"> true </span>，该列表头会显示可编辑列&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 input 编辑框
     </p>
     <section class="demo">
       <div class="section-content">
@@ -28,42 +46,50 @@
         </div>
       </Collapse>
     </section>
-    <h2>Edit 编辑</h2>
+
+    <h3>对象模式</h3>
+    <p>cellRender 决定展示内容，配置列 <span class="primary">config</span>，通过设置 <span class="primary">name</span> 指定渲染元素，</p>config 作用于 cellRender 及 edit 对象的 render 对象
+    <section class="demo">
+      <div class="section-content">
+        <eff-table
+          ref="table"
+          v-model="columns1"
+          :data="data1"
+          :max-height="400"
+          edit
+          border
+        />
+      </div>
+    </section>
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode1" />
+        </div>
+      </Collapse>
+    </section>
+
+    <h3>render函数模式</h3>
+    <p>列 <span class="primary">edit</span> 为render函数时，通过设置 <span class="primary">name</span> 指定渲染元素。元素有下拉框时，需要设置 table 的 edit-stop 属性</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
           ref="table"
           v-model="columns"
-          :max-height="400"
           :data="data"
+          :max-height="400"
           edit
           :edit-stop="editStop"
           border
-        >
-          <div slot="toolbar">
-            <el-button @click="add">新增</el-button>
-            <el-button @click="focus">聚焦第10行</el-button>
-            <el-button @click="data = []">删除所有</el-button>
-            <el-button @click="getData">更新数据</el-button>
-            <el-tooltip placement="top">
-              <div slot="content">
-                <p><el-tag>enter</el-tag> 后一个</p>
-                <p><el-tag>shift</el-tag> + <el-tag>enter</el-tag> 前一个</p>
-                <p><el-tag>arrowup</el-tag> 上一个</p>
-                <p><el-tag>arrowdown</el-tag> 下一个</p>
-              </div>
-              <el-button>快捷操作</el-button>
-            </el-tooltip>
-          </div>
-        </eff-table>
+        />
       </div>
     </section>
-
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -85,6 +111,17 @@ const htmlCode = `
     border
   />
   `
+const htmlCode1 = `
+  <eff-table
+    ref="table"
+    v-model="columns"
+    :data="data"
+    :max-height="400"
+    edit
+    :edit-stop="editStop"
+    border
+  />
+  `
 
 const jsCode = `
   export default {
@@ -99,17 +136,59 @@ const jsCode = `
           {
             show: true,
             prop: 'name',
-            title: '名字'
+            title: '名字',
+            edit: true
           },
           {
             show: true,
             prop: 'sex',
-            title: '性别'
+            title: '性别',
+            edit: true
           },
           {
             show: true,
             prop: 'phone',
-            title: '手机'
+            title: '手机',
+            edit: true
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
+      }
+    }
+  }
+  `
+const jsCode1 = `
+  export default {
+    data() {
+      return {
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true
           }
         ],
         data: [
@@ -123,24 +202,6 @@ const jsCode = `
   }
   `
 
-const componentSnippet = `
-<eff-table
-  ref="table
-  v-model="columns"
-  :data="data"
-  edit
-  :edit-stop="editStop"
-  fullscreen
-  border
->
-  <div slot="toolbar">
-    <el-button @click="add">新增</el-button>
-    <el-button @click="focus">聚焦第三行</el-button>
-    <el-button @click="data = []">删除所有</el-button>
-    <el-button @click="getData">更新数据</el-button>
-  </div>
-</eff-table>
-`
 export default {
   name: 'Edit',
   components: {
@@ -151,8 +212,9 @@ export default {
   data() {
     return {
       htmlCode,
+      htmlCode1,
       jsCode,
-      componentSnippet,
+      jsCode1,
       options: [{
         value: '选项1',
         label: '1'
@@ -186,13 +248,47 @@ export default {
           edit: true
         }
       ],
+      columns1: [
+        {
+          show: true,
+          prop: 'id',
+          title: 'ID'
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '名字',
+          edit: {
+            render: { name: 'input' }
+          }
+        },
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别',
+          config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+          edit: true
+        },
+        {
+          show: true,
+          prop: 'phone',
+          title: '手机',
+          edit: true
+        }
+      ],
       data: [
         { id: 1, name: '张三', sex: '男', phone: '13715201314' },
         { id: 2, name: '李四', sex: '女', phone: '13715201314' },
         { id: 3, name: '王五', sex: '男', phone: '13715201314' },
         { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
       ],
-      columns1: [
+      data1: [
+        { id: 1, name: '张三', sex: '1', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '2', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '1', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '1', phone: '13715201314' }
+      ],
+      columns2: [
         {
           show: true,
           type: 'index',
@@ -306,8 +402,7 @@ export default {
             }
           }
         }
-      ],
-      data1: []
+      ]
     }
   },
   mounted() {
@@ -318,7 +413,7 @@ export default {
       this.editStop = val
     },
     getData() {
-      this.data1 = mock.mock({
+      this.data2 = mock.mock({
         'array|2': [
           {
             'id|+1': 1,
