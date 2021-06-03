@@ -57,8 +57,8 @@ export default {
     setTimeout(v => {
       const { offsetHeight, clientWidth, offsetLeft, offsetTop } = this.table.$el
       this.cardStyle = {
-        top: offsetTop + offsetHeight,
-        left: offsetLeft + 20,
+        bottom: 0,
+        right: 0,
         width: clientWidth - 40,
         height: offsetHeight < 300 ? 300 : offsetHeight
       }
