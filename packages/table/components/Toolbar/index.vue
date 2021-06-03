@@ -1,7 +1,7 @@
 <script>
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
-import columnBatchControlBtn from './columnBatchControlBtn'
+import columnBatchControlBtn from './ColumnBatchControlBtn'
 import EditHistory from './EditHistory'
 import Clear from './Clear'
 import Refresh from './Refresh'
