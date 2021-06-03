@@ -73,12 +73,17 @@ export default {
         this.table.columnGroupIds.push(this.row[this.table.rowId])
         if (!this.row.children || !this.row.children.length) {
           this.groupStatus = 3
+
           this.table.commitProxy('loadChildren', this.row, (arr) => {
             this.$set(this.row, 'children', arr)
             this.groupStatus = 2
+            this.table.groupColumnNum += arr.length
           })
+        } else {
+          this.table.groupColumnNum += this.row.children.length
         }
       } else {
+        this.table.groupColumnNum -= this.row.children.length
         this.table.columnGroupIds.splice(pos, 1)
       }
     },

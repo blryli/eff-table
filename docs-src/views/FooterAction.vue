@@ -1,11 +1,24 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>FooterAction 底部工具栏</h2>
+    <p class="hint">
+      底部工具栏分为左侧和右侧，左侧可以自定义按钮，右侧可以显示分页<br>
+    </p>
+
+    <h3>分页</h3>
+    <p>
+      前置条件<br>
+      <span class="primary">footerActionConfig.showPager = true</span><br>
+      分页的当前页，每页大小，总大小由接口控制，接口的格式需要为<span class="primary">{pageNum pageSize total list}</span>
+    </p>
+
     <section class="demo">
       <div class="section-content">
         <eff-table
           ref="table"
-          v-bind="tableOptions"
+          v-model="columns"
+          :data="data"
+          :footer-action-config="{ showPager: true, showBorder: true }"
           :max-height="400"
         />
       </div>
@@ -14,9 +27,38 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
+          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
           <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+        </div>
+      </Collapse>
+    </section>
+
+    <h3>左侧自定义render</h3>
+    <p>
+      前置条件<br>
+      <span class="primary">slot</span>名为<span class="primary">footer_action</span>的里面有内容<br>
+    </p>
+
+    <section class="demo">
+      <div class="section-content">
+        <eff-table ref="table2" v-model="columns" :data="data" :footer-action-config="{ }" :max-height="400">
+          <template #footer_action>
+            <el-button>演示按钮1</el-button>
+            <el-button>演示按钮2</el-button>
+            <el-button>演示按钮3</el-button>
+            <el-button>演示按钮4</el-button>
+          </template>
+        </eff-table>
+      </div>
+    </section>
+
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="snippet" :code="htmlCode1" lang="html" />
+          <div class="plus">+</div>
+          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
         </div>
       </Collapse>
     </section>
@@ -24,384 +66,147 @@
 </template>
 
 <script>
+
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
-import axios from 'axios'
 
-const mainSnippet = `
-data() {
-    return {
-      mainSnippet,
-      componentSnippet,
-      tableOptions: {
-        footerActionConfig: {
-          showPager: true,
-          showBorder: true
-        },
-        search: true,
-        drag: true,
-        edit: true,
-        columnControl: true,
-        border: true,
-        // selectRange: true,
-        // copy: true,
-        fullscreen: true,
-        rowId: 'id',
-        toolbarConfig: {
-          buttons: [
-            { name: 'button', code: 'checkout_select_type', content: '切换单选', props: { icon: 'el-icon-news' }},
-            { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'save', content: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
-          ]
-        },
-        proxyConfig: {
-          request: {
-            query: ({ page, sorts, filters, form }) => {
-              const params = { ...form }
-              return axios.get('url', params).catch(res => {
-                return {
-                  list: mock.mock({
-                    'array|5': [
-                      {
-                        'id|+1': 100,
-                        'input|+1': 1,
-                        'textarea': '@name',
-                        'select': '1',
-                        'date': '',
-                        'switch': null,
-                        'checkboxgroup': [],
-                        'checkbox': false,
-                        'popup': '@title',
-                        'link': '@ctitle',
-                        'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                      }
-                    ]
-                  }).array,
-                  pageNum: 1,
-                  pageSize: 10,
-                  total: 100
-                }
-              })
-            },
-            delete: ({ body }) => axios.post('url', body),
-            save: ({ body }) => axios.post('url', body)
-          }
-        },
+const htmlCode = `
+    <eff-table
+      ref="table"
+      v-model="columns"
+      :data="data"
+      :footer-action-config="{ showPager: true, showBorder: true }"
+    />
+  `
+const htmlCode1 = `
+  <eff-table ref="table" v-model="columns" :data="data" :footer-action-config="{ }" :max-height="400" >
+      <template #footer_action>
+        <el-button>演示按钮1</el-button>
+        <el-button>演示按钮2</el-button>
+        <el-button>演示按钮3</el-button>
+        <el-button>演示按钮4</el-button>
+      </template>
+    </eff-table>
+  `
+const jsCode = `
+  export default {
+    data() {
+      return {
         columns: [
           {
             show: true,
-            type: 'radio',
-            width: 40,
-            fixed: 'left'
+            prop: 'id',
+            title: 'ID'
           },
           {
             show: true,
-            prop: 'input',
-            title: '输入框',
-            width: 100,
-            config: { name: 'input' },
-            sortable: true,
-            search: {
-              operator: true
-            },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } },
-            edit: true
+            prop: 'name',
+            title: '名字'
           },
           {
             show: true,
-            prop: 'textarea',
-            title: '文本框',
-            width: 100,
-            search: true,
-            edit: {
-              render: { name: 'textarea' }
-            },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } }
+            prop: 'sex',
+            title: '性别'
           },
           {
             show: true,
-            prop: 'popup',
-            title: '气泡',
-            width: 100,
-            config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'select',
-            title: '选择器',
-            width: 100,
-            config: {
-              name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]
-            },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
-            prop: 'switch',
-            title: '开关',
-            width: 100,
-            config: { name: 'switch', defaultValue: false },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
-            prop: 'date',
-            title: '日期',
-            width: 160,
-            config: {
-              name: 'date-picker', format: 'yyyy-MM-dd'
-            },
-            search: {
-              operator: true
-            },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'link',
-            title: '文字链接',
-            width: 100,
-            search: true,
-            cellRender: { name: 'link', props: { url: '' }},
-            edit: {
-              render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
-            }
-          },
-          {
-            show: true,
-            prop: 'url',
-            title: '图片',
-            width: 100,
-            cellRender: { name: 'image' }
-          },
-          {
-            show: true,
-            title: '多选框组',
-            width: 160,
-            config: { name: 'checkbox-group', children: [
-              { name: 'checkbox', props: { label: '深圳' }},
-              { name: 'checkbox', props: { label: '广州' }}
-            ] }
-          },
-          {
-            show: true,
-            title: '多选框',
-            width: 100,
-            config: { name: 'checkbox', content: '选项' }
-          },
-          {
-            show: true,
-            title: '按钮',
-            width: 100,
-            config: { name: 'button', content: '操作' }
+            prop: 'phone',
+            title: '手机'
           }
+        ],
+        data: [
+        { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
         ]
+      }
+    },
+    mounted() {
+      this.$refs.table.pager = {
+        pageNum: 1,
+        pageSize: 10,
+        total: 18
       }
     }
   }
-}
-`
-
-const componentSnippet = `
-<eff-table
-  ref="table"
-  v-bind="tableOptions"
-/>
-`
+  `
 export default {
   name: 'FooterAction',
   components: {
     CodeSnippet,
     Collapse
   },
-
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
-      tableOptions: {
-        footerActionConfig: {
-          showPager: true,
-          showBorder: true
+      htmlCode,
+      htmlCode1,
+      jsCode,
+      columns: [
+        {
+          show: true,
+          prop: 'id',
+          title: 'ID'
         },
-        search: true,
-        drag: true,
-        edit: true,
-        columnControl: true,
-        border: true,
-        // selectRange: true,
-        // copy: true,
-        fullscreen: true,
-        rowId: 'id',
-        toolbarConfig: {
-          buttons: [
-            { name: 'button', code: 'checkout_select_type', content: '切换单选', props: { icon: 'el-icon-news' }},
-            { name: 'button', code: 'insert_focus', content: '新增', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'delete', content: '直接删除', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'mark_cancel', content: '删除/取消', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'save', content: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
-          ]
+        {
+          show: true,
+          prop: 'name',
+          title: '名字'
         },
-        proxyConfig: {
-          request: {
-            query: ({ page, sorts, filters, form }) => {
-              const params = { ...form }
-              return axios.get('url', params).catch(res => {
-                return {
-                  list: mock.mock({
-                    'array|5': [
-                      {
-                        'id|+1': 100,
-                        'input|+1': 1,
-                        'textarea': '@name',
-                        'select': '1',
-                        'date': '',
-                        'switch': null,
-                        'checkboxgroup': [],
-                        'checkbox': false,
-                        'popup': '@title',
-                        'link': '@ctitle',
-                        'url': 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-                      }
-                    ]
-                  }).array,
-                  pageNum: 1,
-                  pageSize: 10,
-                  total: 100
-                }
-              })
-            },
-            delete: ({ body }) => axios.post('url', body),
-            save: ({ body }) => axios.post('url', body)
-          }
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别'
         },
-        columns: [
-          {
-            show: true,
-            type: 'radio',
-            width: 40,
-            fixed: 'left'
-          },
-          {
-            show: true,
-            prop: 'input',
-            title: '输入框',
-            width: 100,
-            config: { name: 'input' },
-            sortable: true,
-            search: {
-              operator: true
-            },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'textarea',
-            title: '文本框',
-            width: 100,
-            search: true,
-            edit: {
-              render: { name: 'textarea' }
-            },
-            validator: { required: true, rule: ({ value }) => {
-              return !value && '不能为空'
-            } }
-          },
-          {
-            show: true,
-            prop: 'popup',
-            title: '气泡',
-            width: 100,
-            config: { name: 'popup', props: { content: '飘起来' }, children: [{ name: 'input', attrs: { autofocus: true }}] },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'select',
-            title: '选择器',
-            width: 100,
-            config: {
-              name: 'select', options: [{ value: '1', label: '选项1' }, { value: '2', label: '选项2' }]
-            },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
-            prop: 'switch',
-            title: '开关',
-            width: 100,
-            config: { name: 'switch', defaultValue: false },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
-            prop: 'date',
-            title: '日期',
-            width: 160,
-            config: {
-              name: 'date-picker', format: 'yyyy-MM-dd'
-            },
-            search: {
-              operator: true
-            },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'link',
-            title: '文字链接',
-            width: 100,
-            search: true,
-            cellRender: { name: 'link', props: { url: '' }},
-            edit: {
-              render: { name: 'dialog', props: { visible: false }, defaultValue: { url: '', title: '' }, children: [{ name: 'form' }] }
-            }
-          },
-          {
-            show: true,
-            prop: 'url',
-            title: '图片',
-            width: 100,
-            cellRender: { name: 'image' }
-          },
-          {
-            show: true,
-            title: '多选框组',
-            width: 160,
-            config: { name: 'checkbox-group', children: [
-              { name: 'checkbox', props: { label: '深圳' }},
-              { name: 'checkbox', props: { label: '广州' }}
-            ] }
-          },
-          {
-            show: true,
-            title: '多选框',
-            width: 100,
-            config: { name: 'checkbox', content: '选项' }
-          },
-          {
-            show: true,
-            title: '按钮',
-            width: 100,
-            config: { name: 'button', content: '操作' }
-          }
-        ]
-      }
+        {
+          show: true,
+          prop: 'phone',
+          title: '手机'
+        }
+      ],
+      data: [
+        { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+      ]
+    }
+  },
+  mounted() {
+    this.$refs.table.pager = {
+      pageNum: 1,
+      pageSize: 10,
+      total: 18
     }
   }
 }

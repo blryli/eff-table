@@ -9,6 +9,7 @@
       :style="{'--lineHeight': form.lineHeight}"
     >
       <div
+        v-if="title || form.titleAlign === 'top'"
         :style="{flex: `0 0 ${tWidth}`, height: '32px'}"
         class="flex align-center justify-end"
         style=" position: relative;"
@@ -25,7 +26,6 @@
 
         </template>
         <label
-          v-if="title || form.titleAlign === 'top'"
           class="v-form-item__title"
         >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
       </div>
