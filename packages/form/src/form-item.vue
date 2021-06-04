@@ -20,9 +20,6 @@
             @mouseenter="messageEnter"
             @mouseleave="messageLeave"
           >{{ titlePrefix.icon == 'ooh'? '!' : '?' }}</i>
-          <div v-if="showMessage" class="v-form-item__message_container">
-            <div class="v-form-item__message">{{ titlePrefix.message }}</div>
-          </div>
 
         </template>
         <label
@@ -58,7 +55,10 @@ export default {
     return {
     }
   },
-  inject: ['form', 'table'],
+  inject: {
+    form: { default: null },
+    table: { default: null }
+  },
   computed: {
     root() {
       return this.form || this.table
@@ -70,8 +70,6 @@ export default {
       const { titleWidth, form } = this
       return titleWidth || form.titleWidth || '80px'
     }
-  },
-  mounted() {
   },
   methods: {
     messageEnter(e) {

@@ -1,39 +1,57 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Form 表单</h2>
     <section class="demo">
       <div class="section-content">
         <v-form ref="form" v-bind="formOptions" />
         <el-button type="primary" @click="validate">校 验</el-button>
         <el-button type="primary" @click="clearValidate">清除校验</el-button>
         <el-button type="primary" @click="save">保 存</el-button>
+      </div>
+    </section>
 
-        <!-- <v-form :data="data">
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
+          <div class="plus">+</div>
+          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+        </div>
+      </Collapse>
+    </section>
+
+    <h2>slot模式</h2>
+    <section class="demo">
+      <div class="section-content">
+        <v-form ref="form1" :data="data">
           <v-form-item
             title="名字"
             prop="name"
             :span="8"
             :rules=" [
-              { type: 'phone' }
+              { required: true },
+              { min: 3 }
             ]"
           >
             <el-input v-model="data.name" />
           </v-form-item>
           <v-form-item
-            title="select"
-            prop="select"
+            title="性别"
+            prop="sex"
             :span="8"
             :rules=" [
               { required: true, trigger: 'change' }
             ]"
           >
-            <el-select v-model="data.select" clearable>
+            <el-select v-model="data.sex" clearable>
               <el-option label="11" value="11" />
               <el-option label="22" value="22" />
             </el-select>
           </v-form-item>
-        </v-form> -->
-        <!-- {{ formOptions.data }} -->
+        </v-form>
+        <el-button type="primary" @click="validate1">校 验</el-button>
+        <el-button type="primary" @click="clearValidate1">清除校验</el-button>
+        <el-button type="primary" @click="save1">保 存</el-button>
       </div>
     </section>
 
@@ -286,10 +304,19 @@ export default {
       this.$refs.form.clearStatus()
     },
     validate() {
-      this.$refs.form.validate().catch(e => console.log(e))
+      this.$refs.form.validate().catch(e => console.log(e)).then(res => console.log('then', res))
     },
     clearValidate() {
       this.$refs.form.clearValidate()
+    },
+    save1() {
+      this.$refs.form1.clearStatus()
+    },
+    validate1() {
+      this.$refs.form1.validate().catch(e => console.log(e)).then(res => console.log('then', res))
+    },
+    clearValidate1() {
+      this.$refs.form1.clearValidate()
     }
   }
 }

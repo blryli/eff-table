@@ -123,7 +123,7 @@ export default {
           }
         }
       }
-      form.focusOpen && form.$emit('line-slot-change', { prop, slot: this, input: this.input })
+      form.focusOpen && form.$emit('line-slot-change', { prop, slot: this, input: this.input, rules })
     },
     onFocus(component) {
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)

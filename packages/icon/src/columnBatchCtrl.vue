@@ -9,8 +9,7 @@
 
 <script>
 export default {
-  name: 'ColumnBatchControlIcon',
-  inject: ['table']
+  name: 'ColumnBatchControlIcon'
 }
 </script>
 

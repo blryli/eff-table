@@ -31,7 +31,7 @@
         <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>
-        <router-link class="menu-list" to="/Form">layout 布局</router-link>
+        <router-link class="menu-list" to="/Form">Form 表单</router-link>
       </div>
       <div class="container">
         <keep-alive>

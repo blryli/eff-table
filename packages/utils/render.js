@@ -347,6 +347,7 @@ function renderTag(h, renderOpts, params) {
   const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
   const { data, prop } = params || {}
   const value = data[prop]
+  if (!value) return ''
   return (XEUtils.isArray(value) ? value : [value]).map(d => {
     const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
     return render(h, renderOpts, params).set('children', label).render()

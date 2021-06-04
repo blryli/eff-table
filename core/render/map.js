@@ -1,6 +1,7 @@
 const map = {
   // element
   'input': 'el-input',
+  'input-number': 'el-input-number',
   'textarea': 'el-textarea',
   'select': 'el-select',
   'option': 'el-option',

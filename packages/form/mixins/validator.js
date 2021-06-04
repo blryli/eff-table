@@ -38,8 +38,8 @@ export default {
       // cell && cell.classList.add('is-async-validator') // 异步校验动效
     },
     validate() {
-      const { data, columns } = this
-      return validate([data], columns, this.validateField)
+      const { data, itemSlots } = this
+      return validate([data], itemSlots.map(d => ({ prop: d.prop, rules: d.rules })), this.validateField)
     },
     clearValidate(props) {
       const clear = prop => {
