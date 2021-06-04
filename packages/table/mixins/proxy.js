@@ -239,6 +239,19 @@ export default {
     },
     refresh() {
       this.commitProxy('query')
+    },
+    getInsertList() {
+      const { rowId, editStore } = this
+      const { insertList, pendingList } = editStore
+      return insertList.filter(d => !pendingList.find(p => p[rowId] === d[rowId]))
+    },
+    getUpdateList() {
+      const { rowId, editStore } = this
+      const { updateList, pendingList } = editStore
+      return updateList.filter(d => !pendingList.find(p => p[rowId] === d[rowId]))
+    },
+    getPendingList() {
+      return this.editStore.pendingList
     }
   }
 }

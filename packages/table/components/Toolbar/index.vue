@@ -1,7 +1,7 @@
 <script>
 import Fullscreen from './Fullscreen'
 import ColumnCtrlBtn from './ColumnCtrlBtn'
-import ColumnEditBtn from './ColumnEditBtn'
+import columnBatchControlBtn from './ColumnBatchControlBtn'
 import EditHistory from './EditHistory'
 import Clear from './Clear'
 import Refresh from './Refresh'
@@ -13,7 +13,7 @@ import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, ColumnEditBtn, EditHistory, Refresh, Search, SortCtrlBtn },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn },
   inject: ['table'],
   data() {
     return {
@@ -25,7 +25,7 @@ export default {
       this.table.$refs.drag.toggleCardShow()
     },
     btnEdit() {
-      this.table.$refs.columnEdit.toggleCardShow()
+      this.table.$refs.columnBatchControl.toggleCardShow()
     },
     btnClick(code, e, index) {
       this.load = false
@@ -38,7 +38,7 @@ export default {
   render(h) {
     const { table, load } = this
     if (!load) return ''
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnEdit, editHistory, showReplace, showSort } = table
+    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnBatchControl, editHistory, showReplace, showSort } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       const { code } = cur
@@ -77,7 +77,7 @@ export default {
             search && searchClear && <Clear /> || ''
           }
           {
-            columnEdit && <ColumnEditBtn on-change={this.btnEdit} /> || ''
+            columnBatchControl && <columnBatchControlBtn on-change={this.btnEdit} /> || ''
           }
           {
             columnControl && <ColumnCtrlBtn on-change={this.btnChange} /> || ''

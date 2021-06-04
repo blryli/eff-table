@@ -308,11 +308,6 @@
   }
 }
 .eff-table__body-row{
-  &:last-child{
-    .eff-table__column{
-      border-bottom: none;
-    }
-  }
   &.is--hover{
     .eff-table__column {
       background-color: #f1f3f5;
@@ -333,6 +328,31 @@
   }
 }
 
+.is--stripe{
+  .eff-table__body-row:nth-child(even){
+    &.is--hover{
+      .eff-table__column {
+        background-color: #f1f3f5;
+      }
+    }
+  }
+  .eff-table__body-row:nth-child(even){
+    .eff-table__column {
+      background-color: #fafafa;
+    }
+  }
+}
+
+// 数据高度==body高度，去掉最后一行的border-bottom
+.is-bottom--coincide{
+  .eff-table__body-row:last-child{
+    .eff-table__column{
+      border-bottom: none;
+    }
+  }
+}
+
+
 .eff-table__footer{
   position: relative;
   border-top: 1px solid #ddd;
@@ -349,7 +369,7 @@
   }
 }
 
-.is-border {
+.is--border {
   .eff-table__column,
   .eff-table__search-empty,
   .eff-table__header-group-title{
@@ -627,7 +647,7 @@
   &.is-hide{
     visibility: hidden;
   }
-  input, textarea{
+   > *, input, textarea{
     width: 100%;
     height: var(--height)!important;
     line-height: var(--height)!important;

@@ -1,6 +1,11 @@
 <template>
   <div class="page-home page">
     <h2>Base 基础表格</h2>
+    <p class="hint">
+      基础属性<br>
+      <span class="primary">value</span> 表格列数组<br>
+      <span class="primary">data</span> 表格数据
+    </p>
     <section class="demo">
       <div class="section-content">
         <eff-table v-model="columns" :data="data" />
@@ -9,13 +14,14 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="html" :code="snippet[0]" />
-          <CodeSnippet class="javascript" :code="snippet[1]" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
-    <h2>Border 边框</h2>
-    <p><span class="primary">border</span> 属性设置为<span class="primary"> true </span>显示竖边框</p>
+
+    <h3>竖边框</h3>
+    <p><span class="primary">border</span> 属性设置为<span class="primary"> true </span>显示列竖边框</p>
     <section class="demo">
       <div class="section-content">
         <eff-table v-model="columns" :data="data" border />
@@ -25,8 +31,25 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="html" :code="snippet[0]" />
-          <CodeSnippet class="javascript" :code="snippet[1]" />
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode" />
+        </div>
+      </Collapse>
+    </section>
+
+    <h3>斑马线</h3>
+    <p><span class="primary">stripe</span> 属性设置为<span class="primary"> true </span>显示列竖边框</p>
+    <section class="demo">
+      <div class="section-content">
+        <eff-table v-model="columns" :data="data" stripe />
+      </div>
+    </section>
+
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode2" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -37,22 +60,25 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
-const snippet = [
-  `
+const htmlCode = `
   <eff-table v-model="columns" :data="data" /> 
-  `,
   `
+const htmlCode1 = `
+  <eff-table v-model="columns" :data="data" border /> 
+  `
+const htmlCode2 = `
+  <eff-table v-model="columns" :data="data" stripe /> 
+  `
+
+const jsCode = `
   export default {
     data() {
       return {
-        data: [],
         columns: [
           {
             show: true,
-            type: 'index',
-            title: '序号',
-            width: 80,
-            fixed: 'left'
+            prop: 'id',
+            title: 'ID'
           },
           {
             show: true,
@@ -67,15 +93,19 @@ const snippet = [
           {
             show: true,
             prop: 'phone',
-            title: '手机',
-            width: 150
+            title: '手机'
           }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
         ]
       }
     }
   }
   `
-]
 export default {
   name: '',
   components: {
@@ -85,14 +115,15 @@ export default {
 
   data() {
     return {
-      snippet,
-      loading: false,
+      htmlCode,
+      htmlCode1,
+      htmlCode2,
+      jsCode,
       columns: [
         {
           show: true,
-          type: 'index',
-          width: 80,
-          fixed: 'left'
+          prop: 'id',
+          title: 'ID'
         },
         {
           show: true,
@@ -107,13 +138,14 @@ export default {
         {
           show: true,
           prop: 'phone',
-          title: '手机',
-          width: 150
+          title: '手机'
         }
       ],
       data: [
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '男', phone: '13715201314' }
+        { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
       ]
     }
   }

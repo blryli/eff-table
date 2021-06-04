@@ -1,31 +1,30 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Replace 批量替换</h2>
+    <p class="hint">
+      前置条件<br>
+      <span class="primary">show-replace</span>和 <span class="primary">column-control</span>属性设置为
+      <span class="primary"> true </span><br>
+    </p>
+    <div>
+      点击
+      <div title="替换和填充" class="eff-table__replace" style="display: inline-flex"><div class="eff-table__replace-icon"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div> <div class="eff-table__replace-icon symmetry"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div></div>
+      弹出替换窗口
+      <span class="primary">右侧</span>选择字段，<span class="primary">左侧</span>编辑替换的选项
+    </div>
+
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          ref="table"
-          v-model="columns"
-          :data="data"
-          :loading="loading"
-          :max-height="400"
-          drag
-          column-control
-          row-drag
-          border
-          fullscreen
-          column-edit
-          show-replace
-        />
+        <eff-table ref="table" v-model="columns" :data="data" show-replace />
       </div>
     </section>
 
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
+          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
           <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
         </div>
       </Collapse>
     </section>
@@ -35,85 +34,45 @@
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
 
-const mainSnippet = `
-data() {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        type: 'selection',
-        width: 40,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'index',
-        title: '序号',
-        width: 80,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'city',
-        title: '城市',
-        width: 140
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '名字',
-        children: [{
-          show: true,
-          prop: 'cfirst',
-          title: '姓',
-          width: 150
-        }, {
-          show: true,
-          prop: 'clast',
-          title: '名',
-          width: 150
-        }]
-      },
-      {
-        show: true,
-        prop: 'email',
-        title: '邮箱',
-        width: 150
-      },
-      {
-        show: true,
-        prop: 'phone',
-        title: '手机',
-        width: 150
-      },
-      {
-        show: true,
-        prop: 'datetime',
-        title: '核酸检测时间',
-        width: 150
+const htmlCode = `
+  <eff-table ref="table" v-model="columns" :data="data" show-replace />
+  `
+
+const jsCode = `
+  export default {
+    data() {
+      return {
+        data: [],
+        columns: [
+          {
+            show: true,
+            type: 'index',
+            title: '序号',
+            width: 80,
+            fixed: 'left'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            width: 150
+          }
+        ]
       }
-    ]
+    }
   }
-}
-`
-
-const componentSnippet = `
- <eff-table
-    ref="table"
-    v-model="columns"
-    :data="data"
-    :loading="loading"
-    drag
-    column-control
-    row-drag
-    border
-    fullscreen
-    show-replace
-  />
-`
+  `
 export default {
   name: 'Replace',
   components: {
@@ -123,86 +82,37 @@ export default {
 
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
-      loading: false,
-      data: [],
+      htmlCode,
+      jsCode,
       columns: [
         {
           show: true,
-          type: 'selection',
-          width: 40,
-          fixed: 'left'
-        },
-        {
-          show: true,
-          prop: 'index',
-          title: '序号',
+          type: 'index',
           width: 80,
           fixed: 'left'
         },
         {
           show: true,
-          prop: 'city',
-          title: '城市',
-          width: 140
-        },
-        {
-          show: true,
           prop: 'name',
-          title: '名字',
-          children: [{
-            show: true,
-            prop: 'cfirst',
-            title: '姓',
-            width: 150
-          }, {
-            show: true,
-            prop: 'clast',
-            title: '名',
-            width: 150
-          }]
+          title: '名字'
         },
         {
           show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150
+          prop: 'sex',
+          title: '性别'
         },
         {
           show: true,
           prop: 'phone',
           title: '手机',
           width: 150
-        },
-        {
-          show: true,
-          prop: 'datetime',
-          title: '核酸检测时间',
-          width: 150
         }
+      ],
+      data: [
+        { name: '张三', sex: '男', phone: '13715201314' },
+        { name: '李四', sex: '男', phone: '13715201314' }
       ]
     }
-  },
-  mounted() {
-    this.loading = true
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|500': [
-          {
-            'city': '@city',
-            'cfirst': '@cfirst',
-            'clast': '@clast',
-            'email': '@email',
-            'datetime': '@datetime',
-            'phone': '13888888888',
-            'index|+1': 1,
-            'id|+1': 1
-          }
-        ]
-      }).array
-      this.loading = false
-    }, 1000)
   }
 }
 </script>

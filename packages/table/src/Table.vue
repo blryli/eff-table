@@ -12,7 +12,7 @@
     <!-- <VForm v-bind="formConfig" /> -->
 
     <Toolbar
-      v-if="toolbarConfig || $slots.toolbar || fullscreen || (drag && columnControl) || columnEdit"
+      v-if="toolbarConfig || $slots.toolbar || fullscreen || showReplace || (drag && columnControl) || columnBatchControl"
       ref="toolbar"
     >
       <slot name="toolbar" />
@@ -129,11 +129,11 @@
       @row-change="dragRowChange"
     />
 
-    <column-edit
+    <column-batch-control
       v-if="border && drag"
-      ref="columnEdit"
+      ref="columnBatchControl"
       :init-columns.sync="tableColumns"
-      :column-control="columnEdit"
+      :column-control="columnBatchControl"
       @cardClose="handleCardClose"
       @change="dargChange"
       @row-change="dragRowChange"
@@ -184,7 +184,7 @@ import ScrollX from '../components/ScrollX'
 import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
-import ColumnEdit from '../components/ColumnEdit/index'
+import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
@@ -203,7 +203,7 @@ export default {
     Loading,
     SelectRange,
     Copy,
-    ColumnEdit,
+    columnBatchControl,
     FooterAction,
     Replace,
     Sort
@@ -232,6 +232,7 @@ export default {
     data: { type: Array, default: () => [] },
     form: { type: Object, default: () => {} },
     border: Boolean,
+    stripe: Boolean,
     drag: Boolean,
     search: Boolean,
     edit: Boolean,
@@ -240,9 +241,9 @@ export default {
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
     columnControl: Boolean,
-    columnEdit: Boolean,
-    columnEditText: { type: String, default: '' },
     columnControlText: { type: String, default: '' },
+    columnBatchControl: Boolean,
+    columnBatchControlText: { type: String, default: '' },
     rowDrag: Boolean,
     fullscreen: Boolean,
     showSummary: Boolean, // 合计
@@ -406,7 +407,6 @@ export default {
   },
   methods: {
     loadTableData(data) {
-      if (!data.length) return []
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
@@ -482,7 +482,9 @@ export default {
       if (isSome) {
         this.editStore.updateList.splice(index, 1)
       } else {
-        this.editStore.updateList.splice(index, 1, newRow)
+        index === -1
+          ? this.editStore.updateList.push(newRow)
+          : this.editStore.updateList.splice(index, 1, newRow)
       }
     },
     // 更新数据行map
@@ -493,7 +495,7 @@ export default {
       })
     },
     editField(fileds) {
-      console.log('fileds', JSON.stringify(fileds, null, 2))
+      // console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this

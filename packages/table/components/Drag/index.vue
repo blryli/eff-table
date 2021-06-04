@@ -49,7 +49,7 @@ export default {
   mounted() {
     this.$watch('table.overflowX', (newVal, oldVal) => {
       if (!oldVal && newVal) {
-        this.setRowHandle(true)
+        this.setRowDrag(true)
       }
     })
 
@@ -76,21 +76,21 @@ export default {
           onEnd: handleEnd
         })
 
-        this.setRowHandle(false)
-      }
-      if (columnControl) {
-        setTimeout(() => {
-          this.cradsSortable = new Sortable({
-            el: cardEl.querySelector('.eff-card__body'),
-            group: id,
-            dragImage: {
-              height: 30
-            },
-            dragend: handleDragend,
-            dragenter: handleDragenter,
-            onEnd: handleEnd
-          })
-        }, 500)
+        if (columnControl) {
+          setTimeout(() => {
+            this.cradsSortable = new Sortable({
+              el: cardEl.querySelector('.eff-card__body'),
+              group: id,
+              dragImage: {
+                height: 30
+              },
+              dragend: handleDragend,
+              dragenter: handleDragenter,
+              onEnd: handleEnd
+            })
+          }, 500)
+        }
+        this.setRowDrag(false)
       }
     })
   },
@@ -103,11 +103,9 @@ export default {
       this.show = false
       this.$emit('cardClose')
     },
-    setRowHandle(left = false) {
-      console.log(left, 123)
+    setRowDrag(left = false) {
       if (this.table.rowDrag) {
         const body = left ? this.table.$refs.leftBody : this.table.$refs.body
-        console.log(body, 123)
         this.rowSortable = new Sortable({
           el: body.$el.querySelector('.eff-table__body'),
           filter: 'is-drag--filter',
@@ -119,7 +117,6 @@ export default {
       }
     },
     toggleCardShow(val) {
-      val = true
       this.show = val === undefined ? !this.show : val
     },
     handleRowEnd({ fromEl, toEl }) {

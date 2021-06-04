@@ -1,9 +1,52 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Sort 排序</h2>
+    <p class="hint">
+      单字段排序<br>
+      设置v-model字段的
+      <span class="primary">sortable</span>属性 = <span class="primary">true</span> 开启
+    </p>
+    <div>
+      也可以通过组件的sort方法去排序，参数为（字段名，"asc" || "desc"）
+    </div>
+    <br>
+
     <el-button @click="$refs.table.sort('city', 'asc')">城市升序</el-button>
     <el-button @click="$refs.table.sort('city', 'desc')">城市降序</el-button>
     <el-button @click="$refs.table.clearSort()">清除排序</el-button>
+    <section class="demo">
+      <div class="section-content">
+        <eff-table
+          ref="table"
+          v-model="columns"
+          :max-height="400"
+          :data="data"
+        />
+      </div>
+    </section>
+
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
+          <div class="plus">+</div>
+          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+        </div>
+      </Collapse>
+    </section>
+
+    <p class="hint">
+      全字段排序<br>
+      设置
+      <span class="primary">show-sort</span> = <span class="primary">true</span> 开启
+    </p>
+    <div>
+      点击
+      <div title="自定义排序" style="display: inline-flex" class="eff-table__sort flex justify-between"><div class="eff-table__sort-left" /> <div class="eff-table__sort-right" /></div>
+      展开排序框，在<span class="primary">右侧</span>选择字段后，点击<span class="primary">左侧</span>选择排序方式，点击确定即可执行排序
+    </div>
+    <br>
+
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -75,7 +118,7 @@ const componentSnippet = `
   ref="table"
   v-model="columns"
   :data="data"
-  fullscreen
+  show-sort
 />
 `
 export default {

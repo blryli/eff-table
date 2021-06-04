@@ -65,5 +65,9 @@ export function render(h, renderOpts, params) {
   if (params && typeof (params._beforeRender_) === 'function') {
     params._beforeRender_(renderOpts, h)
   }
+  const { props } = renderOpts
+  if (props && typeof props === 'function') {
+    renderOpts.props = props(params)
+  }
   return new Render(h, renderOpts, params)
 }

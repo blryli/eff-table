@@ -188,7 +188,7 @@ export default {
       }
     },
     canFocus(column, cell) {
-      const { type, edit = {}} = column
+      const { type, edit } = column
       const types = ['selection', 'index']
       return edit && column && column.prop && !this.disabled(column) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
@@ -269,6 +269,10 @@ export default {
 
     handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
+      if (!column.edit) {
+        this.close()
+        return
+      }
       this.blurEvent().then(() => {
         this.rowIndex = rowIndex
         this.editCell(column, cell)

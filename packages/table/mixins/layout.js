@@ -7,7 +7,8 @@ export default {
       offset: 0,
       overflowX: false,
       headerLoad: false,
-      bodyLoad: false
+      bodyLoad: false,
+      groupColumnNum: 0
     }
   },
   created() {
@@ -19,14 +20,18 @@ export default {
         this.resize()
       }, 0)
     }
+
   },
   computed: {
     tableClass() {
       let tClass = 'eff-table__container'
-      const { overflowX, overflowY, border } = this
+      const { overflowX, overflowY, border, stripe, heights } = this
+      const { bodyHeight, dataHeight } = heights
       overflowX && (tClass += ' is-overflow--x')
       overflowY && (tClass += ' is-overflow--y')
-      border && (tClass += ' is-border')
+      border && (tClass += ' is--border')
+      stripe && (tClass += ' is--stripe')
+      bodyHeight === dataHeight && (tClass += ' is-bottom--coincide')
       return tClass
     },
     bodyRenderWidth() {
@@ -81,7 +86,7 @@ export default {
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
       const footerActionHeight = footerAction ? rowHeight : 0
-      const dataHeight = tableData.length ? tableData.length * rowHeight : rowHeight
+      const dataHeight = tableData.length ? (tableData.length + this.groupColumnNum) * rowHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0

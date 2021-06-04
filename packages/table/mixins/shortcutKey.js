@@ -49,7 +49,6 @@ export default {
       if (this.inRoot && this.search && keysStr === 'b,control') {
         this.searchShow = !this.searchShow
         if (this.searchShow === false) {
-          console.log('this.searchShow', this.searchShow)
           this.clearSearch()
           this.searchChange([])
         }
