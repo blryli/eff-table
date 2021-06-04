@@ -91,7 +91,7 @@
           </el-table>
         </div>
         <div class="search-footer">
-          <el-button size="mini">重置</el-button>
+          <!-- <el-button size="mini">重置</el-button> -->
           <el-button size="mini" @click="handleSearch" type="primary">搜索</el-button>
         </div>
       </div>
@@ -114,104 +114,6 @@ export default {
   data() {
     return {
       key: 0,
-      // searchData: [
-      //   {
-      //     fieldName: "姓名",
-      //     operator: "",
-      //     fieldValue: "",
-      //     conditionConnector: "",
-      //     fieldType: "",
-      //     componentType: "select",
-      //     dataSourceType: "1",
-      //     apiSource: {
-      //       apiUcode: ""
-      //     },
-      //     staticSourceList: [
-      //       {
-      //         label: "aaa",
-      //         value: "aaa"
-      //       },
-      //       {
-      //         label: "bbb",
-      //         value: "bbb"
-      //       }
-      //     ]
-      //     // childConditionList: [
-      //     //   {
-      //     //     fieldName: "状态",
-      //     //     operator: "",
-      //     //     fieldValue: "",
-      //     //     conditionConnector: ""
-      //     //   },
-      //     //   {
-      //     //     fieldName: "类型",
-      //     //     operator: "",
-      //     //     fieldValue: "",
-      //     //     conditionConnector: ""
-      //     //   },
-      //     // ]
-      //   },
-      //   {
-      //     fieldName: "公司",
-      //     operator: "",
-      //     fieldValue: "",
-      //     conditionConnector: "",
-      //     operateTypeList: [
-      //       {
-      //         label: "小于",
-      //         value: "<",
-      //       },
-      //       {
-      //         label: "等于",
-      //         value: "=",
-      //       },
-      //       {
-      //         label: "大于",
-      //         value: ">",
-      //       },
-      //       {
-      //         label: "包含",
-      //         value: "in",
-      //       },
-      //     ],
-      //     fieldType: "",
-      //     componentType: "select",
-      //     dataSourceType: "2",
-      //     apiSource: {
-      //       apiUcode: "acadc"
-      //     },
-      //     staticSourceList: []
-      //   },
-      //   {
-      //     fieldName: "编号",
-      //     operator: "",
-      //     fieldValue: "",
-      //     conditionConnector: "",
-      //     operateTypeList: [
-      //       {
-      //         label: "小于",
-      //         value: "<",
-      //       },
-      //       {
-      //         label: "等于",
-      //         value: "=",
-      //       },
-      //       {
-      //         label: "大于",
-      //         value: ">",
-      //       },
-      //       {
-      //         label: "包含",
-      //         value: "in",
-      //       },
-      //     ],
-      //     fieldType: "",
-      //     componentType: "",
-      //     dataSourceType: "",
-      //     apiSource: {},
-      //     staticSourceList: []
-      //   },
-      // ]
     };
   },
 
