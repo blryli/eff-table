@@ -8,9 +8,20 @@ import Styles from './styles/index.vue'
 import Form from './form'
 import FormItem from './form-item'
 import FormField from './form-field'
+import CustomSearch from './customSearch'
 
 const directives = []
-const components = [Table, Popup, Layout, VRender, Form, FormItem, Panel, Styles]
+const components = [
+  Table, 
+  Popup, 
+  Layout, 
+  VRender, 
+  Form, 
+  FormItem, 
+  Panel, 
+  Styles,
+  CustomSearch
+]
 
 export {
   Table,
@@ -21,7 +32,8 @@ export {
   Form,
   FormItem,
   FormField,
-  Panel
+  Panel,
+  CustomSearch
 }
 
 const install = function(Vue, opts = {}) {
