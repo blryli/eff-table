@@ -31,12 +31,6 @@
         </div>
       </Collapse>
     </section>
-
-    <custom-search 
-      :visible.sync="searchVisible"
-      @search="customSearch"
-      @select-remote="getSelectOptions"
-    />
   </div>
 </template>
 

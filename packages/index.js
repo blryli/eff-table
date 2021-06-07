@@ -8,7 +8,6 @@ import Styles from './styles/index.vue'
 import Form from './form'
 import FormItem from './form-item'
 import FormField from './form-field'
-import CustomSearch from './customSearch'
 
 const directives = []
 const components = [
@@ -19,8 +18,7 @@ const components = [
   Form, 
   FormItem, 
   Panel, 
-  Styles,
-  CustomSearch
+  Styles
 ]
 
 export {
@@ -32,8 +30,7 @@ export {
   Form,
   FormItem,
   FormField,
-  Panel,
-  CustomSearch
+  Panel
 }
 
 const install = function(Vue, opts = {}) {
