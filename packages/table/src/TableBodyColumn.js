@@ -233,7 +233,7 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          {slot}
+          <span class='eff-cell--label'>{slot}</span>
           {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
         </div>
       </div>
