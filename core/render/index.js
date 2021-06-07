@@ -55,9 +55,11 @@ class Render {
   }
 
   render() {
-    const { h, opts, children } = this
+    const { h, opts, params, children } = this
     const { name, tag, defaultSlot } = opts
-    return h(tag || map.get(name), opts, [children, defaultSlot])
+    const { vue } = params
+    const { renderMap } = vue.$EFF || {}
+    return h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
   }
 }
 

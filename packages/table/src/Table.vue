@@ -417,12 +417,17 @@ export default {
       this.updateCache()
       editStore.insertList = []
       this.clearSelection()
+      if (rowId === '_rowId') {
+        this.clearStatus()
+        this.clearValidate()
+      }
       this.scrollLeftEvent()
       this.resize()
       return this.$nextTick()
     },
     reloadData(data = null) {
       this.clearStatus()
+      this.clearValidate()
       if (!data) {
         data = this.data
       }

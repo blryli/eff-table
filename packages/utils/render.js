@@ -153,6 +153,10 @@ function renderdateCell(h, renderOpts, params) {
   const { format } = renderOpts || {}
   const { row, prop } = params || {}
   const cellLabel = row && prop && row[prop] || ''
+  if (XEUtils.isArray(cellLabel)) {
+    const [start, end] = cellLabel
+    return [XEUtils.toDateString(start, format), '~', XEUtils.toDateString(end, format)]
+  }
   return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {

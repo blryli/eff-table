@@ -2,11 +2,9 @@
   <div class="page-home page">
     <h2>Edit 编辑</h2>
     <p class="hint">
-      前置条件：
-      <span class="primary">edit</span> 属性设置为
+      表格 <span class="primary">edit</span> 属性需要设置为
       <span class="primary"> true </span><br>
-      编辑用的是唯一的悬浮框，对比旧方式性能高。<br>
-      旨在尽量让用户脱离鼠标对表格进行快速编辑，快捷键
+      快捷编辑，旨在尽量让用户脱离鼠标进行编辑，快捷键
       <el-tag class="ml-10">enter</el-tag> 右
       <el-tooltip effect="dark" content="聚焦右侧可编辑单元格，在当前行最后一个可编辑单元格按下enter时，自动聚焦下一行第一个可编辑单元格" placement="top">
         <i class="el-icon el-icon-question" />
@@ -25,7 +23,7 @@
       </el-tooltip>
     </p>
     <p>列 <span class="primary">edit</span> 属性设置为
-      <span class="primary"> true </span>，该列表头会显示可编辑列&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 <span class="primary"> input </span> 编辑框
+      <span class="primary"> true </span>，打开编辑功能，列头会显示可编辑&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 <span class="primary"> input </span> 编辑框
     </p>
     <section class="demo">
       <div class="section-content">
@@ -70,10 +68,12 @@
         </div>
       </Collapse>
     </section>
+    <p>组件默认UI元素用的是element-ui，但不依赖element-ui，可以通过renderMap自行配置UI元素</p>
+    <CodeSnippet class="javascript" :code="mapCode" />
 
     <h3>render函数模式</h3>
     <CodeSnippet class="javascript" :code="funcCode" />
-    <p>列 <span class="primary">edit</span> 为render函数时，通过设置 <span class="primary">name</span> 指定渲染元素。元素有下拉框时，需要设置 table 的 edit-stop 属性</p>
+    <p>列 <span class="primary">edit</span> 为render函数时，需要自己做双向绑定。带下拉框的元素及其他特定元素，需要动态设置 table 的 edit-stop 属性， 如当下拉框打开时</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -142,6 +142,9 @@ const objCode = `
       render: {}
     }
   }
+  `
+const mapCode = `
+  Vue.use(EffTable, {renderMap: {'input': 'i-input'}})
   `
 const funcCode = `
   // column对象
@@ -383,6 +386,7 @@ export default {
       jsCode2,
       objCode,
       funcCode,
+      mapCode,
       options: [{
         value: '选项1',
         label: '1'
