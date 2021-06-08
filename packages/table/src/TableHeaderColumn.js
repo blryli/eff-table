@@ -1,4 +1,5 @@
 import VCheckbox from 'pk/checkbox'
+import PopoverRef from 'pk/popover/src/popover-ref'
 import { getTextWidth } from 'pk/utils/dom'
 
 export default {
@@ -26,7 +27,7 @@ export default {
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, type, rules = [] } = column
+    const { sortable, title, titleHelp, type, rules = [] } = column
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
     const required = Boolean(rules.find(d => d.required))
@@ -49,6 +50,9 @@ export default {
             column.edit ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           <span class='eff-cell--title'>{slot}</span>
+          {
+            titleHelp ? <PopoverRef class='eff-cell--title-help' message={titleHelp.message} /> : ''
+          }
           {
             sortable ? <span class='eff-cell--sort'>
               <i

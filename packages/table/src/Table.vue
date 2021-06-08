@@ -146,7 +146,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <!-- <p>expands -  {{ expands }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -410,7 +410,7 @@ export default {
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
-          !d[rowId] && (d._rowId = i)
+          !d[rowId] && (d._rowId = i + 1)
           return d
         }) || []
       this.tableSourceData = XEUtils.clone(data, true)
@@ -588,13 +588,24 @@ export default {
       this.$refs.editPopover.doHide()
     },
     expandChange(obj) {
-      const { rowIndex } = obj
-      const index = this.expands.findIndex(d => d.rowIndex === rowIndex)
-      index > -1 ? this.expands.splice(index, 1, obj) : this.expands.push(obj)
-      this.$emit('expand-change', this.expands)
+      const { rowId } = obj
+      const index = this.expands.findIndex(d => d.rowId === rowId)
+      if (index > -1) {
+        this.$set(this.expands[index], 'expanded', obj.expanded)
+      } else {
+        this.expands.push(obj)
+      }
+      this.$nextTick(() => {
+        // 设置 expand 高度
+        const expand = this.expands.find(d => d.rowId === rowId)
+        if (expand.expanded) {
+          expand.height = document.querySelector('.expandid-' + rowId).offsetHeight
+        }
+        this.$emit('expand-change', this.expands)
+      })
     },
     searchChange(val) {
-      console.log('search change', JSON.stringify(val, null, 2))
+      // console.log('search change', JSON.stringify(val, null, 2))
       this.searchForm = val
       this.$emit('search-change', val)
       if (this.proxyConfig) this.commitProxy('query')

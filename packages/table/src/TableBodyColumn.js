@@ -160,9 +160,9 @@ export default {
       table.tipClose()
     },
     expandClick() {
-      const { rowIndex, expanded, table } = this
+      const { row, expanded, table } = this
       this.expanded = !expanded
-      table.expandChange({ rowIndex, expanded: this.expanded })
+      table.expandChange({ rowId: row[table.rowId], expanded: this.expanded, height: 0 })
     },
 
     handleMouseUp(event) {

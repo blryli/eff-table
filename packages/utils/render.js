@@ -39,8 +39,9 @@ function renderVModel(h, renderOpts, params) {
   const props = {
     value: data[prop] || null
   }
+  const { placeholder } = renderOpts.props || {}
   const attrs = {
-    placeholder: '请输入' + (column.title || '内容')
+    placeholder: placeholder || '请输入' + (column.title || '内容')
   }
 
   if (params.row) {
@@ -424,6 +425,12 @@ const renderMap = {
     renderDefault: renderSwitch,
     renderEdit: renderSwitchEdit,
     renderSearch: renderSwitchSearch
+  },
+  radio: {
+    renderDefault: renderVModel
+  },
+  'radio-group': {
+    renderDefault: renderVModel
   },
   checkbox: {
     renderDefault: renderVModel

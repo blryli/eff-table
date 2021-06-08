@@ -230,6 +230,9 @@ columns: [ // arra
         type: 'phone', // 手机号
         message: '', //可选，默认为 请输入正确的手机号
       }, 
+      {
+        validator: Function // 自定义校验，支持异步
+      }
     ]
   }
 ]
