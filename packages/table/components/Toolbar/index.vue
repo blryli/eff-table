@@ -9,7 +9,6 @@ import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
-import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
@@ -41,12 +40,9 @@ export default {
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnBatchControl, editHistory, showReplace, showSort } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
-      const { code } = cur
-      let { on } = cur
-      if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
-        on = getOn(on, { click: e => this.btnClick(code, e, idx) })
-      }
-      const opts = XEUtils.merge({}, cur, { props: { size: 'mini' }, on })
+      const { code, on = {}} = cur
+      const event = code && getOn(on, { click: e => this.btnClick(code, e, idx) })
+      const opts = Object.assign({}, cur, { props: { size: 'mini' }, on: event })
       const compConf = renderer.get(opts.name)
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])
