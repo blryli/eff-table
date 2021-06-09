@@ -1,20 +1,11 @@
 <template>
-  <i :class="'eff-icon-' + (icon === 'like' ? 'search' : icon)">{{ content }}</i>
+  <i :class="'eff-icon-' + (icon === 'like' ? 'search' : icon)" />
 </template>
 <script>
 export default {
-  name: 'Icon',
+  name: 'Icom',
   props: {
-    operator: { type: Array, default: () => [] },
     icon: { type: String, default: 'like' }
-  },
-  computed: {
-    content() {
-      const { icon } = this.operator.find(d => d.type === this.icon) || {}
-      return icon
-    }
-  },
-  mounted() {
   }
 }
 </script>

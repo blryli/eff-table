@@ -220,7 +220,8 @@ export default {
   ],
   provide() {
     return {
-      table: this
+      table: this,
+      root: this
     }
   },
   model: {

@@ -350,3 +350,62 @@
     top: 7px;
   }
 }
+
+.eff-icon-question {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 100%;
+  background-color: #666;
+  &::before{
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    width: 2px;
+    height: 2px;
+    border: 1.6px solid #fff;
+    border-left-color: transparent;
+    border-radius: 100%;
+    transform: rotate(-30deg);
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    width: 3px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 100%;
+  }
+}
+
+.eff-icon-info {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 100%;
+  background-color: #666;
+  font-size: 12px;
+  &::before{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 2px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 1px 1px 50% 50%;
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 100%;
+  }
+}

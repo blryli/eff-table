@@ -1,6 +1,7 @@
 import VCheckbox from 'pk/checkbox'
 import PopoverRef from 'pk/popover/src/popover-ref'
 import { getTextWidth } from 'pk/utils/dom'
+import Icon from 'pk/icon'
 
 export default {
   name: 'TableHeaderColumn',
@@ -10,7 +11,7 @@ export default {
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' }
   },
-  components: { VCheckbox },
+  components: { VCheckbox, Icon },
   inject: ['table'],
   computed: {
     columnClass() {
@@ -51,7 +52,7 @@ export default {
           }
           <span class='eff-cell--title'>{slot}</span>
           {
-            titleHelp ? <PopoverRef class='eff-cell--title-help' message={titleHelp.message} /> : ''
+            titleHelp && titleHelp.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleHelp.message}><Icon icon='question'/></PopoverRef> : ''
           }
           {
             sortable ? <span class='eff-cell--sort'>

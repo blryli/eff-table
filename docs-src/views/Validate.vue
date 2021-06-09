@@ -106,7 +106,7 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
-          config: { titleHelp: '异步操作' },
+          titleHelp: { message: '异步操作' },
           edit: {
             render: { props: { placeholder: '请输入刘德华' }}
           },

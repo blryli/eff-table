@@ -8,24 +8,14 @@
       :class="{'is-required': required}"
       :style="{'--lineHeight': form.lineHeight}"
     >
-      <div
-        v-if="title || form.titleAlign === 'top'"
-        :style="{flex: `0 0 ${tWidth}`, height: '32px'}"
-        class="flex align-center justify-end"
-        style=" position: relative;"
-      >
-        <template v-if="titlePrefix != null">
-          <i
-            class="v-form-item__tooltip v-form-item__ooh margin-right-xs"
-            @mouseenter="messageEnter"
-            @mouseleave="messageLeave"
-          >{{ titlePrefix.icon == 'ooh'? '!' : '?' }}</i>
 
-        </template>
-        <label
-          class="v-form-item__title"
-        >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</label>
-      </div>
+      <formItemLabel
+        :title="title"
+        :width="tWidth"
+        :title-align="form.titleAlign"
+        :title-prefix="titlePrefix"
+        :title-suffix="titleSuffix"
+      />
       <FormField
         class="v-form-item__content"
         :prop="prop"
@@ -40,16 +30,53 @@
 
 <script>
 import FormField from './form-field'
+import PopoverRef from 'pk/popover/src/popover-ref'
+import Icon from 'pk/icon'
 export default {
   name: 'VFormItem',
-  components: { FormField },
+  components: {
+    FormField,
+    formItemLabel: {
+      props: ['width', 'titleAlign', 'title', 'titlePrefix', 'titleSuffix'],
+      components: { PopoverRef, Icon },
+      render(h) {
+        const { width, titleAlign, title, titlePrefix, titleSuffix } = this
+        return (title || titleAlign === 'top')
+          ? <label
+            class='v-form-item__title'
+            style={{ flex: `0 0 ${width}`, height: '32px' }}
+          >
+            {
+              titlePrefix.message ? <PopoverRef
+                class='eff-prefix'
+                effect='dark'
+                message={titlePrefix.message}
+              >
+                <Icon icon={titlePrefix.icon || 'question'} />
+              </PopoverRef> : ''
+            }
+            { titleAlign === 'top' && !title ? '&nbsp;' : title }
+            {
+              titleSuffix.message ? <PopoverRef
+                class='eff-suffix'
+                effect='dark'
+                message={titleSuffix.message}
+              >
+                <Icon icon={titleSuffix.icon || 'question'} />
+              </PopoverRef> : ''
+            }
+          </label> : ''
+      }
+    }
+  },
   props: {
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' },
-    titlePrefix: { type: Object, default: () => { return null } }
+    titlePrefix: { type: Object, default: () => ({}) },
+    titleSuffix: { type: Object, default: () => ({}) }
   },
   data() {
     return {
@@ -70,15 +97,6 @@ export default {
       const { titleWidth, form } = this
       return titleWidth || form.titleWidth || '80px'
     }
-  },
-  methods: {
-    messageEnter(e) {
-      const message = this.titlePrefix.message
-      this.root.tipShow({ reference: e.toElement, 'popoverClass': 'v-form-popover', message: [{ message }] })
-    },
-    messageLeave(e) {
-      this.root.tipClose()
-    }
   }
 }
 </script>
@@ -93,52 +111,6 @@ export default {
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: nowrap;
-  &__tooltip {
-    transform: rotate(-10deg);
-        width: 14px;
-    height: 14px;
-    border-radius: 100%;
-    background-color: #666;
-    color: white;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  &__message_container {
-    position: absolute;
-    width: 2000%;
-    top: 0;
-    left: 0;
-  }
-  &__message {
-left: 17px;
-    top: -29px;
-    background: #666;
-    height: 50px;
-    position: absolute;
-    border-radius: 5px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 26px;
-    font-size: 12px;
-    padding: 0 10px;
-    &::after {
-      content: "";
-    /* width: 10px; */
-    /* height: 10px; */
-    /* background-color: #666; */
-    position: absolute;
-    bottom: -14px;
-    z-index: 99;
-    left: 4px;
-    border: 7px solid transparent;
-    border-top: 7px solid #666;
-    }
-  }
 
   &::before {
     display: table;
@@ -206,6 +178,12 @@ left: 17px;
   flex: 1 !important;
   text-align: left;
   padding-right: 0;
+}
+.eff-prefix{
+  margin-right: 3px;
+}
+.eff-suffix{
+  margin-left: 3px;
 }
 </style>
 

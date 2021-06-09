@@ -28,7 +28,8 @@ export default {
   },
   provide() {
     return {
-      form: this
+      form: this,
+      root: this
     }
   },
   inject: {
