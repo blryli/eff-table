@@ -5,6 +5,10 @@
       :show="show"
       title="列编辑"
       :init-style="cardStyle"
+      :min-height="300"
+      :height="300"
+      :width="800"
+      :min-width="400"
       @close="close"
       @save="save"
       @resetColumns="resetColumns"
@@ -117,7 +121,7 @@ export default {
   },
   dragToEl: {},
   data() {
-    const { offsetHeight } = this.table.$el
+    // const { offsetHeight } = this.table.$el
 
     return {
       columns: [],
@@ -128,9 +132,7 @@ export default {
       leftList: [],
       rightList: [],
       centerList: [],
-      realColumns: [],
-      cardHeight: offsetHeight,
-      cardWidth: 300
+      realColumns: []
     }
   },
   inject: ['table'],
