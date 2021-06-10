@@ -4,6 +4,10 @@
       v-show="show"
       title="自定义搜索"
       :init-style="cardStyle"
+      :min-height="300"
+      :height="300"
+      :width="800"
+      :min-width="400"
       @close="close"
     >
       <template slot="header">
