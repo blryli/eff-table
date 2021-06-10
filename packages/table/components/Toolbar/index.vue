@@ -41,12 +41,10 @@ export default {
     const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnBatchControl, editHistory, showReplace, showSort } = table
     const { buttons = [], refresh, diySearch } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
-      const { code } = cur
-      let { on } = cur
-      if (code && getOn(on, { click: e => this.btnClick(code, e, idx) })) {
-        on = getOn(on, { click: e => this.btnClick(code, e, idx) })
-      }
-      const opts = XEUtils.merge({}, cur, { props: { size: 'mini' }, on })
+      const { code, on = {}} = cur
+      const event = code ? getOn(on, { click: e => this.btnClick(code, e, idx) }) : on
+      const merge = XEUtils.merge({}, cur, { props: { size: 'mini' }})
+      const opts = Object.assign(merge, { on: event })
       const compConf = renderer.get(opts.name)
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
     }, [])

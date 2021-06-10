@@ -191,21 +191,16 @@ export default {
       const tableEl = table.$refs.table
       const { left: tableLeft, height: tableHeight, top: tableTop } = tableEl.getBoundingClientRect()
       const { left: columnLeft } = this.dragingTarget.getBoundingClientRect()
-      let minLeft = columnLeft + 50
-
-      if (column.edit) {
-        minLeft += 16
-      }
-
-      if (column.sortable) {
-        minLeft += 20
-      }
-
-      const required = column.rules && Boolean(column.rules.find(d => d.required))
-
-      if (required) {
-        minLeft += 12
-      }
+      const { edit, sortable, titlePrefix = {}, titleSuffix = {}} = column
+      const lefts = [
+        { el: true, width: columnLeft + 50 },
+        { el: edit, width: 16 },
+        { el: sortable, width: 20 },
+        { el: titlePrefix.message, width: 18 },
+        { el: titleSuffix.message, width: 18 },
+        { el: column.rules && Boolean(column.rules.find(d => d.required)), width: 12 }
+      ]
+      const minLeft = lefts.reduce((acc, cur) => cur.el ? acc + cur.width : acc, 0)
 
       if (minLeft <= this.startX + moveX) {
         this.moveX = moveX

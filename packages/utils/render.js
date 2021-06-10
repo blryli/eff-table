@@ -34,13 +34,15 @@ function renderCell(h, renderOpts, params) {
 
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
-  const { vue, data, column, prop, searchChange } = params
+  const { vue, data, table, column, prop, searchChange, rowIndex, columnIndex } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
+  // console.log({ data, prop })
   const props = {
     value: data[prop] || null
   }
+  const { placeholder } = renderOpts.props || {}
   const attrs = {
-    placeholder: '请输入' + (column.title || '内容')
+    placeholder: placeholder || '请输入' + (column.title || '内容')
   }
 
   if (params.row) {
@@ -53,6 +55,9 @@ function renderVModel(h, renderOpts, params) {
     },
     change: val => {
       searchChange && searchChange(val)
+      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
+        table.editField([{ rowIndex, columnIndex, content: val }])
+      }
     },
     blur: v => {
       oldData = null
@@ -153,6 +158,10 @@ function renderdateCell(h, renderOpts, params) {
   const { format } = renderOpts || {}
   const { row, prop } = params || {}
   const cellLabel = row && prop && row[prop] || ''
+  if (XEUtils.isArray(cellLabel)) {
+    const [start, end] = cellLabel
+    return [XEUtils.toDateString(start, format), '~', XEUtils.toDateString(end, format)]
+  }
   return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
@@ -284,7 +293,7 @@ function renderForm(h, renderOpts, params) {
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
-  const { data, prop } = params
+  const { table, rowIndex, columnIndex, data, prop } = params
   const isBoolean = typeof data[prop] === 'boolean'
   const props = {
     value: isBoolean ? data[prop] : '' + data[prop],
@@ -298,6 +307,11 @@ function renderSwitch(h, renderOpts, params) {
   const on = getOn(renderOpts.on, {
     input: val => {
       data[prop] = isBoolean ? val : '' + val
+    },
+    change: val => {
+      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
+        table.editField([{ rowIndex, columnIndex, content: val }])
+      }
     },
     blur: v => {
       oldData = null
@@ -420,6 +434,12 @@ const renderMap = {
     renderDefault: renderSwitch,
     renderEdit: renderSwitchEdit,
     renderSearch: renderSwitchSearch
+  },
+  radio: {
+    renderDefault: renderVModel
+  },
+  'radio-group': {
+    renderDefault: renderVModel
   },
   checkbox: {
     renderDefault: renderVModel

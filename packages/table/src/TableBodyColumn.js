@@ -122,7 +122,7 @@ export default {
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     },
     expandRender() {
@@ -160,9 +160,9 @@ export default {
       table.tipClose()
     },
     expandClick() {
-      const { rowIndex, expanded, table } = this
+      const { row, expanded, table } = this
       this.expanded = !expanded
-      table.expandChange({ rowIndex, expanded: this.expanded })
+      table.expandChange({ rowId: row[table.rowId], expanded: this.expanded, height: 0 })
     },
 
     handleMouseUp(event) {
@@ -233,7 +233,7 @@ export default {
       >
         {groupEl}
         <div ref='cell' class='eff-cell'>
-          {slot}
+          <span class='eff-cell--label'>{slot}</span>
           {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
         </div>
       </div>

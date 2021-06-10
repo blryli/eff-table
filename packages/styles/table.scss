@@ -467,7 +467,7 @@
 
 .eff-cell--sort{
   position: relative;
-  min-width: 20px;
+  min-width: 14px;
   height: 20px;
   display: flex;
   flex-direction: column;
@@ -477,7 +477,7 @@
     height: 0;
     border: 6px solid transparent;
     position: absolute;
-    left: 5px;
+    left: 2px;
     cursor: pointer;
   }
   .eff-cell--sort-asc{

@@ -249,9 +249,8 @@ export default {
       this.table.$refs.edit && this.table.$refs.edit.close()
       const { startRow, startColumn } = this._getReac()
 
-      let data = e.clipboardData.getData('text/plain')
-
       const updateArr = []
+      let data = e.clipboardData.getData('text/plain')
       data = data.trim().split('\r\n')
       data = data.map((v, k) => {
         let columnList

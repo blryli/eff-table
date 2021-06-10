@@ -11,18 +11,18 @@
 
 .eff-icon-edit {
   position: relative;
-  width: 10px;
-  height: 10px;
-  font-size: 10px;
+  display: inline-block;
+  min-width: 12px;
+  height: 12px;
 
   &::before {
     position: absolute;
-    height: 0.86em;
-    width: 0.86em;
-    top: .1em;
-    left: .02em;
-    border-radius: .2em;
-    border-width: .1em;
+    height: 9px;
+    width: 9px;
+    top: 2px;
+    left: 1px;
+    border-radius: 2px;
+    border-width: 1px;
     border-style: solid;
     border-color: inherit;
     content: " ";
@@ -31,12 +31,12 @@
   &::after {
     position: absolute;
     content: " ";
-    left: .6em;
-    bottom: .3em;
+    left: 8px;
+    bottom: 3px;
     width: 0;
-    height: .8em;
+    height: 8px;
     border-radius: 0 0 80% 80%;
-    border-width: 0 0 0 .22em;
+    border-width: 0 0 0 2px;
     border-style: solid;
     border-color: inherit;
     -webkit-transform: rotate(45deg);
@@ -348,5 +348,66 @@
     border-top: 2px solid #888;
     right: 0px;
     top: 7px;
+  }
+}
+
+.eff-icon-question {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  border-radius: 100%;
+  background-color: #666;
+  &::before{
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    width: 2px;
+    height: 2px;
+    border: 1.6px solid #fff;
+    border-left-color: transparent;
+    border-radius: 100%;
+    transform: rotate(-30deg);
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    width: 3px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 100%;
+  }
+}
+
+.eff-icon-info {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  border-radius: 100%;
+  background-color: #666;
+  font-size: 12px;
+  &::before{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 2px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 1px 1px 50% 50%;
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 100%;
   }
 }

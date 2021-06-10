@@ -193,7 +193,7 @@ export default {
         name: '',
         sex: '',
         age: '',
-        height: '',
+        heights: { height: '' },
         heightUnit: '1',
         weight: '',
         weightUnit: '1',
@@ -238,7 +238,7 @@ export default {
 
           {
             title: '身高',
-            prop: 'height',
+            prop: 'heights.height.0.aaa',
             span: 7,
             itemRender: { name: 'input' },
             rules: [

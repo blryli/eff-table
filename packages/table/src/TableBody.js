@@ -159,8 +159,9 @@ export default {
         >
           {
             renderData.map((row, key) => {
-              const { expanded } = expands.find(d => d.rowIndex === key) || {}
-              const expandNode = expanded ? <div class='eff-table__expanded'>{expand({ row, key })}</div> : ''
+              const { expanded } = expands.find(d => d.rowId === row[rowId]) || {}
+              const classes = `eff-table__expanded expandid-${row[rowId]} is-drag--filter`
+              const expandNode = expanded ? <div class={classes}>{expand({ row, key })}</div> : ''
 
               const dom = [<TableBodyRow
                 key={rowIndex}
