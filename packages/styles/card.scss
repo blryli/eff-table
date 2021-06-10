@@ -1,12 +1,26 @@
 .eff-card {
   position: fixed;
-  right: 10px;
-  bottom: 10px;
   z-index: 2000;
   border: 1px solid #ddd;
   background-color: #fff;
   box-sizing: border-box;
   transition: box-shadow .3s;
+  &--right-bottom{
+    right: 15px;
+    bottom: 15px;
+  }
+  &--top-right{
+    top: 15px;
+    right: 15px;
+  }
+  &--left-top{
+    left: 15px;
+    top: 15px;
+  }
+  &--left-bottom{
+    left: 15px;
+    bottom: 15px;
+  }
   &:hover{
     box-shadow: 0 1px 10px rgba($color: #000000, $alpha: .1);
   }

@@ -2,7 +2,7 @@
   <div
     v-show="show"
     ref="card"
-    class="eff-card"
+    :class="['eff-card', `eff-card--${position}`]"
     shadow="hover"
     :style="style"
     @mousedown="handleMousedown"
@@ -31,18 +31,17 @@ export default {
     height: { type: Number, default: 250 },
     minWidth: { type: Number, default: 100 },
     minHeight: { type: Number, default: 200 },
+    position: { type: String, default: 'right-bottom' },
     show: Boolean,
     inline: Boolean,
     addToBody: Boolean,
-    limit: { type: Number, default: 10 },
-    initStyle: { type: Object, default() { return { left: 0, top: 0, width: this.width, height: this.height } } }
+    limit: { type: Number, default: 15 }
   },
   data() {
     return {
       isAddToBody: false,
       startRect: { left: 0, top: 0, width: 0, height: 0 },
-      endRect: this.initStyle,
-      // endRect: { left: 0, top: 0, width: this.width, height: this.height },
+      endRect: { left: 0, top: 0, width: this.width, height: this.height },
       move: { x: 0, y: 0, width: 0, height: 0 },
       cursor: null,
       isDraging: false
@@ -65,9 +64,6 @@ export default {
     },
     cursor(val) {
       document.body.style.cursor = val.replace(/_[a-z]+/, '')
-    },
-    initStyle(val) {
-      this.endRect = val
     }
   },
   mounted() {

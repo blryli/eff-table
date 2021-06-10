@@ -4,7 +4,7 @@ import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
 import Popover from 'pk/popover'
-// import XEUtils from 'xe-utils'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'VForm',
@@ -63,32 +63,43 @@ export default {
   methods: {
     init() {
       const { data, columns } = this
-      const set = (data, prop) => {
-        if (prop.indexOf('.')) {
-          const props = prop.split('.').filter(d => d || d === 0)
-          const [one, tow, three] = props
-          let nextProps = null
-          if (three) nextProps = props.slice(2)
-          if (!data[one]) {
-            data[one] = typeof tow === 'number' ? [] : {}
-
+      const builder = (data, prop) => {
+        const set = (data, props) => {
+          const [one, tow] = props
+          // 第一个非数字
+          if (XEUtils.isNaN(Number(one))) {
             if (tow) {
-              data[one][tow] = typeof tow === 'number' ? {} : null
+              // 第二个非数字
+              if (XEUtils.isNaN(Number(tow))) {
+                data[one] = {}
+              } else {
+                data[one] = []
+              }
+              set(data[one], props.slice(1))
+            } else {
+              data[one] = null
             }
-            if (three) {
-              set(data[one][tow], nextProps)
-            }
+          } else {
+            // 第一个是数字
+            data[one] = {}
+            set(data[one], props.slice(1))
           }
         }
-        data[prop] = null
+        if (prop.indexOf('.') > -1) {
+          const props = prop.split('.').filter(d => d || d === 0)
+          set(data, props)
+        } else {
+          data[prop] = null
+        }
         return data
       }
       columns.forEach(column => {
         const { prop } = column
-        if (!(prop in this.data)) {
-          set(data, prop.split('.').filter(d => d || d === 0))
+        if (!(prop in data)) {
+          builder(data, prop)
         }
       })
+      Object.assign(this, { data })
       // console.log('data', JSON.stringify(this.data, null, 2))
     },
     itemRender(column) {

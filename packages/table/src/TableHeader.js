@@ -191,7 +191,7 @@ export default {
       const tableEl = table.$refs.table
       const { left: tableLeft, height: tableHeight, top: tableTop } = tableEl.getBoundingClientRect()
       const { left: columnLeft } = this.dragingTarget.getBoundingClientRect()
-      const { edit, sortable, titlePrefix, titleSuffix } = column
+      const { edit, sortable, titlePrefix = {}, titleSuffix = {}} = column
       const lefts = [
         { el: true, width: columnLeft + 50 },
         { el: edit, width: 16 },
