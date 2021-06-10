@@ -117,6 +117,8 @@ export default {
   },
   dragToEl: {},
   data() {
+    const { offsetHeight } = this.table.$el
+
     return {
       columns: [],
       show: false,
@@ -126,7 +128,9 @@ export default {
       leftList: [],
       rightList: [],
       centerList: [],
-      realColumns: []
+      realColumns: [],
+      cardHeight: offsetHeight,
+      cardWidth: 300
     }
   },
   inject: ['table'],
@@ -151,13 +155,6 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth } = this.table.$el
-    this.cardStyle = {
-      bottom: 0,
-      right: 0,
-      width: clientWidth - 40,
-      height: offsetHeight < 300 ? 300 : offsetHeight
-    }
 
     this.$nextTick(() => {
       const {
