@@ -7,12 +7,13 @@ export default {
     }
   },
   methods: {
-    validateField(row, prop, rule) {
+    validateField(row = this.data, prop, rule) {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
       }
       const { columns, validators, rowId } = this
-      const value = row[prop]
+      // console.log({ row, prop, value })
+      const value = this.getFieldValue(row, prop)
       const id = row[rowId]
       const column = columns.find(d => d.prop === prop) || {}
       if (!rule) {
@@ -56,6 +57,10 @@ export default {
       } else {
         clear(props)
       }
+    },
+    getFieldValue(data, prop) {
+      console.log(prop.split('.').filter(d => d || d === 0))
+      return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
     }
   }
 }

@@ -9,13 +9,13 @@
       :style="{'--lineHeight': form.lineHeight}"
     >
 
-      <formItemLabel
-        :title="title"
-        :width="tWidth"
-        :title-align="form.titleAlign"
-        :title-prefix="titlePrefix"
-        :title-suffix="titleSuffix"
-      />
+      <PrefixSuffix
+        tag="label"
+        :prefix="titlePrefix"
+        :suffix="titleSuffix"
+        class="v-form-item__title"
+        :style="{ flex: `0 0 ${tWidth}`, height: '32px' }"
+      >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</PrefixSuffix>
       <FormField
         class="v-form-item__content"
         :prop="prop"
@@ -30,44 +30,12 @@
 
 <script>
 import FormField from './form-field'
-import PopoverRef from 'pk/popover/src/popover-ref'
-import Icon from 'pk/icon'
+import PrefixSuffix from 'pk/prefix-suffix'
 export default {
   name: 'VFormItem',
   components: {
     FormField,
-    formItemLabel: {
-      props: ['width', 'titleAlign', 'title', 'titlePrefix', 'titleSuffix'],
-      components: { PopoverRef, Icon },
-      render(h) {
-        const { width, titleAlign, title, titlePrefix, titleSuffix } = this
-        return (title || titleAlign === 'top')
-          ? <label
-            class='v-form-item__title'
-            style={{ flex: `0 0 ${width}`, height: '32px' }}
-          >
-            {
-              titlePrefix.message ? <PopoverRef
-                class='eff-prefix'
-                effect='dark'
-                message={titlePrefix.message}
-              >
-                <Icon icon={titlePrefix.icon || 'question'} />
-              </PopoverRef> : ''
-            }
-            { titleAlign === 'top' && !title ? '&nbsp;' : title }
-            {
-              titleSuffix.message ? <PopoverRef
-                class='eff-suffix'
-                effect='dark'
-                message={titleSuffix.message}
-              >
-                <Icon icon={titleSuffix.icon || 'question'} />
-              </PopoverRef> : ''
-            }
-          </label> : ''
-      }
-    }
+    PrefixSuffix
   },
   props: {
     title: { type: String, default: '' },
@@ -178,12 +146,6 @@ export default {
   flex: 1 !important;
   text-align: left;
   padding-right: 0;
-}
-.eff-prefix{
-  margin-right: 3px;
-}
-.eff-suffix{
-  margin-left: 3px;
 }
 </style>
 

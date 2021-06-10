@@ -4,6 +4,7 @@ import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
 import Popover from 'pk/popover'
+// import XEUtils from 'xe-utils'
 
 export default {
   name: 'VForm',
@@ -61,8 +62,32 @@ export default {
   },
   methods: {
     init() {
-      this.columns.forEach(column => {
-        !(column.prop in this.data) && this.$set(this.data, column.prop, null)
+      const { data, columns } = this
+      const set = (data, prop) => {
+        if (prop.indexOf('.')) {
+          const props = prop.split('.').filter(d => d || d === 0)
+          const [one, tow, three] = props
+          let nextProps = null
+          if (three) nextProps = props.slice(2)
+          if (!data[one]) {
+            data[one] = typeof tow === 'number' ? [] : {}
+
+            if (tow) {
+              data[one][tow] = typeof tow === 'number' ? {} : null
+            }
+            if (three) {
+              set(data[one][tow], nextProps)
+            }
+          }
+        }
+        data[prop] = null
+        return data
+      }
+      columns.forEach(column => {
+        const { prop } = column
+        if (!(prop in this.data)) {
+          set(data, prop.split('.').filter(d => d || d === 0))
+        }
       })
       // console.log('data', JSON.stringify(this.data, null, 2))
     },

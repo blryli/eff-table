@@ -34,8 +34,9 @@ function renderCell(h, renderOpts, params) {
 
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
-  const { vue, data, column, prop, searchChange } = params
+  const { vue, data, table, column, prop, searchChange, rowIndex, columnIndex } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
+  // console.log({ data, prop })
   const props = {
     value: data[prop] || null
   }
@@ -54,6 +55,9 @@ function renderVModel(h, renderOpts, params) {
     },
     change: val => {
       searchChange && searchChange(val)
+      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
+        table.editField([{ rowIndex, columnIndex, content: val }])
+      }
     },
     blur: v => {
       oldData = null
@@ -289,7 +293,7 @@ function renderForm(h, renderOpts, params) {
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
-  const { data, prop } = params
+  const { table, rowIndex, columnIndex, data, prop } = params
   const isBoolean = typeof data[prop] === 'boolean'
   const props = {
     value: isBoolean ? data[prop] : '' + data[prop],
@@ -303,6 +307,11 @@ function renderSwitch(h, renderOpts, params) {
   const on = getOn(renderOpts.on, {
     input: val => {
       data[prop] = isBoolean ? val : '' + val
+    },
+    change: val => {
+      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
+        table.editField([{ rowIndex, columnIndex, content: val }])
+      }
     },
     blur: v => {
       oldData = null

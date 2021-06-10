@@ -1,6 +1,7 @@
 import VCheckbox from 'pk/checkbox'
-import PopoverRef from 'pk/popover/src/popover-ref'
 import { getTextWidth } from 'pk/utils/dom'
+import PrefixSuffix from 'pk/prefix-suffix'
+import PopoverRef from 'pk/popover/src/popover-ref'
 import Icon from 'pk/icon'
 
 export default {
@@ -11,7 +12,7 @@ export default {
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' }
   },
-  components: { VCheckbox, Icon },
+  components: { VCheckbox, PrefixSuffix, PopoverRef, Icon },
   inject: ['table'],
   computed: {
     columnClass() {
@@ -28,7 +29,7 @@ export default {
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, titleHelp, type, rules = [] } = column
+    const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
     const required = Boolean(rules.find(d => d.required))
@@ -50,10 +51,18 @@ export default {
           {
             column.edit ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
+          {
+            titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon='question'/></PopoverRef> : ''
+          }
           <span class='eff-cell--title'>{slot}</span>
           {
-            titleHelp && titleHelp.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleHelp.message}><Icon icon='question'/></PopoverRef> : ''
+            titleSuffix && titleSuffix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleSuffix.message}><Icon icon='question'/></PopoverRef> : ''
           }
+          {/* <PrefixSuffix tag='span'
+            prefix={titlePrefix}
+            suffix={titleSuffix}
+            class='eff-cell--title'
+          >{slot}</PrefixSuffix> */}
           {
             sortable ? <span class='eff-cell--sort'>
               <i

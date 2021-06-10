@@ -105,8 +105,10 @@ export default {
         {
           show: true,
           prop: 'name',
-          title: '名字',
-          titleHelp: { message: '异步操作' },
+          title: '名字异步操作',
+          titlePrefix: { message: '异步操作' },
+          titleSuffix: { icon: 'info', message: '等待回调完成再进行下一步操作' },
+          sortable: true,
           edit: {
             render: { props: { placeholder: '请输入刘德华' }}
           },
