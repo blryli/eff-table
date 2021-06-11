@@ -136,7 +136,7 @@ export default {
           const { name } = renderOpts
           const compConf = renderer.get(name)
           if (compConf && typeof compConf.renderSearch === 'function') {
-            slot = compConf.renderSearch(h, renderOpts, { root: table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
+            slot = compConf.renderSearch(h, renderOpts, { root: table, table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
           } else {
             slot = <Input value={value} on-input={val => (this.form[prop] = val)} on-change={searchChange}/>
           }
@@ -149,7 +149,7 @@ export default {
             const { name, type } = renderOpts
             const compConf = renderer.get(name || type)
             if (compConf && compConf.renderSearchRange) {
-              rangeSlot = compConf.renderSearchRange(h, renderOpts, { root: table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
+              rangeSlot = compConf.renderSearchRange(h, renderOpts, { root: table, table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
             } else {
               rangeSlot = <RangeInput value={value} column={column} on-change={searchChange}/>
             }

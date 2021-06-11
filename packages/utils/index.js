@@ -71,7 +71,7 @@ export function deepClone(obj) {
 }
 
 export const initField = (data, prop, vue) => {
-  const props = prop.split('.').filter(d => d || d === 0)
+  const props = prop.split('.')
   const set = (data, props) => {
     const [one, tow] = props
     // 第一个非数字
@@ -79,9 +79,9 @@ export const initField = (data, prop, vue) => {
       if (tow) {
         // 第二个非数字
         if (XEUtils.isNaN(Number(tow))) {
-          data[one] = {}
+          vue.$set(data, one, {})
         } else {
-          data[one] = []
+          vue.$set(data, one, [])
         }
         set(data[one], props.slice(1))
       } else {
@@ -99,12 +99,4 @@ export const initField = (data, prop, vue) => {
     data[prop] === undefined && vue.$set(data, prop, null)
   }
   return data
-}
-
-export const getField = function(data, prop) {
-  if (prop.indexOf('.') === -1) return { fieldData: data, fieldProp: prop }
-  const props = prop.split('.').filter(d => d || d === 0)
-  const len = props.length
-  const da = props.reduce((acc, cur, index) => len - 1 === index ? acc : acc[cur] || acc, data)
-  return { fieldData: da, fieldProp: props[len - 1] }
 }

@@ -58,7 +58,7 @@ export default {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit($createElement, renderOpts, { table, vue: table, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          return compConf && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''
         }
       }
     }

@@ -170,8 +170,8 @@ export default {
       this.isDirty = !eqCellValue({ [prop]: initValue }, data, prop)
     },
     updateField() {
-      const { data, prop } = this
-      this.initValue = data[prop]
+      const { data, prop, form } = this
+      this.initValue = prop in data ? data[prop] : form.editProps[prop]
       this.updateStatus()
     }
   }

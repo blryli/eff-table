@@ -5,6 +5,7 @@ import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
 import XEUtils from 'xe-utils'
+import { initField } from 'pk/utils'
 
 export default {
   name: 'TableBodyColumn',
@@ -64,6 +65,10 @@ export default {
       }
       return classes
     }
+  },
+  created() {
+    const { row, column } = this
+    column.prop && initField(row, column.prop, this)
   },
   methods: {
     groupClick(e) {

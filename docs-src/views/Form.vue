@@ -250,7 +250,7 @@ export default {
             span: 5,
             itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] },
             rules: [
-              { required: true }
+              { required: true, trigger: 'change' }
             ]
           },
           {
@@ -266,7 +266,7 @@ export default {
             span: 5,
             itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] },
             rules: [
-              { required: true }
+              { required: true, trigger: 'change' }
             ]
           },
 

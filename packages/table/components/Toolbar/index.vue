@@ -46,7 +46,7 @@ export default {
       const merge = XEUtils.merge({}, cur, { props: { size: 'mini' }})
       const opts = Object.assign(merge, { on: event })
       const compConf = renderer.get(opts.name)
-      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, vue: this, columnIndex: idx })) : acc
+      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
     }, [])
 
     return (

@@ -10,6 +10,7 @@
     >
 
       <PrefixSuffix
+        v-if="title || form.titleAlign === 'top'"
         tag="label"
         :prefix="titlePrefix"
         :suffix="titleSuffix"
