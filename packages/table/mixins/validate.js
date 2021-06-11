@@ -28,17 +28,15 @@ export default {
       // 校验处理函数
       // console.log({ value, row, column, id, prop })
       return validateField(rule, { value, row, column, id, prop }).then(res => {
-        const index = validators.findIndex(d => d.prop === prop && d[rowId] === row[rowId])
+        const index = validators.findIndex(d => d.prop === prop && d.id === row[rowId])
         if (res.message) {
           index === -1 ? validators.push(res) : validators.splice(index, 1, res)
         } else {
-          index > -1 && validators.splice(index, 1)
+          validators.splice(index, 1)
         }
         this.$emit('validate', res, validators)
         return res
       })
-
-      // cell && cell.classList.add('is-async-validator') // 异步校验动效
     },
     validate(rows, all) {
       const { tableData, columns, editStore } = this

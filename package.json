@@ -1,6 +1,6 @@
 {
   "name": "eff-table",
-  "version": "1.0.90",
+  "version": "1.0.91",
   "description": "is a efficient table",
   "keywords": [
     "vue",
@@ -39,7 +39,7 @@
   },
   "homepage": "https://blryli.github.com/eff-table",
   "dependencies": {
-    "eff-table": "^1.0.35",
+    "eff-table": "^1.0.90",
     "vue": "^2.6.10",
     "vuedraggable": "^2.24.3",
     "xe-utils": "3.0.0"

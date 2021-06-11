@@ -59,7 +59,6 @@ export default {
       }
     },
     getFieldValue(data, prop) {
-      console.log(prop.split('.').filter(d => d || d === 0))
       return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
     }
   }

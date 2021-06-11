@@ -22,7 +22,7 @@
 
     <h2>slot模式</h2>
     <section class="demo">
-      <div class="section-content">
+      <!-- <div class="section-content">
         <v-form ref="form1" :data="data">
           <v-form-item
             title="名字"
@@ -53,18 +53,18 @@
         <el-button type="primary" @click="clearValidate1">清除校验</el-button>
         <el-button type="primary" @click="save1">保 存</el-button>
       </div>
-    </section>
+    </section> -->
 
-    <section class="snippets">
-      <Collapse>
-        <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
-        </div>
-      </Collapse>
-    </section>
-  </div>
+      <section class="snippets">
+        <Collapse>
+          <div class="section-content">
+            <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
+            <div class="plus">+</div>
+            <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          </div>
+        </Collapse>
+      </section>
+    </section></div>
 </template>
 
 <script>
@@ -255,7 +255,7 @@ export default {
           },
           {
             title: '体重',
-            prop: 'weight',
+            prop: 'weight.0.bbb',
             span: 7,
             itemRender: { name: 'input' },
             rules: [

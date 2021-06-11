@@ -204,6 +204,8 @@ value: [
 | getInsertList | 获取新增的数据 ||
 | getUpdateList | 获取更新的数据 ||
 | getPendingList | 获取伪删除的数据 ||
+| insert | 插入数据的方法，返回promise |records（插入数据）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行）|
+| triggerPending | 把选中行标记为伪删除的方法，返回promise |-|
 
 
 ### Events

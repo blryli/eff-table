@@ -154,6 +154,7 @@ export default {
       this.validators = [...this.validators.filter(d => pendingRowIds.indexOf(d.rowId) === -1)]
       this.editStore.pendingList = [...list]
       this.clearSelection()
+      return this.$nextTick()
     },
     save(save) {
       const { tableData, editStore, rowId, validate } = this
@@ -167,7 +168,7 @@ export default {
         cur = tableData.find(d => d[rowId] === cur[rowId])
         return cur && !pendingList.some(item => item === cur) ? acc.concat(cur) : acc
       }, [])
-      validate(validateList).catch(errMap => {
+      return validate(validateList).catch(errMap => {
         // console.log('errMap', JSON.stringify(errMap, null, 2))
         // 聚焦到第一个校验不通过的单元格
         const { id, prop } = errMap[0]

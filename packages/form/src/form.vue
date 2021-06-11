@@ -4,7 +4,6 @@ import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
 import Popover from 'pk/popover'
-import XEUtils from 'xe-utils'
 
 export default {
   name: 'VForm',
@@ -58,50 +57,23 @@ export default {
     }
   },
   created() {
-    this.init()
+    // this.init()
   },
   methods: {
-    init() {
-      const { data, columns } = this
-      const builder = (data, prop) => {
-        const set = (data, props) => {
-          const [one, tow] = props
-          // 第一个非数字
-          if (XEUtils.isNaN(Number(one))) {
-            if (tow) {
-              // 第二个非数字
-              if (XEUtils.isNaN(Number(tow))) {
-                data[one] = {}
-              } else {
-                data[one] = []
-              }
-              set(data[one], props.slice(1))
-            } else {
-              data[one] = null
-            }
-          } else {
-            // 第一个是数字
-            data[one] = {}
-            set(data[one], props.slice(1))
-          }
-        }
-        if (prop.indexOf('.') > -1) {
-          const props = prop.split('.').filter(d => d || d === 0)
-          set(data, props)
-        } else {
-          data[prop] = null
-        }
-        return data
-      }
-      columns.forEach(column => {
-        const { prop } = column
-        if (!(prop in data)) {
-          builder(data, prop)
-        }
-      })
-      Object.assign(this, { data })
-      // console.log('data', JSON.stringify(this.data, null, 2))
-    },
+    // init() {
+    //   const { data, columns } = this
+
+    //   columns.forEach(column => {
+    //     const { prop } = column
+    //     console.log(prop, prop in data)
+    //     if (!(prop in data)) {
+    //       builder(data, prop)
+    //     }
+    //   })
+
+    //   Object.assign(this, { data })
+    //   console.log('data', JSON.stringify(this.data, null, 2))
+    // },
     itemRender(column) {
       const { $createElement, table, data } = this
       const { prop, itemRender } = column

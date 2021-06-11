@@ -1,3 +1,4 @@
+import XEUtils from 'xe-utils'
 /**
  * * 获取对象类型
  * @param {params} params
@@ -67,4 +68,43 @@ export function deepClone(obj) {
   }
 
   return result
+}
+
+export const initField = (data, prop, vue) => {
+  const props = prop.split('.').filter(d => d || d === 0)
+  const set = (data, props) => {
+    const [one, tow] = props
+    // 第一个非数字
+    if (XEUtils.isNaN(Number(one))) {
+      if (tow) {
+        // 第二个非数字
+        if (XEUtils.isNaN(Number(tow))) {
+          data[one] = {}
+        } else {
+          data[one] = []
+        }
+        set(data[one], props.slice(1))
+      } else {
+        vue.$set(data, one, null)
+      }
+    } else {
+      // 第一个是数字
+      data[one] = {}
+      set(data[one], props.slice(1))
+    }
+  }
+  if (props.length > 1) {
+    set(data, props)
+  } else {
+    data[prop] === undefined && vue.$set(data, prop, null)
+  }
+  return data
+}
+
+export const getField = function(data, prop) {
+  if (prop.indexOf('.') === -1) return { fieldData: data, fieldProp: prop }
+  const props = prop.split('.').filter(d => d || d === 0)
+  const len = props.length
+  const da = props.reduce((acc, cur, index) => len - 1 === index ? acc : acc[cur] || acc, data)
+  return { fieldData: da, fieldProp: props[len - 1] }
 }

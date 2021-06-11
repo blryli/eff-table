@@ -12,7 +12,7 @@
 <script>
 import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/dom'
 import { eqCellValue } from 'pk/utils/dom'
-
+import { initField } from 'pk/utils'
 export default {
   name: 'VFormField',
   props: {
@@ -68,6 +68,9 @@ export default {
   },
   created() {
     this.root.$on('clearStatus', this.updateField)
+    const { data, prop } = this
+    initField(data, prop, this)
+    // console.log('builder', JSON.stringify(this.data, null, 2))
   },
   mounted() {
     this.initValue = this.data[this.prop] || null

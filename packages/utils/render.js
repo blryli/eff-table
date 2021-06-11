@@ -1,6 +1,7 @@
 import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
+import { getField } from 'pk/utils'
 
 let oldData = null
 
@@ -36,9 +37,9 @@ function renderCell(h, renderOpts, params) {
 function renderVModel(h, renderOpts, params) {
   const { vue, data, table, column, prop, searchChange, rowIndex, columnIndex } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
-  // console.log({ data, prop })
+  const { fieldData, fieldProp } = getField(data, prop)
   const props = {
-    value: data[prop] || null
+    value: fieldData[fieldProp] || null
   }
   const { placeholder } = renderOpts.props || {}
   const attrs = {
@@ -46,14 +47,16 @@ function renderVModel(h, renderOpts, params) {
   }
 
   if (params.row) {
-    oldData = oldData === null ? params.row[params.prop] : oldData
+    oldData = oldData === null ? params.row[params.fieldProp] : oldData
   }
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      vue.$set(data, prop, val)
+      vue.$set(fieldData, fieldProp, val)
+      console.log('data', JSON.stringify(data, null, 2))
     },
     change: val => {
+      if (!table) return
       searchChange && searchChange(val)
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
         table.editField([{ rowIndex, columnIndex, content: val }])
