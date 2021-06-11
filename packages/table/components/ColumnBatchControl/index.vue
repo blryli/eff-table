@@ -5,6 +5,10 @@
       :show="show"
       title="列编辑"
       :init-style="cardStyle"
+      :min-height="300"
+      :height="300"
+      :width="800"
+      :min-width="400"
       @close="close"
       @save="save"
       @resetColumns="resetColumns"
@@ -117,6 +121,8 @@ export default {
   },
   dragToEl: {},
   data() {
+    // const { offsetHeight } = this.table.$el
+
     return {
       columns: [],
       show: false,
@@ -151,13 +157,6 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight, clientWidth } = this.table.$el
-    this.cardStyle = {
-      bottom: 0,
-      right: 0,
-      width: clientWidth - 40,
-      height: offsetHeight < 300 ? 300 : offsetHeight
-    }
 
     this.$nextTick(() => {
       const {
