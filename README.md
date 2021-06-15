@@ -194,6 +194,7 @@ value: [
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|
+| getCheckRows   | 用于多选表格，获取当前选中的行数据 | -|
 | clearSelection   | 用于多选表格，清空用户的选择 | -|
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
@@ -206,6 +207,9 @@ value: [
 | getPendingList | 获取伪删除的数据 ||
 | insert | 插入数据的方法，返回promise |records（插入数据）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行）|
 | triggerPending | 把选中行标记为伪删除的方法，返回promise |-|
+| getRemoveList |  获取表格已删除数据 |-|
+| remove | 删除表格数据，返回promise |rows|
+| removeCheckRow | 删除表格已选中数据，返回promise |-|
 
 
 ### Events
@@ -274,3 +278,10 @@ value: [
 -  增加 getUpdateList 方法，获取更新的数据
 
 -  增加 getPendingList 方法，获取伪删除的数据
+
+-  增加 remove 方法，删除表格数据
+
+-  增加 removeCheckRow 方法，删除表格已勾选数据
+
+-  增加 getRemoveList 方法，获取表格已删除数据
+

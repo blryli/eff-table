@@ -146,7 +146,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <p>tableData -  {{ tableData }}</p>
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
@@ -298,6 +298,7 @@ export default {
       editStore: {
         editRow: {},
         insertList: [],
+        removeList: [],
         updateList: [],
         pendingList: []
       },
@@ -487,7 +488,7 @@ export default {
         }
       }
       if (isSome) {
-        this.editStore.updateList.splice(index, 1)
+        index > -1 && this.editStore.updateList.splice(index, 1)
       } else {
         index === -1
           ? this.editStore.updateList.push(newRow)

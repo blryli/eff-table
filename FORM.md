@@ -210,11 +210,11 @@ columns: [ // arra
         trigger: '' // 可选，默认为 blur，对于select组件必须声明为 change
       }, 
       {
-        min: number, // 或 minmax 
+        min: number, // 最小长度
         message: '', //可选，默认为 长度不能小于 min
       }, 
       {
-        max: number, // 或 minmax 
+        max: number, // 最大长度 
         message: '', //可选，默认为 长度不能大于 max
       }, 
       // min,max同时存在时 message 默认为 长度必须在 min 到 max 

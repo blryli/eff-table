@@ -33,6 +33,7 @@
         </div>
       </Collapse>
     </section>
+    <CodeSnippet class="javascript" :code="rules" />
   </div>
 </template>
 
@@ -49,6 +50,39 @@ const htmlCode = `
   />
   `
 
+const rules = `
+  rules: [ // 校验规则
+    {
+      required: true, 
+      message: '', //可选，默认为 不能为空 
+      trigger: '' // 可选，默认为 blur，对于select组件必须声明为 change
+    }, 
+    {
+      min: number, // 最小长度
+      message: '', //可选，默认为 长度不能小于 min
+    }, 
+    {
+      max: number, // 最大长度 
+      message: '', //可选，默认为 长度不能大于 max
+    }, 
+    // min,max同时存在时 message 默认为 长度必须在 min 到 max 
+    {
+      pattern: reg, // 正则
+      message: '', //可选，默认为 校验不通过
+    }, 
+    {
+      type: 'email', // 邮箱
+      message: '', //可选，默认为 请输入正确的邮箱
+    }, 
+    {
+      type: 'phone', // 手机号
+      message: '', //可选，默认为 请输入正确的手机号
+    }, 
+    {
+      validator: Function // 自定义校验，支持异步
+    }
+  ]
+  `
 const jsCode = `
   export default {
     data() {
@@ -96,6 +130,7 @@ export default {
     return {
       htmlCode,
       jsCode,
+      rules,
       columns: [
         {
           show: true,

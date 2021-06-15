@@ -61,7 +61,7 @@ export function validateField(rules, params) {
         ]
         let e = false
         const valid = validRules.find(valid => (rule.required ? valid.type === 'required' : Object.keys(rule).includes(valid.type)) || rule.type === valid.type)
-        console.log('validate', JSON.stringify({ rule, valid }, null, 2))
+        // console.log('validate', JSON.stringify({ rule, valid }, null, 2))
         if (valid) {
           e = getMessage(valid.rule(), message || valid.message || '校验不通过')
           if (valid.type !== 'required' && !hasRequire && !value) {

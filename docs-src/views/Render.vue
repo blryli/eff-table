@@ -220,7 +220,6 @@ export default {
                 }).array
               })
             },
-            delete: ({ body }) => axios.post('url', body),
             save: ({ body }) => axios.post('url', body)
           }
         },

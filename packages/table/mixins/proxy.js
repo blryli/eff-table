@@ -95,6 +95,58 @@ export default {
         return query({ page, sorts, filters, form: searchForm })
       }
     },
+    /**
+     * 删除复选/单选框选中的数据
+     */
+    removeCheckRow() {
+      return this.remove(this.checkeds).then(params => {
+        this.clearSelection()
+        return params
+      })
+    },
+    remove(rows) {
+      const { tableData, rowId, editStore } = this
+      const { insertList, updateList, pendingList, removeList } = editStore
+      let rest = []
+      if (!rows) {
+        rows = tableData
+      } else if (!Array.isArray(rows)) {
+        rows = [rows]
+      }
+      rows.forEach(row => {
+        // 保存记录
+        removeList.push(row)
+        // 从新增中移除已删除的数据
+        const iIndex = insertList.indexOf(row)
+        if (iIndex > -1) {
+          insertList.splice(iIndex, 1)
+        } else {
+          this.$message.success('成功删除所选记录!')
+        }
+        // 从修改中移除已删除的数据
+        const uIndex = updateList.findIndex(d => d[rowId] === row[rowId])
+        if (uIndex > -1) {
+          updateList.splice(uIndex, 1)
+        }
+        // 从伪删除中移除已删除的数据
+        const pIndex = pendingList.findIndex(d => d[rowId] === row[rowId])
+        if (pIndex > -1) {
+          pendingList.splice(pIndex, 1)
+        }
+        if (tableData === rows) {
+          rows = rest = tableData.slice(0)
+          this.tableData = []
+        } else {
+          const tIndex = tableData.findIndex(d => d[rowId] === row[rowId])
+          if (tIndex > -1) {
+            const rItems = tableData.splice(tIndex, 1)
+            rest.push(rItems[0])
+          }
+        }
+        // console.log('remove', JSON.stringify({ insertList, removeList }, null, 2))
+      })
+      return this.$nextTick().then(() => ({ rows: rest }))
+    },
     delete(deleted) {
       const { checkeds } = this
       const checkedsLen = checkeds.length
@@ -102,25 +154,28 @@ export default {
         this.$message.warning('请至少选择一条记录！')
         return
       }
-      this.$confirm('确定要删除所选记录吗？', '提示', {
+      return this.$confirm('确定要删除所选记录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         if (typeof deleted === 'function') {
           this.isLoading = true
-          deleted({ table: this, body: checkeds }).then(res => {
-            this.$message.success('成功删除所选记录!')
-            this.commitProxy('query')
-            this.clearSelection()
-            this.isLoading = false
+          return deleted({ table: this, body: checkeds }).then(res => {
+            if (res.success) {
+              this.$message.success('成功删除所选记录!')
+              this.clearSelection()
+              this.isLoading = false
+            } else {
+              this.$message.error(res.message)
+            }
           }).catch(e => {
             console.error(e)
             this.clearSelection()
             this.isLoading = false
           })
         } else {
-          this.$message.error('requst [delete] 必须是函数!')
+          return this.removeCheckRow()
         }
       })
     },
@@ -177,10 +232,9 @@ export default {
       }).then(success => {
         if (success) {
           this.isLoading = true
-          save({ body: { insertList, updateList, pendingList }}).then(res => {
+          return save({ body: { insertList, updateList, pendingList }}).then(res => {
             this.isLoading = false
             this.$message.success('保存成功！')
-            this.commitProxy('query')
           }).catch(e => {
             console.error(e)
             this.isLoading = false
@@ -249,6 +303,9 @@ export default {
       const { rowId, editStore } = this
       const { insertList, pendingList } = editStore
       return insertList.filter(d => !pendingList.find(p => p[rowId] === d[rowId]))
+    },
+    getRemoveList() {
+      return this.editStore.removeList
     },
     getUpdateList() {
       const { rowId, editStore } = this
