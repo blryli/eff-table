@@ -9,19 +9,8 @@
       <div class="section-content">
         <eff-table
           ref="table"
-          v-model="columns"
-          :data="data"
-          :max-height="400"
-          edit
-          border
-        >
-          <template slot="toolbar">
-            <el-button @click="validate">校验</el-button>
-            <el-button @click="validateChecked">校验选中行</el-button>
-            <el-button @click="fullValidate">全量校验</el-button>
-            <el-button @click="clearValidate">清除校验</el-button>
-          </template>
-        </eff-table>
+          v-bind="tableOptions"
+        />
       </div>
     </section>
 
@@ -131,93 +120,71 @@ export default {
       htmlCode,
       jsCode,
       rules,
-      columns: [
-        {
-          show: true,
-          type: 'selection',
-          width: 60
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字异步操作',
-          titlePrefix: { message: '异步操作' },
-          titleSuffix: { icon: 'info', message: '等待回调完成再进行下一步操作' },
-          sortable: true,
-          edit: {
-            render: { props: { placeholder: '请输入刘德华' }}
-          },
-          rules: [
-            { required: true },
-            { validator: ({ value }) => new Promise(resolve => {
-              // 模拟远程校验
-              return setTimeout(() => resolve(value === '刘德华' ? '该名称已被作者使用，请换其他名字' : ''), 200)
-            }) }
+      tableOptions: {
+        maxHeight: '400',
+        edit: true,
+        border: true,
+        toolbarConfig: {
+          buttons: [
+            { name: 'button', code: 'validate', children: '校验' },
+            { name: 'button', code: 'validate_full', children: '全量校验' },
+            { name: 'button', code: 'validate_check_row', children: '校验选中' },
+            { name: 'button', code: 'clear_validate', children: '清除校验' }
           ]
         },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别',
-          config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
-          edit: true,
-          rules: [{ required: true, trigger: 'change' }]
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          edit: true,
-          rules: [{ type: 'phone' }]
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          edit: true,
-          rules: [{ type: 'email' }]
-        }
-      ],
-      data: [
-        { id: 1, name: '张三', sex: '男', phone: '13715201314', email: '168@qq.com' },
-        { id: 2, name: '李四', sex: '女', phone: '', email: '168@qq.com' },
-        { id: 3, name: '王五', sex: '', phone: '13715201314', email: '168@qq.com' },
-        { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: '' }
-      ]
-    }
-  },
-  methods: {
-    validate() {
-      this.$refs.table.validate().then(res => {
-        this.$message.success('校验通过!')
-      }).catch(data => {
-        this.$message.error('校验不通过!')
-        console.log(JSON.stringify(data, null, 2))
-      })
-    },
-    fullValidate() {
-      this.$refs.table.validate(true).then(res => {
-        this.$message.success('校验通过!')
-      }).catch(data => {
-        this.$message.error('校验不通过!')
-        console.log(JSON.stringify(data, null, 2))
-      })
-    },
-    validateChecked() {
-      const rows = this.$refs.table.getCheckRows()
-      if (rows.length) {
-        this.$refs.table.validate(rows).then(res => {
-          this.$message.success('校验通过!')
-        }).catch(data => {
-          this.$message.error('校验不通过!')
-          console.log(JSON.stringify(data, null, 2))
-        })
-      } else {
-        this.$message.error('未选中行!')
+        columns: [
+          {
+            show: true,
+            type: 'selection',
+            width: 60
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            titleSuffix: { icon: 'info', message: '异步操作，等待回调完成再进行下一步操作' },
+            sortable: true,
+            edit: {
+              render: { props: { placeholder: '请输入刘德华' }}
+            },
+            rules: [
+              { required: true },
+              { validator: ({ value }) => new Promise(resolve => {
+              // 模拟远程校验
+                return setTimeout(() => resolve(value === '刘德华' ? '该名称已被作者使用，请换其他名字' : ''), 200)
+              }) }
+            ]
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+            edit: true,
+            rules: [{ required: true, trigger: 'change' }]
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true,
+            rules: [{ type: 'phone' }]
+          },
+          {
+            show: true,
+            prop: 'email',
+            title: '邮箱',
+            edit: true,
+            rules: [{ type: 'email' }]
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314', email: '168@qq.com' },
+          { id: 2, name: '李四', sex: '女', phone: '', email: '168@qq.com' },
+          { id: 3, name: '王五', sex: '', phone: '13715201314', email: '168@qq.com' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: '' }
+        ]
       }
-    },
-    clearValidate() {
-      this.$refs.table.clearValidate()
     }
   }
 }

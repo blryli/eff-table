@@ -285,3 +285,7 @@ value: [
 
 -  增加 getRemoveList 方法，获取表格已删除数据
 
+-  column 增加 titlePrefix 属性，表头标题前缀
+
+-  column 增加 titleSuffix 属性，表头标题后缀
+

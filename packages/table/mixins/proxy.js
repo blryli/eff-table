@@ -5,47 +5,32 @@ export default {
   },
   methods: {
     // 提交指令
-    commitProxy(code) {
+    commitProxy(...ags) {
       // console.log('commitProxy', code)
+      const { add, insert, focus, validate, clearValidate, getCheckRows } = this
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save, loadChildren } = request || {}
-      switch (code) {
-        case 'add':
-          this.add()
-          break
-        case 'add_focus':
-          this.add().then(rowIndex => this.focus(rowIndex))
-          break
-        case 'insert':
-          this.insert()
-          break
-        case 'insert_focus':
-          this.insert().then(rowIndex => this.focus(rowIndex))
-          break
-        case 'mark_cancel':
-          this.triggerPending()
-          break
-        case 'checkout_select_type':
-          this.checkoutSelectType()
-          break
-        case 'delete':
-          this.delete(deleted)
-          break
-        case 'query':
-          query && (typeof query === 'function' ? this.query(query) : console.warn(`requst 没有传入函数 ${[code]}`))
-          break
-        case 'save':
-          save && (typeof save === 'function' ? this.save(save) : console.warn(`requst 没有传入函数 ${[code]}`))
-          break
-        case 'refresh':
-          this.refresh()
-          break
-        case 'loadChildren':
-          typeof loadChildren === 'function' ? loadChildren(arguments[1], arguments[2]) : console.warn(`requst 没有传入函数 ${[code]}`)
-          break
-        default:
-          break
-      }
+      const code = ags[0]
+      console.log('ags', JSON.stringify(ags, null, 2))
+      const codes = [
+        { code: 'add', fn: add },
+        { code: 'add_focus', fn: () => add().then(rowIndex => focus(rowIndex)) },
+        { code: 'insert', fn: insert },
+        { code: 'insert_focus', fn: () => this.insert().then(rowIndex => this.focus(rowIndex)) },
+        { code: 'mark_cancel', fn: () => this.triggerPending() },
+        { code: 'checkout_select_type', fn: () => this.checkoutSelectType() },
+        { code: 'delete', fn: () => this.delete(deleted) },
+        { code: 'query', fn: () => query && typeof query === 'function' && this.query(query) },
+        { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
+        { code: 'refresh', fn: () => this.refresh() },
+        { code: 'loadChildren', fn: () => typeof loadChildren === 'function' && loadChildren(ags[1], ags[2]) },
+        { code: 'validate', fn: validate },
+        { code: 'validate_full', fn: () => validate(true) },
+        { code: 'validate_check_row', fn: validate(getCheckRows()) },
+        { code: 'clear_validate', fn: clearValidate }
+      ]
+      const ccode = codes.find(d => d.code === code)
+      ccode && ccode.fn(ags)
     },
     loadingOpen() {
       this.isLoading = true
@@ -66,6 +51,7 @@ export default {
           this.loadTableData(data.list || [])
           Object.assign(this.pager, { pageNum, pageSize, total })
         }
+        this.clearSelection()
         this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
@@ -105,7 +91,7 @@ export default {
       })
     },
     remove(rows) {
-      const { tableData, rowId, editStore } = this
+      const { tableData, rowId, editStore, checkeds } = this
       const { insertList, updateList, pendingList, removeList } = editStore
       let rest = []
       if (!rows) {
@@ -116,6 +102,12 @@ export default {
       rows.forEach(row => {
         // 保存记录
         removeList.push(row)
+        if (checkeds.length) {
+          const cIndex = checkeds.findIndex(d => d[rowId] === row[rowId])
+          if (cIndex > -1) {
+            checkeds.splice(cIndex, 1)
+          }
+        }
         // 从新增中移除已删除的数据
         const iIndex = insertList.indexOf(row)
         if (iIndex > -1) {
