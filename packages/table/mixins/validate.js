@@ -32,7 +32,7 @@ export default {
         if (res.message) {
           index === -1 ? validators.push(res) : validators.splice(index, 1, res)
         } else {
-          validators.splice(index, 1)
+          index > -1 && validators.splice(index, 1)
         }
         this.$emit('validate', res, validators)
         return res

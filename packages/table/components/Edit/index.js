@@ -411,26 +411,28 @@ export default {
     },
     focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
       if (!prop) return
-      const { table, getColumn, editCell, fixOverflowX } = this
-      rowIndex = Number(rowIndex)
-      const lastIndex = table.tableData.length - 1
-      this.rowIndex = rowIndex < 0 ? 0 : rowIndex > lastIndex ? lastIndex : rowIndex
-      const { column, cell, columnIndex } = getColumn(prop, rowIndex)
-      this.column = column
-      if (cell) {
-        setTimeout(() => this.blurEvent().then(() => editCell(column, cell)))
-      } else {
-        fixOverflowX(columnIndex).then(() => {
-          table.toScroll(rowIndex).then(() => {
-            setTimeout(() => {
-              const { column, cell } = getColumn(prop, rowIndex)
-              this.column = column
-              this.handleType = 'to'
-              this.blurEvent().then(() => editCell(column, cell))
-            }, 100)
+      this.blurEvent().then(() => {
+        const { table, getColumn, editCell, fixOverflowX } = this
+        rowIndex = Number(rowIndex)
+        const lastIndex = table.tableData.length - 1
+        this.rowIndex = rowIndex < 0 ? 0 : rowIndex > lastIndex ? lastIndex : rowIndex
+        const { column, cell, columnIndex } = getColumn(prop, rowIndex)
+        this.column = column
+        if (cell) {
+          setTimeout(() => editCell(column, cell))
+        } else {
+          fixOverflowX(columnIndex).then(() => {
+            table.toScroll(rowIndex).then(() => {
+              setTimeout(() => {
+                const { column, cell } = getColumn(prop, rowIndex)
+                this.column = column
+                this.handleType = 'to'
+                editCell(column, cell)
+              }, 100)
+            })
           })
-        })
-      }
+        }
+      })
     },
     getRow(rowIndex, columnIndex) {
       const rowid = rowIndex + 1

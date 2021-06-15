@@ -60,7 +60,8 @@ export function validateField(rules, params) {
           { type: 'phone', rule: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value)), message: `请输入正确的手机号` }
         ]
         let e = false
-        const valid = validRules.find(valid => Object.keys(rule).includes(valid.type) && Object.values[0] || rule.type === valid.type)
+        const valid = validRules.find(valid => (rule.required ? valid.type === 'required' : Object.keys(rule).includes(valid.type)) || rule.type === valid.type)
+        console.log('validate', JSON.stringify({ rule, valid }, null, 2))
         if (valid) {
           e = getMessage(valid.rule(), message || valid.message || '校验不通过')
           if (valid.type !== 'required' && !hasRequire && !value) {

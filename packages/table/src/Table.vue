@@ -146,7 +146,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>editProps -  {{ editProps }}</p> -->
+    <p>tableData -  {{ tableData }}</p>
 
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />

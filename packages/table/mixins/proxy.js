@@ -212,11 +212,15 @@ export default {
           acc[prop] = defaultValue !== undefined ? defaultValue : null
           return acc
         }, {})
-        Object.assign(records, { [rowId]: `row_${tableData.length}` })
         beforeInsert(records)
       }
       if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
+      records.forEach(d => {
+        if (!d[rowId]) {
+          Object.assign(d, { [rowId]: `row_${tableData.length}` })
+        }
+      })
 
       const checkedsLen = checkeds.length
       if (checkedsLen) {
