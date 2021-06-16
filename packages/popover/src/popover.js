@@ -16,7 +16,9 @@ export default {
     hideDelay: { type: Number, default: 200 },
     vslot: {},
     addToBody: Boolean,
-    isFixed: Boolean
+    isFixed: Boolean,
+    showAlways: Boolean,
+    disabled: Boolean
   },
   data() {
     return {
@@ -26,9 +28,13 @@ export default {
     }
   },
   computed: {
+    isVisible() {
+      const { showAlways, show, disabled, message } = this
+      return (showAlways || show) && !disabled && message
+    },
     pClass() {
-      const { effect, show, momentPlacement, popoverClass, isFixed } = this
-      return `${effect ? `is-${effect}` : 'is-light'}  eff-table__popover-${momentPlacement} ${popoverClass} ${show ? 'eff-table__popover--visible' : 'eff-table__popover--hidden'} ${isFixed ? 'is--fixed' : ''}`
+      const { effect, momentPlacement, popoverClass, isFixed, isVisible } = this
+      return `${effect ? `is-${effect}` : 'is-light'}  eff-table__popover-${momentPlacement} ${popoverClass} ${isVisible ? 'eff-table__popover--visible' : 'eff-table__popover--hidden'} ${isFixed ? 'is--fixed' : ''}`
     },
     popoverStyle() {
       const { effect } = this
@@ -87,6 +93,9 @@ export default {
     }
   },
   watch: {
+    showAlways(val) {
+      val && setTimeout(this.calculateCoordinate, 0)
+    },
     show(val) {
       if (val) {
         setTimeout(() => {
@@ -209,7 +218,7 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          this.vslot || $slots.default || (Array.isArray(message) ? message : [message]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          this.vslot || $slots.default || (Array.isArray(message) ? message : [{ message }]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='eff-table__popover-arrow' />
       </div>

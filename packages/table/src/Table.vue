@@ -151,6 +151,7 @@
     <!-- 气泡 -->
     <Popover ref="popover" v-bind="popoverOpts" />
     <Popover v-if="edit" ref="editPopover" v-bind="editPopoverOpts" />
+    <Popover ref="validPopover" v-bind="validPopoverOpts" />
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -295,6 +296,7 @@ export default {
       isLoading: false,
       popoverOpts: {},
       editPopoverOpts: {},
+      validPopoverOpts: {},
       editStore: {
         editRow: {},
         insertList: [],
@@ -413,7 +415,7 @@ export default {
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
-          !d[rowId] && (d._rowId = i + 1)
+          !d[rowId] && (d._rowId = XEUtils.uniqueId('_rowId'))
           return d
         }) || []
       this.tableSourceData = XEUtils.clone(data, true)
@@ -589,6 +591,13 @@ export default {
     },
     editTipClose() {
       this.$refs.editPopover.doHide()
+    },
+    validTipShow(opts) {
+      this.$refs.validPopover.doShow()
+      this.validPopoverOpts = opts
+    },
+    validTipClose() {
+      this.$refs.validPopover.doHide()
     },
     expandChange(obj) {
       const { rowId } = obj

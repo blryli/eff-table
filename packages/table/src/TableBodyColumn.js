@@ -147,22 +147,22 @@ export default {
         return
       }
 
-      const messages = []
+      let placement = 'top'
+
       if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > table.spaceWidth) {
-        messages.push({ type: 'info', message: cell.innerText })
+        table.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cell.innerText })
+        placement = 'bottom'
       }
-      if (this.message && this.message.message) {
-        messages.push({ type: 'error', message: this.message.message })
-      }
-      if (messages.length) {
-        table.tipShow({ reference: cell.parentNode, message: messages })
-      }
+      const { message } = this.message || {}
+      message && table.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message })
     },
     handleMouseleave(event, slot) {
       if (this.$parent.summary) return
       const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.tipClose()
+      const { message } = this.message || {}
+      message && table.validTipClose()
     },
     expandClick() {
       const { row, expanded, table } = this

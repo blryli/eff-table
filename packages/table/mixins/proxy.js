@@ -1,3 +1,4 @@
+let row_id = 100
 export default {
   created() {
     const { request } = this.proxyConfig || {}
@@ -7,30 +8,25 @@ export default {
     // 提交指令
     commitProxy(...ags) {
       // console.log('commitProxy', code)
-      const { add, insert, focus, validate, clearValidate, getCheckRows } = this
+      const { add, insert, focus, triggerPending, checkoutSelectType } = this
       const { request } = this.proxyConfig || {}
       const { query, delete: deleted, save, loadChildren } = request || {}
       const code = ags[0]
-      console.log('ags', JSON.stringify(ags, null, 2))
       const codes = [
         { code: 'add', fn: add },
         { code: 'add_focus', fn: () => add().then(rowIndex => focus(rowIndex)) },
         { code: 'insert', fn: insert },
-        { code: 'insert_focus', fn: () => this.insert().then(rowIndex => this.focus(rowIndex)) },
-        { code: 'mark_cancel', fn: () => this.triggerPending() },
-        { code: 'checkout_select_type', fn: () => this.checkoutSelectType() },
+        { code: 'insert_focus', fn: () => insert().then(rowIndex => focus(rowIndex)) },
+        { code: 'mark_cancel', fn: triggerPending },
+        { code: 'checkout_select_type', fn: checkoutSelectType },
         { code: 'delete', fn: () => this.delete(deleted) },
         { code: 'query', fn: () => query && typeof query === 'function' && this.query(query) },
         { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
         { code: 'refresh', fn: () => this.refresh() },
-        { code: 'loadChildren', fn: () => typeof loadChildren === 'function' && loadChildren(ags[1], ags[2]) },
-        { code: 'validate', fn: validate },
-        { code: 'validate_full', fn: () => validate(true) },
-        { code: 'validate_check_row', fn: validate(getCheckRows()) },
-        { code: 'clear_validate', fn: clearValidate }
+        { code: 'loadChildren', fn: () => typeof loadChildren === 'function' && loadChildren(ags[1], ags[2]) }
       ]
       const ccode = codes.find(d => d.code === code)
-      ccode && ccode.fn(ags)
+      return ccode && ccode.fn(ags)
     },
     loadingOpen() {
       this.isLoading = true
@@ -240,9 +236,9 @@ export default {
     },
     /**
      * 往表格指定行中插入临时数据
-     * 如果 row 为空则插入到顶部
-     * 如果 row 为 -1 则从插入到底部
-     * 如果 row 为有效行则插入到该行的位置
+     * 如果 rowIndex 为空则插入到顶部
+     * 如果 rowIndex 为 -1 则从插入到底部
+     * 如果 rowIndex 为有效行则插入到该行的位置
      * @param {Object/Array} records 新的数据
      * @param {RowIndex} rowIndex 指定行
      */
@@ -258,13 +254,13 @@ export default {
           acc[prop] = defaultValue !== undefined ? defaultValue : null
           return acc
         }, {})
-        beforeInsert(records)
+        beforeInsert(records, rowIndex)
       }
       if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach(d => {
         if (!d[rowId]) {
-          Object.assign(d, { [rowId]: `row_${tableData.length}` })
+          Object.assign(d, { [rowId]: `row_${row_id++}` })
         }
       })
 

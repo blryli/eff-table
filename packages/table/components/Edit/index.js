@@ -27,7 +27,7 @@ export default {
       columnIndex: null
     }
   },
-  inject: ['table'],
+  inject: ['table', 'root'],
   computed: {
     row() {
       const { table, rowIndex } = this
@@ -373,6 +373,16 @@ export default {
           this.table.$emit('focus', this.column.prop, this.rowIndex)
         }
         target && target.select && target.select()
+        const { table, row, column, cell } = this
+        const { rowId } = table
+
+        // 编辑时的校验提示
+        if (row && column && cell) {
+          const valid = table.validators.find(d => d.id === row[rowId] && d.prop === column.prop)
+          if (valid) {
+            table.validTipShow({ reference: cell, showAllways: true, effect: 'error', message: valid.message })
+          }
+        }
       }, 50)
     },
     setElPos() {
@@ -404,6 +414,7 @@ export default {
           component.$emit('blur')
           close && close()
           table.$emit('blur')
+          table.validTipClose()
           return this.$nextTick()
         })
       }
