@@ -13,13 +13,14 @@ export default {
       const { query, delete: deleted, save, loadChildren } = request || {}
       const code = ags[0]
       const codes = [
-        { code: 'add', fn: add },
+        { code: 'add', fn: () => add() },
         { code: 'add_focus', fn: () => add().then(rowIndex => focus(rowIndex)) },
         { code: 'insert', fn: insert },
         { code: 'insert_focus', fn: () => insert().then(rowIndex => focus(rowIndex)) },
         { code: 'mark_cancel', fn: triggerPending },
         { code: 'checkout_select_type', fn: checkoutSelectType },
         { code: 'delete', fn: () => this.delete(deleted) },
+        { code: 'remove_check_row', fn: () => this.removeCheckRow() },
         { code: 'query', fn: () => query && typeof query === 'function' && this.query(query) },
         { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
         { code: 'refresh', fn: () => this.refresh() },
@@ -88,18 +89,22 @@ export default {
     },
     remove(rows) {
       const { tableData, rowId, editStore, checkeds } = this
+      console.log(rows, checkeds)
       const { insertList, updateList, pendingList, removeList } = editStore
       let rest = []
+      rows = [...rows]
       if (!rows) {
-        rows = tableData
+        rows = [...tableData]
       } else if (!Array.isArray(rows)) {
         rows = [rows]
       }
+      let timer = null
       rows.forEach(row => {
         // 保存记录
+        const id = row[rowId]
         removeList.push(row)
         if (checkeds.length) {
-          const cIndex = checkeds.findIndex(d => d[rowId] === row[rowId])
+          const cIndex = checkeds.findIndex(d => d[rowId] === id)
           if (cIndex > -1) {
             checkeds.splice(cIndex, 1)
           }
@@ -109,15 +114,18 @@ export default {
         if (iIndex > -1) {
           insertList.splice(iIndex, 1)
         } else {
-          this.$message.success('成功删除所选记录!')
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            this.$message.success('成功删除所选记录!')
+          }, 50)
         }
         // 从修改中移除已删除的数据
-        const uIndex = updateList.findIndex(d => d[rowId] === row[rowId])
+        const uIndex = updateList.findIndex(d => d[rowId] === id)
         if (uIndex > -1) {
           updateList.splice(uIndex, 1)
         }
         // 从伪删除中移除已删除的数据
-        const pIndex = pendingList.findIndex(d => d[rowId] === row[rowId])
+        const pIndex = pendingList.findIndex(d => d[rowId] === id)
         if (pIndex > -1) {
           pendingList.splice(pIndex, 1)
         }
@@ -125,7 +133,7 @@ export default {
           rows = rest = tableData.slice(0)
           this.tableData = []
         } else {
-          const tIndex = tableData.findIndex(d => d[rowId] === row[rowId])
+          const tIndex = tableData.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {
             const rItems = tableData.splice(tIndex, 1)
             rest.push(rItems[0])

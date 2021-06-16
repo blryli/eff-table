@@ -31,13 +31,13 @@ export function validateField(rules, params) {
     return new Promise((resolve, reject) => {
       const { validator, min, max, pattern, message } = rule
       const { id, prop, value } = params
+      const isNoValue = value === null || value === undefined || value === ''
       if (typeof validator === 'function') {
-        if (params.value === null) {
+        if (isNoValue) {
           params.value = ''
-        }
-
-        if (!hasRequire && !value) {
-          resolve({ id, prop, message: false })
+          if (!hasRequire) {
+            resolve({ id, prop, message: false })
+          }
         }
 
         const valid = validator(params)
@@ -64,7 +64,7 @@ export function validateField(rules, params) {
         // console.log('validate', JSON.stringify({ rule, valid }, null, 2))
         if (valid) {
           e = getMessage(valid.rule(), message || valid.message || '校验不通过')
-          if (valid.type !== 'required' && !hasRequire && !value) {
+          if (valid.type !== 'required' && !hasRequire && isNoValue) {
             e = false
           }
         }
