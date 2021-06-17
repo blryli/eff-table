@@ -148,6 +148,7 @@ export default {
             },
             rules: [
               { required: true },
+              { min: 2, max: 5 },
               { validator: ({ value }) => new Promise(resolve => {
               // 模拟远程校验
                 return setTimeout(() => resolve(value === '刘德华' ? '该名称已被作者使用，请换其他名字' : ''), 200)
