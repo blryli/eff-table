@@ -250,7 +250,7 @@ export default {
      * @param {Object/Array} records 新的数据
      * @param {RowIndex} rowIndex 指定行
      */
-    insert(records, rowIndex) {
+    insert(records, rowIndex, cover = false) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
       if (!records) {
         records = columns.reduce((acc, column) => {
@@ -262,7 +262,6 @@ export default {
           acc[prop] = defaultValue !== undefined ? defaultValue : null
           return acc
         }, {})
-        beforeInsert(records, rowIndex)
       }
       if (!Array.isArray(records)) records = [records]
       // console.log('records', JSON.stringify(records, null, 2))
@@ -273,18 +272,21 @@ export default {
       })
 
       const checkedsLen = checkeds.length
-      if (checkedsLen) {
+      if (!cover && checkedsLen) {
         rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
 
       if (!rowIndex) {
-        this.tableData.unshift(...records)
         rowIndex = 0
+        beforeInsert(records, rowIndex)
+        this.tableData.unshift(...records)
       } else {
         if (rowIndex === -1) {
+          rowIndex = this.tableData.length
+          beforeInsert(records, rowIndex)
           this.tableData.push(...records)
-          rowIndex = this.tableData.length - 1
         } else {
+          beforeInsert(records, rowIndex)
           this.tableData.splice(rowIndex, 0, ...records)
         }
       }

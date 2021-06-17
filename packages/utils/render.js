@@ -116,14 +116,11 @@ function renderselectCell(h, renderOpts, params) {
   return opt[labelKey] || cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
-  const { options = [] } = renderOpts
+  const { options = [], props: oProps = {}} = renderOpts
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getPropValue(data, prop, root),
-    placeholder: '请选择' + (column.title || '')
-  }
-  if (renderOpts.placeholder) {
-    props.placeholder = renderOpts.placeholder
+    placeholder: oProps.placeholder || '请选择' + (column.title || '')
   }
   const on = {
     input: val => {
@@ -182,9 +179,10 @@ function renderdateCell(h, renderOpts, params) {
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
+  const { props: oProps = {}} = renderOpts
   const props = {
     value: getPropValue(data, prop, root),
-    valueFormat: 'timestamp' // 时间格式默认用时间戳
+    valueFormat: oProps.valueFormat || 'timestamp' // 时间格式默认用时间戳
   }
   const on = {
     input: val => {
@@ -227,8 +225,9 @@ function renderDatepickerSearchRange(h, renderOpts, params) {
 // 链接 link
 function renderLink(h, renderOpts, params) {
   const { data, prop, root } = params
+  const { props: oProps = {}} = renderOpts
   const props = {
-    type: 'primary'
+    type: oProps.type || 'primary'
   }
   return render(h, renderOpts, params).mergeOpts({ props }).set('children', getPropValue(data, prop, root)).render()
 }
@@ -244,8 +243,9 @@ function renderImage(h, renderOpts, params) {
 
 // 气泡 popover
 function renderPopup(h, renderOpts, params) {
+  const { props: oProps = {}} = renderOpts
   const props = {
-    palcement: 'top'
+    palcement: oProps.palcement || 'top'
   }
   return render(h, renderOpts, params).mergeOpts({ props }).render()
 }

@@ -121,7 +121,7 @@ export default {
           const [, columnIndex] = colid.split('-')
           column = table.bodyColumns[columnIndex - 1]
           if (column) {
-            const obj = { row, column, rowIndex, columnIndex, cell, event }
+            const obj = { row, column, prop: column.prop, rowIndex, columnIndex, cell, event }
             const { edit } = table.$refs
             !isPending && name === 'click' && edit && edit.handleEditCell(obj)
             table.$emit(`cell-${name}`, obj)

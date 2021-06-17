@@ -22,7 +22,7 @@ export default {
     focusOptions: { type: Object, default: () => {} },
     focusTextAllSelected: { type: Boolean, default: true },
     width: { type: String, default: '' },
-    mseeageType: { type: String, default: '' },
+    messageType: { type: String, default: '' },
     focusStop: Boolean,
     focusPause: Boolean
   },

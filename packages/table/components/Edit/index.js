@@ -107,9 +107,15 @@ export default {
   },
   methods: {
     handleValidate() {
-      const { prop, rules = [] } = this.column || {}
+      const { table, column, cell } = this
+      const { prop, rules = [] } = column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-      return this.table.validateField(this.row, prop, rules)
+      return this.table.validateField(this.row, prop, rules).then(res => {
+        table.validTipClose()
+        this.$nextTick(() => {
+          res.message && table.validTipShow({ reference: cell, showAllways: true, effect: 'error', message: res.message })
+        })
+      })
     },
     updateStatus() {
       const { table, column, row } = this
@@ -339,6 +345,7 @@ export default {
         // 原生input
         if (editRender && editRender.tag === 'input') {
           const { elm } = editRender
+          on(elm, 'input',)
           elm.focus && elm.focus()
           elm.select && elm.select()
           return
@@ -357,6 +364,11 @@ export default {
         this.component = component
         this.componentValue = component.value
 
+        if (this.component) {
+          // 实时校验
+          this.component.$on('input', this.handleValidate)
+        }
+
         // 处理禁用
         if (componentInstance.disabled || component.disabled) {
           inputFocus()
@@ -369,6 +381,7 @@ export default {
         const target = component.getInput ? component.getInput() : component
         if (component.focus || target.focus) {
           component.focus ? component.focus() : target.focus()
+
           componentInstance.$emit('focus')
           this.table.$emit('focus', this.column.prop, this.rowIndex)
         }
@@ -408,7 +421,7 @@ export default {
             this.table.$emit('table-update-data', data)
           }
         }
-        return this.handleValidate().then(res => {
+        return this.handleValidate().then(() => {
           this.updateStatus()
           const { close } = component
           component.$emit('blur')

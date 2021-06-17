@@ -304,7 +304,7 @@ export default {
       this.$refs.form.clearStatus()
     },
     validate() {
-      this.$refs.form.validate().catch(e => console.log(e)).then(res => console.log('then', res))
+      this.$refs.form.validate().catch(e => console.log(e))
     },
     clearValidate() {
       this.$refs.form.clearValidate()
@@ -313,7 +313,7 @@ export default {
       this.$refs.form1.clearStatus()
     },
     validate1() {
-      this.$refs.form1.validate().catch(e => console.log(e)).then(res => console.log('then', res))
+      this.$refs.form1.validate().catch(e => console.log(e))
     },
     clearValidate1() {
       this.$refs.form1.clearValidate()
