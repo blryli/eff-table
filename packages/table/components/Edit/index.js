@@ -24,7 +24,8 @@ export default {
       scrollNum: 0,
       dialogVisible: true,
       baseText: null,
-      columnIndex: null
+      columnIndex: null,
+      message: ''
     }
   },
   inject: ['table', 'root'],
@@ -70,6 +71,9 @@ export default {
     rowIndex(val) {
       this.table.editStore.editRow = val === null ? {} : this.table.tableData[val]
       this.dialogVisible = true
+    },
+    message() {
+      this.table.$refs.popovers.validingTipClose()
     },
     show(val) {
       const { table } = this
@@ -124,9 +128,8 @@ export default {
     },
     validateShowpopover() {
       const { table, cell } = this
-      console.log(cell, this.column.prop)
-      table.$refs.popovers.validingTipClose()
       this.handleValidate().then(res => {
+        this.message = res.message
         setTimeout(() => {
           res.message && table.$refs.popovers.validingTipShow({ reference: cell, showAllways: true, effect: 'error', message: res.message })
         }, 20)

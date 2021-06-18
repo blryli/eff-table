@@ -179,10 +179,8 @@ function renderdateCell(h, renderOpts, params) {
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
-  const { props: oProps = {}} = renderOpts
   const props = {
-    value: getPropValue(data, prop, root),
-    valueFormat: oProps.valueFormat || 'timestamp' // 时间格式默认用时间戳
+    value: getPropValue(data, prop, root)
   }
   const on = {
     input: val => {

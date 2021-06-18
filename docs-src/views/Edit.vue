@@ -570,9 +570,9 @@ export default {
         }
       ],
       data1: [
-        { id: 1, name: '张三', sex: '1', phone: '13715201314', date: 1622476800000, vaccination: '1' },
+        { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
         { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
-        { id: 3, name: '王五', sex: '1', phone: '13715201314', date: 1624982400000, vaccination: '' },
+        { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
         { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
       ]
     }

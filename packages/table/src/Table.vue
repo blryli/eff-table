@@ -439,6 +439,7 @@ export default {
         {
           insertList: [],
           updateList: [],
+          removeList: [],
           pendingList: []
         }
       )
