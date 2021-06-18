@@ -57,8 +57,8 @@ export default {
     handleWindowClick(e) {
       const { target } = e
       if (this.edit) {
-        const { edit, editPopover } = this.$refs
-        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && !edit.$el.contains(target) && !editPopover.$el.contains(target)) {
+        const { edit, popovers } = this.$refs
+        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && !edit.$el.contains(target) && !popovers.$refs.editPopover.$el.contains(target)) {
           if (edit.show) {
             this.closeEdit()
           }

@@ -149,9 +149,7 @@
     <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
-    <Popover ref="popover" v-bind="popoverOpts" />
-    <Popover v-if="edit" ref="editPopover" v-bind="editPopoverOpts" />
-    <Popover ref="validPopover" v-bind="validPopoverOpts" />
+    <Popovers ref="popovers" />
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -176,7 +174,7 @@ import shortcutKey from '../mixins/shortcutKey'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
-import Popover from 'pk/popover'
+import Popovers from 'pk/table/components/popovers'
 import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import FooterAction from '../components/FooterAction'
@@ -196,7 +194,7 @@ export default {
     TableHeader,
     TableBody,
     TableFooter,
-    Popover,
+    Popovers,
     Drag,
     Toolbar,
     Edit,
@@ -294,9 +292,6 @@ export default {
       expand: null,
       editIsStop: false,
       isLoading: false,
-      popoverOpts: {},
-      editPopoverOpts: {},
-      validPopoverOpts: {},
       editStore: {
         editRow: {},
         insertList: [],
@@ -577,27 +572,6 @@ export default {
     },
     handleCardClose() {
       this.$emit('drag-card-close')
-    },
-    tipShow(opts) {
-      this.$refs.popover.doShow()
-      this.popoverOpts = opts
-    },
-    tipClose() {
-      this.$refs.popover.doHide()
-    },
-    editTipShow(opts) {
-      this.$refs.editPopover.doShow()
-      this.editPopoverOpts = opts
-    },
-    editTipClose() {
-      this.$refs.editPopover.doHide()
-    },
-    validTipShow(opts) {
-      this.$refs.validPopover.doShow()
-      this.validPopoverOpts = opts
-    },
-    validTipClose() {
-      this.$refs.validPopover.doHide()
     },
     expandChange(obj) {
       const { rowId } = obj

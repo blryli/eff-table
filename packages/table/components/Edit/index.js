@@ -104,17 +104,32 @@ export default {
   beforeDestroy() {
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
+    const { editRender, component, validateShowpopover } = this
+    const { elm } = editRender
+    // 原生input
+    if (editRender && editRender.tag === 'input') {
+      elm && off(elm, 'input', validateShowpopover)
+    }
+    if (component) {
+      // 实时校验
+      component.$off('input', validateShowpopover)
+    }
   },
   methods: {
     handleValidate() {
-      const { table, column, cell } = this
+      const { column } = this
       const { prop, rules = [] } = column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-      return this.table.validateField(this.row, prop, rules).then(res => {
-        table.validTipClose()
-        this.$nextTick(() => {
-          res.message && table.validTipShow({ reference: cell, showAllways: true, effect: 'error', message: res.message })
-        })
+      return this.table.validateField(this.row, prop, rules)
+    },
+    validateShowpopover() {
+      const { table, cell } = this
+      console.log(cell, this.column.prop)
+      table.$refs.popovers.validingTipClose()
+      this.handleValidate().then(res => {
+        setTimeout(() => {
+          res.message && table.$refs.popovers.validingTipShow({ reference: cell, showAllways: true, effect: 'error', message: res.message })
+        }, 20)
       })
     },
     updateStatus() {
@@ -341,11 +356,11 @@ export default {
     },
     handleFocus() {
       setTimeout(() => {
-        const { editRender, editRender: { componentInstance } = {}} = this
+        const { table, row, column, cell, editRender, editRender: { componentInstance } = {}, validateShowpopover } = this
         // 原生input
         if (editRender && editRender.tag === 'input') {
           const { elm } = editRender
-          on(elm, 'input',)
+          on(elm, 'input', validateShowpopover)
           elm.focus && elm.focus()
           elm.select && elm.select()
           return
@@ -366,8 +381,9 @@ export default {
 
         if (this.component) {
           // 实时校验
-          this.component.$on('input', this.handleValidate)
+          this.component.$on('input', validateShowpopover)
         }
+        validateShowpopover()
 
         // 处理禁用
         if (componentInstance.disabled || component.disabled) {
@@ -386,14 +402,13 @@ export default {
           this.table.$emit('focus', this.column.prop, this.rowIndex)
         }
         target && target.select && target.select()
-        const { table, row, column, cell } = this
         const { rowId } = table
 
         // 编辑时的校验提示
         if (row && column && cell) {
           const valid = table.validators.find(d => d.id === row[rowId] && d.prop === column.prop)
           if (valid) {
-            table.validTipShow({ reference: cell, showAllways: true, effect: 'error', message: valid.message })
+            table.$refs.popovers.validingTipShow({ reference: cell, showAllways: true, effect: 'error', message: valid.message })
           }
         }
       }, 50)
@@ -411,7 +426,7 @@ export default {
       this.baseText = null
     },
     blurEvent() {
-      const { component, table, rowIndex, columnIndex, column } = this
+      const { component, table, rowIndex, columnIndex, column, editRender, validateShowpopover } = this
       const { tableData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
@@ -427,7 +442,16 @@ export default {
           component.$emit('blur')
           close && close()
           table.$emit('blur')
-          table.validTipClose()
+          table.$refs.popovers.validingTipClose()
+          const { elm } = editRender
+          // 原生input
+          if (editRender && editRender.tag === 'input') {
+            off(elm, 'input', validateShowpopover)
+          }
+          if (this.component) {
+            // 实时校验
+            this.component.$off('input', validateShowpopover)
+          }
           return this.$nextTick()
         })
       }

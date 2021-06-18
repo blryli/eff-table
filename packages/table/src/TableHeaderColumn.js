@@ -109,17 +109,17 @@ export default {
     },
     handleMouseenter() {
       const { table, column: { width }, $refs: { cell }} = this
-      const { tipShow, spaceWidth } = table
+      const { spaceWidth } = table
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
 
       if (width && getTextWidth(cell) > Math.max(width, 40) || !width && getTextWidth(cell) > spaceWidth) {
-        tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
+        table.$refs.popovers.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
       }
     },
     handleMouseleave() {
-      this.table.tipClose()
+      this.table.$refs.popovers.tipClose()
     },
     sortClick(order) {
       const { column, column: { prop }} = this

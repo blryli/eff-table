@@ -35,13 +35,12 @@
 
 <script>
 import Card from 'pk/card'
-import { deepClone } from 'pk/utils/index'
 
 export default {
   name: 'DiySearch',
   components: { Card },
   props: {
-    show: {}
+    show: Boolean
   },
   dragToEl: {},
   data() {
@@ -59,7 +58,7 @@ export default {
   },
   mounted() {
     setTimeout(v => {
-      const { offsetHeight, clientWidth, offsetLeft, offsetTop } = this.table.$el
+      const { offsetHeight, clientWidth } = this.table.$el
       this.cardStyle = {
         bottom: 0,
         right: 0,

@@ -16,6 +16,7 @@
           :max-height="400"
         />
       </div>
+
     </section>
 
     <section class="snippets">

@@ -188,7 +188,7 @@ value: [
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
 | getFullData      | 获取当前表格全量数据 |     ---          |
 | getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
-| validate      | 对整个表单进行校验的方法 | Array 需要校验的数组，不传参数校验所有 |
+| validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateField | 对单元格进行校验的方法 | rowIndex, prop |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
@@ -200,12 +200,12 @@ value: [
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 | updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
-| editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],updateList: [],pendingList: [] } |-|
+| editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],removeList: [], updateList: [],pendingList: [] } |-|
 | copyFromChecked | 把选择的行数据复制到粘贴板 ||
 | getInsertList | 获取新增的数据 ||
 | getUpdateList | 获取更新的数据 ||
 | getPendingList | 获取伪删除的数据 ||
-| insert | 插入数据的方法，返回promise |records（插入数据）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行）|
+| insert | 插入数据的方法，返回promise |records（插入数据array）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行），insertCheckRow （存在勾选行时，插入到指定行，默认为true）|
 | triggerPending | 把选中行标记为伪删除的方法，返回promise |-|
 | getRemoveList |  获取表格已删除数据 |-|
 | remove | 删除表格数据，返回promise |rows|

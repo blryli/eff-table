@@ -27,12 +27,12 @@ export default {
     handlerMouseenter(e) {
       const { msgType, reference = this.$el, message, effect } = this
       if (msgType === 'popover') {
-        message && this.root.tipShow({ reference, effect, message: [{ type: 'dark', message }] })
+        message && this.root.$refs.popovers.tipShow({ reference, effect, message: [{ type: 'dark', message }] })
       }
     },
     handlerMouseleave(e) {
       if (this.msgType === 'popover') {
-        this.root.tipClose()
+        this.root.$refs.popovers.tipClose()
       }
     }
   },

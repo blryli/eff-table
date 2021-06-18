@@ -89,14 +89,14 @@ export default {
     },
     remove(rows) {
       const { tableData, rowId, editStore, checkeds } = this
-      console.log(rows, checkeds)
       const { insertList, updateList, pendingList, removeList } = editStore
       let rest = []
-      rows = [...rows]
       if (!rows) {
         rows = [...tableData]
       } else if (!Array.isArray(rows)) {
         rows = [rows]
+      } else {
+        rows = [...rows]
       }
       let timer = null
       rows.forEach(row => {
@@ -249,8 +249,9 @@ export default {
      * 如果 rowIndex 为有效行则插入到该行的位置
      * @param {Object/Array} records 新的数据
      * @param {RowIndex} rowIndex 指定行
+     * @param {InsertCheckRow} insertCheckRow 插入到指定行
      */
-    insert(records, rowIndex, cover = false) {
+    insert(records, rowIndex, insertCheckRow = true) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
       if (!records) {
         records = columns.reduce((acc, column) => {
@@ -263,7 +264,11 @@ export default {
           return acc
         }, {})
       }
-      if (!Array.isArray(records)) records = [records]
+      let isObj = false
+      if (!Array.isArray(records)) {
+        records = [records]
+        isObj = true
+      }
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach(d => {
         if (!d[rowId]) {
@@ -272,21 +277,21 @@ export default {
       })
 
       const checkedsLen = checkeds.length
-      if (!cover && checkedsLen) {
+      if (insertCheckRow && checkedsLen) {
         rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
 
       if (!rowIndex) {
         rowIndex = 0
-        beforeInsert(records, rowIndex)
+        beforeInsert(isObj ? records[0] : records, rowIndex)
         this.tableData.unshift(...records)
       } else {
         if (rowIndex === -1) {
           rowIndex = this.tableData.length
-          beforeInsert(records, rowIndex)
+          beforeInsert(isObj ? records[0] : records, rowIndex)
           this.tableData.push(...records)
         } else {
-          beforeInsert(records, rowIndex)
+          beforeInsert(isObj ? records[0] : records, rowIndex)
           this.tableData.splice(rowIndex, 0, ...records)
         }
       }

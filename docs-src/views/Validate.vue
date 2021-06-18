@@ -161,7 +161,7 @@ export default {
             title: '性别',
             config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
             edit: true,
-            rules: [{ required: true, trigger: 'change' }]
+            rules: [{ required: true }]
           },
           {
             show: true,
@@ -179,10 +179,10 @@ export default {
           }
         ],
         data: [
-          { id: 1, name: '张三', sex: '男', phone: '13715201314', email: '168@qq.com' },
-          { id: 2, name: '李四', sex: '女', phone: '', email: '168@qq.com' },
-          { id: 3, name: '王五', sex: '', phone: '13715201314', email: '168@qq.com' },
-          { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: '' }
+          { id: 1, name: '张三', sex: '男', phone: '1371520', email: '168@qq.com' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314', email: '168@qq.com' },
+          { id: 3, name: '刘德华', sex: '', phone: '137152013141371520131413715201314137152013141371520', email: '168@qq.com' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: '168168168168168168168168168168168168168168168168168168' }
         ]
       }
     }

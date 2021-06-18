@@ -150,19 +150,19 @@ export default {
       let placement = 'top'
 
       if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > table.spaceWidth) {
-        table.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cell.innerText })
+        table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cell.innerText })
         placement = 'bottom'
       }
       const { message } = this.message || {}
-      message && table.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message })
+      message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message })
     },
     handleMouseleave(event, slot) {
       if (this.$parent.summary) return
       const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
-      table.tipClose()
+      table.$refs.popovers.tipClose()
       const { message } = this.message || {}
-      message && table.validTipClose()
+      message && table.$refs.popovers.validTipClose()
     },
     expandClick() {
       const { row, expanded, table } = this
