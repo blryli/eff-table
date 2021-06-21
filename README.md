@@ -139,21 +139,18 @@ value: [
     }
 
     // 编辑
+    editable: true, // boolean 控制是否开启编辑
     edit: { // object
       render: (h, {row, rowIndex, column, columnIndex, prop}) => {
         return <your-component vModel={value} on-change={this.change} />
       },
       disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
-      skip: false, // boolean | function({row, rowIndex}){} 为true时跳过字段
-      leaveTime: 0 // number | function({ row, rowIndex }) {return Promise} 需要延时或异步处理完值再离开时使用，为函数时返回值必须是promise
     }
 
     // 校验
-    validator: {
+    validator: [{
       required: false, // boolean
-      rule: ({value, row, rowIndex}) => !value && '不能为空', // 校验规则，返回值为字符串或promise，为promise时作异步校验处理
-      field: '' // 指定校验字段( 默认为prop )
-    }
+    }]
 
     // 搜索
     search: {
@@ -288,4 +285,8 @@ value: [
 -  column 增加 titlePrefix 属性，表头标题前缀
 
 -  column 增加 titleSuffix 属性，表头标题后缀
+
+#### 2021-6-21
+
+-  column 增加 editable 属性，控制是否开启编辑
 

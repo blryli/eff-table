@@ -1,4 +1,4 @@
-import { getType } from 'pk/utils'
+import { columnIsEdit } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
@@ -38,7 +38,7 @@ export default {
       const { row, column } = this
       if (!column) return ''
       const { edit, prop, config } = column || {}
-      if (edit) {
+      if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
 
         const columnIndex = this.getColumnIndex(column.prop)
@@ -166,28 +166,7 @@ export default {
             this.placement = placement
 
             // 跳下一个处理
-            const { row, rowIndex, column } = this
-            const { prop, edit: { leaveTime } = {}} = column
-            if (leaveTime) {
-              if (typeof leaveTime === 'number') {
-                setTimeout(() => {
-                  this.to()
-                }, leaveTime)
-              } else if (typeof leaveTime === 'function') {
-                const leaveFn = leaveTime({ prop, row, rowIndex })
-                if (getType(leaveFn) === 'Promise') {
-                  leaveFn.then(() => {
-                    this.to()
-                  })
-                } else {
-                  console.error(`[${prop}] leaveTime 函数返回值必须是promise`)
-                }
-              } else {
-                console.error(`[${prop}] leaveTime 参数类型必须是数字或函数`)
-              }
-            } else {
-              this.to()
-            }
+            this.to()
             break
           }
         }
@@ -212,16 +191,16 @@ export default {
       }
     },
     canFocus(column, cell) {
-      const { type, edit } = column
+      const { type } = column
       const types = ['selection', 'index']
-      return edit && column && column.prop && !this.disabled(column) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
+      return columnIsEdit(column) && column && column.prop && !this.disabled(column) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
     toX() {
-      const { placement, columns, cellIndex, table, $el, canFocus, skip, getColumn, editCell } = this
+      const { placement, columns, cellIndex, table, $el, canFocus, getColumn, editCell } = this
       let toCellIndex = 0
       let toColumns = []
       let column = {}
-      const filterColumns = columns => columns.filter(column => canFocus(column) && !skip(column))
+      const filterColumns = columns => columns.filter(column => canFocus(column))
       if (placement === 'right') {
         toCellIndex = cellIndex + 1
         toColumns = filterColumns(columns.slice(toCellIndex))
@@ -264,19 +243,6 @@ export default {
         skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
       }
     },
-    skip(column) {
-      const { edit: { skip } = {}, prop = '' } = column || {}
-      const { row, rowIndex } = this
-      if (skip === undefined) return false
-
-      if (typeof skip === 'function') {
-        return skip({ row, rowIndex })
-      }
-      if (typeof skip !== 'boolean') {
-        console.error(`${prop} 字段，skip类型必须是 function/boolean`)
-      }
-      return skip || false
-    },
     disabled(column) {
       const { edit: { disabled } = {}, prop = '' } = column || {}
       const { row, rowIndex } = this
@@ -293,7 +259,7 @@ export default {
 
     handleEditCell({ column, cell, rowIndex }) {
       this.handleType = 'click'
-      if (!column.edit) {
+      if (!columnIsEdit(column)) {
         this.close()
         return
       }
@@ -305,7 +271,7 @@ export default {
     editCell(column, cell) {
       this.scrollNum = 0
       const { prop } = column || {}
-      const { rowIndex, getColumnIndex, canFocus, getColumn, fixOverflowX } = this
+      const { getColumnIndex, canFocus, getColumn, fixOverflowX } = this
       const cellIndex = getColumnIndex(prop)
       const editCell = (cell) => {
         if (cellIndex === -1 || !canFocus(column, cell)) return
@@ -315,9 +281,9 @@ export default {
           this.cellIndex = cellIndex
           this.cell = getColumn(prop).cell
           this.show = true
+
           this.setElPos() // 设置编辑框位置
 
-          this.table.$emit('blur', prop, rowIndex)
           this.handleFocus()// 处理聚焦
         })
       }
@@ -332,8 +298,7 @@ export default {
     },
     fixOverflowX(cellIndex) {
       const { columnWidths, bodyWrapperWidth } = this.table
-      const scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0) - bodyWrapperWidth / 2
-      this.table.scrollLeft = scrollLeft
+      this.table.scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0) - bodyWrapperWidth / 2
       return this.$nextTick()
     },
     fixOverflow(cell, cellIndex) {
@@ -359,7 +324,7 @@ export default {
     },
     handleFocus() {
       setTimeout(() => {
-        const { table, row, column, cell, editRender, editRender: { componentInstance } = {}, validateShowpopover } = this
+        const { table, row, rowIndex, column, columnIndex, cell, editRender, editRender: { componentInstance } = {}, validateShowpopover } = this
         // 原生input
         if (editRender && editRender.tag === 'input') {
           const { elm } = editRender
@@ -401,8 +366,7 @@ export default {
         if (component.focus || target.focus) {
           component.focus ? component.focus() : target.focus()
 
-          componentInstance.$emit('focus')
-          this.table.$emit('focus', this.column.prop, this.rowIndex)
+          this.table.$emit('focus', { prop: column.prop, row: this.row, rowIndex, columnIndex })
         }
         target && target.select && target.select()
         const { rowId } = table
@@ -442,9 +406,8 @@ export default {
         return this.handleValidate().then(() => {
           this.updateStatus()
           const { close } = component
-          component.$emit('blur')
           close && close()
-          table.$emit('blur')
+          column && table.$emit('blur', { prop: column.prop, row: this.row, rowIndex, columnIndex })
           table.$refs.popovers.validingTipClose()
           const { elm } = editRender
           // 原生input

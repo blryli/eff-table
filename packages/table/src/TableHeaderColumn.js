@@ -1,4 +1,5 @@
 import VCheckbox from 'pk/checkbox'
+import { columnIsEdit } from 'pk/utils'
 import { getTextWidth } from 'pk/utils/dom'
 import PrefixSuffix from 'pk/prefix-suffix'
 import PopoverRef from 'pk/popover/src/popover-ref'
@@ -49,7 +50,7 @@ export default {
             required ? <i class='eff-cell--required' /> : ''
           }
           {
-            column.edit ? <i class='eff-icon-edit' title='可编辑列' /> : ''
+            columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           {
             titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon='question'/></PopoverRef> : ''

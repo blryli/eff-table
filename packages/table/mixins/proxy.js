@@ -132,6 +132,7 @@ export default {
         if (tableData === rows) {
           rows = rest = tableData.slice(0)
           this.tableData = []
+          this.clearSelection()
         } else {
           const tIndex = tableData.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {

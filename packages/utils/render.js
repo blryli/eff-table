@@ -382,14 +382,6 @@ function renderTag(h, renderOpts, params) {
   })
 }
 
-// 文本 text
-function renderText(h, renderOpts, params) {
-  const props = {
-    trigger: 'hover'
-  }
-  return render(h, renderOpts, params).mergeOpts({ props }).render()
-}
-
 const renderMap = {
   default: {
     renderDefault: renderDefault
@@ -437,9 +429,6 @@ const renderMap = {
   dialog: {
     renderDefault: renderDialog,
     renderEdit: renderDialog
-  },
-  text: {
-    renderDefault: renderText
   },
   form: {
     renderDefault: renderForm

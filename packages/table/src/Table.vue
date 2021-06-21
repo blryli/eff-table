@@ -410,7 +410,7 @@ export default {
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
-          !d[rowId] && (d._rowId = XEUtils.uniqueId('_rowId'))
+          !d[rowId] && (d[rowId] = XEUtils.uniqueId('_rowId'))
           return d
         }) || []
       this.tableSourceData = XEUtils.clone(data, true)

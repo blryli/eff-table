@@ -70,6 +70,7 @@ export function deepClone(obj) {
   return result
 }
 
+// 根据prop初始化字段
 export const initField = (data, prop, vue) => {
   const props = prop.split('.')
   const set = (data, props) => {
@@ -99,4 +100,10 @@ export const initField = (data, prop, vue) => {
     data[prop] === undefined && vue.$set(data, prop, null)
   }
   return data
+}
+
+// 判断列是否可编辑
+export const columnIsEdit = function(column) {
+  const { editable, edit } = column
+  return editable === true || edit && editable !== false
 }

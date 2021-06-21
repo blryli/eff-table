@@ -3,7 +3,9 @@
     <h2>Search 搜索</h2>
     <p class="hint">
       表格 <span class="primary">search</span> 属性设置为
-      <span class="primary"> true </span>，会展示搜索行<br>
+      <span class="primary"> true </span>，会显示搜索行&nbsp;<el-tooltip effect="dark" content="鼠标在表格内时，可用快捷键 ctrl+b 控制搜索行显示/隐藏" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
     </p>
     <p>列 <span class="primary">search</span> 属性设置为
       <span class="primary"> true </span>，打开搜索功能&nbsp;，搜索框默认渲染成 <span class="primary"> input </span>
