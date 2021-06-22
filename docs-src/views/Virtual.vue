@@ -1,16 +1,14 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Virtual 虚拟滚动</h2>
+    <p class="hint">数据大于 50 行时自动开启<span class="primary"> 行 </span>虚拟滚动</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
-          ref="table"
           v-model="columns"
-          fullscreen
-          edit
-          border
-          :max-height="400"
           :data="data"
+          :max-height="400"
+          border
         />
       </div>
     </section>
@@ -18,9 +16,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -32,7 +29,7 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
-const mainSnippet = `
+const jsCode = `
 data() {
   return {
     data: [],
@@ -109,15 +106,12 @@ data() {
 }
 `
 
-const componentSnippet = `
+const htmlCode = `
 <eff-table
-  ref="table"
   v-model="columns"
-  fullscreen
-  edit
-  border
-  :max-height="400"
   :data="data"
+  :max-height="400"
+  border
 />
 `
 export default {
@@ -129,8 +123,8 @@ export default {
 
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
+      htmlCode,
+      jsCode,
       data: [],
       columns: [
         {

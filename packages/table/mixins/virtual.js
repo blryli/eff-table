@@ -35,7 +35,7 @@ export default {
     columnIsVirtual() {
       // return false
       const { useGroupColumn, useExpand, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
-      return !useExpand && !useGroupColumn && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 500
+      return !useExpand && !useGroupColumn && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 400
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this

@@ -4,7 +4,7 @@
     <p class="hint">
       调用 <span class="primary"> validate </span> 函数校验数据，第一个参数为 true 时全量校验（如果不指定数据，则默认只校验临时变动的数据，例如新增或修改等）<br>
       列数据 <span class="primary"> rules </span> 配置校验规则<br>
-      编辑时实会进行时校验<br>
+      编辑时会进行实时校验<br>
     </p>
     <section class="demo">
       <div class="section-content">

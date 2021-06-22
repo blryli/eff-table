@@ -22,8 +22,8 @@
         <i class="el-icon el-icon-question" />
       </el-tooltip>
     </p>
-    <p>列 <span class="primary">edit</span> 属性设置为
-      <span class="primary"> true </span>，打开编辑功能，列头会显示可编辑&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 <span class="primary"> input </span> 编辑框
+    <p>列 <span class="primary">edit</span> 属性设置为<span class="primary"> true </span>，
+      打开编辑功能，列头会显示可编辑&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 <span class="primary"> input </span> 编辑框（<span class="primary">editable</span> 属性设置为<span class="primary"> false </span> 时取消列编辑）
     </p>
     <section class="demo">
       <div class="section-content">
@@ -47,16 +47,12 @@
 
     <h3>对象模式</h3>
     <CodeSnippet class="javascript" :code="objCode" />
-    <p>通常配置 <span class="primary">config</span> 就可以了，特殊情况下需要单独配置 <span class="primary">cellRender</span> 及 <span class="primary">edit > render</span> 属性</p>
+    <p>通常配置 <span class="primary">config</span> 就可以了，特殊情况下需要单独配置 <span class="primary">cellRender</span> 及 <span class="primary">edit 的 render</span> 属性</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
           ref="table"
-          v-model="columns1"
-          :data="data1"
-          :max-height="400"
-          edit
-          border
+          v-bind="tableOptions"
         />
       </div>
     </section>
@@ -73,7 +69,7 @@
 
     <h3>render函数模式</h3>
     <CodeSnippet class="javascript" :code="funcCode" />
-    <p>列 <span class="primary">edit</span> 为render函数时，需要自己做双向绑定。带下拉框的元素及其他特定元素，需要动态设置 table 的 edit-stop 属性， 如当下拉框打开时</p>
+    <p>列 <span class="primary">edit</span> 的 render 属性为函数时，需要自己做双向绑定。带下拉框的元素及其他特定元素，需要动态设置 table 的 edit-stop 属性， 如当下拉框打开时</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -188,6 +184,7 @@ const jsCode = `
             show: true,
             prop: 'phone',
             title: '手机',
+            editable: false,
             edit: true
           }
         ],
@@ -205,56 +202,64 @@ const jsCode1 = `
   export default {
     data() {
       return {
-        columns1: [
-          {
-            show: true,
-            prop: 'id',
-            title: 'ID'
-          },
-          {
-            show: true,
-            prop: 'name',
-            title: '名字',
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'sex',
-            title: '性别',
-            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'phone',
-            title: '手机',
-            config: { name: 'input' },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'date',
-            title: '疫苗预约日期',
-            config: { name: 'date-picker', format: 'yyyy-MM-dd' },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'vaccination',
-            title: '疫苗注射情况',
-            cellRender: { name: 'tag' },
-            config: { options: [{ value: '1', label: '还没有打' }, { value: '2', label: '打了一针' }, { value: '3', label: '打完了' }] },
-            edit: {
-              render: { name: 'select' }
+        tableOptions: {
+          maxHeight: 400,
+          edit: true,
+          border: true,
+          data: [
+            { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
+            { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
+            { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
+            { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
+          ],
+          columns: [
+            {
+              show: true,
+              prop: 'id',
+              title: 'ID'
+            },
+            {
+              show: true,
+              prop: 'name',
+              title: '名字',
+              config: { name: 'input' },
+              edit: true
+            },
+            {
+              show: true,
+              prop: 'sex',
+              title: '性别',
+              config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+              edit: true
+            },
+            {
+              show: true,
+              prop: 'phone',
+              title: '手机',
+              config: { name: 'input' },
+              edit: true
+            },
+            {
+              show: true,
+              prop: 'date',
+              title: '疫苗预约日期',
+              config: {
+                name: 'date-picker', format: 'yyyy-MM-dd'
+              },
+              edit: true
+            },
+            {
+              show: true,
+              prop: 'vaccination',
+              title: '疫苗注射情况',
+              config: { options: [{ value: '1', label: '还没有打' }, { value: '2', label: '打了一针' }, { value: '3', label: '打完了' }] },
+              cellRender: { name: 'tag' },
+              edit: {
+                render: { name: 'select' }
+              }
             }
-          }
-        ],
-        data1: [
-          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: 1622476800000, vaccination: '1' },
-          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
-          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: 1624982400000, vaccination: '' },
-          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
-        ],
+          ]
+        },
       }
     }
   }
@@ -416,6 +421,7 @@ export default {
           show: true,
           prop: 'phone',
           title: '手机',
+          editable: false,
           edit: true
         }
       ],
@@ -425,56 +431,76 @@ export default {
         { id: 3, name: '王五', sex: '男', phone: '13715201314' },
         { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
       ],
-      columns1: [
-        {
-          show: true,
-          prop: 'id',
-          title: 'ID'
+      tableOptions: {
+        maxHeight: 400,
+        edit: true,
+        border: true,
+        toolbarConfig: {
+          buttons: [{ name: 'button', code: 'add', children: '新增' }]
         },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          config: { name: 'input' },
-          edit: true
-        },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别',
-          config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
-          edit: true
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          config: { name: 'input' },
-          edit: true
-        },
-        {
-          show: true,
-          prop: 'date',
-          title: '疫苗预约日期',
-          config: {
-            name: 'date-picker', format: 'yyyy-MM-dd'
+        data: [
+          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
+          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
+          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
+          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
+        ],
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
           },
-          edit: true
-        },
-        {
-          show: true,
-          prop: 'vaccination',
-          title: '疫苗注射情况',
-          config: { options: [{ value: '1', label: '还没有打' }, { value: '2', label: '打了一针' }, { value: '3', label: '打完了' }] },
-          cellRender: { name: 'tag' },
-          edit: {
-            render: { name: 'select' }
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            config: { name: 'input' },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            config: { name: 'input' },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'date',
+            title: '疫苗预约日期',
+            config: {
+              name: 'date-picker', format: 'yyyy-MM-dd'
+            },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'vaccination',
+            title: '疫苗注射情况',
+            config: { options: [{ value: '1', label: '还没有打' }, { value: '2', label: '打了一针' }, { value: '3', label: '打完了' }] },
+            cellRender: { name: 'tag' },
+            edit: {
+              render: { name: 'select' }
+            }
           }
-        }
-      ],
+        ]
+      },
       editStop: false,
       sexOptions: [{ label: '男', value: '1' }, { label: '女', value: '2' }],
       vaccinationOptions: [{ value: '1', label: '还没有打' }, { value: '2', label: '打了一针' }, { value: '3', label: '打完了' }],
+      data1: [
+        { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
+        { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
+        { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
+        { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
+      ],
       columns2: [
         {
           show: true,
@@ -568,12 +594,6 @@ export default {
             }
           }
         }
-      ],
-      data1: [
-        { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
-        { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
-        { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
-        { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
       ]
     }
   },

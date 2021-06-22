@@ -109,10 +109,9 @@ export default {
     off(window, 'resize', this.handleWindowResize)
     off(document.getElementById('app-container'), 'scroll', this.close)
     const { editRender, component, validateShowpopover } = this
-    const { elm } = editRender
     // 原生input
     if (editRender && editRender.tag === 'input') {
-      elm && off(elm, 'input', validateShowpopover)
+      off(editRender.elm, 'input', validateShowpopover)
     }
     if (component) {
       // 实时校验
@@ -409,10 +408,9 @@ export default {
           close && close()
           column && table.$emit('blur', { prop: column.prop, row: this.row, rowIndex, columnIndex })
           table.$refs.popovers.validingTipClose()
-          const { elm } = editRender
           // 原生input
           if (editRender && editRender.tag === 'input') {
-            off(elm, 'input', validateShowpopover)
+            off(editRender.elm, 'input', validateShowpopover)
           }
           if (this.component) {
             // 实时校验
