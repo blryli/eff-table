@@ -26,7 +26,8 @@ export default {
   },
   data() {
     return {
-      isFullscreen: false
+      isFullscreen: false,
+      target: null
     }
   },
   inject: ['table'],
@@ -37,16 +38,19 @@ export default {
     this.destroy()
   },
   methods: {
-    click() {
+    click(e) {
       if (!screenfull.isEnabled) {
         console.error('you browser can not work')
         return false
       }
+      this.target = e.target
       screenfull.toggle()
     },
-    change() {
+    change(e) {
+      if (!this.table.$el.contains(this.target)) return
       this.isFullscreen = screenfull.isFullscreen
       this.table.isScreenfull = this.isFullscreen
+      if (!this.isFullscreen) this.target = null
     },
     init() {
       if (screenfull.isEnabled) {
