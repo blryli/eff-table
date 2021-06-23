@@ -1,50 +1,47 @@
 <template>
   <div class="page-home page">
-    <h2>Description</h2>
+    <h2>Expand 展开行</h2>
+    <p class="hint">
+      当行内容过多并且不想显示横向滚动条时，可以使用 Table 展开行功能。
+    </p>
+    <p>通过设置 type="expand" 和 scope slot 可以开启展开行功能（展开行不能用于虚拟滚动）</p>
     <section class="demo">
       <div class="section-content">
         <eff-table
           ref="table"
           v-model="columns"
           :data="data"
-          :loading="loading"
           :max-height="400"
           border
-          drag
-          edit
-          fullscreen
-          row-drag
         >
           <template #expand="{row}">
-            <el-form label-position="left" inline>
-              <el-form-item label="名字">
-                <span>{{ row.name }}</span>
-              </el-form-item>
-              <el-form-item label="城市">
-                <span>{{ row.city }}</span>
-              </el-form-item>
-              <el-form-item label="邮箱">
-                <span>{{ row.email }}</span>
-              </el-form-item>
-              <el-form-item label="手机">
-                <span>{{ row.phone }}</span>
-              </el-form-item>
-              <el-form-item label="核酸检测日期">
-                <span>{{ row.datetime }}</span>
-              </el-form-item>
-            </el-form>
+            <v-form
+              :data="row"
+              :columns="[
+                {title: '名字', prop: 'name'},
+                {title: '性别', prop: 'sex'},
+                {title: '手机', prop: 'phone'},
+                {title: '邮箱', prop: 'email'},
+              ]"
+            />
           </template>
         </eff-table>
+      </div>
+    </section>
+    <h3>对象配置模式</h3>
+    <section class="demo">
+      <div class="section-content">
+        <eff-table
+          v-bind="tableOptions"
+        />
       </div>
     </section>
 
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          通过设置 type="expand" 和 Scoped slot 可以开启展开行功能（展开行不能用于虚拟滚动）
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode1" />
         </div>
       </Collapse>
     </section>
@@ -54,84 +51,124 @@
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
 
-const mainSnippet = `
-data() {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        type: 'expand',
-        width: 40
-      },
-      {
-        show: true,
-        prop: 'index',
-        title: '序号',
-        width: 80,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '名字',
-        width: 120
-      },
-      {
-        show: true,
-        prop: 'city',
-        title: '城市',
-        width: 140
-      },
-      {
-        show: true,
-        prop: 'email',
-        title: '邮箱',
-        width: 150
-      },
-      {
-        show: true,
-        prop: 'phone',
-        title: '手机',
-        width: 150
-      }
-    ]
-  }
-}
-`
-
-const componentSnippet = `
+const htmlCode = `
 <eff-table
-  ref="table"
   v-model="columns"
   :data="data"
-  :loading="loading"
   border
-  fullscreen
 >
-  <template #expand="{row}">
-    <el-form label-position="left">
-      <el-form-item label="名字">
-        <span>{{ row.name }}</span>
-      </el-form-item>
-      <el-form-item label="城市">
-        <span>{{ row.city }}</span>
-      </el-form-item>
-      <el-form-item label="邮箱">
-        <span>{{ row.email }}</span>
-      </el-form-item>
-      <el-form-item label="手机">
-        <span>{{ row.phone }}</span>
-      </el-form-item>
-      <el-form-item label="核酸检测日期">
-        <span>{{ row.datetime }}</span>
-      </el-form-item>
-    </el-form>
-  </template>
+  <v-form
+    :data="row"
+    :columns="[
+      {title: '名字', prop: 'name'},
+      {title: '性别', prop: 'sex'},
+      {title: '手机', prop: 'phone'},
+      {title: '邮箱', prop: 'email'},
+    ]"
+  />
 </eff-table>
 `
+const htmlCode1 = `
+<eff-table v-bind="tableOptions" />
+`
+const jsCode = `
+  export default {
+    data() {
+      return {
+        columns: [
+          {
+            show: true,
+            type: 'expand',
+            width: 60,,
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机'
+          },
+          {
+            show: true,
+            prop: 'email',
+            title: '邮箱'
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
+      }
+    }
+  }
+  `
+const jsCode1 = `
+  export default {
+    data() {
+      return {
+        tableOptions: {
+          columns: [
+            {
+              show: true,
+              type: 'expand',
+              width: 60
+            },
+            {
+              show: true,
+              prop: 'name',
+              title: '名字'
+            },
+            {
+              show: true,
+              prop: 'sex',
+              title: '性别'
+            },
+            {
+              show: true,
+              prop: 'phone',
+              title: '手机'
+            },
+            {
+              show: true,
+              prop: 'email',
+              title: '邮箱'
+            }
+          ],
+          data: [
+            { id: 1, name: '张三', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+            { id: 2, name: '李四', sex: '女', phone: '13715201314', email: 'aaa@qq.com' },
+            { id: 3, name: '王五', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+            { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: 'aaa@qq.com' }
+          ],
+          scopedSlots: { expand: ({ row }) => {
+            return (
+              <v-form
+                data={row}
+                columns={[
+                  { title: '名字', prop: 'name' },
+                  { title: '性别', prop: 'sex' },
+                  { title: '手机', prop: 'phone' },
+                  { title: '邮箱', prop: 'email' }
+                ]}
+              />
+            )
+          } }
+        }
+      }
+    }
+  }
+  `
 export default {
   name: 'Expand',
   components: {
@@ -141,69 +178,93 @@ export default {
 
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
-      loading: false,
-      data: [],
+      htmlCode,
+      htmlCode1,
+      jsCode,
+      jsCode1,
       columns: [
         {
           show: true,
           type: 'expand',
-          width: 40
-        },
-        {
-          show: true,
-          prop: 'index',
-          title: '序号',
-          width: 80,
-          fixed: 'left'
+          width: 60
         },
         {
           show: true,
           prop: 'name',
-          title: '名字',
-          width: 120,
-          edit: true
+          title: '名字'
         },
         {
           show: true,
-          prop: 'city',
-          title: '城市',
-          width: 140
-        },
-        {
-          show: true,
-          prop: 'email',
-          title: '邮箱',
-          width: 150
+          prop: 'sex',
+          title: '性别'
         },
         {
           show: true,
           prop: 'phone',
-          title: '手机',
-          width: 150
+          title: '手机'
+        },
+        {
+          show: true,
+          prop: 'email',
+          title: '邮箱'
         }
-      ]
-    }
-  },
-  mounted() {
-    this.loading = true
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|100': [
+      ],
+      data: [
+        { id: 1, name: '张三', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: 'aaa@qq.com' }
+      ],
+      tableOptions: {
+        columns: [
           {
-            'id|+1': 1,
-            city: '@city',
-            name: '@name',
-            email: '@email',
-            datetime: '@datetime',
-            phone: '13888888888',
-            'index|+1': 1
+            show: true,
+            type: 'expand',
+            width: 60
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机'
+          },
+          {
+            show: true,
+            prop: 'email',
+            title: '邮箱'
           }
-        ]
-      }).array
-      this.loading = false
-    }, 100)
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314', email: 'aaa@qq.com' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: 'aaa@qq.com' }
+        ],
+        scopedSlots: { expand: ({ row }) => {
+          return (
+            <v-form
+              data={row}
+              columns={[
+                { title: '名字', prop: 'name' },
+                { title: '性别', prop: 'sex' },
+                { title: '手机', prop: 'phone' },
+                { title: '邮箱', prop: 'email' }
+              ]}
+            />
+          )
+        } }
+      }
+    }
   }
 }
 </script>
+

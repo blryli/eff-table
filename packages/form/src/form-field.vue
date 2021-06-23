@@ -99,6 +99,7 @@ export default {
   },
   methods: {
     init() {
+      if (this.form.readonly) return
       this.component = getOneChildComponent(this)
       const { form, prop, rules, trigger, component, $el, onFocus, onBlur, handleValidate } = this
       if (this.$children.length && component) {

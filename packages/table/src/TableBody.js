@@ -144,8 +144,8 @@ export default {
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
     const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
-    const { $scopedSlots, $slots } = table
-    const { expand } = $scopedSlots || $slots
+    const { $scopedSlots, $slots, scopedSlots } = table
+    const { expand } = scopedSlots || $scopedSlots || $slots
 
     let rowIndex = renderIndex
 

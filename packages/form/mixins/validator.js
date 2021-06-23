@@ -1,4 +1,5 @@
 import { validateField, validate } from 'pk/utils/validate'
+import { getFieldValue } from 'pk/utils'
 
 export default {
   data() {
@@ -13,7 +14,7 @@ export default {
       }
       const { columns, validators, rowId } = this
       // console.log({ row, prop, value })
-      const value = this.getFieldValue(row, prop)
+      const value = getFieldValue(row, prop)
       const id = row[rowId]
       const column = columns.find(d => d.prop === prop) || {}
       if (!rule) {
@@ -57,9 +58,6 @@ export default {
       } else {
         clear(props)
       }
-    },
-    getFieldValue(data, prop) {
-      return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
     }
   }
 }

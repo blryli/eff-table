@@ -107,3 +107,8 @@ export const columnIsEdit = function(column) {
   const { editable, edit } = column
   return editable === true || edit && editable !== false
 }
+
+// 获取字段值
+export const getFieldValue = function(data, prop) {
+  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
+}

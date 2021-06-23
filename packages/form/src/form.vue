@@ -4,6 +4,7 @@ import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
 import Popover from 'pk/popover'
+import { getFieldValue } from 'pk/utils'
 
 export default {
   name: 'VForm',
@@ -24,7 +25,8 @@ export default {
     width: { type: String, default: '' },
     messageType: { type: String, default: '' },
     focusStop: Boolean,
-    focusPause: Boolean
+    focusPause: Boolean,
+    readonly: Boolean
   },
   provide() {
     return {
@@ -76,8 +78,9 @@ export default {
     //   console.log('data', JSON.stringify(this.data, null, 2))
     // },
     itemRender(column) {
-      const { $createElement, table, data } = this
+      const { $createElement, table, data, readonly } = this
       const { prop, itemRender } = column
+      if (readonly) return getFieldValue(data, prop)
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {

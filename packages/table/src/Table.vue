@@ -272,7 +272,8 @@ export default {
     editHistory: Boolean,
     showReplace: Boolean,
     showSort: Boolean,
-    beforeInsert: { type: Function, default: () => {} } // 插入数据前的钩子函数
+    beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
+    scopedSlots: { type: Object, default: () => {} } // 插槽
   },
   data() {
     return {

@@ -22,7 +22,6 @@
         :prop="prop"
         :rules="rules"
       >
-
         <slot />
       </FormField>
     </div>
@@ -81,15 +80,6 @@ export default {
   align-items: flex-start;
   flex-wrap: nowrap;
 
-  &::before {
-    display: table;
-    content: "";
-  }
-  &:after {
-    display: table;
-    content: "";
-    clear: both;
-  }
   .vue-popover-trigger {
     position: relative;
   }
@@ -114,14 +104,7 @@ export default {
     position: relative;
     line-height: var(--lineHeight);
     font-size: 14px;
-    &::before,
-    &::after {
-      display: table;
-      content: "";
-    }
-    &::after {
-      clear: both;
-    }
+    white-space: nowrap;
     & :only-child {
       width: 100%;
     }
