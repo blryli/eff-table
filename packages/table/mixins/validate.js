@@ -7,7 +7,7 @@ export default {
     }
   },
   methods: {
-    validateField(row, prop, rule) {
+    validateField(prop, row, rule) {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
         // resolve()

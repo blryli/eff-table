@@ -1,7 +1,10 @@
 <template>
   <div class="page-home page">
     <h2>Virtual 虚拟滚动</h2>
-    <p class="hint">数据大于 50 行时自动开启<span class="primary"> 行 </span>虚拟滚动</p>
+    <p class="hint">
+      数据大于 50 行时自动开启<span class="primary"> 行 </span>虚拟滚动<br>
+      展开行与树形数据存在时自动禁用展开行
+    </p>
     <section class="demo">
       <div class="section-content">
         <eff-table

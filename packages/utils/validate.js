@@ -85,7 +85,7 @@ export function validate(rows, columns, validateField) {
       acc.concat(
         columns.reduce((acc, cur) => {
           const { prop, rules = [] } = cur
-          return rules.length ? acc.concat(validateField(row, prop, rules)) : acc
+          return rules.length ? acc.concat(validateField(prop, row, rules)) : acc
         }, [])
       ),
     [])

@@ -8,21 +8,23 @@ export default {
     }
   },
   methods: {
-    validateField(row = this.data, prop, rule) {
+    validateField(prop, row = this.data, rule) {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
       }
-      const { columns, validators, rowId } = this
+      const { validators, rowId, itemSlots } = this
       // console.log({ row, prop, value })
       const value = getFieldValue(row, prop)
       const id = row[rowId]
-      const column = columns.find(d => d.prop === prop) || {}
+      const column = itemSlots.find(d => d.prop === prop) || {}
       if (!rule) {
         const { rules = [] } = column
+        console.log({ rules })
         if (Array.isArray(rules)) {
           rule = rules
         }
       }
+      console.log(prop, row, rule)
 
       // 校验处理函数
       // console.log({ value, row, column, id, prop })
