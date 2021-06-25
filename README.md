@@ -126,7 +126,8 @@ value: [
 
     fixed: '', // string left/right
 
-    config: { // 通用配置
+    // 通用配置
+    config: {
       name: 'input', // 指定ui元素
       options: [], // select组件需要
       format: 'yyy-MM-dd', // 日期组件需要
@@ -155,9 +156,36 @@ value: [
     }
 
     // 校验
-    validator: [{
-      required: false, // boolean
-    }]
+    rules: [ // 校验规则
+      {
+        required: true, 
+        message: '', //可选，默认为 不能为空 
+      }, 
+      {
+        min: number, // 最小长度
+        message: '', //可选，默认为 长度不能小于 min
+      }, 
+      {
+        max: number, // 最大长度 
+        message: '', //可选，默认为 长度不能大于 max
+      }, 
+      // min,max同时存在时 message 默认为 长度必须在 min 到 max 
+      {
+        pattern: reg, // 正则
+        message: '', //可选，默认为 校验不通过
+      }, 
+      {
+        type: 'email', // 邮箱
+        message: '', //可选，默认为 请输入正确的邮箱
+      }, 
+      {
+        type: 'phone', // 手机号
+        message: '', //可选，默认为 请输入正确的手机号
+      }, 
+      {
+        validator: Function // 自定义校验，支持异步
+      }
+    ]
 
     // 搜索
     search: {
