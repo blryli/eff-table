@@ -130,7 +130,12 @@ const objCode = `
   // column对象
   
   {
-    config: { name: 'input' }, // 通用配置，对name指定的元素有内置的处理
+    config: { // 通用配置
+      name: 'input', // 指定ui元素
+      options: [], // select组件需要
+      format: 'yyy-MM-dd', // 日期组件需要
+      defaultValue: '', // 新增行指定默认值，非必须
+    }, 
 
     cellRender: {}, // 单元格配置，会与config的配置进行合并
 

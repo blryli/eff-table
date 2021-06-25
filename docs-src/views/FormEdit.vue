@@ -2,14 +2,18 @@
   <div class="page-home page">
     <h2>Form 高级表单</h2>
     <p class="hint">
-      <span class="primary">formOptions</span> 配置整个表单<br>
+      快捷编辑，旨在尽量让用户脱离鼠标进行编辑，快捷键
+      <el-tag class="ml-10">enter</el-tag> 右
+      <el-tooltip effect="dark" content="聚焦后一个可编辑元素，在最后一个可编辑元素按下enter时，进行循环编辑" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip>
+      <el-tag class="ml-20">shift</el-tag> + <el-tag>enter</el-tag> 左
+      <el-tooltip effect="dark" content="聚焦前一个可编辑元素，在第一个可编辑元素按下shift+enter时，进行循环编辑" placement="top">
+        <i class="el-icon el-icon-question" />
+      </el-tooltip><br>
     </p>
     <section class="demo">
       <div class="section-content">
-        <p>
-          <el-button type="primary" @click="validate">校 验</el-button>
-          <el-button type="primary" @click="clearValidate">清除校验</el-button>
-        </p>
         <v-form ref="form" v-bind="formOptions" />
       </div>
     </section>
@@ -23,9 +27,6 @@
       </Collapse>
     </section>
 
-    <p><span class="primary">render</span> 配置</p>
-    <CodeSnippet class="javascript" :code="objCode" />
-
   </div>
 </template>
 
@@ -33,17 +34,7 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 // import mock from 'mockjs'
-const objCode = `
-  // column对象
-  
-  {
-    itemRender: { // form-item配置render
-      name: 'input', // 指定ui元素
-      options: [], // select组件需要
-      format: 'yyy-MM-dd', // 日期组件需要
-    },
-  }
-  `
+
 const jsCode = `
 data () {
   return {
@@ -147,14 +138,10 @@ data () {
 `
 
 const htmlCode = `
-<p>
-  <el-button type="primary" @click="validate">校 验</el-button>
-  <el-button type="primary" @click="clearValidate">清除校验</el-button>
-</p>
 <v-form ref="form" v-bind="formOptions" />
 `
 export default {
-  name: 'Form',
+  name: 'FormEdit',
   components: {
     CodeSnippet,
     Collapse
@@ -165,15 +152,11 @@ export default {
       value: 2,
       jsCode,
       htmlCode,
-      objCode,
       data: {
         name: '',
-        sex: '',
         age: '',
-        heights: { height: '' },
-        heightUnit: '1',
+        height: '',
         weight: '',
-        weightUnit: '1',
         hobby1: '',
         hobby2: '',
         hobby3: ''
@@ -184,104 +167,50 @@ export default {
           {
             title: '名字',
             prop: 'name',
-            span: 8,
-            itemRender: { name: 'input' },
-            rules: [
-              { required: true },
-              { min: 3 }
-            ]
-          },
-          {
-            title: '性别',
-            prop: 'sex',
-            span: 8,
-            itemRender: {
-              name: 'select',
-              options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
-            },
-            rules: [
-              { required: true, trigger: 'change' }
-            ]
+            span: 8
           },
           {
             title: '年龄',
             prop: 'age',
             span: 8,
-            itemRender: { name: 'input' },
-            titlePrefix: { message: '帮助信息', icon: 'question' },
-            rules: [
-              { min: 1, max: 3 }
-            ]
+            itemRender: { name: 'input' }
           },
 
           {
             title: '身高',
-            prop: 'heights.height.0.aaa',
-            span: 7,
+            prop: 'height',
+            span: 8,
             itemRender: { name: 'input' },
-            rules: [
-              { max: 3 }
-            ]
-          },
-          { prop: 'heightUnit',
-            span: 5,
-            itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] },
-            rules: [
-              { required: true, trigger: 'change' }
-            ]
+            titlePrefix: { message: '帮助信息', icon: 'question' }
           },
           {
             title: '体重',
             prop: 'weight.0.bbb',
-            span: 7,
+            span: 8,
             itemRender: { name: 'input' },
             rules: [
               { required: true }
-            ]
-          },
-          { prop: 'weightUnit',
-            span: 5,
-            itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] },
-            rules: [
-              { required: true, trigger: 'change' }
             ]
           },
 
           {
             title: '爱好',
             prop: 'hobby1',
-            span: 10,
-            itemRender: { name: 'input' },
-            rules: [
-              { required: true }
-            ]
+            span: 6,
+            itemRender: { name: 'input' }
           },
           {
             prop: 'hobby2',
-            span: 7,
-            itemRender: { name: 'input' },
-            rules: [
-              { required: true }
-            ]
+            span: 5,
+            itemRender: { name: 'input' }
           },
           {
             prop: 'hobby3',
-            span: 7,
-            itemRender: { name: 'input' },
-            rules: [
-              { required: true }
-            ]
+            span: 5,
+            itemRender: { name: 'input' }
           }
         ]
       }
-    }
-  },
-  methods: {
-    validate() {
-      this.$refs.form.validate().catch(e => console.log(e))
-    },
-    clearValidate() {
-      this.$refs.form.clearValidate()
     }
   }
 }

@@ -33,7 +33,8 @@
         <h3 class="menu-title">表单</h3>
         <router-link class="menu-list" to="/FormBase">FormBase 基础使用</router-link>
         <router-link class="menu-list" to="/FormValidate">FormValidate 表单校验</router-link>
-        <router-link class="menu-list" to="/Form">Form 表单</router-link>
+        <router-link class="menu-list" to="/Form">Form 高级表单</router-link>
+        <router-link class="menu-list" to="/FormEdit">FormEdit 快捷编辑</router-link>
       </div>
       <div class="container">
         <keep-alive>

@@ -126,6 +126,13 @@ value: [
 
     fixed: '', // string left/right
 
+    config: { // 通用配置
+      name: 'input', // 指定ui元素
+      options: [], // select组件需要
+      format: 'yyy-MM-dd', // 日期组件需要
+      defaultValue: '', // 新增行指定默认值，非必须
+    }, 
+
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
     titleRender: (h, {title, column, columnIndex}) => {
