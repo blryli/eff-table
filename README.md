@@ -126,7 +126,7 @@ value: [
 
     fixed: '', // string left/right
 
-    // 通用配置
+    // 通用配置，会根据name指定的元素对单元格做渲染模式、编辑模式、搜索模式的默认处理，原则上只需要配置config就可以了
     config: {
       name: 'input', // 指定ui元素
       options: [], // select组件需要
@@ -155,8 +155,8 @@ value: [
       disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
     }
 
-    // 校验
-    rules: [ // 校验规则
+    // 校验规则
+    rules: [
       {
         required: true, 
         message: '', //可选，默认为 不能为空 

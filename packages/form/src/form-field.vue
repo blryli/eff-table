@@ -149,14 +149,14 @@ export default {
       })
     },
     handlerNodeMouseenter(e) {
-      const { msgType, handlerNode, message } = this
+      const { msgType, handlerNode, root, message } = this
       if (msgType === 'popover') {
-        message && this.root.tipShow({ reference: handlerNode, effect: 'error', message })
+        message && root && this.root.tipShow({ reference: handlerNode, effect: 'error', message })
       }
     },
     handlerNodeMouseleave(e) {
       if (this.msgType === 'popover') {
-        this.root.tipClose()
+        this.root && this.root.tipClose()
       }
     },
     setNodeStyle() {

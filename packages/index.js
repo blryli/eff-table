@@ -8,6 +8,7 @@ import Styles from './styles/index.vue'
 import Form from './form'
 import FormItem from './form-item'
 import FormField from './form-field'
+import Icon from './icon'
 
 const directives = []
 const components = [
@@ -18,6 +19,7 @@ const components = [
   Form,
   FormItem,
   Panel,
+  Icon,
   Styles
 ]
 
@@ -30,6 +32,7 @@ export {
   Form,
   FormItem,
   FormField,
+  Icon,
   Panel
 }
 

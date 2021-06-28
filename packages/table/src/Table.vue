@@ -312,7 +312,14 @@ export default {
   },
   computed: {
     visibleColumns() {
-      let arr = this.tableColumns.filter(d => d.show !== false)
+      const columns = this.tableColumns.reduce((acc, column, index) => {
+        if (column.show !== false) {
+          const { fixed = 'center' } = column
+          acc[fixed].push(column)
+          return acc
+        } else return acc
+      }, { left: [], center: [], right: [] })
+      let arr = Object.values(columns).reduce((acc, cur) => acc.concat(cur), [])
       if (this.drag && this.rowDrag) {
         if (arr[0].type !== 'expand') {
           arr.unshift({

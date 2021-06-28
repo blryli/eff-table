@@ -30,7 +30,8 @@ export default {
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
+    const { sortable, title, titlePrefix, titleSuffix, type, rules = [], fixed } = column
+    const { overflowX, drag } = table
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
     const required = Boolean(rules.find(d => d.required))
@@ -46,6 +47,9 @@ export default {
         on-mouseleave={event => handleMouseleave(event, slot)}
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
+          {
+            drag && !overflowX && fixed ? <Icon icon='fixed' class='eff-column--fixed' /> : ''
+          }
           {
             required ? <i class='eff-cell--required' /> : ''
           }

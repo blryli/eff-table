@@ -132,16 +132,16 @@ export default {
       columns: [
         {
           show: true,
+          prop: 'name',
+          title: '列1',
+          width: 200
+        },
+        {
+          show: true,
           fixed: 'left',
           type: 'index',
           title: '序号',
           width: 80
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列1',
-          width: 200
         },
         {
           show: true,
@@ -188,13 +188,14 @@ export default {
         {
           show: true,
           prop: 'name',
-          title: '列9',
-          width: 200
+          title: '列10',
+          fixed: 'right',
+          width: 100
         },
         {
           show: true,
           prop: 'age',
-          title: '列10',
+          title: '列9',
           width: 200
         }
       ]

@@ -1,3 +1,6 @@
+$icon-color: #666;
+$icon-thin-color: #888;
+
 [class^="eff-icon-"] {
   position: relative;
   width: 14px;
@@ -54,7 +57,7 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    border: 1px solid #888;
+    border: 1px solid $icon-thin-color;
     border-radius: 50%;
   }
 
@@ -66,7 +69,7 @@
     transform: rotate(40deg);
     width: 4px;
     height: 1px;
-    background-color: #888;
+    background-color: $icon-thin-color;
   }
 }
 
@@ -81,7 +84,7 @@
     display: inline-block;
     width: 1px;
     height: 9px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     transform: rotate(135deg);
   }
 
@@ -92,7 +95,7 @@
     bottom: 0;
     width: 1px;
     height: 9px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     transform: rotate(-135deg);
   }
 }
@@ -108,7 +111,7 @@
     display: inline-block;
     width: 1px;
     height: 9px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     transform: rotate(45deg);
   }
 
@@ -119,7 +122,7 @@
     bottom: 0;
     width: 1px;
     height: 9px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     transform: rotate(-45deg);
   }
 }
@@ -135,8 +138,8 @@
     display: inline-block;
     width: 7px;
     height: 7px;
-    border-bottom: 1px solid #888;
-    border-right: 1px solid #888;
+    border-bottom: 1px solid $icon-thin-color;
+    border-right: 1px solid $icon-thin-color;
     -webkit-transform: rotate(312deg) skew(14deg,
         25deg);
     transform: rotate(312deg) skew(14deg,
@@ -153,7 +156,7 @@
     left: 2px;
     width: 10px;
     height: 1px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     -webkit-transform: rotate(337deg);
     transform: rotate(337deg);
   }
@@ -171,8 +174,8 @@
     display: inline-block;
     width: 7px;
     height: 7px;
-    border-bottom: 1px solid #888;
-    border-right: 1px solid #888;
+    border-bottom: 1px solid $icon-thin-color;
+    border-right: 1px solid $icon-thin-color;
     -webkit-transform: rotate(312deg) skew(14deg,
         25deg);
     transform: rotate(312deg) skew(14deg,
@@ -189,7 +192,7 @@
     left: 2px;
     width: 10px;
     height: 1px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     -webkit-transform: rotate(337deg);
     transform: rotate(337deg);
   }
@@ -212,7 +215,7 @@
     height: 1px;
     top: 3px;
     left: 3px;
-    background-color: #888;
+    background-color: $icon-thin-color;
   }
 
   &::after {
@@ -223,7 +226,7 @@
     width: 9px;
     left: 3px;
     height: 1px;
-    background-color: #888;
+    background-color: $icon-thin-color;
   }
 }
 
@@ -241,7 +244,7 @@
     display: block;
     width: 13px;
     height: 1px;
-    background-color: #888;
+    background-color: $icon-thin-color;
     -webkit-transform: rotate(90deg);
     transform: rotate(114deg);
     top: 6px;
@@ -255,8 +258,8 @@
     bottom: 4px;
     width: 10px;
     height: 4px;
-    border-top: 1px solid #888;
-    border-bottom: 1px solid #888;
+    border-top: 1px solid $icon-thin-color;
+    border-bottom: 1px solid $icon-thin-color;
     left: 2px;
   }
 }
@@ -274,10 +277,10 @@
     width: 4px;
     height: 7px;
     border-radius: 61%;
-    border-top: 1px solid #888;
+    border-top: 1px solid $icon-thin-color;
     -webkit-transform: rotate(317deg);
     transform: rotate(295deg);
-    border-right: 2px solid #888;
+    border-right: 2px solid $icon-thin-color;
     top: 4px;
     left: 1px;
   }
@@ -289,10 +292,10 @@
     width: 4px;
     height: 7px;
     border-radius: 61%;
-    border-top: 1px solid #888;
+    border-top: 1px solid $icon-thin-color;
     -webkit-transform: rotate(71deg);
     transform: rotate(104deg);
-    border-right: 2px solid #888;
+    border-right: 2px solid $icon-thin-color;
     left: 6px;
     top: 3px;
   }
@@ -306,7 +309,7 @@
   &__stub {
     width: 2px;
     height: 7px;
-    background: #888;
+    background: $icon-thin-color;
     position: absolute;
     top: 3px;
     left: 2px;
@@ -315,7 +318,7 @@
       position: relative;
       content: '';
       border: 3px solid transparent;
-      border-bottom: 4px solid #888;
+      border-bottom: 4px solid $icon-thin-color;
       top: -18px;
       left: -2px;
     }
@@ -324,7 +327,7 @@
       position: relative;
       content: '';
       border: 3px solid transparent;
-      border-top: 4px solid #888;
+      border-top: 4px solid $icon-thin-color;
       top: 12px;
       left: -8px;
     }
@@ -335,9 +338,9 @@
     position: absolute;
     width: 7px;
     height: 6px;
-    border-top: 2px solid #888;
+    border-top: 2px solid $icon-thin-color;
     right: 0px;
-    border-bottom: 2px solid #888;
+    border-bottom: 2px solid $icon-thin-color;
     top: 3px;
   }
 
@@ -345,7 +348,7 @@
     content: '';
     position: absolute;
     width: 7px;
-    border-top: 2px solid #888;
+    border-top: 2px solid $icon-thin-color;
     right: 0px;
     top: 7px;
   }
@@ -410,4 +413,51 @@
     background-color: #fff;
     border-radius: 100%;
   }
+}
+
+.eff-icon-fixed {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  transform: rotate(30deg) scale(.7);
+  &__item{
+    position: absolute;
+    left: 6px;
+    top: 9px;
+    width: 2px;
+    height: 5px;
+    background-color: $icon-thin-color;
+  }
+  &::before{
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    display: inline-block;
+    width: 8px;
+    height: 6px;
+    border: 2px solid $icon-thin-color;
+    border-bottom: 0;
+    box-sizing: border-box;
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 3px;
+    display: inline-block;
+    width: 12px;
+    height: 6px;
+    border: 2px solid $icon-thin-color;
+    border-top: 0;
+    transform: perspective(.2em) rotateX(10deg);
+    transform-origin: bottom;
+    box-sizing: border-box;
+  }
+}
+.eff-column--fixed{
+  position: absolute;
+  left: -1px;
+  top: 0px;
 }
