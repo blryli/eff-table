@@ -1,5 +1,5 @@
 <template>
-  <layout class="panel">
+  <div class="panel">
     <div
       class="panel-header flex-row"
       :class="{ collapsible: collapsible }"
@@ -25,7 +25,7 @@
     <div v-show="!isCollapsed" class="panel-content">
       <slot />
     </div>
-  </layout>
+  </div>
 </template>
 <script>
 export default {
