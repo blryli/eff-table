@@ -1,5 +1,5 @@
 <template>
-  <div
+  <layout
     :span="span"
     :style="{ padding: form.itemGutter ? `0 ${form.itemGutter / 2}px` : '', marginBottom: form.rowledge }"
   >
@@ -25,7 +25,7 @@
         <slot />
       </FormField>
     </div>
-  </div>
+  </layout>
 </template>
 
 <script>
