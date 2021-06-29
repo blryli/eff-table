@@ -154,9 +154,6 @@ export default {
             this.cradsSortable = new Sortable({
               el: cardEl.querySelector(className),
               group: id,
-              dragImage: {
-                height: 30
-              },
               dragend: handleDragend,
               dragenter: handleDragenter,
               onEnd: handleEnd

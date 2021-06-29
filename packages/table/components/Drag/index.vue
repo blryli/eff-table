@@ -37,7 +37,7 @@ export default {
     dradingTarget(val, oldVal) {
       if (val !== oldVal) {
         const classes = target =>
-          hasClass(target, 'is-drag--filter')
+          hasClass(target, 'col-fixed') && !hasClass(target, 'fixed-hidden')
             ? 'is-draging--warning'
             : 'is-draging'
         addClass(val, classes(val))
@@ -67,10 +67,7 @@ export default {
         this.columnSortable = new Sortable({
           el: $el.querySelector('.eff-table__header'),
           group: id,
-          filter: 'is-drag--filter',
-          dragImage: {
-            height: 30
-          },
+          filter: 'col-fixed',
           dragend: handleDragend,
           dragenter: handleDragenter,
           onEnd: handleEnd
@@ -81,22 +78,20 @@ export default {
             this.cradsSortable = new Sortable({
               el: cardEl.querySelector('.eff-card__body'),
               group: id,
-              dragImage: {
-                height: 30
-              },
               dragend: handleDragend,
               dragenter: handleDragenter,
               onEnd: handleEnd
             })
           }, 500)
         }
-        this.setRowDrag(false)
       }
+      this.setRowDrag(false)
     })
   },
   beforeDestroy() {
     this.columnSortable = null
     this.cradsSortable = null
+    this.rowSortable = null
   },
   methods: {
     close() {
@@ -109,9 +104,6 @@ export default {
         this.rowSortable = new Sortable({
           el: body.$el.querySelector('.eff-table__body'),
           filter: 'is-drag--filter',
-          dragImage: {
-            height: 30
-          },
           onEnd: this.handleRowEnd
         })
       }
@@ -120,6 +112,7 @@ export default {
       this.show = val === undefined ? !this.show : val
     },
     handleRowEnd({ fromEl, toEl }) {
+      // console.log({ fromEl, toEl })
       const fromRowId = fromEl.getAttribute('data-rowid')
       const toRowId = toEl.getAttribute('data-rowid')
       this.$emit('row-change', +fromRowId - 1, +toRowId - 1)
@@ -160,21 +153,22 @@ export default {
         const { innerText } = hasClass(el, 'eff-table__header-group')
           ? el.querySelector('.eff-table__header-group-title')
           : el
-        return column.title && column.title.trim() === innerText.trim()
+        const { title, type } = column
+        return title && title.trim() === innerText.trim() || type && hasClass(el, 'col-' + type)
       }
       const oldIndex = columns.findIndex(d => some(d, fromEl))
       if (oldIndex < 0) {
         return console.error(`没有找到title为 ${fromEl.innerText} 的节点`)
       }
 
-      if (hasClass(toEl, 'is-drag--filter')) {
+      if (hasClass(toEl, 'col-fixed') && !hasClass(toEl, 'fixed-hidden')) {
         console.log('该列不能做拖动操作！')
         return
       }
       // tr内元素拖动
       if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
-        const oldItem = columns[oldIndex]
-        columns.splice(oldIndex, 1)
+        const oldItem = columns.splice(oldIndex, 1)[0]
+
         if (hasClass(toEl, 'is--space')) {
           const index = columns.findIndex(d => d.fixed === 'right')
           index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)

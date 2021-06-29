@@ -28,6 +28,14 @@
         </eff-table>
       </div>
     </section>
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
+        </div>
+      </Collapse>
+    </section>
     <h3>对象配置模式</h3>
     <section class="demo">
       <div class="section-content">
@@ -58,15 +66,17 @@ const htmlCode = `
   :data="data"
   border
 >
-  <v-form
-    :data="row"
-    :columns="[
-      {title: '名字', prop: 'name'},
-      {title: '性别', prop: 'sex'},
-      {title: '手机', prop: 'phone'},
-      {title: '邮箱', prop: 'email'},
-    ]"
-  />
+  <template #expand="{row}">
+    <v-form
+      :data="row"
+      :columns="[
+        {title: '名字', prop: 'name'},
+        {title: '性别', prop: 'sex'},
+        {title: '手机', prop: 'phone'},
+        {title: '邮箱', prop: 'email'},
+      ]"
+    />
+  </template>
 </eff-table>
 `
 const htmlCode1 = `
@@ -80,7 +90,7 @@ const jsCode = `
           {
             show: true,
             type: 'expand',
-            width: 60,,
+            width: 40,
           },
           {
             show: true,
@@ -122,7 +132,7 @@ const jsCode1 = `
             {
               show: true,
               type: 'expand',
-              width: 60
+              width: 40
             },
             {
               show: true,
@@ -186,7 +196,7 @@ export default {
         {
           show: true,
           type: 'expand',
-          width: 60
+          width: 40
         },
         {
           show: true,
@@ -220,7 +230,7 @@ export default {
           {
             show: true,
             type: 'expand',
-            width: 60
+            width: 40
           },
           {
             show: true,

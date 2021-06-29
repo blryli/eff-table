@@ -17,21 +17,28 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag, fixed, prop } = this.column
+      const { titleClassName, drag, edit, fixed, prop, type } = this.column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
-      // edit && (classes += ` col-edit`)
-      if (drag === false || fixed || !prop) {
-        classes += ' is-drag--filter'
+      edit && (classes += ` col-edit`)
+      if (fixed) {
+        classes += ' col-fixed'
+        if (drag === false || !prop) {
+          classes += ' fixed-hidden'
+        }
+      }
+      if (type) {
+        classes += ' col-' + type
       }
       return classes
     }
   },
   render(h) {
     const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [], fixed } = column
-    const { overflowX, drag } = table
+    const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
+    const { icon: prefixIcon = 'question' } = titlePrefix || {}
+    const { icon: suffixIcon = 'question' } = titleSuffix || {}
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
     const required = Boolean(rules.find(d => d.required))
@@ -48,26 +55,18 @@ export default {
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
           {
-            drag && !overflowX && fixed ? <Icon icon='fixed' class='eff-column--fixed' /> : ''
-          }
-          {
             required ? <i class='eff-cell--required' /> : ''
           }
           {
             columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           {
-            titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon='question'/></PopoverRef> : ''
+            titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon={prefixIcon}/></PopoverRef> : ''
           }
           <span class='eff-cell--title'>{slot}</span>
           {
-            titleSuffix && titleSuffix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleSuffix.message}><Icon icon='question'/></PopoverRef> : ''
+            titleSuffix && titleSuffix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleSuffix.message}><Icon icon={suffixIcon}/></PopoverRef> : ''
           }
-          {/* <PrefixSuffix tag='span'
-            prefix={titlePrefix}
-            suffix={titleSuffix}
-            class='eff-cell--title'
-          >{slot}</PrefixSuffix> */}
           {
             sortable ? <span class='eff-cell--sort'>
               <i

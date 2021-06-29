@@ -33,13 +33,14 @@ export default {
   computed: {
     columnClass() {
       let classes = `eff-table__column ` + (this.column.type === 'drag' ? '' : 'is-drag--filter')
-      const { row, column, rowIndex, columnIndex, table } = this
+      const { row, column, rowIndex, columnIndex, table, fixed, drag } = this
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}
       const sourceRow = updateList.find(d => {
         return d.$old[rowId] === row[rowId]
       })
+
       // 状态
       if (prop && sourceRow && !eqCellValue(sourceRow.$old, row, prop)) {
         classes += ' is--dirty'
@@ -134,9 +135,6 @@ export default {
       const { expanded, disabled, expandClick } = this
       const expand = <span class={{ 'eff-icon-expand': true, 'is--expanded': expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
 
-      if (this.table.drag && this.table.rowDrag) {
-        return [<RowDrag />, expand]
-      }
       return expand
     },
     handleMouseenter(event, slot) {
@@ -191,7 +189,7 @@ export default {
     let slot
     if (type === 'expand') {
       slot = this.expandRender(h)
-    } else if (type === 'drag') {
+    } else if (type === 'row-drag') {
       slot = <RowDrag />
     } else if (row[columnIndex] !== undefined) {
       slot = row[columnIndex]

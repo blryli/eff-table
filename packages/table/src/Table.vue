@@ -120,7 +120,7 @@
     </FooterAction>
     <!-- 拖动 -->
     <drag
-      v-if="border && drag"
+      v-if="drag && border || rowDrag"
       ref="drag"
       v-model="tableColumns"
       :column-control="columnControl"
@@ -146,7 +146,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <!-- <p>columns -  {{ columns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -278,9 +278,7 @@ export default {
   data() {
     return {
       tableData: [],
-      tableColumns: this.columns.map(d => {
-        return { ...{ width: d.width || 0 }, ...d }
-      }),
+      tableColumns: [],
       tableForm: {},
       searchForm: [],
       currentRow: null,
@@ -312,33 +310,19 @@ export default {
   },
   computed: {
     visibleColumns() {
-      const columns = this.tableColumns.reduce((acc, column, index) => {
+      const { tableColumns, drag, overflowX } = this
+      const columns = tableColumns.reduce((acc, column, index) => {
         if (column.show !== false) {
+          const types = ['expand', 'selection', 'radio', 'index', 'row-drag']
+          if (column.type && types.some(d => d === column.type) && !column.fixed) {
+            column.fixed = 'left'
+          }
           const { fixed = 'center' } = column
-          acc[fixed].push(column)
-          return acc
-        } else return acc
-      }, { left: [], center: [], right: [] })
-      let arr = Object.values(columns).reduce((acc, cur) => acc.concat(cur), [])
-      if (this.drag && this.rowDrag) {
-        if (arr[0].type !== 'expand') {
-          arr.unshift({
-            show: true,
-            type: 'drag',
-            width: 40,
-            fixed: 'left'
-          })
-        } else {
-          arr = arr.map(v => {
-            if (v.type === 'expand') {
-              v.fixed = 'left'
-              v.width = 46
-            }
-            return v
-          })
+          drag && overflowX ? acc[fixed].push(column) : acc.center.push(column)
         }
-      }
-      return arr
+        return acc
+      }, { left: [], center: [], right: [] })
+      return Object.values(columns).reduce((acc, cur) => acc.concat(cur), [])
     },
     bodyColumns() {
       const plat = arr => {
@@ -397,6 +381,20 @@ export default {
     }
   },
   created() {
+    const { rowDrag, tableColumns } = this
+    if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
+      console.log('row drag', rowDrag)
+
+      this.columns.unshift({
+        show: true,
+        type: 'row-drag',
+        titleSuffix: { icon: 'question', message: '上下拖动排序' },
+        width: 40
+      })
+    }
+    this.tableColumns = this.columns.map(d => {
+      return { ...{ width: d.width || 0 }, ...d }
+    })
     Object.assign(this, {
       tableDataMap: new Map()
     })
@@ -556,9 +554,7 @@ export default {
     },
     handleDragend(column) {
       const { tableColumns } = this
-      const index = tableColumns.findIndex(
-        d => column.prop === d.prop && column.title === d.title
-      )
+      const index = tableColumns.some(d => d === column)
       if (index > -1) {
         tableColumns[index] = column
         this.tableColumns = [...tableColumns]
