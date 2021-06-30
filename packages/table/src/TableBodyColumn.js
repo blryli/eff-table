@@ -33,7 +33,7 @@ export default {
   computed: {
     columnClass() {
       let classes = `eff-table__column ` + (this.column.type === 'drag' ? '' : 'is-drag--filter')
-      const { row, column, rowIndex, columnIndex, table, fixed, drag } = this
+      const { row, column, rowIndex, columnIndex, table } = this
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
       const { message } = this.message || {}

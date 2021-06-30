@@ -311,14 +311,14 @@ export default {
   computed: {
     visibleColumns() {
       const { tableColumns, drag, overflowX } = this
-      const columns = tableColumns.reduce((acc, column, index) => {
+      const columns = tableColumns.reduce((acc, column) => {
         if (column.show !== false) {
           const types = ['expand', 'selection', 'radio', 'index', 'row-drag']
           if (column.type && types.some(d => d === column.type) && !column.fixed) {
             column.fixed = 'left'
           }
           const { fixed = 'center' } = column
-          drag && overflowX ? acc[fixed].push(column) : acc.center.push(column)
+          drag && overflowX && fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
         }
         return acc
       }, { left: [], center: [], right: [] })
