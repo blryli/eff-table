@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     columnClass() {
-      let classes = `eff-table__column ` + (this.column.type === 'drag' ? '' : 'is-drag--filter')
+      let classes = `eff-table__column `
       const { row, column, rowIndex, columnIndex, table } = this
       const { className, prop } = column
       const { cellClassName, editStore: { updateList }, rowId } = table
@@ -65,6 +65,25 @@ export default {
         }
       }
       return classes
+    },
+    columnStyle() {
+      const { style, table, row, column, columnIndex, groupFloor } = this
+      let { width = 0 } = column
+      const { spaceWidth } = table
+      !width && (width = spaceWidth)
+      const columnWidth = Math.max(width, 40)
+      style.minWidth = columnWidth + 'px'
+      style.maxWidth = columnWidth + 'px'
+      if (columnIndex === 0) {
+        style.borderLeft = 0
+      }
+
+      // 小计
+      if (row.rowIsSum) {
+        style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
+      }
+      style.paddingLeft = groupFloor * 28 + 'px'
+      return style
     }
   },
   created() {
@@ -92,15 +111,6 @@ export default {
         this.table.groupColumnNum -= this.row.children.length
         this.table.columnGroupIds.splice(pos, 1)
       }
-    },
-    getStyle() {
-      const defaultStyle = this.table.setColumnStyle(this.column, this.columnIndex, this.fixed)
-      const paddingLeft = { paddingLeft: this.groupFloor * 28 + 'px' }
-
-      if (this.row.rowIsSum) {
-        this.style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
-      }
-      return Object.assign(defaultStyle, this.style, paddingLeft)
     },
     renderSelection(h) {
       const { table, row } = this
@@ -182,7 +192,7 @@ export default {
     }
   },
   render(h) {
-    const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, getStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
+    const { row, rowIndex, column, columnIndex, handleMouseenter, handleMouseleave, columnStyle, handleMouseUp, handleMouseDown, handleMousemove } = this
     const { type } = column
     // row[columnIndex] summary合计列
 
@@ -226,7 +236,7 @@ export default {
       <div
         class={this.columnClass}
         key={this.groupFloor + '-' + rowIndex + '-' + columnIndex}
-        style={getStyle()}
+        style={columnStyle}
         on-mouseenter={event => handleMouseenter(event, slot)}
         on-mouseleave={event => handleMouseleave(event, slot)}
 

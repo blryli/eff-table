@@ -383,8 +383,6 @@ export default {
   created() {
     const { rowDrag, tableColumns } = this
     if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
-      console.log('row drag', rowDrag)
-
       this.columns.unshift({
         show: true,
         type: 'row-drag',
@@ -420,15 +418,15 @@ export default {
           return d
         }) || []
       this.tableSourceData = XEUtils.clone(data, true)
-      this.updateCache()
       editStore.insertList = []
-      this.clearSelection()
       if (rowId === '_rowId') {
         this.clearStatus()
         this.clearValidate()
       }
-      this.scrollLeftEvent()
+      this.updateCache()
+      this.clearSelection()
       this.resize()
+      this.scrollLeftEvent()
       return this.$nextTick()
     },
     reloadData(data = null) {

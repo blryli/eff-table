@@ -29,17 +29,26 @@ export default {
   },
   inject: ['table'],
   computed: {
-    width() {
-      let { width = 0 } = this.column
-      !width && (width = this.table.spaceWidth)
-      const columnWidth = Math.max(width, 40)
-      return columnWidth
-    },
     columnClass() {
       const { titleClassName } = this.column
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
       return classes
+    },
+    columnStyle() {
+      const { table, column, columnIndex } = this
+      const style = {}
+      let { width = 0 } = column
+      const { spaceWidth } = table
+      !width && (width = spaceWidth)
+      const columnWidth = Math.max(width, 40)
+      style.minWidth = columnWidth + 'px'
+      style.maxWidth = columnWidth + 'px'
+      if (columnIndex === 0) {
+        style.borderLeft = 0
+      }
+
+      return style
     }
   },
   mounted() {
@@ -161,7 +170,7 @@ export default {
     }
   },
   render(h) {
-    const { column, columnIndex, columnClass, width, table, form, operators, reference, searchRender, handleMouseenter, handleMouseleave, operatorChange } = this
+    const { column, columnIndex, columnClass, columnStyle, table, form, operators, reference, searchRender, handleMouseenter, handleMouseleave, operatorChange } = this
     const { search } = column
     const { operator } = search || {}
     const { type } = form
@@ -172,7 +181,7 @@ export default {
         class={columnClass}
         key={columnIndex}
         data-colid={columnIndex}
-        style={table.setColumnStyle(column, columnIndex, width)}
+        style={columnStyle}
       >
         <div ref='item' class='eff-table__search-item'>
           {

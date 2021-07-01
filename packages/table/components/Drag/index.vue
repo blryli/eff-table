@@ -103,7 +103,7 @@ export default {
         const body = left ? this.table.$refs.leftBody : this.table.$refs.body
         this.rowSortable = new Sortable({
           el: body.$el.querySelector('.eff-table__body'),
-          filter: 'is-drag--filter',
+          handle: 'eff-icon-drag',
           onEnd: this.handleRowEnd
         })
       }

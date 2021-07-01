@@ -32,10 +32,24 @@ export default {
         classes += ' col-' + type
       }
       return classes
+    },
+    columnStyle() {
+      const { table, column, columnIndex } = this
+      const style = {}
+      let { width = 0 } = column
+      const { spaceWidth } = table
+      !width && (width = spaceWidth)
+      const columnWidth = Math.max(width, 40)
+      style.minWidth = columnWidth + 'px'
+      style.maxWidth = columnWidth + 'px'
+      if (columnIndex === 0) {
+        style.borderLeft = 0
+      }
+      return style
     }
   },
   render(h) {
-    const { table, column, columnIndex, columnClass, colid, bodyColumnIndex, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
+    const { column, columnIndex, columnClass, columnStyle, colid, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
@@ -49,7 +63,7 @@ export default {
         data-colid={colid}
         data-colidx={columnIndex}
         key={colid}
-        style={table.setColumnStyle(column, bodyColumnIndex)}
+        style={columnStyle}
         on-mouseenter={event => handleMouseenter(event, slot)}
         on-mouseleave={event => handleMouseleave(event, slot)}
       >

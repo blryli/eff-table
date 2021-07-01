@@ -132,7 +132,10 @@ export default {
         if (tableData === rows) {
           rows = rest = tableData.slice(0)
           this.tableData = []
+          this.updateCache()
           this.clearSelection()
+          this.resize()
+          this.scrollLeftEvent()
         } else {
           const tIndex = tableData.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {
@@ -161,14 +164,20 @@ export default {
           return deleted({ table: this, body: checkeds }).then(res => {
             if (res.success) {
               this.$message.success('成功删除所选记录!')
+              this.updateCache()
               this.clearSelection()
+              this.resize()
+              this.scrollLeftEvent()
               this.isLoading = false
             } else {
               this.$message.error(res.message)
             }
           }).catch(e => {
             console.error(e)
+            this.updateCache()
             this.clearSelection()
+            this.resize()
+            this.scrollLeftEvent()
             this.isLoading = false
           })
         } else {
@@ -298,6 +307,9 @@ export default {
       }
       this.editStore.insertList.push(...records)
       this.updateCache()
+      this.clearSelection()
+      this.resize()
+      this.scrollLeftEvent()
       return this.$nextTick().then(() => rowIndex)
     },
     refresh() {

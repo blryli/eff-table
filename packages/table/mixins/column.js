@@ -58,28 +58,6 @@ export default {
     //   return columns.map((da, idx) => {
     //     return da.map(d => setRowspan(d, rowspan - idx))
     //   })
-    // }
-  },
-  methods: {
-    setColumnStyle(column, columnIndex) {
-      const style = {}
-      let { width = 0 } = column
-      const { spaceWidth } = this
-      !width && (width = spaceWidth)
-      const columnWidth = Math.max(width, 40)
-      style.minWidth = columnWidth + 'px'
-      style.maxWidth = columnWidth + 'px'
-      if (columnIndex === 0) {
-        style.borderLeft = 0
-      }
-
-      for (const key in column.borderStyle) {
-        if (Object.hasOwnProperty.call(column.borderStyle, key)) {
-          const v = column.borderStyle[key]
-          style[key] = v
-        }
-      }
-      return style
-    }
+    // },
   }
 }

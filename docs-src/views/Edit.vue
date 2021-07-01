@@ -426,7 +426,6 @@ export default {
           show: true,
           prop: 'phone',
           title: '手机',
-          editable: false,
           edit: true
         }
       ],
