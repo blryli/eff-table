@@ -40,7 +40,7 @@
           v-model="columns1"
           :data="data"
           drag
-          column-control
+          :toolbar-config="{columnControl: true}"
           border
         />
       </div>
@@ -66,7 +66,7 @@
           v-model="columns2"
           :data="data1"
           drag
-          column-batch-control
+          :toolbar-config="{columnBatchControl: true}"
           border
         />
       </div>
@@ -129,7 +129,7 @@ const htmlCode1 = `
     v-model="columns"
     :data="data"
     drag
-    column-control
+    :toolbar-config="{columnControl: true}"
     border
   />
   `
@@ -139,7 +139,7 @@ const htmlCode2 = `
     v-model="columns1"
     :data="data1"
     drag
-    column-batch-control
+    :toolbar-config="{columnBatchControl: true}"
     border
   />
   `

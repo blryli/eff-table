@@ -6,11 +6,12 @@
       <span class="primary"> true </span>，会显示搜索行&nbsp;<el-tooltip effect="dark" content="鼠标在表格内时，可用快捷键 ctrl+b 控制搜索行显示/隐藏" placement="top">
         <i class="el-icon el-icon-question" />
       </el-tooltip>
+      ，搜索框默认渲染成 <span class="primary"> input </span><br>
+      点击按钮 <icon icon="clear-search" /> 清空搜索条件
     </p>
-    <p>列 <span class="primary">search</span> 属性设置为
-      <span class="primary"> true </span>，打开搜索功能&nbsp;，搜索框默认渲染成 <span class="primary"> input </span>。
+    <p>
       <span class="primary">operator</span> 属性设置为
-      <span class="primary"> true </span>，打开范围搜索功能&nbsp;<i title="范围搜索" class="eff-icon-search" />
+      <span class="primary"> true </span>，打开范围搜索功能&nbsp;<i title="范围搜索" class="eff-icon-search" /><br>
     </p>
     <section class="demo">
       <div class="section-content">

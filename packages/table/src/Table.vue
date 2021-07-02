@@ -12,7 +12,7 @@
     <!-- <VForm v-bind="formConfig" /> -->
 
     <Toolbar
-      v-if="toolbarConfig || $slots.toolbar || fullscreen || showReplace || (drag && columnControl) || columnBatchControl"
+      v-if="showToolbar"
       ref="toolbar"
     >
       <slot name="toolbar" />
@@ -123,7 +123,7 @@
       v-if="drag && border || rowDrag"
       ref="drag"
       v-model="tableColumns"
-      :column-control="columnControl"
+      :column-control="toolbarConfig.columnControl"
       @cardClose="handleCardClose"
       @change="dargChange"
       @row-change="dragRowChange"
@@ -133,7 +133,7 @@
       v-if="border && drag"
       ref="columnBatchControl"
       :init-columns.sync="tableColumns"
-      :column-control="columnBatchControl"
+      :column-batch-control="toolbarConfig.columnBatchControl"
       @cardClose="handleCardClose"
       @change="dargChange"
       @row-change="dragRowChange"
@@ -240,14 +240,10 @@ export default {
     editLoop: { type: Boolean, default: true },
     editLengthways: { type: Boolean, default: true },
     loading: Boolean,
-    columnControl: Boolean,
     columnControlText: { type: String, default: '' },
-    columnBatchControl: Boolean,
     columnBatchControlText: { type: String, default: '' },
     rowDrag: Boolean,
-    fullscreen: Boolean,
     showSummary: Boolean, // 合计
-    searchClear: { type: Boolean, default: true },
     searchClearText: { type: String, default: '' },
     sortConfig: { type: Object, default: () => {} },
     summaryMethod: { type: Function, default: null },
@@ -266,12 +262,9 @@ export default {
     copy: Boolean,
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
-    toolbarConfig: { type: Object, default: () => {} }, // 工具栏配置
+    toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    editHistory: Boolean,
-    showReplace: Boolean,
-    showSort: Boolean,
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
     scopedSlots: { type: Object, default: () => {} } // 插槽
   },
@@ -361,6 +354,20 @@ export default {
     useGroupColumn() {
       const { tableData } = this
       return tableData && tableData.find(d => typeof d.children !== 'undefined')
+    },
+    showToolbar() {
+      const { drag, search, toolbarConfig = {}, $slots } = this
+      let show = false
+      for (const key in toolbarConfig) {
+        const item = toolbarConfig[key]
+        if (key === 'buttons') {
+          if (Array.isArray(item) && item.length) show = true
+        } else if (key === 'columnControl') {
+          if (drag && item) show = true
+        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl'].indexOf(key) > -1 && item) show = true
+      }
+      if ($slots.toolbar || search) show = true
+      return show
     }
   },
   watch: {
@@ -509,7 +516,7 @@ export default {
       const updateArr = []
       fileds.forEach(filed => {
         const { tableData, visibleColumns, updateStatus } = this
-        const { rowIndex, columnIndex, content } = filed
+        const { row, rowIndex, columnIndex, content } = filed
         const column = visibleColumns[columnIndex] || {}
         const { prop, rules } = column
 
@@ -526,7 +533,7 @@ export default {
             })
           }
           tableData[rowIndex][prop] = content
-          rules && rules.length && this.validateField(rowIndex, prop, rules)
+          rules && rules.length && this.validateField(prop, rules, row)
           updateStatus(tableData[rowIndex], prop)
         }
       })

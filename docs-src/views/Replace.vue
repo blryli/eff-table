@@ -15,7 +15,7 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-model="columns" :data="data" show-replace />
+        <eff-table ref="table" v-model="columns" :data="data" :toolbar-config="{showReplace: true}" />
       </div>
     </section>
 

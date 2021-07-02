@@ -89,6 +89,7 @@ export default {
 | row-height    | 列高度    | number      |            | 36      |
 | border    | 是否带有纵向边框    | boolean      |            | false      |
 | show-header   | 是否显示表头   | Boolean    |            | true      |
+| toolbar-config   | 工具栏配置   | String    |            |       |
 | empty-text   | 空数据时显示的文本内容   | String    |            |       |
 | fullscreen| 是否显示全屏按钮 | boolean      |        | false      |
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
@@ -99,7 +100,6 @@ export default {
 | column-control         | 是否启用列控制             | Boolean      |            | false      |
 | column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
 | search      | 是否启用搜索      | Boolean      |            | false      |
-| searchClear | search为true时有效，是否展示清空搜索按钮   | Boolean   |           | true      |
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | editLoop   | 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑  | Boolean    |     | true      |
@@ -115,7 +115,8 @@ export default {
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 | showReplace       | 替换和填充功能    | Boolean |       |       |
 | before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
-```js
+
+c
 value: [
   {
     show: true,// boolean 列是否显示
@@ -212,20 +213,47 @@ value: [
 ]
 ```
 
+- toolbar-config
+
+```js
+{
+  buttons: [ // 操作按钮
+    { name: 'button', code: 'add', children: '新增', props: { icon: 'el-icon-plus' }}, // 数据末尾增加一行
+    { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }}, // 数据末尾增加一行并聚焦
+    { name: 'button', code: 'insert', children: '插入', props: { icon: 'el-icon-plus' }}, // 数据头部增加一行
+    { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }}, // 数据头部增加一行并聚焦
+    { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+    { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+    { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' } }
+  ], 
+  columnControl: false, // 是否启用列控制功能
+  columnBatchControl: false, // 是否启用列批量控制功能
+  showReplace: false, // 是否启用列批量替换功能
+  editHistory: false, // 是否启用历史操作控制功能
+  diySearch: false, // 是否启用高级搜索功能
+  refresh: false, // 是否启用刷新功能
+  fullscreen: false, // 是否启用全屏功能
+}
+```
+
 ### Methods
 
 | 方法名         | 说明                | 参数                |
 | ------------- | ------------------------- | ----------------------------- |
-| focus         | 聚焦的方法                 | index(列索引), prop(字段) |
-| editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
+| loadTableData | 加载数据，在没有设置主键的情况下会清空数据状态，返回promise |data|
+| reloadData | 重载数据，会清空数据状态，返回promise |data|
+| reloadData | 重载数据，会清空数据状态，返回promise |data|
 | getFullData      | 获取当前表格全量数据 |     ---          |
 | getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |
 | validateRow | 对行进行校验的方法 | rowIndex |
-| validateField | 对单元格进行校验的方法 | rowIndex, prop |
+| validateField | 对单元格进行校验的方法 | prop, rules, row  |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|
+| clearSearch       | 清空搜索条件 | -|
+| focus         | 聚焦的方法                 | index(列索引), prop(字段) |
+| editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
 | getCheckRows   | 用于多选表格，获取当前选中的行数据 | -|
 | clearSelection   | 用于多选表格，清空用户的选择 | -|
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|

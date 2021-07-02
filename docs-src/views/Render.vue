@@ -44,11 +44,11 @@ data() {
       search: true,
       drag: true,
       edit: true,
-      columnControl: true,
       border: true,
-      fullscreen: true,
       rowId: 'id',
       toolbarConfig: {
+        columnControl: true,
+        fullscreen: true,
         buttons: [
           { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
           { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
@@ -187,11 +187,11 @@ export default {
         search: true,
         drag: true,
         edit: true,
-        columnControl: true,
         border: true,
-        fullscreen: true,
         rowId: 'id',
         toolbarConfig: {
+          columnControl: true,
+          fullscreen: true,
           buttons: [
             { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
             { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},

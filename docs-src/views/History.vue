@@ -13,7 +13,7 @@
           fullscreen
           border
           copy
-          edit-history
+          :toolbar-config="{editHistory: true}"
           @editColumnLastToNext="editColumnLastToNext"
         >
           <div slot="toolbar">
@@ -230,8 +230,8 @@ const componentSnippet = `
   :edit-stop="editStop"
   fullscreen
   border
+  :toolbarConfig="{editHistory: true}"
   @editColumnLastToNext="editColumnLastToNext"
-  editHistory
 >
   <div slot="toolbar">
     <el-button @click="add">新增</el-button>

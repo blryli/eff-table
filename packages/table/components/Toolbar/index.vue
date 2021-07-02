@@ -38,8 +38,8 @@ export default {
   render(h) {
     const { table, load } = this
     if (!load) return ''
-    const { toolbarConfig, search, searchClear, columnControl, fullscreen, columnBatchControl, editHistory, showReplace, showSort } = table
-    const { buttons = [], refresh, diySearch } = toolbarConfig || {}
+    const { toolbarConfig, search } = table
+    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort } = toolbarConfig || {}
     const buttonsRender = buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur
       const event = code ? getOn(on, { click: e => this.btnClick(code, e, idx) }) : on
@@ -72,7 +72,7 @@ export default {
             refresh && <Refresh /> || ''
           }
           {
-            search && searchClear && <Clear /> || ''
+            search && <Clear /> || ''
           }
           {
             columnBatchControl && <columnBatchControlBtn on-change={this.btnEdit} /> || ''

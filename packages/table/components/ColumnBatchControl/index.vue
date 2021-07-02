@@ -1,7 +1,7 @@
 <template>
   <div class="drag-table">
     <card
-      v-if="columnControl"
+      v-if="columnBatchControl"
       :show="show"
       title="列编辑"
       :init-style="cardStyle"
@@ -117,7 +117,7 @@ export default {
   components: { Card },
   props: {
     initColumns: { type: Array, default: () => [] },
-    columnControl: Boolean
+    columnBatchControl: Boolean
   },
   dragToEl: {},
   data() {
@@ -163,11 +163,11 @@ export default {
         handleDragend,
         handleDragenter,
         handleEnd,
-        columnControl,
+        columnBatchControl,
         $el: cardEl
       } = this
       const id = Math.floor(Math.random() * 100000)
-      if (columnControl) {
+      if (columnBatchControl) {
         const calback = className => {
           setTimeout(() => {
             this.cradsSortable = new Sortable({

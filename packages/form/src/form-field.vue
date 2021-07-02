@@ -144,7 +144,7 @@ export default {
     },
     handleValidate() {
       const { root, data, prop, rules } = this
-      rules.length && root.validateField(data, prop, rules).then(res => {
+      rules.length && root.validateField(prop, rules, data).then(res => {
         this.updateStatus()
       })
     },

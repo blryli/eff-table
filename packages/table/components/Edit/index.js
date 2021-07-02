@@ -123,7 +123,7 @@ export default {
       const { column } = this
       const { prop, rules = [] } = column || {}
       if (!rules.length || !this.row) return this.$nextTick()
-      return this.table.validateField(this.row, prop, rules)
+      return this.table.validateField(prop, rules, this.row)
     },
     validateShowpopover() {
       const { table, cell } = this

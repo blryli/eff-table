@@ -14,16 +14,18 @@
           edit
           :edit-stop="editStop"
           search
-          fullscreen
           show-summary
           border
           select-range
           copy
-          show-replace
-          column-batch-control
-          edit-history
-          show-sort
-          :toolbar-config="{diySearch: diySearch}"
+          :toolbar-config="{
+            showReplace: true,
+            fullscreen: true,
+            columnBatchControl: true,
+            editHistory: true,
+            showSort: true,
+            diySearch: diySearch
+          }"
           :footer-action-config="{showPager: true, showBorder: true}"
           @selection-change="selectionChange"
           @search-change="searchChange"
