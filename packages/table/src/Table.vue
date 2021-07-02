@@ -5,7 +5,7 @@
     :style="style"
     @mouseenter="rootMouseenter"
     @mouseleave="rootMouseleave"
-    @selectstart.prevent="rootSelectstart"
+    @selectstart="rootSelectstart($event)"
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
@@ -549,7 +549,11 @@ export default {
       this.$emit('table-mouse-up', { event: event })
     },
     rootSelectstart(event) {
-      return !(this.select || this.copy)
+      if (!(this.select || this.copy)) {
+        return true
+      }
+
+      return event.preventDefault()
     },
     setEditIsStop(val) {
       this.editIsStop = val
