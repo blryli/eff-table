@@ -54,7 +54,6 @@ export default class Sortable {
       } else {
         if (this.isFilter(target, e.target) || target === this.el) return
       }
-      console.log(target)
 
       this.downTarget = target
       this.downTarget && this.downTarget.setAttribute('draggable', true)

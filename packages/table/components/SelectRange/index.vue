@@ -250,9 +250,8 @@ export default {
       const { startRow, startColumn } = this._getReac()
 
       const updateArr = []
-      let data = e.clipboardData.getData('text/plain')
-      data = data.trim().split('\r\n')
-      data = data.map((v, k) => {
+      const data = e.clipboardData.getData('text/plain').trim().split('\r\n')
+      data.map((v, k) => {
         let columnList
 
         if (v.indexOf('\t ') !== -1) {

@@ -52,7 +52,7 @@ export function validateField(rules, params) {
         const len = ('' + value).length
         const minMaxMessage = `${min && max ? '长度必须在' + min + '到' + max : min ? '长度不能小于' + min : max ? '长度不能大于' + max : ''}个字符`
         const validRules = [
-          { type: 'required', rule: () => !value, message: `不能为空` },
+          { type: 'required', rule: () => isNoValue, message: `不能为空` },
           { type: 'min', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
           { type: 'max', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
           { type: 'pattern', rule: () => !(pattern.test(value)), message: `校验不通过` },
