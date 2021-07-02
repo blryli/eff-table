@@ -116,7 +116,9 @@ export default {
 | showReplace       | 替换和填充功能    | Boolean |       |       |
 | before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
 
-c
+- columns
+
+```js
 value: [
   {
     show: true,// boolean 列是否显示
@@ -349,7 +351,9 @@ value: [
 
 -  column 增加 titleSuffix 属性，表头标题后缀
 
-#### 2021-6-21
-
 -  column 增加 editable 属性，控制是否开启编辑
+#### 2021-7
+
+- 1.1.11 toolbar-config 操作功能整合
+
 
