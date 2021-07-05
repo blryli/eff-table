@@ -452,8 +452,11 @@
     animation: rotate linear .5s infinite;
   }
 }
+.col-fixed{
+  cursor: no-drop;
+}
 
-.col-edit::before{
+.col-drag::before{
   content: '';
   position: absolute;
   left: -5px;
@@ -745,6 +748,10 @@
 }
 .eff-table .is--disabled{
   cursor: no-drop;
+}
+
+.is--copy{
+  user-select: none;
 }
 
 @keyframes rotate {

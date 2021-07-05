@@ -342,6 +342,16 @@ export default {
       columns2: [
         {
           show: true,
+          type: 'selection',
+          width: 40
+        },
+        {
+          show: true,
+          type: 'index',
+          width: 40
+        },
+        {
+          show: true,
           prop: 'name',
           title: '名字',
           width: 200

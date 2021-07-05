@@ -175,7 +175,7 @@ export default class Sortable {
   isFilter(target, child) {
     const { filter } = this.options
     const filters = [filter, 'is--space', 'eff-empty-text']
-    return filters.find(d => target.classList.contains(d)) || target.classList.contains('col-fixed') && !(target.classList.contains('fixed-hidden')) || child && filters.find(d => child.classList.contains(d))
+    return filters.find(d => target.classList.contains(d)) || target.classList.contains('col-fixed') || child && filters.find(d => child.classList.contains(d))
   }
 
   getDragNode(el) {

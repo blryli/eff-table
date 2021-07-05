@@ -1,11 +1,13 @@
 <template>
   <div
     class="eff-table"
-    :class="{'is--screenfull': isScreenfull}"
+    :class="{
+      'is--screenfull': isScreenfull,
+      'is--copy': selectRange || copy
+    }"
     :style="style"
     @mouseenter="rootMouseenter"
     @mouseleave="rootMouseleave"
-    @selectstart="rootSelectstart($event)"
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
@@ -303,7 +305,7 @@ export default {
   },
   computed: {
     visibleColumns() {
-      const { tableColumns, drag, overflowX } = this
+      const { tableColumns, drag } = this
       const columns = tableColumns.reduce((acc, column) => {
         if (column.show !== false) {
           const types = ['expand', 'selection', 'radio', 'index', 'row-drag']
@@ -311,7 +313,7 @@ export default {
             column.fixed = 'left'
           }
           const { fixed = 'center' } = column
-          drag && overflowX && fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
+          drag && fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
         }
         return acc
       }, { left: [], center: [], right: [] })
@@ -547,13 +549,6 @@ export default {
     },
     rootMouseup(event) {
       this.$emit('table-mouse-up', { event: event })
-    },
-    rootSelectstart(event) {
-      if (!(this.select || this.copy)) {
-        return true
-      }
-
-      return event.preventDefault()
     },
     setEditIsStop(val) {
       this.editIsStop = val

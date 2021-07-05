@@ -17,16 +17,22 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName, drag, edit, fixed, prop, type } = this.column
+      const { table, column } = this
+      const { drag: tableDrag } = table
+      const { titleClassName, drag, edit, fixed, prop, type } = column
 
       let classes = `eff-table__column`
       titleClassName && (classes += ` ${titleClassName}`)
       edit && (classes += ` col-edit`)
-      if (fixed) {
+      const isDrag = tableDrag && drag !== false
+      if (fixed && isDrag) {
         classes += ' col-fixed'
         if (drag === false || !prop) {
           classes += ' fixed-hidden'
         }
+      }
+      if (isDrag && !fixed) {
+        classes += ' col-drag'
       }
       if (type) {
         classes += ' col-' + type
@@ -72,7 +78,7 @@ export default {
             required ? <i class='eff-cell--required' /> : ''
           }
           {
-            columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
+            !type && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           {
             titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon={prefixIcon}/></PopoverRef> : ''

@@ -37,7 +37,7 @@ export default {
     dradingTarget(val, oldVal) {
       if (val !== oldVal) {
         const classes = target =>
-          hasClass(target, 'col-fixed') && !hasClass(target, 'fixed-hidden')
+          hasClass(target, 'col-fixed')
             ? 'is-draging--warning'
             : 'is-draging'
         addClass(val, classes(val))
@@ -161,8 +161,9 @@ export default {
         return console.error(`没有找到title为 ${fromEl.innerText} 的节点`)
       }
 
-      if (hasClass(toEl, 'col-fixed') && !hasClass(toEl, 'fixed-hidden')) {
-        console.log('该列不能做拖动操作！')
+      if (hasClass(toEl, 'col-fixed')) {
+        const { $message } = this
+        $message ? $message.warning('固定列不能做拖动操作！') : console.log('固定列不能做拖动操作！')
         return
       }
       // tr内元素拖动
