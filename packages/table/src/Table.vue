@@ -549,7 +549,7 @@ export default {
       this.$emit('table-mouse-up', { event: event })
     },
     rootSelectstart(event) {
-      if (!(this.selectRange || this.copy)) {
+      if (!(this.select || this.copy)) {
         return true
       }
 
