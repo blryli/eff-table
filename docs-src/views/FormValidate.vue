@@ -36,7 +36,7 @@
               { required: true, trigger: 'change' }
             ]"
           >
-            <el-select v-model="data.sex" clearable>
+            <el-select v-model="data.sex" automatic-dropdown clearable>
               <el-option label="11" value="11" />
               <el-option label="22" value="22" />
             </el-select>
@@ -49,7 +49,7 @@
               { min: 1, max: 3 }
             ]"
           >
-            <el-input v-model="data.name" />
+            <el-input v-model="data.age" />
           </v-form-item>
         </v-form>
       </div>

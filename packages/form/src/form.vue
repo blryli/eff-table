@@ -59,24 +59,7 @@ export default {
       this.editIsStop = val
     }
   },
-  created() {
-    // this.init()
-  },
   methods: {
-    // init() {
-    //   const { data, columns } = this
-
-    //   columns.forEach(column => {
-    //     const { prop } = column
-    //     console.log(prop, prop in data)
-    //     if (!(prop in data)) {
-    //       builder(data, prop)
-    //     }
-    //   })
-
-    //   Object.assign(this, { data })
-    //   console.log('data', JSON.stringify(this.data, null, 2))
-    // },
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
       const { prop, itemRender } = column
@@ -100,15 +83,21 @@ export default {
     tipClose() {
       this.$refs.popover.doHide()
     },
+    // 清除状态
     clearStatus() {
       this.formItems.forEach(d => {
         d.slot.updateField()
       })
     },
+    // 重置表单
     resetFields() {
+      this.clearValidate()
       this.formItems.forEach(d => {
         d.slot.resetField()
       })
+    },
+    getFormData() {
+      return this.data
     }
   },
   render(h) {

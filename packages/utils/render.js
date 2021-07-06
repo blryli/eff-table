@@ -20,6 +20,7 @@ export function getOn(on, events, params = []) {
 function getPropValue(data, prop, root) {
   if (!data || !prop) return ''
   const { rowId } = root
+  // 特殊路径prop，用editProps做值的中转站
   return prop in data ? data[prop] : root.editProps[rowId ? prop + data[rowId] : prop] || ''
 }
 

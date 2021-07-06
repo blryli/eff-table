@@ -13,6 +13,7 @@
 import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/dom'
 import { eqCellValue } from 'pk/utils/dom'
 import XEUtils from 'xe-utils'
+import { initField } from 'pk/utils'
 export default {
   name: 'VFormField',
   props: {
@@ -67,9 +68,9 @@ export default {
     }
   },
   created() {
-    const { data, prop } = this
-    prop && XEUtils.set(data, prop)
-    // console.log('builder', JSON.stringify(this.data, null, 2))
+    const { data = {}, prop } = this
+    initField(data, prop, this)
+    // console.log('builder', this.data, JSON.stringify(this.data, null, 2))
   },
   mounted() {
     const value = XEUtils.get(this.data, this.prop)
@@ -177,8 +178,8 @@ export default {
     },
     resetField() {
       const { data, prop } = this
-      this.initValue = '111'
       XEUtils.set(data, prop, this.initValue)
+      this.updateStatus()
     }
   }
 }

@@ -9,6 +9,7 @@
         <p>
           <el-button type="primary" @click="validate">校 验</el-button>
           <el-button type="primary" @click="clearValidate">清除校验</el-button>
+          <el-button type="primary" @click="resetFields">重置</el-button>
         </p>
         <v-form ref="form" v-bind="formOptions" />
       </div>
@@ -45,141 +46,10 @@ const objCode = `
   }
   `
 const jsCode = `
-data () {
-  return {
-    formOptions: {
-      // titleWidth: '100px',
-      columns: [
-        {
-          title: '名字',
-          prop: 'name',
-          span: 8,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true },
-            { min: 3 }
-          ]
-        },
-        {
-          title: '性别',
-          prop: 'sex',
-          span: 8,
-          itemRender: {
-            name: 'select',
-            options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
-          },
-          rules: [
-            { required: true, trigger: 'change' }
-          ]
-        },
-        {
-          title: '年龄',
-          prop: 'age',
-          span: 8,
-          itemRender: { name: 'input' },
-          rules: [
-            { min: 1, max: 3 }
-          ]
-        },
-
-        {
-          title: '身高',
-          prop: 'height',
-          span: 7,
-          itemRender: { name: 'input' },
-          rules: [
-            { max: 3 }
-          ]
-        },
-        { prop: 'heightUnit',
-          span: 5,
-          itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] },
-          rules: [
-            { required: true }
-          ]
-        },
-        {
-          title: '体重',
-          prop: 'weight',
-          span: 7,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true }
-          ]
-        },
-        { prop: 'weightUnit',
-          span: 5,
-          itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] },
-          rules: [
-            { required: true }
-          ]
-        },
-
-        {
-          title: '爱好',
-          prop: 'hobby1',
-          span: 10,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true }
-          ]
-        },
-        {
-          prop: 'hobby2',
-          span: 7,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true }
-          ]
-        },
-        {
-          prop: 'hobby3',
-          span: 7,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true }
-          ]
-        }
-      ]
-    }
-  }
-}
-`
-
-const htmlCode = `
-<p>
-  <el-button type="primary" @click="validate">校 验</el-button>
-  <el-button type="primary" @click="clearValidate">清除校验</el-button>
-</p>
-<v-form ref="form" v-bind="formOptions" />
-`
 export default {
-  name: 'Form',
-  components: {
-    CodeSnippet,
-    Collapse
-  },
-
   data() {
     return {
-      value: 2,
-      jsCode,
-      htmlCode,
-      objCode,
-      data: {
-        name: '',
-        sex: '',
-        age: '',
-        heights: { height: '' },
-        heightUnit: '1',
-        weight: '',
-        weightUnit: '1',
-        hobby1: '',
-        hobby2: '',
-        hobby3: ''
-      },
       formOptions: {
-        // titleWidth: '100px',
         columns: [
           {
             title: '名字',
@@ -216,7 +86,7 @@ export default {
 
           {
             title: '身高',
-            prop: 'heights.height.0.aaa',
+            prop: 'height',
             span: 7,
             itemRender: { name: 'input' },
             rules: [
@@ -232,7 +102,7 @@ export default {
           },
           {
             title: '体重',
-            prop: 'weight.0.bbb',
+            prop: 'weight',
             span: 7,
             itemRender: { name: 'input' },
             rules: [
@@ -282,6 +152,141 @@ export default {
     },
     clearValidate() {
       this.$refs.form.clearValidate()
+    },
+    resetFields() {
+      this.$refs.form.resetFields()
+    }
+  }
+}
+`
+
+const htmlCode = `
+<p>
+  <el-button type="primary" @click="validate">校 验</el-button>
+  <el-button type="primary" @click="clearValidate">清除校验</el-button>
+  <el-button type="primary" @click="resetFields">重置</el-button>
+</p>
+<v-form ref="form" v-bind="formOptions" />
+`
+export default {
+  name: 'Form',
+  components: {
+    CodeSnippet,
+    Collapse
+  },
+
+  data() {
+    return {
+      value: 2,
+      jsCode,
+      htmlCode,
+      objCode,
+      formOptions: {
+        columns: [
+          {
+            title: '名字',
+            prop: 'name',
+            span: 8,
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true },
+              { min: 3 }
+            ]
+          },
+          {
+            title: '性别',
+            prop: 'sex',
+            span: 8,
+            itemRender: {
+              name: 'select',
+              options: [{ value: '1', label: '男' }, { value: '2', label: '女' }]
+            },
+            rules: [
+              { required: true, trigger: 'change' }
+            ]
+          },
+          {
+            title: '年龄',
+            prop: 'age',
+            span: 8,
+            itemRender: { name: 'input' },
+            titlePrefix: { message: '帮助信息', icon: 'question' },
+            rules: [
+              { min: 1, max: 3 }
+            ]
+          },
+
+          {
+            title: '身高',
+            prop: 'height',
+            span: 7,
+            itemRender: { name: 'input' },
+            rules: [
+              { max: 3 }
+            ]
+          },
+          { prop: 'heightUnit',
+            span: 5,
+            itemRender: { name: 'select', options: [{ value: '1', label: 'cm' }, { value: '2', label: 'm' }] },
+            rules: [
+              { required: true, trigger: 'change' }
+            ]
+          },
+          {
+            title: '体重',
+            prop: 'weight',
+            span: 7,
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
+          },
+          { prop: 'weightUnit',
+            span: 5,
+            itemRender: { name: 'select', options: [{ value: '1', label: 'kg' }, { value: '2', label: 'g' }] },
+            rules: [
+              { required: true, trigger: 'change' }
+            ]
+          },
+
+          {
+            title: '爱好',
+            prop: 'hobby1',
+            span: 10,
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
+          },
+          {
+            prop: 'hobby2',
+            span: 7,
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
+          },
+          {
+            prop: 'hobby3',
+            span: 7,
+            itemRender: { name: 'input' },
+            rules: [
+              { required: true }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  methods: {
+    validate() {
+      this.$refs.form.validate().catch(e => console.log(e))
+    },
+    clearValidate() {
+      this.$refs.form.clearValidate()
+    },
+    resetFields() {
+      this.$refs.form.resetFields()
     }
   }
 }

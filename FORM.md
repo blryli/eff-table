@@ -153,14 +153,15 @@ focusOptions: { // object
 
 ### v-form Methods
 
-| 方法名        | 说明                                                                                                     | 参数                                             |
-| ------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| validate      | 对整个表单进行重算的方法，参数是一个回调函数(第一个参数是校验是否通过，第二个参数是所有校验结果集合数组) | Function(boolean, array)                         |
-| validateField | 对单个字段进行重算的方法，参数是字段，规则， 数据对象                                                    | prop: string, rule: function, data：object/array |
-| clearValidate | 移除表单校验结果。参数是要移除校验结果的字段数组，如不传则移除整个表单的重算结果)                        | props: array                                     |
-| focus         | prop 对应节点聚焦，不传参数则聚焦第一个可聚焦节点节点                                                              | prop: string                                     |
-| blur          | prop 对应节点失焦                                                              | prop: string                                     |
-| select        | prop 对应节点文本选中                                                     | prop: string                                     |
+| 方法名        | 说明                                                                     |      参数           |
+| validate| 对整个表单进行重算的方法，参数是一个回调函数(第一个参数是校验是否通过，第二个参数是所有校验结果集合数组) | Function(boolean, array)    |
+| validateField | 对单个字段进行重算的方法，参数是字段，规则， 数据对象    | prop: string, rule: function, data：object/array |
+| clearValidate | 移除表单校验结果。参数是要移除校验结果的字段数组，如不传则移除整个表单的重算结果)  | props: array   |
+| resetFields | 重置表单，清除校验及状态  | --  |
+| getFormData | 配置模式下，获取表单数据的方法  | --  |
+| focus         | prop 对应节点聚焦，不传参数则聚焦第一个可聚焦节点节点   | prop: string                       |
+| blur          | prop 对应节点失焦                | prop: string                                     |
+| select        | prop 对应节点文本选中            | prop: string                                     |
 
 
 
@@ -237,3 +238,11 @@ columns: [ // arra
   }
 ]
 ```
+
+### 更新日志
+
+#### 2021-7
+
+- 表单组件增加 resetFields 重置表单方法
+
+- 表单组件增加 getFormData 获取表单数据方法

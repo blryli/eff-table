@@ -106,17 +106,7 @@ export default {
       value: 2,
       jsCode,
       htmlCode,
-      data: {
-        name: '',
-        age: '',
-        height: '',
-        weight: '',
-        hobby1: '',
-        hobby2: '',
-        hobby3: ''
-      },
       formOptions: {
-        // titleWidth: '100px',
         columns: [
           {
             title: '名字',

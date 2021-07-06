@@ -19,12 +19,11 @@ export default {
       const column = formItems.find(d => d.prop === prop) || {}
       if (!rule) {
         const { rules = [] } = column
-        console.log({ rules })
         if (Array.isArray(rules)) {
           rule = rules
         }
       }
-      console.log(prop, row, rule)
+      // console.log(prop, row, rule)
 
       // 校验处理函数
       // console.log({ value, row, column, id, prop })
