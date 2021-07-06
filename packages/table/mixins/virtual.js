@@ -179,6 +179,12 @@ export default {
         this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * rowHeight
       }
       return this.$nextTick()
+    },
+    // 清除滚动位置
+    clearScroll() {
+      this.table.scrollLeft = 0
+      this.table.scrollTop = 0
+      return this.$nextTick()
     }
   }
 }

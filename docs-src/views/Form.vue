@@ -41,7 +41,7 @@ const objCode = `
     itemRender: { // form-item配置render
       name: 'input', // 指定ui元素
       options: [], // select组件需要
-      format: 'yyy-MM-dd', // 日期组件需要
+      format: 'yyy-MM-dd', // 日期组件需要，如果没设置，则会取props里面的format
     },
   }
   `

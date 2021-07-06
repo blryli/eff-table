@@ -19,6 +19,7 @@
           select-range
           copy
           :toolbar-config="{
+            refresh: true,
             showReplace: true,
             fullscreen: true,
             columnBatchControl: true,

@@ -133,7 +133,7 @@ value: [
     config: {
       name: 'input', // 指定ui元素
       options: [], // select组件需要
-      format: 'yyy-MM-dd', // 日期组件需要
+      format: 'yyy-MM-dd', // 日期组件需要，如果没设置，则会取props里面的format
       defaultValue: '', // 新增行指定默认值，非必须
     }, 
 
@@ -355,6 +355,10 @@ value: [
 #### 2021-7
 
 - 1.1.11 toolbar-config 操作功能整合
+
+- 解决表格滚动后，离开页面，再重新激活页面会出现空白区域的问题
+
+- 解决表格全选时会把之前的数据也选上的问题
 
 
 

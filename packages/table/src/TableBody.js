@@ -87,7 +87,10 @@ export default {
     $el.onscroll = null
   },
   activated() {
-    // this.scrollEvent()
+    // 缓存的页面，切回页面时，保持最后的滚动姿势
+    const { scrollLeft, scrollTop } = this.table
+    this.table.scrollLeft = scrollLeft - 0.1
+    this.table.scrollTop = scrollTop - 0.1
   },
   methods: {
     scrollEvent(e) {

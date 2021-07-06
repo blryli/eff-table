@@ -133,7 +133,7 @@ const objCode = `
     config: { // 通用配置
       name: 'input', // 指定ui元素
       options: [], // select组件需要
-      format: 'yyy-MM-dd', // 日期组件需要
+      format: 'yyy-MM-dd', // 日期组件需要，如果没设置，则会取props里面的format
       defaultValue: '', // 新增行指定默认值，非必须
     }, 
 

@@ -305,7 +305,7 @@ export default {
   },
   computed: {
     visibleColumns() {
-      const { tableColumns, drag } = this
+      const { tableColumns } = this
       const columns = tableColumns.reduce((acc, column) => {
         if (column.show !== false) {
           const types = ['expand', 'selection', 'radio', 'index', 'row-drag']
@@ -313,7 +313,7 @@ export default {
             column.fixed = 'left'
           }
           const { fixed = 'center' } = column
-          drag && fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
+          fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
         }
         return acc
       }, { left: [], center: [], right: [] })
@@ -509,6 +509,7 @@ export default {
     // 更新数据行map
     updateCache() {
       const { tableData, rowId } = this
+      this.tableDataMap.clear()
       tableData.forEach(d => {
         this.tableDataMap.set(d[rowId], d)
       })
