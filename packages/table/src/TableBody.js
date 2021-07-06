@@ -87,7 +87,7 @@ export default {
     $el.onscroll = null
   },
   activated() {
-    this.scrollEvent()
+    // this.scrollEvent()
   },
   methods: {
     scrollEvent(e) {

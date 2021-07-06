@@ -134,6 +134,7 @@ export default {
     handleMouseenter() {
       const { table, column: { width }, $refs: { cell }} = this
       const { spaceWidth } = table
+      if (!cell) return
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }

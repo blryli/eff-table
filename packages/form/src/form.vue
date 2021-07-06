@@ -4,7 +4,7 @@ import FocusControl from 'pk/form/mixins/focusControl'
 import { renderer } from 'pk/utils/render'
 import VFormItem from './form-item'
 import Popover from 'pk/popover'
-import { getFieldValue } from 'pk/utils'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'VForm',
@@ -80,7 +80,7 @@ export default {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
       const { prop, itemRender } = column
-      if (readonly) return getFieldValue(data, prop)
+      if (readonly) return XEUtils.get(data, prop)
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {
@@ -101,9 +101,15 @@ export default {
       this.$refs.popover.doHide()
     },
     clearStatus() {
-      this.$emit('clearStatus')
+      this.formItems.forEach(d => {
+        d.slot.updateField()
+      })
     },
-    resetField() {}
+    resetFields() {
+      this.formItems.forEach(d => {
+        d.slot.resetField()
+      })
+    }
   },
   render(h) {
     const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts } = this

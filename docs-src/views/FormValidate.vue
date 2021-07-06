@@ -13,6 +13,7 @@
         <el-button type="primary" @click="validate">校 验</el-button>
         <el-button type="primary" @click="validateField">校验名字字段</el-button>
         <el-button type="primary" @click="clearValidate">清除校验</el-button>
+        <el-button type="primary" @click="resetFields">重置表单</el-button>
       </p>
       <div class="section-content">
         <v-form ref="form" :data="data">
@@ -201,6 +202,9 @@ export default {
     },
     clearValidate() {
       this.$refs.form.clearValidate()
+    },
+    resetFields() {
+      this.$refs.form.resetFields()
     }
   }
 }

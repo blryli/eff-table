@@ -12,7 +12,7 @@
 <script>
 import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/dom'
 import { eqCellValue } from 'pk/utils/dom'
-import { initField } from 'pk/utils'
+import XEUtils from 'xe-utils'
 export default {
   name: 'VFormField',
   props: {
@@ -67,13 +67,13 @@ export default {
     }
   },
   created() {
-    this.root.$on('clearStatus', this.updateField)
     const { data, prop } = this
-    initField(data, prop, this)
+    prop && XEUtils.set(data, prop)
     // console.log('builder', JSON.stringify(this.data, null, 2))
   },
   mounted() {
-    this.initValue = this.data[this.prop] || null
+    const value = XEUtils.get(this.data, this.prop)
+    this.initValue = value
     this.$nextTick(() => {
       this.init()
     })
@@ -127,7 +127,7 @@ export default {
           }
         }
       }
-      form.focusOpen && form.$emit('line-slot-change', { prop, slot: this, input: this.input, rules })
+      form.$emit('form-item-change', { prop, slot: this, input: this.input, rules })
     },
     onFocus(component) {
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
@@ -172,8 +172,13 @@ export default {
     },
     updateField() {
       const { data, prop, form } = this
-      this.initValue = prop in data ? data[prop] : form.editProps[prop]
+      this.initValue = prop in data ? XEUtils.get(data, prop) : XEUtils.get(form.editProps, prop)
       this.updateStatus()
+    },
+    resetField() {
+      const { data, prop } = this
+      this.initValue = '111'
+      XEUtils.set(data, prop, this.initValue)
     }
   }
 }

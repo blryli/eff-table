@@ -1,5 +1,5 @@
 import { validateField, validate } from 'pk/utils/validate'
-import { getFieldValue } from 'pk/utils'
+import XEUtils from 'xe-utils'
 
 export default {
   data() {
@@ -12,11 +12,11 @@ export default {
       if (!prop) {
         console.error('需要校验的字段，必须具有 prop 属性')
       }
-      const { validators, rowId, itemSlots } = this
+      const { validators, rowId, formItems } = this
       // console.log({ row, prop, value })
-      const value = getFieldValue(row, prop)
+      const value = XEUtils.get(row, prop)
       const id = row[rowId]
-      const column = itemSlots.find(d => d.prop === prop) || {}
+      const column = formItems.find(d => d.prop === prop) || {}
       if (!rule) {
         const { rules = [] } = column
         console.log({ rules })
@@ -42,8 +42,8 @@ export default {
       // cell && cell.classList.add('is-async-validator') // 异步校验动效
     },
     validate() {
-      const { data, itemSlots } = this
-      return validate([data], itemSlots.map(d => ({ prop: d.prop, rules: d.rules })), this.validateField)
+      const { data, formItems } = this
+      return validate([data], formItems.map(d => ({ prop: d.prop, rules: d.rules })), this.validateField)
     },
     clearValidate(props) {
       const clear = prop => {

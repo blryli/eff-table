@@ -5,7 +5,6 @@ import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
 import XEUtils from 'xe-utils'
-import { initField } from 'pk/utils'
 
 export default {
   name: 'TableBodyColumn',
@@ -88,7 +87,7 @@ export default {
   },
   created() {
     const { row, column } = this
-    column.prop && initField(row, column.prop, this)
+    column.prop && XEUtils.set(row, column.prop, row[column.prop])
   },
   methods: {
     groupClick(e) {
@@ -151,6 +150,7 @@ export default {
       if (this.$parent.summary) return
       const { row, column, rowIndex, columnIndex, table, $refs: { cell }} = this
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
+      if (!cell) return
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }

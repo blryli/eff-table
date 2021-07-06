@@ -10,7 +10,7 @@ var defaultFocusOptions = {
 export default {
   data() {
     return {
-      itemSlots: Object.freeze([]),
+      formItems: Object.freeze([]),
       curprop: null,
       direction: null
     }
@@ -18,7 +18,7 @@ export default {
   created() {
     const { focusOpen, lineSlotChange, onFocus, onBlur, keyup, click } = this
     if (focusOpen) {
-      this.$on('line-slot-change', lineSlotChange)
+      this.$on('form-item-change', lineSlotChange)
       this.$on('on-focus', onFocus)
       this.$on('on-blur', onBlur)
 
@@ -38,20 +38,20 @@ export default {
       if (!this.focusCtrl.prevKeys) return ''
       return this.focusCtrl.nextKeys.toLowerCase().split('+').sort().toString()
     },
-    revItemSlots() {
-      return [...this.itemSlots].reverse()
+    revformItems() {
+      return [...this.formItems].reverse()
     },
-    itemSlotsProp() {
-      return this.itemSlots.map(d => d.prop)
+    formItemsProp() {
+      return this.formItems.map(d => d.prop)
     }
   },
   methods: {
     lineSlotChange(obj) {
-      const itemSlots = [...this.itemSlots]
-      const index = itemSlots.findIndex(d => d.prop === obj.prop)
-      index === -1 ? itemSlots.push(obj) : itemSlots.splice(index, 1, obj)
-      this.itemSlots = Object.freeze(itemSlots)
-      // console.log(JSON.stringify(this.itemSlots.map(d => d.prop), null, 2))
+      const formItems = [...this.formItems]
+      const index = formItems.findIndex(d => d.prop === obj.prop)
+      index === -1 ? formItems.push(obj) : formItems.splice(index, 1, obj)
+      this.formItems = Object.freeze(formItems)
+      // console.log(JSON.stringify(this.formItems.map(d => d.prop), null, 2))
     },
     onFocus(prop) {
       setTimeout(() => {
@@ -66,12 +66,12 @@ export default {
       this.curprop = null
     },
     click(e) {
-      const { curprop, itemSlots, _clear } = this
+      const { curprop, formItems, _clear } = this
       if (!curprop) return
-      !itemSlots.find(d => d.slot.$el.contains(e.target)) && _clear()
+      !formItems.find(d => d.slot.$el.contains(e.target)) && _clear()
     },
     keyup(e) {
-      const { curprop, editIsStop, prevKeys, nextKeys, itemSlotsProp, prevFocus, nextFocus, focus } = this
+      const { curprop, editIsStop, prevKeys, nextKeys, formItemsProp, prevFocus, nextFocus, focus } = this
       const keyStr = e.key || e.keyIdentifier
       if (!curprop || editIsStop || !keyStr) return
       const key = keyStr.toLowerCase()
@@ -90,40 +90,40 @@ export default {
         const getprop = sign => curprop.replace(/\/(\d)\//, (match, p1) => `/${+p1 + sign}/`)
         const prevprop = getprop(-1)
         const nextprop = getprop(1)
-        keysStr === 'arrowup' && itemSlotsProp.includes(prevprop) && focus(prevprop)
-        keysStr === 'arrowdown' && itemSlotsProp.includes(nextprop) && focus(nextprop)
+        keysStr === 'arrowup' && formItemsProp.includes(prevprop) && focus(prevprop)
+        keysStr === 'arrowdown' && formItemsProp.includes(nextprop) && focus(nextprop)
       }
       this.$emit('keyup', keysStr, curprop, e)
     },
     prevFocus(curprop = this.curprop) {
-      const { revItemSlots, nextNodeFocus } = this
+      const { revformItems, nextNodeFocus } = this
       this.direction = 'prev'
-      nextNodeFocus(curprop, revItemSlots)
+      nextNodeFocus(curprop, revformItems)
     },
     nextFocus(curprop = this.curprop) {
-      const { itemSlots, nextNodeFocus } = this
+      const { formItems, nextNodeFocus } = this
       this.direction = 'next'
-      nextNodeFocus(curprop, itemSlots)
+      nextNodeFocus(curprop, formItems)
     },
-    nextNodeFocus(curprop, itemSlots) {
-      const index = itemSlots.findIndex(d => d.prop === curprop) || 0
+    nextNodeFocus(curprop, formItems) {
+      const index = formItems.findIndex(d => d.prop === curprop) || 0
       if (index === -1) return
       let nextIndex
-      const len = itemSlots.length
-      const curConponent = getOneChildComponent(itemSlots[index].slot)
+      const len = formItems.length
+      const curConponent = getOneChildComponent(formItems[index].slot)
 
       const handleBlur = () => { // 处理失焦
         if (curConponent) {
           curConponent.blur && curConponent.blur()
           curConponent.handleClose && curConponent.handleClose()
         } else {
-          const slotInput = itemSlots[index].input
+          const slotInput = formItems[index].input
           slotInput && slotInput.blur && slotInput.blur()
         }
       }
 
       for (let i = index + 1; i < len; i++) {
-        const slot = itemSlots[i]
+        const slot = formItems[i]
         if (this._isCanFocus(slot)) {
           nextIndex = i
           break
@@ -133,7 +133,7 @@ export default {
       // 如果下一个节点是最后一个或是剩下的节点存在，且都为不可操作的节点
       if (index === len - 1 || nextIndex === undefined) {
         if (this.focusCtrl.loop) {
-          nextIndex = itemSlots.findIndex(slot => this._isCanFocus(slot))
+          nextIndex = formItems.findIndex(slot => this._isCanFocus(slot))
         } else {
           const event = this.direction === 'prev' ? 'first-focused-node-prev' : 'last-focused-node-next'
           this.$emit(event, this.curprop)
@@ -152,14 +152,14 @@ export default {
       nextIndex !== index && handleBlur()
 
       try {
-        const focusNode = this.getFocusNode(nextIndex, itemSlots)
+        const focusNode = this.getFocusNode(nextIndex, formItems)
         focusNode && focusNode.focus && focusNode.focus()
       } catch (error) {
         console.error(error)
       }
     },
-    getFocusNode(index, itemSlots = this.itemSlots) {
-      const nextSlot = itemSlots[index]
+    getFocusNode(index, formItems = this.formItems) {
+      const nextSlot = formItems[index]
       const nextComponent = getOneChildComponent(nextSlot.slot)
       return nextSlot && (nextComponent || nextSlot.input)
     },
@@ -179,11 +179,11 @@ export default {
       this.getInput(prop).select && this.getInput(prop).select()
     },
     getInput(prop) {
-      const { itemSlots, _isCanFocus, getFocusNode } = this
-      if (prop && !itemSlots.find(d => d.slot.prop === prop)) {
+      const { formItems, _isCanFocus, getFocusNode } = this
+      if (prop && !formItems.find(d => d.slot.prop === prop)) {
         console.error(`focus方法传入的prop [${prop}] 没有定义`)
       }
-      const index = prop ? itemSlots.findIndex(d => d.prop === prop) : itemSlots.findIndex(d => _isCanFocus(d))
+      const index = prop ? formItems.findIndex(d => d.prop === prop) : formItems.findIndex(d => _isCanFocus(d))
       if (index === -1) return
       return getFocusNode(index)
     }
@@ -191,7 +191,7 @@ export default {
   beforeDestroy() {
     const { focusOpen, lineSlotChange, onFocus, onBlur, keyup, click } = this
     if (focusOpen) {
-      this.$off('line-slot-change', lineSlotChange)
+      this.$off('form-item-change', lineSlotChange)
       this.$off('on-focus', onFocus)
       this.$off('on-blur', onBlur)
 

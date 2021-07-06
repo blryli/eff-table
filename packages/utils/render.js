@@ -17,7 +17,7 @@ export function getOn(on, events, params = []) {
   return ons
 }
 
-function getPropValue(data, prop, root, rowIndex) {
+function getPropValue(data, prop, root) {
   if (!data || !prop) return ''
   const { rowId } = root
   return prop in data ? data[prop] : root.editProps[rowId ? prop + data[rowId] : prop] || ''
@@ -167,15 +167,16 @@ function renderSelectEdit(h, renderOpts, params) {
 }
 
 // 日期 datepick
-function renderdateCell(h, renderOpts, params) {
-  const { format } = renderOpts || {}
-  const { row, prop } = params || {}
+function renderdateCell(h, renderOpts = {}, params = {}) {
+  const { format, props: { format: propsFormat } = {}} = renderOpts
+  const formater = format || propsFormat
+  const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
     const [start, end] = cellLabel
-    return [XEUtils.toDateString(start, format), '~', XEUtils.toDateString(end, format)]
+    return [XEUtils.toDateString(start, formater), '~', XEUtils.toDateString(end, formater)]
   }
-  return XEUtils.toDateString(cellLabel, format)
+  return XEUtils.toDateString(cellLabel, formater)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
