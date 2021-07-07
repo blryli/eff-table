@@ -480,7 +480,7 @@ export default {
             prop: 'date',
             title: '疫苗预约日期',
             config: {
-              name: 'date-picker', format: 'yyyy-MM-dd'
+              name: 'date-picker'
             },
             edit: true
           },

@@ -49,7 +49,7 @@ export default {
   },
   inject: ['table'],
   render(h) {
-    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData } = this
+    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, handleMouseenter, handleMouseup } = this
     const { showSpace, search, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
 
@@ -61,7 +61,10 @@ export default {
           style={{ height }}
           on-click={handleClick}
           on-mousemove={handleMousemove}
+          on-mouseenter={handleMouseenter}
           on-mouseleave={handleMouseleave}
+          on-contextmenu={() => false}
+          on-mouseup={handleMouseup}
         >
           {
             renderColumns(visibleColumns)
@@ -148,6 +151,9 @@ export default {
         }
       }
     },
+    handleMouseenter() {
+      document.oncontextmenu = () => false
+    },
     handleMousemove(e) {
       const { table, $refs, dragingTarget, isDraging } = this
       if (!table.border) return
@@ -163,6 +169,7 @@ export default {
       this.dragingTarget = hasClass(target, 'is--space') ? null : target
     },
     handleMouseleave() {
+      document.oncontextmenu = null
       !this.isDraging && setTimeout(() => {
         this.dragingTarget = null
       }, 110)
@@ -170,6 +177,9 @@ export default {
     moveMousedown() {
       const { start, moveing, end } = this
       onMousemove({ start, moveing, end })
+    },
+    handleMouseup(e) {
+      console.log(e.which)
     },
     start(e) {
       if (!this.dragingTarget) return

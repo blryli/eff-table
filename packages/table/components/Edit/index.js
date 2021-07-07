@@ -147,7 +147,6 @@ export default {
     handleWindowKeyup(e, keysStr) {
       const { show, table, row, inTable } = this
       if (!show || table.editIsStop || !inTable(e.target)) return
-      console.log('key up')
       e.stopPropagation()
       e.preventDefault()
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }

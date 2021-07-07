@@ -230,9 +230,9 @@ export default {
     event: 'input'
   },
   props: {
-    columns: { type: Array, default: () => [] },
-    data: { type: Array, default: () => [] },
-    form: { type: Object, default: () => {} },
+    columns: { type: Array, default: () => ([]) },
+    data: { type: Array, default: () => ([]) },
+    form: { type: Object, default: () => ({}) },
     border: Boolean,
     stripe: Boolean,
     drag: Boolean,
@@ -419,7 +419,7 @@ export default {
     this.$off('edit-fields', this.editField)
   },
   methods: {
-    loadTableData(data) {
+    loadTableData(data = this.data) {
       const { editStore, rowId } = this
       this.tableData =
         data.map((d, i) => {
