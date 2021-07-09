@@ -148,8 +148,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
-    <!-- <p>editStore -  {{ editStore }}</p> -->
+    <!-- <p>tableColumns -  {{ tableColumns }}</p>
+    <p>fixedColumns -  {{ fixedColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -374,7 +374,7 @@ export default {
         return acc
       }, { left: [], center: [], right: [] })
       this.fixedColumns = columns
-      this.visibleColumns = Object.values(columns).reduce((acc, cur) => cur.show === false ? acc : acc.concat(cur), [])
+      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => acc.concat(cur.filter(d => d.show !== false)), [])]
     },
     loading(val) {
       this.isLoading = val

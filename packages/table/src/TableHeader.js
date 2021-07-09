@@ -264,8 +264,8 @@ export default {
     },
     getContextmenuItem(columnIndex) {
       const { fixed, table } = this
-      const { tableColumns, fixedColumns } = table
-      let cur = tableColumns[columnIndex]
+      const { tableColumns, visibleColumns, fixedColumns } = table
+      let cur = visibleColumns[columnIndex]
       if (fixed) {
         cur = fixedColumns[fixed][columnIndex]
         columnIndex = tableColumns.findIndex(column => [column].some(d => d === cur))
@@ -274,11 +274,11 @@ export default {
     },
     contextmenuListMethod(index) {
       const { fixed, table, getContextmenuItem } = this
-      const { visibleColumns } = table
+      const { tableColumns, overflowX } = table
       const { column, columnIndex } = getContextmenuItem(index)
       const { type } = column
-      const lefts = visibleColumns.slice(0, columnIndex)
-      const rights = visibleColumns.slice(columnIndex + 1)
+      const lefts = tableColumns.slice(0, columnIndex).filter(d => d.show !== false)
+      const rights = tableColumns.slice(columnIndex + 1).filter(d => d.show !== false)
       const onType = !type
       const prev = onType && !column.fixed && lefts.find(d => !d.fixed)
       const next = onType && !column.fixed && rights.find(d => !d.fixed)
@@ -288,9 +288,9 @@ export default {
         { title: '后移一列', fixed, disabled: false, show: next },
         { title: '移到首列', fixed, disabled: false, show: prev },
         { title: '移到尾列', fixed, disabled: false, show: next },
-        { title: '设为左固定列', fixed, disabled: false, show: column.fixed !== 'left' },
-        { title: '设为右固定列', fixed, disabled: false, show: column.fixed !== 'right' },
-        { title: '取消固定列', fixed, disabled: false, show: column.fixed },
+        { title: '设为左固定列', fixed, disabled: false, show: overflowX && column.fixed !== 'left' },
+        { title: '设为右固定列', fixed, disabled: false, show: overflowX && column.fixed !== 'right' },
+        { title: '取消固定列', fixed, disabled: false, show: overflowX && column.fixed },
         { title: '隐藏列', fixed, disabled: false, show: true }
       ]
     }
