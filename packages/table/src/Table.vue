@@ -149,6 +149,7 @@
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>editStore -  {{ editStore }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -274,6 +275,8 @@ export default {
     return {
       tableData: [],
       tableColumns: [],
+      visibleColumns: [],
+      fixedColumns: [],
       tableForm: {},
       searchForm: [],
       currentRow: null,
@@ -304,21 +307,6 @@ export default {
     }
   },
   computed: {
-    visibleColumns() {
-      const { tableColumns } = this
-      const columns = tableColumns.reduce((acc, column) => {
-        if (column.show !== false) {
-          const types = ['expand', 'selection', 'radio', 'index', 'row-drag']
-          if (column.type && types.some(d => d === column.type) && !column.fixed) {
-            column.fixed = 'left'
-          }
-          const { fixed = 'center' } = column
-          fixed && acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
-        }
-        return acc
-      }, { left: [], center: [], right: [] })
-      return Object.values(columns).reduce((acc, cur) => acc.concat(cur), [])
-    },
     bodyColumns() {
       const plat = arr => {
         return arr.reduce((acc, cur) => {
@@ -379,6 +367,15 @@ export default {
     columns(val) {
       this.tableColumns = val
     },
+    tableColumns(tableColumns) {
+      const columns = tableColumns.reduce((acc, column) => {
+        const { fixed = 'center' } = column
+        acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
+        return acc
+      }, { left: [], center: [], right: [] })
+      this.fixedColumns = columns
+      this.visibleColumns = Object.values(columns).reduce((acc, cur) => cur.show === false ? acc : acc.concat(cur), [])
+    },
     loading(val) {
       this.isLoading = val
     },
@@ -399,9 +396,10 @@ export default {
         width: 40
       })
     }
-    this.tableColumns = this.columns.map(d => {
-      return { ...{ width: d.width || 0 }, ...d }
+    this.columns.forEach(d => {
+      d = { ...{ width: d.width || 0 }, ...d }
     })
+    this.tableColumns = [...this.columns]
     Object.assign(this, {
       tableDataMap: new Map()
     })
@@ -612,11 +610,11 @@ export default {
       this.$emit('update:form', {})
     },
     getFullData() {
-      return [...this.tableData].map(d => {
+      return this.rowId === '_rowId' ? [...this.tableData].map(d => {
         // 如果是默认生成的主键，返回数据时去除该主键
-        this.rowId !== '_rowId' && delete d[this.rowId]
+        delete d[this.rowId]
         return d
-      })
+      }) : this.tableData
     },
     getEditStore() {
       return this.editStore

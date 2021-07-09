@@ -384,6 +384,18 @@ function renderTag(h, renderOpts, params) {
   })
 }
 
+// 级联选择器 cascader
+// function renderCascader(h, renderOpts, params) {
+//   const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
+//   const { data, prop, root } = params || {}
+//   const value = getPropValue(data, prop, root)
+//   if (!value) return ''
+//   return (XEUtils.isArray(value) ? value : [value]).map(d => {
+//     const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
+//     return render(h, renderOpts, params).set('children', label).render()
+//   })
+// }
+
 const renderMap = {
   default: {
     renderDefault: renderDefault
@@ -451,6 +463,10 @@ const renderMap = {
   },
   'checkbox-group': {
     renderDefault: renderCheckboxGroup
+  },
+  'cascader': {
+    renderDefault: renderCell,
+    renderEdit: renderVModel
   }
 }
 export const renderer = {

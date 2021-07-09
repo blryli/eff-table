@@ -188,7 +188,6 @@ export default {
         drag: true,
         edit: true,
         border: true,
-        rowId: 'id',
         toolbarConfig: {
           columnControl: true,
           fullscreen: true,

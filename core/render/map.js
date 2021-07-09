@@ -19,6 +19,7 @@ const map = {
   'pagination': 'el-pagination',
   'radio': 'el-radio',
   'radio-group': 'el-radio-group',
+  'cascader': 'el-cascader',
 
   // 内置组件
   'popup': 'popup',

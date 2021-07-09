@@ -443,10 +443,10 @@ export default {
           buttons: [{ name: 'button', code: 'add', children: '新增' }]
         },
         data: [
-          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '1' },
-          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, vaccination: '2' },
-          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', vaccination: '' },
-          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, vaccination: '3' }
+          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', cascader: [], vaccination: '1' },
+          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, cascader: [], vaccination: '2' },
+          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', cascader: [], vaccination: '' },
+          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, cascader: [], vaccination: '3' }
         ],
         columns: [
           {
@@ -480,7 +480,39 @@ export default {
             prop: 'date',
             title: '疫苗预约日期',
             config: {
-              name: 'date-picker'
+              name: 'date-picker', format: 'yyyy-MM-dd'
+            },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'cascader',
+            title: '地址',
+            config: {
+              name: 'cascader',
+              props: {
+                options: [{
+                  value: 'zhinan',
+                  label: '指南',
+                  children: [{
+                    value: 'shejiyuanze',
+                    label: '设计原则',
+                    children: [{
+                      value: 'yizhi',
+                      label: '一致'
+                    }, {
+                      value: 'fankui',
+                      label: '反馈'
+                    }, {
+                      value: 'xiaolv',
+                      label: '效率'
+                    }, {
+                      value: 'kekong',
+                      label: '可控'
+                    }]
+                  }]
+                }]
+              }
             },
             edit: true
           },

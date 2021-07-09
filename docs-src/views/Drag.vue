@@ -343,11 +343,13 @@ export default {
         {
           show: true,
           type: 'selection',
+          fixed: 'left',
           width: 40
         },
         {
           show: true,
           type: 'index',
+          fixed: 'left',
           width: 40
         },
         {
@@ -360,7 +362,6 @@ export default {
           show: true,
           prop: 'id',
           title: 'ID',
-          fixed: 'left',
           width: 100
         },
         {
