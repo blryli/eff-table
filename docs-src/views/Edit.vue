@@ -484,38 +484,38 @@ export default {
             },
             edit: true
           },
-          {
-            show: true,
-            prop: 'cascader',
-            title: '地址',
-            config: {
-              name: 'cascader',
-              props: {
-                options: [{
-                  value: 'zhinan',
-                  label: '指南',
-                  children: [{
-                    value: 'shejiyuanze',
-                    label: '设计原则',
-                    children: [{
-                      value: 'yizhi',
-                      label: '一致'
-                    }, {
-                      value: 'fankui',
-                      label: '反馈'
-                    }, {
-                      value: 'xiaolv',
-                      label: '效率'
-                    }, {
-                      value: 'kekong',
-                      label: '可控'
-                    }]
-                  }]
-                }]
-              }
-            },
-            edit: true
-          },
+          // {
+          //   show: true,
+          //   prop: 'cascader',
+          //   title: '地址',
+          //   config: {
+          //     name: 'cascader',
+          //     props: {
+          //       options: [{
+          //         value: 'zhinan',
+          //         label: '指南',
+          //         children: [{
+          //           value: 'shejiyuanze',
+          //           label: '设计原则',
+          //           children: [{
+          //             value: 'yizhi',
+          //             label: '一致'
+          //           }, {
+          //             value: 'fankui',
+          //             label: '反馈'
+          //           }, {
+          //             value: 'xiaolv',
+          //             label: '效率'
+          //           }, {
+          //             value: 'kekong',
+          //             label: '可控'
+          //           }]
+          //         }]
+          //       }]
+          //     }
+          //   },
+          //   edit: true
+          // },
           {
             show: true,
             prop: 'vaccination',

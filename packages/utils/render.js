@@ -385,16 +385,26 @@ function renderTag(h, renderOpts, params) {
 }
 
 // 级联选择器 cascader
-// function renderCascader(h, renderOpts, params) {
-//   const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
-//   const { data, prop, root } = params || {}
-//   const value = getPropValue(data, prop, root)
-//   if (!value) return ''
-//   return (XEUtils.isArray(value) ? value : [value]).map(d => {
-//     const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
-//     return render(h, renderOpts, params).set('children', label).render()
-//   })
-// }
+function renderCascader(h, renderOpts, params) {
+  const { props, options } = renderOpts
+  console.log(renderOpts)
+  const { data, prop, root } = params || {}
+  const value = getPropValue(data, prop, root)
+  let opts = options || props.options || []
+  return value.reduce((acc, cur) => {
+    if (opts) {
+      const op = opts.find(d => d.value === cur)
+      opts = op.children
+      return acc.concat([op.label])
+    }
+    return acc
+  }, []).join('/')
+}
+function renderCascaderEdit(h, renderOpts, params) {
+  const { props, options } = renderOpts
+  options && !props.options && (renderOpts.props.options = options)
+  return renderVModel(h, renderOpts, params)
+}
 
 const renderMap = {
   default: {
@@ -465,8 +475,8 @@ const renderMap = {
     renderDefault: renderCheckboxGroup
   },
   'cascader': {
-    renderDefault: renderCell,
-    renderEdit: renderVModel
+    renderDefault: renderCascader,
+    renderEdit: renderCascaderEdit
   }
 }
 export const renderer = {
