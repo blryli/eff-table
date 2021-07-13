@@ -102,9 +102,6 @@ export default {
     background-color: #888;
     z-index: 2;
   }
-  &:hover{
-    // animation: effRefresh 2s infinite;
-  }
 }
 @keyframes effRefresh {
   0%{
