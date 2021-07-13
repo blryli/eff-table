@@ -38,7 +38,8 @@ function getOptionsRender(h, renderOpts, params, optionName) {
 
 // 默认 render
 function renderDefault(h, renderOpts, params) {
-  return render(h, renderOpts, params).render()
+  const on = getOn(renderOpts.on, {}, params)
+  return render(h, renderOpts, params).mergeOpts({ on }).render()
 }
 
 // 默认 render
@@ -412,7 +413,7 @@ function renderCascaderEdit(h, renderOpts, params) {
   options && !props.options && (renderOpts.props.options = options)
   return renderVModel(h, renderOpts, params)
 }
-
+// const vModelMap = []
 const renderMap = {
   default: {
     renderDefault: renderDefault
@@ -476,15 +477,17 @@ const renderMap = {
     renderDefault: renderVModel
   },
   checkbox: {
-    renderDefault: renderVModel,
-    renderEdit: () => ''
+    renderDefault: renderVModel
   },
   'checkbox-group': {
     renderDefault: renderCheckboxGroup
   },
-  'cascader': {
+  cascader: {
     renderDefault: renderCascader,
     renderEdit: renderCascaderEdit
+  },
+  layout: {
+    renderDefault: renderDefault
   }
 }
 export const renderer = {

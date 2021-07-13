@@ -70,7 +70,7 @@ export default {
         const renderOpts = Object.assign({ name: 'input' }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
-        return compConf && compConf.renderEdit($createElement, renderOpts, { root: this, table, form: this, vue: this, data, column, prop }) || ''
+        return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: this, table, form: this, vue: this, data, column, prop }) || ''
       }
     },
     setEditIsStop(val) {

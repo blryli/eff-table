@@ -1,8 +1,13 @@
 import map from './map'
 import XEUtils from 'xe-utils'
+import { getOn } from 'pk/utils/render'
 
-export function getChildren(h, children, params, key) {
-  if (children) {
+export function getChildren(h, opts, params, key) {
+  if (opts) {
+    const children = XEUtils.clone(opts)
+    if (children.on) {
+      children.on = getOn({}, children.on, params)
+    }
     if (children.constructor.name === 'VNode') return children
 
     if (XEUtils.isFunction(children)) return getChildren(h, children(h, params), params)
