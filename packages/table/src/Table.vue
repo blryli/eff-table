@@ -148,8 +148,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableColumns -  {{ tableColumns }}</p>
-    <p>fixedColumns -  {{ fixedColumns }}</p> -->
+    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -507,6 +506,11 @@ export default {
     // 更新数据行map
     updateCache() {
       const { tableData, rowId } = this
+      if (!this.tableDataMap) {
+        Object.assign(this, {
+          tableDataMap: new Map()
+        })
+      }
       this.tableDataMap.clear()
       tableData.forEach(d => {
         this.tableDataMap.set(d[rowId], d)

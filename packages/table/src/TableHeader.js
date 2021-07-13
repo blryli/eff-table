@@ -118,7 +118,6 @@ export default {
       }
     },
     handleMousemove(e) {
-      console.log('handleMousemove')
       const { table, $refs, dragingTarget, isDraging } = this
       if (!table.border) return
       let target = e.target
@@ -126,7 +125,7 @@ export default {
         target = target.parentNode
       }
       if (!target) return
-      const header = $refs.header
+      const header = $refs.header.$el
       const dragMove = $refs.dragMove
       if (target.contains(header) || target === dragMove || dragingTarget === target || isDraging) return
 
@@ -221,7 +220,7 @@ export default {
       const { table, getContextmenuItem } = this
       const tableColumns = [...table.tableColumns]
       const { column: oldItem, columnIndex: oldIndex } = getContextmenuItem(index)
-      console.log({ oldItem, oldIndex })
+      // console.log({ oldItem, oldIndex })
       let newIndex = 0
       switch (item.title) {
         case '前移一列':
@@ -282,7 +281,7 @@ export default {
       const onType = !type
       const prev = onType && !column.fixed && lefts.find(d => !d.fixed)
       const next = onType && !column.fixed && rights.find(d => !d.fixed)
-      console.log('column', JSON.stringify(column, null, 2))
+      // console.log('column', JSON.stringify(column, null, 2))
       this.contextmenuList = [
         { title: '前移一列', fixed, disabled: false, show: prev },
         { title: '后移一列', fixed, disabled: false, show: next },
@@ -306,39 +305,38 @@ export default {
     off(this.$el, 'scroll', this.handleScroll)
   },
   render(h) {
-    const { table, visibleColumns, bodyColumns, fixed, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, contextmenuList, contextmenuListMethod, contextmenuClick } = this
+    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, contextmenuList, contextmenuListMethod, contextmenuClick } = this
     const { showSpace, search, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
 
     return (
       <div class='eff-table__header-wrapper'>
-        <Contextmenu
-          list={contextmenuList}
-          listMethod={contextmenuListMethod}
-          class={{ 'eff-table__header': true, 'is--move': isDraging }}
-          ref= 'header'
-          fixed={fixed}
-          style={{ height }}
-          on-click_native={handleClick}
-          on-mousemove_native={handleMousemove}
-          on-mouseleave_native={handleMouseleave}
-          on-item-click={contextmenuClick}
-        >
-          {
-            renderColumns(visibleColumns)
-          }
-          {
-            showSpace ? <div class='eff-table__column is--space' style={height} /> : ''
-          }
-          {
+        {
+          h('Contextmenu', {
+            props: { list: contextmenuList, listMethod: contextmenuListMethod },
+            class: { 'eff-table__header': true, 'is--move': isDraging },
+            ref: 'header',
+            style: { height },
+            nativeOn: {
+              click: handleClick,
+              mousemove: handleMousemove,
+              mouseleave: handleMouseleave
+            },
+            on: {
+              click: handleClick,
+              'item-click': contextmenuClick
+            }
+          }, [
+            renderColumns(visibleColumns),
+            showSpace ? <div class='eff-table__column is--space' style={height} /> : '',
             <div
               ref='dragMove'
               class='header-drag-move'
               style={dragStyle}
               on-mousedown={moveMousedown}
             />
-          }
-        </Contextmenu>
+          ])
+        }
         {
           search && !isColumnsChange && table.searchShow ? <Search
             value={searchData}

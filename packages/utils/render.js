@@ -24,8 +24,16 @@ function getPropValue(data, prop, root) {
   return prop in data ? data[prop] : root.editProps[rowId ? prop + data[rowId] : prop] || ''
 }
 
-function getOptions(options, params) {
-  return typeof options === 'function' ? options(params) : options
+function getOptions(renderOpts, params) {
+  const { options, props = {}} = renderOpts
+  return typeof options === 'function' ? options(params) : options || props.options
+}
+
+// 带标签的 children
+function getOptionsRender(h, renderOpts, params, optionName) {
+  const { props = {}} = renderOpts
+  const { labelKey = 'label', valueKey = 'value' } = props
+  return getOptions(renderOpts, params).map(item => h(map.get(optionName), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
 }
 
 // 默认 render
@@ -109,15 +117,15 @@ function renderTextareaEdit(h, renderOpts, params) {
 
 // 选择器 select
 function renderselectCell(h, renderOpts, params) {
-  const { props, options = [] } = renderOpts || {}
+  const { props } = renderOpts || {}
   const { data, prop, root } = params || {}
   const cellLabel = getPropValue(data, prop, root)
   const { labelKey = 'label', valueKey = 'value' } = props || {}
-  const opt = getOptions(options, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
+  const opt = getOptions(renderOpts, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
   return opt[labelKey] || cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
-  const { options = [], props: oProps = {}} = renderOpts
+  const { props: oProps = {}} = renderOpts
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getPropValue(data, prop, root),
@@ -155,8 +163,7 @@ function renderSelect(h, renderOpts, params, renderType) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const ons = getOn(renderOpts.on, on, onParams)
 
-  const { labelKey = 'label', valueKey = 'value' } = renderOpts.props || {}
-  const optionsRender = getOptions(options, params).map(item => h(map.get('option'), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+  const optionsRender = getOptionsRender(h, renderOpts, params, 'option')
 
   return render(h, renderOpts, params).mergeOpts({ props, on: ons }).set('children', optionsRender).render()
 }
@@ -374,12 +381,12 @@ function renderCheckboxGroup(h, renderOpts, params) {
 
 // 标签 tag
 function renderTag(h, renderOpts, params) {
-  const { options, labelKey = 'label', valueKey = 'value' } = renderOpts
+  const { labelKey = 'label', valueKey = 'value' } = renderOpts
   const { data, prop, root } = params || {}
   const value = getPropValue(data, prop, root)
   if (!value) return ''
   return (XEUtils.isArray(value) ? value : [value]).map(d => {
-    const label = (getOptions(options, params).find(o => o[valueKey] === d) || {})[labelKey]
+    const label = (getOptions(renderOpts, params).find(o => o[valueKey] === d) || {})[labelKey]
     return render(h, renderOpts, params).set('children', label).render()
   })
 }
@@ -469,7 +476,8 @@ const renderMap = {
     renderDefault: renderVModel
   },
   checkbox: {
-    renderDefault: renderVModel
+    renderDefault: renderVModel,
+    renderEdit: () => ''
   },
   'checkbox-group': {
     renderDefault: renderCheckboxGroup
