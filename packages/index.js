@@ -1,4 +1,5 @@
 import Table from './table'
+import VTable from './vTable/src/table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import Panel from './panel/src/Panel'
@@ -9,6 +10,7 @@ import Form from './form'
 import FormItem from './form-item'
 import FormField from './form-field'
 import Icon from './icon'
+import steps from './steps'
 
 const directives = []
 const components = [
@@ -20,7 +22,9 @@ const components = [
   FormItem,
   Panel,
   Icon,
-  Styles
+  VTable,
+  Styles,
+  steps
 ]
 
 export {
@@ -33,7 +37,9 @@ export {
   FormItem,
   FormField,
   Icon,
-  Panel
+  Panel,
+  VTable,
+  steps
 }
 
 const install = function(Vue, opts = {}) {

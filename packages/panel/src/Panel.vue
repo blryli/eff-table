@@ -1,31 +1,24 @@
 <template>
-  <div class="panel">
-    <div
-      class="panel-header flex-row"
-      :class="{ collapsible: collapsible }"
-      @click="collapse('vertical')"
+  <layout class="panel" :class="{ collapsed: isCollapsed }">
+    <el-card
+      class="box-card"
+      :body-style="{ padding: hasPadding ? '20px' : '20px 0' }"
     >
-      <span
-        v-show="!isCollapsed || deraction === 'vertical'"
-        class="panel-title"
-      >{{ title }}</span>
-      <span
-        v-show="!isCollapsed || deraction === 'vertical'"
-        class="flex-space"
-      />
-      <!-- <v-render v-if="headerTools.name" :config="headerTools" @click.native.stop /> -->
-      <slot name="header" />
-      <i
-        v-if="collapsible"
-        class="el-icon-arrow-right"
-        :class="{ icon2front: icon2front }"
-        @click="collapse('horizontal')"
-      />
-    </div>
-    <div v-show="!isCollapsed" class="panel-content">
-      <slot />
-    </div>
-  </div>
+      <div slot="header" class="flex-row">
+        <span class="header-text" @click="collapse">
+          <i
+            v-if="collapsible"
+            class="colllapse-icon el-icon-caret-bottom"
+          />{{ title }}</span>
+        <div class="flex-grow" style="padding-left:10px">
+          <slot name="header" />
+        </div>
+      </div>
+      <div v-show="!isCollapsed" class="panel-content flex-warp flex-row">
+        <slot />
+      </div>
+    </el-card>
+  </layout>
 </template>
 <script>
 export default {
@@ -41,20 +34,10 @@ export default {
     // 是否是折叠状态
     collapsed: { type: Boolean, default: false },
 
-    // 折叠方向  前置条件[collapsible:true]  -- vertical:垂直  horizontal:水平
-    deraction: { type: String, default: 'vertical' },
-
-    // 是否前置操作图标
-    icon2front: { type: Boolean, default: false },
-
-    // 头部工具栏
-    headerTools: {
-      type: Object,
-      default() {
-        return {
-
-        }
-      }
+    // 是否显示padding
+    hasPadding: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -71,16 +54,32 @@ export default {
   methods: {
     collapse(val) {
       if (this.collapsible) {
-        if (this.deraction === val) {
-          this.isCollapsed = !this.isCollapsed
-          if (val === 'horizontal') {
-            this.iWidth = this.isCollapsed ? '45px' : ''
-          }
-          this.$emit('update:collapsed', this.isCollapsed)
-          this.$emit('change', this.isCollapsed)
-        }
+        this.isCollapsed = !this.isCollapsed
+        this.$emit('update:collapsed', this.isCollapsed)
+        this.$emit('change', this.isCollapsed)
       }
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.panel {
+  &.collapsed {
+    .colllapse-icon {
+      transform: rotate(-90deg);
+      transform-origin: 8px 8px;
+    }
+    ::v-deep .el-card__body{
+      display:none
+    }
+  }
+  .header-text{
+    font-weight: bold;
+    color:#666
+  }
+  .colllapse-icon {
+    margin-right: 5px;
+    color: #bbb;
+  }
+}
+</style>
