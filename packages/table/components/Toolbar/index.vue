@@ -20,6 +20,15 @@ export default {
       load: true
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      // const { toolbar, toolbarLeft, toolbarRight } = this.$refs
+      // const { width } = toolbar.getBoundingClientRect()
+      // const { width: rightWidth } = toolbarRight.getBoundingClientRect()
+      // console.log({ toolbar, toolbarRight, width, rightWidth }, toolbarRight.getBoundingClientRect())
+      // toolbarLeft.style.maxWidth = width - rightWidth + 'px'
+    })
+  },
   methods: {
     btnChange() {
       this.table.$refs.drag.toggleCardShow()
@@ -50,12 +59,12 @@ export default {
     }, [])
 
     return (
-      <div class='eff-table__toobar'>
-        <div class='eff-table__toobar-left'>
+      <div class='eff-table__toobar' ref='toolbar'>
+        <div class='eff-table__toobar-left' ref='toolbarLeft'>
           { buttonsRender }
           { this.$slots.default }
         </div>
-        <div class='eff-table__toobar-right'>
+        <div class='eff-table__toobar-right' ref='toolbarRight'>
           {
             editHistory && <EditHistory /> || ''
           }
@@ -107,6 +116,9 @@ export default {
     > * + * {
       margin-left: 10px;
     }
+  }
+  &-left{
+    overflow: hidden;
   }
 }
 </style>
