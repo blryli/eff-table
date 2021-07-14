@@ -132,7 +132,7 @@ export default {
       }
 
       const offsetIndex = Math.abs(leftScrollIndex - this.columnRenderIndex)
-      if (offsetIndex > 2) {
+      if (offsetIndex > 1) {
         this.columnRenderIndex = leftScrollIndex - 1
         this.bodyMarginLeft = getWidth(0, leftScrollIndex - 1) + 'px'
       }
@@ -150,7 +150,7 @@ export default {
       const { columnRenderIndex, spaceWidth } = this
       const bodyColumns = [...this.bodyColumns]
 
-      const columns = bodyColumns.slice(columnRenderIndex)
+      const columns = bodyColumns.slice(columnRenderIndex < 0 ? 0 : columnRenderIndex)
       const len = this.bodyColumns.length
       let index = 0
       let allWidth = 0
@@ -160,7 +160,7 @@ export default {
         !width && (width = spaceWidth)
         const columnWidth = Math.max(width, 40)
         allWidth += columnWidth
-        if (allWidth > this.columnVisibleWidth + 400) {
+        if (allWidth > this.columnVisibleWidth + 200) {
           index = columnRenderIndex + i + 2
           break
         } else if (columnRenderIndex + i >= len - 1) {
@@ -182,8 +182,8 @@ export default {
     },
     // 清除滚动位置
     clearScroll() {
-      this.table.scrollLeft = 0
-      this.table.scrollTop = 0
+      this.scrollLeft = 0
+      this.scrollTop = 0
       return this.$nextTick()
     }
   }

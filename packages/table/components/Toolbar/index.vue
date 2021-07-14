@@ -10,10 +10,11 @@ import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
 import XEUtils from 'xe-utils'
+import PopoverRef from 'pk/popover/src/popover-ref'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, PopoverRef },
   inject: ['table'],
   data() {
     return {
@@ -22,11 +23,11 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      // const { toolbar, toolbarLeft, toolbarRight } = this.$refs
-      // const { width } = toolbar.getBoundingClientRect()
-      // const { width: rightWidth } = toolbarRight.getBoundingClientRect()
-      // console.log({ toolbar, toolbarRight, width, rightWidth }, toolbarRight.getBoundingClientRect())
-      // toolbarLeft.style.maxWidth = width - rightWidth + 'px'
+      // const { toolbarLeft, toolbarRight } = this.$refs
+      // console.log({ toolbarLeft, toolbarRight })
+      // const leftRect = toolbarLeft.getBoundingClientRect()
+      // const rightRect = toolbarRight.getBoundingClientRect()
+      // console.log({ leftRect, rightRect })
     })
   },
   methods: {
@@ -58,6 +59,15 @@ export default {
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
     }, [])
 
+    // <div class='toobar-left--more'>
+    //   <PopoverRef
+    //     effect='dark'
+    //     message='2222'
+    //   >
+    //     <div class='toobar-left--more-icon'>...</div>
+    //   </PopoverRef>
+    // </div>
+    // <div class='eff-table__toobar-gutter' ref='gutter' />
     return (
       <div class='eff-table__toobar' ref='toolbar'>
         <div class='eff-table__toobar-left' ref='toolbarLeft'>
@@ -111,6 +121,7 @@ export default {
   background-color: #f6f7f8;
   box-sizing: border-box;
   &-left, &-right{
+    height: var(--rowHeight);
     display: flex;
     align-items: center;
     > * + * {
@@ -118,7 +129,23 @@ export default {
     }
   }
   &-left{
+    position: relative;
     overflow: hidden;
+    margin-right: 20px;
+  }
+  &-gutter{
+    position: absolute;
+    right: 0;
+    width: 1px;
+    height: var(--rowHeight);
+    background-color: red;
+  }
+  .toobar-left--more{
+    &-icon{
+      padding: 10px;
+      background-color: #f6f7f8;
+      border: 1px solid #ddd;
+    }
   }
 }
 </style>

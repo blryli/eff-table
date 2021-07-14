@@ -395,9 +395,8 @@ function renderTag(h, renderOpts, params) {
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
   const { props, options } = renderOpts
-  console.log(renderOpts)
   const { data, prop, root } = params || {}
-  const value = getPropValue(data, prop, root)
+  const value = getPropValue(data, prop, root) || []
   let opts = options || props.options || []
   return value.reduce((acc, cur) => {
     if (opts) {

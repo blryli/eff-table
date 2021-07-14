@@ -41,14 +41,13 @@ export default {
         if (!data) data = []
         if (Array.isArray(data)) {
           // 无分页
-          this.loadTableData(data)
+          this.reloadData(data)
         } else {
           // 有分页
           const { pageNum, pageSize, total } = data
-          this.loadTableData(data.list || [])
+          this.reloadData(data.list || [])
           Object.assign(this.pager, { pageNum, pageSize, total })
         }
-        this.clearSelection()
         this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
@@ -307,7 +306,6 @@ export default {
       }
       this.editStore.insertList.push(...records)
       this.updateCache()
-      this.clearSelection()
       this.resize()
       this.scrollLeftEvent()
       return this.$nextTick().then(() => rowIndex)

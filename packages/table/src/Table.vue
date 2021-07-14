@@ -430,7 +430,7 @@ export default {
         this.clearValidate()
       }
       this.updateCache()
-      this.clearSelection()
+      this.clearScroll()
       this.resize()
       this.scrollLeftEvent()
       return this.$nextTick()
@@ -438,6 +438,7 @@ export default {
     reloadData(data = null) {
       this.clearStatus()
       this.clearValidate()
+      this.clearSelection()
       if (!data) {
         data = this.data
       }
@@ -447,9 +448,10 @@ export default {
       this.editStore = Object.assign(
         {},
         {
+          editRow: {},
           insertList: [],
-          updateList: [],
           removeList: [],
+          updateList: [],
           pendingList: []
         }
       )
