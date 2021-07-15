@@ -9,26 +9,17 @@ import Search from './Search'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
+import ToolbarShrink from 'pk/toolbar-shrink'
 import XEUtils from 'xe-utils'
-import PopoverRef from 'pk/popover/src/popover-ref'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, PopoverRef },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, ToolbarShrink },
   inject: ['table'],
   data() {
     return {
       load: true
     }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      // const { toolbarLeft, toolbarRight } = this.$refs
-      // console.log({ toolbarLeft, toolbarRight })
-      // const leftRect = toolbarLeft.getBoundingClientRect()
-      // const rightRect = toolbarRight.getBoundingClientRect()
-      // console.log({ leftRect, rightRect })
-    })
   },
   methods: {
     btnChange() {
@@ -47,34 +38,21 @@ export default {
   },
   render(h) {
     const { table, load } = this
-    if (!load) return ''
     const { toolbarConfig, search } = table
     const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort } = toolbarConfig || {}
-    const buttonsRender = buttons.reduce((acc, cur, idx) => {
+    const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur
       const event = code ? getOn(on, { click: e => this.btnClick(code, e, idx) }) : on
       const merge = XEUtils.merge({}, cur, { props: { size: 'mini' }})
       const opts = Object.assign(merge, { on: event })
       const compConf = renderer.get(opts.name)
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
-    }, [])
-
-    // <div class='toobar-left--more'>
-    //   <PopoverRef
-    //     effect='dark'
-    //     message='2222'
-    //   >
-    //     <div class='toobar-left--more-icon'>...</div>
-    //   </PopoverRef>
-    // </div>
-    // <div class='eff-table__toobar-gutter' ref='gutter' />
+    }, []) : ''
+    const list = buttonsRender.concat(this.$slots.default || []) || []
     return (
-      <div class='eff-table__toobar' ref='toolbar'>
-        <div class='eff-table__toobar-left' ref='toolbarLeft'>
-          { buttonsRender }
-          { this.$slots.default }
-        </div>
-        <div class='eff-table__toobar-right' ref='toolbarRight'>
+      <div class='eff-table__toobar'>
+        <ToolbarShrink list={list} class='eff-table__toobar-left' />
+        <div class='eff-table__toobar-right'>
           {
             editHistory && <EditHistory /> || ''
           }
@@ -129,6 +107,7 @@ export default {
     }
   }
   &-left{
+    flex: 1;
     position: relative;
     overflow: hidden;
     margin-right: 20px;
@@ -142,10 +121,23 @@ export default {
   }
   .toobar-left--more{
     &-icon{
-      padding: 10px;
-      background-color: #f6f7f8;
+      padding: 2px 10px 6px;
+      background-color: white;
       border: 1px solid #ddd;
+      border-radius: 4px;
+      user-select: none;
+      &:hover{
+        cursor: pointer;
+        background-color: #f5f5f5;
+        border-color: #ccc;
+      }
     }
   }
+}
+.is--show{
+  display: block;
+}
+.is--hide{
+  display: none;
 }
 </style>

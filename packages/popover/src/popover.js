@@ -208,7 +208,7 @@ export default {
     }
   },
   render(h) {
-    const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message } = this
+    const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message, vslot } = this
     return <transition name='effFade'>
       <div
         ref='popover'
@@ -218,7 +218,7 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          this.vslot || $slots.default || (Array.isArray(message) ? message : [{ message }]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          vslot || $slots.default || (Array.isArray(message) ? message : [{ message }]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
         }
         <div ref='arrow' class='eff-table__popover-arrow' />
       </div>

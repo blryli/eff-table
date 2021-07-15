@@ -148,7 +148,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -616,11 +616,12 @@ export default {
       this.$emit('update:form', {})
     },
     getFullData() {
-      return this.rowId === '_rowId' ? [...this.tableData].map(d => {
+      const data = XEUtils.clone(this.tableData, true)
+      return this.rowId === '_rowId' ? data.map(d => {
         // 如果是默认生成的主键，返回数据时去除该主键
         delete d[this.rowId]
         return d
-      }) : this.tableData
+      }) : data
     },
     getEditStore() {
       return this.editStore
