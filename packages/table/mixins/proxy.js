@@ -1,10 +1,6 @@
 let row_id = 100
 export default {
   created() {
-    if (this.footerActionConfig && this.footerActionConfig.pageConfig && this.footerActionConfig.pageConfig.pageSize) {
-      this.pager.pageSize = this.footerActionConfig.pageConfig.pageSize
-    }
-
     const { request } = this.proxyConfig || {}
     request && this.commitProxy('query')
   },

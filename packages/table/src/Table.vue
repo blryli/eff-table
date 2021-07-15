@@ -297,7 +297,7 @@ export default {
       },
       pager: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
       replaceControl: false,
       sortControl: false,
