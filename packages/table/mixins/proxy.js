@@ -281,7 +281,7 @@ export default {
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach(d => {
         if (!d[rowId]) {
-          Object.assign(d, { [rowId]: `row_${row_id++}` })
+          this.$set(d, rowId, `row_${row_id++}`)
         }
       })
 

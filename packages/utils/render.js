@@ -26,7 +26,8 @@ function getPropValue(data, prop, root) {
 
 function getOptions(renderOpts, params) {
   const { options, props = {}} = renderOpts
-  return typeof options === 'function' ? options(params) : options || props.options
+  const opts = options || props.options || []
+  return (typeof opts === 'function' ? opts(params) : opts) || []
 }
 
 // 带标签的 children
@@ -394,17 +395,13 @@ function renderTag(h, renderOpts, params) {
 
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
-  const { props, options } = renderOpts
   const { data, prop, root } = params || {}
   const value = getPropValue(data, prop, root) || []
-  let opts = options || props.options || []
+  let opts = getOptions(renderOpts, params)
   return value.reduce((acc, cur) => {
-    if (opts) {
-      const op = opts.find(d => d.value === cur)
-      opts = op.children
-      return acc.concat([op.label])
-    }
-    return acc
+    const op = opts.find(d => d.value === cur)
+    opts = op.children
+    return acc.concat([op.label])
   }, []).join('/')
 }
 function renderCascaderEdit(h, renderOpts, params) {
