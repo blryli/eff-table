@@ -409,11 +409,9 @@ function renderCascaderEdit(h, renderOpts, params) {
   options && !props.options && (renderOpts.props.options = options)
   return renderVModel(h, renderOpts, params)
 }
-// const vModelMap = []
-const renderMap = {
-  default: {
-    renderDefault: renderDefault
-  },
+const vModelMap = ['radio', 'radio-group', 'checkbox']
+const defMap = ['default', 'button', 'tooltip', 'layout', 'dropdown']
+const renderMap = Object.assign({
   input: {
     renderDefault: renderCell,
     renderEdit: renderVModel,
@@ -443,9 +441,6 @@ const renderMap = {
     renderDefault: renderTag,
     renderEdit: renderSelectEdit
   },
-  button: {
-    renderDefault: renderDefault
-  },
   image: {
     renderDefault: renderImage,
     renderEdit: renderDialog
@@ -466,26 +461,20 @@ const renderMap = {
     renderEdit: renderSwitchEdit,
     renderSearch: renderSwitchSearch
   },
-  radio: {
-    renderDefault: renderVModel
-  },
-  'radio-group': {
-    renderDefault: renderVModel
-  },
-  checkbox: {
-    renderDefault: renderVModel
-  },
   'checkbox-group': {
     renderDefault: renderCheckboxGroup
   },
   cascader: {
     renderDefault: renderCascader,
     renderEdit: renderCascaderEdit
-  },
-  layout: {
-    renderDefault: renderDefault
   }
-}
+}, defMap.reduce((acc, cur) => {
+  acc[cur] = { renderDefault }
+  return acc
+}, {}), vModelMap.reduce((acc, cur) => {
+  acc[cur] = { renderDefault: renderVModel }
+  return acc
+}, {}))
 export const renderer = {
   get(name) {
     return renderMap[name] || null

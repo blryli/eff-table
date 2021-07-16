@@ -1,3 +1,4 @@
+import XEUtils from 'xe-utils'
 let row_id = 100
 export default {
   created() {
@@ -260,10 +261,10 @@ export default {
      * @param {RowIndex} rowIndex 指定行
      * @param {InsertCheckRow} insertCheckRow 插入到指定行
      */
-    insert(records, rowIndex, insertCheckRow = true) {
+    insert(records = { id: 2222 }, rowIndex, insertCheckRow = true) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
-      if (!records) {
-        records = columns.reduce((acc, column) => {
+      if (!records || XEUtils.isObject(records)) {
+        const defRecords = columns.reduce((acc, column) => {
           const { type, prop } = column
           if (['expand', 'selection', 'radio'].indexOf(type) > -1 || !prop) return acc
 
@@ -272,6 +273,11 @@ export default {
           acc[prop] = defaultValue !== undefined ? defaultValue : null
           return acc
         }, {})
+        if (XEUtils.isObject(records)) {
+          records = Object.assign({}, defRecords, records)
+        } else {
+          records = defRecords
+        }
       }
       let isObj = false
       if (!Array.isArray(records)) {

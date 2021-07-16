@@ -30,23 +30,23 @@ export function validateField(rules, params) {
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
       const { validator, min, max, pattern, message } = rule
-      const { id, prop, value } = params
+      const { id, prop, value, row, rowIndex, column, columnIndex } = params
       const isNoValue = value === null || value === undefined || value === ''
       if (typeof validator === 'function') {
         if (isNoValue) {
           params.value = ''
           if (!hasRequire) {
-            resolve({ id, prop, message: false })
+            resolve({ id, prop, message: false, row, rowIndex, column, columnIndex })
           }
         }
 
         const valid = validator(params)
         if (getType(valid) === 'Promise') {
           valid.then(message => {
-            resolve({ id, prop, message })
+            resolve({ id, prop, message, row, rowIndex, column, columnIndex })
           }).catch(e => reject(e))
         } else {
-          resolve({ id, prop, message: valid })
+          resolve({ id, prop, message: valid, row, rowIndex, column, columnIndex })
         }
       } else {
         const len = ('' + value).length
@@ -68,7 +68,7 @@ export function validateField(rules, params) {
             e = false
           }
         }
-        resolve({ id, prop, message: e })
+        resolve({ id, prop, message: e, row, rowIndex, column, columnIndex })
       }
     })
   })

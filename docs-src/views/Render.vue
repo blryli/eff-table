@@ -224,6 +224,7 @@ export default {
             save: ({ body }) => axios.post('url', body)
           }
         },
+        footerActionConfig: { showPager: true, showBorder: true },
         columns: [
           {
             show: true,

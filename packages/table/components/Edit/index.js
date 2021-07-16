@@ -243,17 +243,14 @@ export default {
       }
     },
     disabled(column) {
-      const { edit: { disabled } = {}, prop = '' } = column || {}
+      const { edit: { disabled } = {}} = column || {}
       const { row, rowIndex } = this
       if (disabled === undefined) return false
 
       if (typeof disabled === 'function') {
-        return disabled({ row, rowIndex })
+        return Boolean(disabled({ row, rowIndex }))
       }
-      if (typeof disabled !== 'boolean') {
-        console.error(`${prop} 字段，disabled类型必须是 function/boolean`)
-      }
-      return disabled || false
+      return Boolean(disabled) || false
     },
 
     handleEditCell({ column, cell, rowIndex }) {

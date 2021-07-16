@@ -12,6 +12,7 @@ const map = {
   'image': 'el-image',
   'popover': 'el-popover',
   'tooltip': 'el-tooltip',
+  'dropdown': 'el-dropdown',
   'dialog': 'el-dialog',
   'switch': 'el-switch',
   'checkbox': 'el-checkbox',

@@ -1,46 +1,39 @@
 <script>
 import Paginator from './Paginator.js'
+import ToolbarShrink from 'pk/toolbar-shrink'
 
 export default {
   name: 'Toolbar',
-  components: { Paginator },
+  components: { Paginator, ToolbarShrink },
   inject: ['table'],
   methods: {
   },
   render(h) {
-    const { table } = this
-    const { showPager, showBorder, pageInLeft } = table.footerActionConfig
+    const { table, $slots } = this
+    const { showPager, showBorder, changeOver } = table.footerActionConfig
     const { pageNum, pageSize, total } = table.pager
+    const paginator = showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
 
-    let slot
-    if (pageInLeft) {
-      slot = (
-        <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
-          <div class='eff-table__toobar-right'>
-            {
-              showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
-            }
-          </div>
+    return <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
+      {
+        changeOver ? [
           <div class='eff-table__toobar-left'>
-            { this.$slots.default }
-          </div>
-        </div>
-      )
-    } else {
-      slot =
-      <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
-        <div class='eff-table__toobar-left'>
-          { this.$slots.default }
-        </div>
-        <div class='eff-table__toobar-right'>
-          {
-            showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
-          }
-        </div>
-      </div>
-    }
+            {paginator}
+          </div>,
+          <ToolbarShrink list={$slots.default} class='eff-table__toobar-right'>
+            { $slots.default}
+          </ToolbarShrink>
 
-    return slot
+        ] : [
+          <ToolbarShrink list={$slots.default} class='eff-table__toobar-left'>
+            {$slots.default}
+          </ToolbarShrink>,
+          <div class='eff-table__toobar-right'>
+            { paginator}
+          </div>
+        ]
+      }
+    </div>
   }
 }
 </script>

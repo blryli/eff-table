@@ -45,7 +45,7 @@ export default {
       const event = code ? getOn(on, { click: e => this.btnClick(code, e, idx) }) : on
       const merge = XEUtils.merge({}, cur, { props: { size: 'mini' }})
       const opts = Object.assign(merge, { on: event })
-      const compConf = renderer.get(opts.name)
+      const compConf = renderer.get('default')
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
     }, []) : ''
     const list = buttonsRender.concat(this.$slots.default || []) || []
