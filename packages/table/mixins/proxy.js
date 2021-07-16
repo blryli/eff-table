@@ -261,7 +261,7 @@ export default {
      * @param {RowIndex} rowIndex 指定行
      * @param {InsertCheckRow} insertCheckRow 插入到指定行
      */
-    insert(records = { id: 2222 }, rowIndex, insertCheckRow = true) {
+    insert(records, rowIndex, insertCheckRow = true) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
       if (!records || XEUtils.isObject(records)) {
         const defRecords = columns.reduce((acc, column) => {

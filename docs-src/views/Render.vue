@@ -13,7 +13,6 @@
         <eff-table
           ref="table"
           v-bind="tableOptions"
-          :max-height="400"
         />
       </div>
 
@@ -184,6 +183,7 @@ export default {
       disabled: false,
       options: [{ value: '1', label: '名称1' }, { value: '2', label: '名称2' }],
       tableOptions: {
+        maxHeight: 400,
         search: true,
         drag: true,
         edit: true,

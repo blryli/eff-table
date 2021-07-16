@@ -304,6 +304,7 @@ value: [
 |page-current-change|分页当前页发生改变|{pageNum}|
 |page-size-change|分页每页大小发生改变|{pageSize}|
 |table-update-data|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|field-change|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
 
 ### Slot
 
@@ -359,6 +360,8 @@ value: [
 - 解决表格滚动后，离开页面，再重新激活页面会出现空白区域的问题
 
 - 解决表格全选时会把之前的数据也选上的问题
+
+- table增加 field-change 回调事件
 
 
 

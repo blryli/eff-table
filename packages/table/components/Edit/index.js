@@ -134,6 +134,11 @@ export default {
         }, 20)
       })
     },
+    fieldChange(value) {
+      const { table, row, rowIndex, column, columnIndex } = this
+      table.$emit('field-change', { row, rowIndex, column, columnIndex, value })
+      this.validateShowpopover()
+    },
     updateStatus() {
       const { table, column, row } = this
       column && column.prop && row && table.updateStatus(row, column.prop)
@@ -320,11 +325,11 @@ export default {
     },
     handleFocus() {
       setTimeout(() => {
-        const { table, row, rowIndex, column, columnIndex, cell, editRender, editRender: { componentInstance } = {}, validateShowpopover } = this
+        const { table, row, rowIndex, column, columnIndex, cell, editRender, editRender: { componentInstance } = {}, validateShowpopover, fieldChange } = this
         // 原生input
         if (editRender && editRender.tag === 'input') {
           const { elm } = editRender
-          on(elm, 'input', validateShowpopover)
+          on(elm, 'input', fieldChange)
           elm.focus && elm.focus()
           elm.select && elm.select()
           return
@@ -345,7 +350,7 @@ export default {
 
         if (this.component) {
           // 实时校验
-          this.component.$on('input', validateShowpopover)
+          this.component.$on('input', fieldChange)
         }
         validateShowpopover()
 
@@ -389,7 +394,7 @@ export default {
       this.baseText = null
     },
     blurEvent() {
-      const { component, table, rowIndex, columnIndex, column, editRender, validateShowpopover } = this
+      const { component, table, rowIndex, columnIndex, column, editRender, fieldChange } = this
       const { tableData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
@@ -407,11 +412,11 @@ export default {
           table.$refs.popovers.validingTipClose()
           // 原生input
           if (editRender && editRender.tag === 'input') {
-            off(editRender.elm, 'input', validateShowpopover)
+            off(editRender.elm, 'input', fieldChange)
           }
           if (this.component) {
             // 实时校验
-            this.component.$off('input', validateShowpopover)
+            this.component.$off('input', fieldChange)
           }
           return this.$nextTick()
         })
