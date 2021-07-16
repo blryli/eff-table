@@ -11,6 +11,7 @@ import FormItem from './form-item'
 import FormField from './form-field'
 import Icon from './icon'
 import steps from './steps'
+import help from './help'
 
 const directives = []
 const components = [
@@ -24,7 +25,8 @@ const components = [
   Icon,
   VTable,
   Styles,
-  steps
+  steps,
+  help
 ]
 
 export {
@@ -39,7 +41,8 @@ export {
   Icon,
   Panel,
   VTable,
-  steps
+  steps,
+  help
 }
 
 const install = function(Vue, opts = {}) {

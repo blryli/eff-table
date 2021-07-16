@@ -61,14 +61,19 @@ class Render {
 
   render() {
     const { h, opts, params, children } = this
-    const { name, tag, defaultSlot, disabled } = opts
-    const { vue = {}} = params
+    const { name, tag, defaultSlot, disabled, help } = opts
+    const { vue = {}, renderHelp } = params
     const { renderMap = {}} = vue.$EFF || {}
     // 处理禁用
     if (disabled && XEUtils.isFunction(disabled)) {
       opts.props.disabled = disabled(params)
     }
-    return h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
+    const render = h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
+    // 处理 help
+    if (help && renderHelp) {
+      return renderHelp(help, render)
+    }
+    return render
   }
 }
 

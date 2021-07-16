@@ -11,6 +11,7 @@ import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
 import ToolbarShrink from 'pk/toolbar-shrink'
 import XEUtils from 'xe-utils'
+import Help from 'pk/help'
 
 export default {
   name: 'Toolbar',
@@ -40,13 +41,17 @@ export default {
     const { table, load } = this
     const { toolbarConfig, search } = table
     const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort } = toolbarConfig || {}
+    const renderHelp = (help, node) => {
+      const { effect = 'dark', message, placement } = help
+      return <Help effect={effect} message={message} placement={placement} >{node}</Help>
+    }
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur
       const event = code ? getOn(on, { click: e => this.btnClick(code, e, idx) }) : on
       const merge = XEUtils.merge({}, cur, { props: { size: 'mini' }})
       const opts = Object.assign(merge, { on: event })
       const compConf = renderer.get('default')
-      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
+      return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, renderHelp, vue: this, columnIndex: idx })) : acc
     }, []) : ''
     const list = buttonsRender.concat(this.$slots.default || []) || []
     return (
