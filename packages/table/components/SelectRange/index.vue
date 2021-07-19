@@ -261,7 +261,7 @@ export default {
         }
 
         columnList.forEach((vv, kk) => {
-          updateArr.push({ rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
+          updateArr.push({ row: this.table.tableData[k + startRow], rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
         })
       })
 
@@ -272,7 +272,7 @@ export default {
       const { startRow, startColumn, endRow, endColumn } = this._getReac(startKey, endKey)
       for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
         for (let columnIndex = startColumn; columnIndex <= endColumn; columnIndex++) {
-          updateArr.push({ rowIndex, columnIndex, content })
+          updateArr.push({ row: this.tableData[rowIndex], rowIndex, columnIndex, content })
         }
       }
 

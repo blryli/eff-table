@@ -60,7 +60,7 @@ function setPropValue(root, data, prop, val) {
 }
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
-  const { vue, root, data, table, column, prop, searchChange, rowIndex, columnIndex } = params
+  const { vue, root, data, table, row, column, prop, searchChange, rowIndex, columnIndex } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
   const props = {
     value: getPropValue(data, prop, root)
@@ -73,7 +73,7 @@ function renderVModel(h, renderOpts, params) {
   if (params.row) {
     oldData = oldData === null ? params.row[params.fieldProp] : oldData
   }
-  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
+  const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       setPropValue.call(vue, root, data, prop, val)
@@ -83,7 +83,7 @@ function renderVModel(h, renderOpts, params) {
       if (!table) return
       searchChange && searchChange(val)
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
-        table.editField([{ rowIndex, columnIndex, content: val }])
+        table.editField([{ row, rowIndex, columnIndex, content: val }])
       }
     },
     blur: v => {
@@ -124,7 +124,7 @@ function renderselectCell(h, renderOpts, params) {
   const cellLabel = getPropValue(data, prop, root)
   const { labelKey = 'label', valueKey = 'value' } = props || {}
   const opt = getOptions(renderOpts, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
-  return opt[labelKey] || cellLabel
+  return opt[labelKey] || ''
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { props: oProps = {}} = renderOpts
@@ -318,7 +318,7 @@ function renderForm(h, renderOpts, params) {
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
-  const { vue, table, rowIndex, columnIndex, data, prop, root } = params
+  const { vue, table, row, rowIndex, columnIndex, data, prop, root } = params
   const isBoolean = typeof getPropValue(data, prop, root) === 'boolean'
   const props = {
     value: isBoolean ? getPropValue(data, prop, root) : '' + getPropValue(data, prop, root),
@@ -328,14 +328,14 @@ function renderSwitch(h, renderOpts, params) {
   if (params.row) {
     oldData = oldData === null ? params.row[params.prop] : oldData
   }
-  const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
+  const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
       setPropValue.call(vue, root, data, prop, isBoolean ? val : '' + val)
     },
     change: val => {
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
-        table.editField([{ rowIndex, columnIndex, content: val }])
+        table.editField([{ row, rowIndex, columnIndex, content: val }])
       }
     },
     blur: v => {

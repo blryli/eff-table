@@ -280,8 +280,8 @@ export default {
         isObj = true
       }
       // console.log('records', JSON.stringify(records, null, 2))
-      records.forEach(d => {
-        if (!d[rowId] || tableData.find(t => t[rowId] === [rowId])) {
+      records.forEach((d, i) => {
+        if (!d[rowId] || tableData.find(t => t[rowId] === d[rowId]) || records.find((t, idx) => i !== idx && t[rowId] === d[rowId])) {
           this.$set(d, rowId, `row_${row_id++}`)
         }
       })

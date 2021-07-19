@@ -465,6 +465,7 @@ export default {
         const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
         columnIndex > -1 &&
           fields.push({
+            row,
             rowIndex,
             columnIndex,
             content: row[prop]
