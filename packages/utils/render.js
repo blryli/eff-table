@@ -403,11 +403,8 @@ function renderCascader(h, renderOpts, params) {
   let opts = getOptions(renderOpts, params)
   return cascaderValue.reduce((acc, cur) => {
     const op = opts.find(d => d[value] === cur)
-    if (op && op[children]) {
-      opts = op[children]
-      return acc.concat([op[label]])
-    }
-    return acc
+    opts = op[children]
+    return acc.concat([op[label]])
   }, []).join('/')
 }
 function renderCascaderEdit(h, renderOpts, params) {

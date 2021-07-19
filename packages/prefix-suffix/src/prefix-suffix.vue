@@ -1,5 +1,5 @@
 <script>
-import PopoverRef from 'pk/popover/src/popover-ref'
+import Help from 'pk/help'
 import Icon from 'pk/icon'
 
 export default {
@@ -13,21 +13,21 @@ export default {
     const { tag, prefix, suffix } = this
     if (!prefix.message && !suffix.message) return h(tag, {}, this.$slots.default)
     return h(tag, { class: 'eff-prefix-suffix' }, [
-      prefix.message ? <PopoverRef
+      prefix.message ? <Help
         class='eff-prefix'
         effect='dark'
         message={prefix.message}
       >
         <Icon icon={prefix.icon || 'question'} />
-      </PopoverRef> : '',
+      </Help> : '',
       this.$slots.default,
-      suffix.message ? <PopoverRef
+      suffix.message ? <Help
         class='eff-suffix'
         effect='dark'
         message={suffix.message}
       >
         <Icon icon={suffix.icon || 'question'} />
-      </PopoverRef> : ''
+      </Help> : ''
     ])
   }
 }

@@ -31,7 +31,7 @@ export default {
       const { msgType, reference = this.$el, message, effect, vslot, placement, enterable } = this
       if (msgType === 'popover') {
         const tipShow = this.root.tipShow || this.root.$refs.popovers.tipShow
-        message && tipShow({ reference, effect, vslot, placement, enterable, message: [{ type: 'dark', message }] })
+        message && tipShow({ reference, effect, vslot, placement, isFixed: true, enterable, message: [{ type: 'dark', message }] })
       }
     },
     handlerMouseleave(e) {

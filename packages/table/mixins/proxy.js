@@ -281,7 +281,7 @@ export default {
       }
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach(d => {
-        if (!d[rowId]) {
+        if (!d[rowId] || tableData.find(t => t[rowId] === [rowId])) {
           this.$set(d, rowId, `row_${row_id++}`)
         }
       })

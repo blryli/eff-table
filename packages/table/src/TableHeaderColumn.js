@@ -2,7 +2,7 @@ import VCheckbox from 'pk/checkbox'
 import { columnIsEdit } from 'pk/utils'
 import { getTextWidth } from 'pk/utils/dom'
 import PrefixSuffix from 'pk/prefix-suffix'
-import PopoverRef from 'pk/popover/src/popover-ref'
+import Help from 'pk/help'
 import Icon from 'pk/icon'
 
 export default {
@@ -13,7 +13,7 @@ export default {
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' }
   },
-  components: { VCheckbox, PrefixSuffix, PopoverRef, Icon },
+  components: { VCheckbox, PrefixSuffix, Help, Icon },
   inject: ['table'],
   computed: {
     columnClass() {
@@ -81,11 +81,11 @@ export default {
             !type && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           {
-            titlePrefix && titlePrefix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon={prefixIcon}/></PopoverRef> : ''
+            titlePrefix && titlePrefix.message ? <Help class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon={prefixIcon}/></Help> : ''
           }
           <span class='eff-cell--title'>{slot}</span>
           {
-            titleSuffix && titleSuffix.message ? <PopoverRef class='eff-cell--title-help' effect='dark' message={titleSuffix.message}><Icon icon={suffixIcon}/></PopoverRef> : ''
+            titleSuffix && titleSuffix.message ? <Help class='eff-cell--title-help' effect='dark' message={titleSuffix.message}><Icon icon={suffixIcon}/></Help> : ''
           }
           {
             sortable ? <span class='eff-cell--sort'>

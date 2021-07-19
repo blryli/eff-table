@@ -1,8 +1,8 @@
 <script>
-import PopoverRef from 'pk/popover/src/popover-ref'
+import Help from 'pk/help'
 export default {
   name: 'ToolbarShrink',
-  components: { PopoverRef },
+  components: { Help },
   props: {
     list: { type: Array, default: () => ([]) }
   },
@@ -36,14 +36,14 @@ export default {
       { isHidden > 0 ? showList : list }
       {
         <div class={['toobar-left--more', isHidden ? 'is--show' : 'is--hide']} ref='more'>
-          <PopoverRef
+          <Help
             vslot={hideNode}
             message='1'
             placement='bottom'
             enterable={true}
           >
             <div class='toobar-left--more-icon'>...</div>
-          </PopoverRef>
+          </Help>
         </div>
       }
     </div>
