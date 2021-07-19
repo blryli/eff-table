@@ -263,25 +263,20 @@ export default {
      */
     insert(records, rowIndex, insertCheckRow = true) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
-      if (!records || XEUtils.isObject(records)) {
-        const defRecords = columns.reduce((acc, column) => {
-          const { type, prop } = column
-          if (['expand', 'selection', 'radio'].indexOf(type) > -1 || !prop) return acc
+      const defRecords = columns.reduce((acc, column) => {
+        const { type, prop } = column
+        if (['expand', 'selection', 'radio'].indexOf(type) > -1 || !prop) return acc
 
-          const { config = {}, edit = {}} = column
-          const { defaultValue } = Object.assign({}, config, edit.render)
-          acc[prop] = defaultValue !== undefined ? defaultValue : null
-          return acc
-        }, {})
-        if (XEUtils.isObject(records)) {
-          records = Object.assign({}, defRecords, records)
-        } else {
-          records = defRecords
-        }
-      }
+        const { config = {}, edit = {}} = column
+        const { defaultValue } = Object.assign({}, config, edit.render)
+        acc[prop] = defaultValue !== undefined ? defaultValue : null
+        return acc
+      }, {})
       let isObj = false
-      if (!Array.isArray(records)) {
-        records = [records]
+      if (XEUtils.isArray(records)) {
+        records = records.map(d => Object.assign({}, defRecords, d))
+      } else {
+        records = [Object.assign({}, defRecords, records)]
         isObj = true
       }
       // console.log('records', JSON.stringify(records, null, 2))
@@ -296,17 +291,19 @@ export default {
         rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
 
+      const bInsert = () => beforeInsert(isObj ? records[0] : records, rowIndex)
+
       if (!rowIndex) {
         rowIndex = 0
-        beforeInsert(isObj ? records[0] : records, rowIndex)
+        bInsert()
         this.tableData.unshift(...records)
       } else {
         if (rowIndex === -1) {
           rowIndex = this.tableData.length
-          beforeInsert(isObj ? records[0] : records, rowIndex)
+          bInsert()
           this.tableData.push(...records)
         } else {
-          beforeInsert(isObj ? records[0] : records, rowIndex)
+          bInsert()
           this.tableData.splice(rowIndex, 0, ...records)
         }
       }

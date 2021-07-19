@@ -395,18 +395,23 @@ function renderTag(h, renderOpts, params) {
 
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
-  const { data, prop, root } = params || {}
-  const value = getPropValue(data, prop, root) || []
+  const { data, prop, root = {}} = params || {}
+  const { props = {}} = renderOpts
+  const cascaderProps = props.props || {}
+  const { label = 'label', value = 'value', children = 'children' } = cascaderProps
+  const cascaderValue = getPropValue(data, prop, root) || []
   let opts = getOptions(renderOpts, params)
-  return value.reduce((acc, cur) => {
-    const op = opts.find(d => d.value === cur)
-    opts = op.children
-    return acc.concat([op.label])
+  return cascaderValue.reduce((acc, cur) => {
+    const op = opts.find(d => d[value] === cur)
+    if (op && op[children]) {
+      opts = op[children]
+      return acc.concat([op[label]])
+    }
+    return acc
   }, []).join('/')
 }
 function renderCascaderEdit(h, renderOpts, params) {
-  const { props, options } = renderOpts
-  options && !props.options && (renderOpts.props.options = options)
+  renderOpts.props.options = getOptions(renderOpts, params)
   return renderVModel(h, renderOpts, params)
 }
 const vModelMap = ['radio', 'radio-group', 'checkbox']
