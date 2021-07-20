@@ -16,10 +16,10 @@ export default {
       const codes = [
         { code: 'add', fn: () => add() },
         { code: 'add_focus', fn: () => add().then(rowIndex => focus(rowIndex)) },
-        { code: 'insert', fn: insert },
+        { code: 'insert', fn: () => insert() },
         { code: 'insert_focus', fn: () => insert().then(rowIndex => focus(rowIndex)) },
-        { code: 'mark_cancel', fn: triggerPending },
-        { code: 'checkout_select_type', fn: checkoutSelectType },
+        { code: 'mark_cancel', fn: () => triggerPending() },
+        { code: 'checkout_select_type', fn: () => checkoutSelectType() },
         { code: 'delete', fn: () => this.delete(deleted) },
         { code: 'remove_check_row', fn: () => this.removeCheckRow() },
         { code: 'query', fn: () => query && typeof query === 'function' ? this.query(query) : this.loadTableData() },

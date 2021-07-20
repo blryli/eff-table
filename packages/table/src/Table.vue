@@ -625,7 +625,13 @@ export default {
       }) : data
     },
     getEditStore() {
-      return this.editStore
+      const editStore = XEUtils.clone(this.editStore, true)
+      editStore.insertList.map(d => {
+        // 如果是默认生成的主键，返回数据时去除该主键
+        delete d[this.rowId]
+        return d
+      })
+      return editStore
     }
   }
 }
