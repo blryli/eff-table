@@ -89,6 +89,7 @@ export default {
 | row-height    | 列高度    | number      |            | 36      |
 | border    | 是否带有纵向边框    | boolean      |            | false      |
 | show-header   | 是否显示表头   | Boolean    |            | true      |
+| header-contextmenu   | 是否开启表头右键扩展菜单   | Boolean    |            | false      |
 | toolbar-config   | 工具栏配置   | String    |            |       |
 | empty-text   | 空数据时显示的文本内容   | String    |            |       |
 | fullscreen| 是否显示全屏按钮 | boolean      |        | false      |
@@ -363,6 +364,8 @@ value: [
 - 解决表格全选时会把之前的数据也选上的问题
 
 - table增加 field-change 回调事件
+
+- table增加 getTableData 方法获取表格数据
 
 
 

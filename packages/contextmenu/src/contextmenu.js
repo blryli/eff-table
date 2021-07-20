@@ -4,7 +4,8 @@ export default {
   name: 'Contextmenu',
   props: {
     list: { type: Array, default: () => ([]) },
-    listMethod: { type: Function, default: () => {} }
+    listMethod: { type: Function, default: () => {} },
+    disabled: Boolean
   },
   data() {
     return {
@@ -14,12 +15,16 @@ export default {
     }
   },
   mounted() {
-    on(window, 'mousedown', this.windowMousedown)
-    on(window, 'mousewheel', this.close)
+    if (!this.disabled) {
+      on(window, 'mousedown', this.windowMousedown)
+      on(window, 'mousewheel', this.close)
+    }
   },
   beforeDestroy() {
-    off(window, 'mousedown', this.windowMousedown)
-    off(window, 'mousewheel', this.close)
+    if (!this.disabled) {
+      off(window, 'mousedown', this.windowMousedown)
+      off(window, 'mousewheel', this.close)
+    }
   },
   methods: {
     windowMousedown(e) {
@@ -56,8 +61,8 @@ export default {
     }
   },
   render(h) {
-    const { handleMouseenter, handleMouseleave, handleMouseup, list, handleClickItem, show, pos } = this
-    return (
+    const { handleMouseenter, handleMouseleave, handleMouseup, list, handleClickItem, show, pos, disabled } = this
+    return disabled ? <div>{this.$slots.default}</div> : (
       <div
         class='eff-contextmenu'
         on-mouseenter={handleMouseenter}

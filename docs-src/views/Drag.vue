@@ -30,7 +30,7 @@
 
     <h3>列控制</h3>
     <p>
-      <span class="primary">column-control</span> 属性设置为
+      toolbar-config 配置 <span class="primary">column-control</span> 属性设置为
       <span class="primary"> true </span>，点击功能图标 <ColumnCtrl /> 开启列控制功能（显示/隐藏）
     </p>
     <section class="demo">
@@ -49,6 +49,33 @@
       <Collapse>
         <div class="section-content">
           <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode" />
+        </div>
+      </Collapse>
+    </section>
+
+    <h3>右键列控制</h3>
+    <p>
+      <span class="primary">header-contextmenu</span> 属性设置为
+      <span class="primary"> true </span>， 开启右键列控制功能（移动/固定/显示/隐藏）
+    </p>
+    <section class="demo">
+      <div class="section-content">
+        <eff-table
+          ref="table"
+          v-model="columns2"
+          :data="data1"
+          drag
+          header-contextmenu
+          :toolbar-config="{columnControl: true}"
+          border
+        />
+      </div>
+    </section>
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode4" />
           <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
@@ -149,6 +176,17 @@ const htmlCode3 = `
     v-model="columns"
     :data="data"
     row-drag
+  />
+  `
+const htmlCode4 = `
+ <eff-table
+    ref="table"
+    v-model="columns1"
+    :data="data1"
+    drag
+    header-contextmenu
+    :toolbar-config="{columnControl: true}"
+    border
   />
   `
 
@@ -264,6 +302,7 @@ export default {
       htmlCode1,
       htmlCode2,
       htmlCode3,
+      htmlCode4,
       jsCode,
       jsCode1,
       loading: false,

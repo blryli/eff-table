@@ -124,7 +124,7 @@ function renderselectCell(h, renderOpts, params) {
   const cellLabel = getPropValue(data, prop, root)
   const { labelKey = 'label', valueKey = 'value' } = props || {}
   const opt = getOptions(renderOpts, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
-  return opt[labelKey] || ''
+  return opt[labelKey] || cellLabel
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { props: oProps = {}} = renderOpts

@@ -306,14 +306,14 @@ export default {
   },
   render(h) {
     const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, contextmenuList, contextmenuListMethod, contextmenuClick } = this
-    const { showSpace, search, heights: { headerHeight }} = table
+    const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
 
     return (
       <div class='eff-table__header-wrapper'>
         {
           h('Contextmenu', {
-            props: { list: contextmenuList, listMethod: contextmenuListMethod },
+            props: { list: contextmenuList, listMethod: contextmenuListMethod, disabled: !drag || !headerContextmenu },
             class: { 'eff-table__header': true, 'is--move': isDraging },
             ref: 'header',
             style: { height },

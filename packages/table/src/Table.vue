@@ -260,8 +260,9 @@ export default {
     cellClassName: { type: [String, Function], default: '' },
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] },
-    selectRange: Boolean,
-    copy: Boolean,
+    selectRange: Boolean, // 表格区域选择
+    copy: Boolean, // 复制功能
+    headerContextmenu: Boolean, // 表头右键扩展菜单
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
