@@ -616,6 +616,9 @@ export default {
       this.tableForm = []
       this.$emit('update:form', {})
     },
+    getTableData() {
+      return this.tableData
+    },
     getFullData() {
       const data = XEUtils.clone(this.tableData, true)
       return this.rowId === '_rowId' ? data.map(d => {
