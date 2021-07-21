@@ -620,13 +620,16 @@ export default {
     getTableData() {
       return this.tableData
     },
-    getFullData() {
-      const data = XEUtils.clone(this.tableData, true)
-      return this.rowId === '_rowId' ? data.map(d => {
-        // 如果是默认生成的主键，返回数据时去除该主键
-        delete d[this.rowId]
-        return d
-      }) : data
+    getFullData(source) {
+      if (source) {
+        const data = XEUtils.clone(this.tableData, true)
+        return this.rowId === '_rowId' ? data.map(d => {
+          // 如果是默认生成的主键，返回数据时去除该主键
+          delete d[this.rowId]
+          return d
+        }) : data
+      }
+      return this.tableData
     },
     getEditStore() {
       const editStore = XEUtils.clone(this.editStore, true)

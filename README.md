@@ -246,7 +246,7 @@ value: [
 | loadTableData | 加载数据，在没有设置主键的情况下会清空数据状态，返回promise |data|
 | reloadData | 重载数据，会清空数据状态，返回promise |data|
 | reloadData | 重载数据，会清空数据状态，返回promise |data|
-| getFullData      | 获取当前表格全量数据，数据不具有响应性 |     ---          |
+| getFullData      | 不传参数时获取当前表格数据，数据具有响应性，如果有参数source则返回不带rowId的数据，数据不具有响应性 |     source          |
 | getTableData      | 获取当前表格数据，数据具有响应性 |     ---          |
 | getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |

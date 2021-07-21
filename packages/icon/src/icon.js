@@ -3,6 +3,7 @@ import SearchClear from './searchClear'
 import RowDrag from './rowDrag'
 import ColumnBatchCtrl from './columnBatchCtrl'
 import ColumnCtrl from './columnCtrl'
+import Subtotal from './subtotal'
 export default {
   name: 'Icon',
   components: { Fixed, SearchClear, RowDrag, ColumnBatchCtrl },
@@ -11,16 +12,16 @@ export default {
   },
   render(h) {
     const { icon } = this
-    if (icon === 'fixed') {
-      return <Fixed />
-    } else if (icon === 'clear-search') {
-      return <SearchClear />
-    } else if (icon === 'row-drag') {
-      return <RowDrag />
-    } else if (icon === 'column-ctrl') {
-      return <ColumnCtrl />
-    } else if (icon === 'column-batch-ctrl') {
-      return <ColumnBatchCtrl />
+    const icons = {
+      'fixed': <Fixed />,
+      'SearchClear': <SearchClear />,
+      'row-drag': <RowDrag />,
+      'column-ctrl': <ColumnCtrl />,
+      'column-batch-ctrl': <ColumnBatchCtrl />,
+      'subtotal': <Subtotal />
+    }
+    if (icons[icon]) {
+      return icons[icon]
     }
     return <i class={'eff-icon-' + (icon === 'like' ? 'search' : icon)} />
   }

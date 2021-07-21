@@ -65,8 +65,8 @@ class Render {
     const { vue = {}, renderHelp } = params
     const { renderMap = {}} = vue.$EFF || {}
     // 处理禁用
-    if (disabled && XEUtils.isFunction(disabled)) {
-      opts.props.disabled = disabled(params)
+    if (disabled) {
+      opts.props.disabled = Boolean(XEUtils.isFunction(disabled) ? disabled(params) : disabled)
     }
     const render = h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
     // 处理 help

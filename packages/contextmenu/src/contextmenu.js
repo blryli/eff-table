@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     windowMousedown(e) {
-      if (e.which && !this.$refs.contextmenu.contains(e.target)) {
+      if (e.which && this.$refs.contextmenu && !this.$refs.contextmenu.contains(e.target)) {
         this.close()
       }
     },

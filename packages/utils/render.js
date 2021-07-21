@@ -26,8 +26,9 @@ function getPropValue(data, prop, root) {
 
 function getOptions(renderOpts, params) {
   const { options, props = {}} = renderOpts
-  const opts = options || props.options || []
-  return (typeof opts === 'function' ? opts(params) : opts) || []
+  const ot = options || props.options || []
+  const opts = typeof ot === 'function' ? ot(params) : ot
+  return Array.isArray(opts) ? opts : [opts]
 }
 
 // 带标签的 children

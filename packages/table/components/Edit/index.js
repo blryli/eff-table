@@ -248,7 +248,8 @@ export default {
       }
     },
     disabled(column) {
-      const { edit: { disabled } = {}} = column || {}
+      const { edit = {}, config = {}} = column || {}
+      const { disabled } = Object.assign({}, config, edit)
       const { row, rowIndex } = this
       if (disabled === undefined) return false
 

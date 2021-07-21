@@ -28,6 +28,7 @@
         <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
         <router-link class="menu-list" to="/Replace">Replace 批量替换</router-link>
         <router-link class="menu-list" to="/SmallSum">SmallSum 小计</router-link>
+        <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>
