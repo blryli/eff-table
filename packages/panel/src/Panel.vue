@@ -4,7 +4,7 @@
       class="box-card"
       :body-style="{ padding: hasPadding ? '20px' : '20px 0' }"
     >
-      <div slot="header" class="flex-row">
+      <div v-if="title" slot="header" class="flex-row">
         <span class="header-text" @click="collapse">
           <i
             v-if="collapsible"
