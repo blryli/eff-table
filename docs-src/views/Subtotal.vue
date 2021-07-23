@@ -2,7 +2,9 @@
   <div class="page-home page">
     <h2>Subtotal 校验</h2>
     <p class="hint">
-      <icon icon="subtotal" /> row数据中有 <span class="primary"> subtotal </span> 对象，则会标记为小计行
+      toolbarConfig 配置中 <span class="primary"> subtotal </span> 属性设置 <span class="primary"> true </span>，显示小计功能图标
+      <icon icon="subtotal" /><br>
+      row数据中有 <span class="primary"> subtotal </span> 对象，则会标记为小计行
     </p>
     <section class="demo">
       <div class="section-content">
@@ -52,6 +54,7 @@ export default {
         maxHeight: 400,
         edit: true,
         border: true,
+        toolbarConfig: { subtotal: true },
         columns: [
           {
             show: true,

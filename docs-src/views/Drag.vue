@@ -315,7 +315,14 @@ export default {
         {
           show: true,
           prop: 'name',
-          title: '名字'
+          title: '名字',
+          children: [
+            { prop: 'xing', title: '姓' },
+            { prop: 'ming', title: '名', children: [
+              { prop: 'zhongwen', title: '中文' },
+              { prop: 'yingwen', title: '英文' }
+            ] }
+          ]
         },
         {
           show: true,

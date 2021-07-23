@@ -6,6 +6,7 @@ import EditHistory from './EditHistory'
 import Clear from './Clear'
 import Refresh from './Refresh'
 import Search from './Search'
+import Subtotal from './Subtotal'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
@@ -15,7 +16,7 @@ import Help from 'pk/help'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, ToolbarShrink },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, ToolbarShrink, Subtotal },
   inject: ['table'],
   data() {
     return {
@@ -40,7 +41,7 @@ export default {
   render(h) {
     const { table, load } = this
     const { toolbarConfig, search } = table
-    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort } = toolbarConfig || {}
+    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort, subtotal } = toolbarConfig || {}
     const renderHelp = (help, node) => {
       const { effect = 'dark', message, placement } = help
       return <Help effect={effect} message={message} placement={placement} >{node}</Help>
@@ -58,6 +59,9 @@ export default {
       <div class='eff-table__toobar'>
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
+          {
+            subtotal && <Subtotal /> || ''
+          }
           {
             editHistory && <EditHistory /> || ''
           }

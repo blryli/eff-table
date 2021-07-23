@@ -56,6 +56,23 @@ export default {
         top: top + 'px',
         left: left + width - 8 + 'px'
       }
+    },
+    checkedColumnGroup() {
+      var result = []
+      var i = 0
+      const list = [...this.table.headerCheckedColumns].sort((a, b) => a.id - b.id)
+
+      list.forEach((item, index) => {
+        if (index === 0) {
+          result[0] = [item]
+        } else if (parseInt(item.id) - parseInt(list[index - 1].id) === 1) { // 判断当前值 和 前一个值是否相差1
+          result[i].push(item.id)
+        } else {
+          result[++i] = [item.id] // 开辟新空间。
+        }
+      })
+
+      return result.filter(d => d.length > 1)
     }
   },
   inject: ['table'],
@@ -67,18 +84,22 @@ export default {
       const { table, sortChange } = this
       const { rowHeight } = table
       let index = 0
-      const render = (columns, colid = '') => {
+      const render = (columns, colid = '', parentProp = []) => {
         return columns.reduce((acc, column, columnIndex) => {
           const { children = [] } = column
           const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
+          if (parentProp.length) {
+            column.parent = parentProp
+          }
+          column.id = parent
           if (children.length) {
-            acc.push(<div class='eff-table__header-group'>
+            acc.push(<div class={['eff-table__header-group', table.headerCheckedColumns.some(d => d === column) ? 'is--checked' : '']} data-colid={parent}>
               <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='eff-table__header-group-children'>
                 {
-                  render(children, parent)
+                  render(children, parent, parentProp.concat(column.prop))
                 }
               </div>
             </div>)
@@ -90,6 +111,7 @@ export default {
                 columnIndex,
                 bodyColumnIndex: index
               },
+              class: { 'is--checked': table.headerCheckedColumns.some(d => d === column) },
               on: {
                 'sort-change': sortChange
               }
@@ -108,13 +130,38 @@ export default {
     handleClick(event) {
       const { table } = this
       const cell = getCell(event)
-      let column
       if (cell) {
-        const columnIndex = cell.getAttribute('data-colidx')
-        column = table.bodyColumns[columnIndex]
+        const colid = cell.getAttribute('data-colid').split('-')
+
+        const column = colid.reduce((acc, cur, idx) => {
+          const index = +cur - 1
+          acc = idx === 0 ? acc[index] : acc.children[index]
+          return acc
+        }, [...table.columns])
         if (column) {
-          table.$emit(`header-click`, { column, columnIndex, cell, event })
+          this.checkedColumn({ column, event })
+          table.$emit(`header-click`, { column, event })
         }
+      }
+    },
+    checkedColumn(params) {
+      const { table } = this
+      const { column, event } = params
+      if (event.ctrlKey) {
+        const { parent } = column
+        const handleColumn = parent ? table.visibleColumns.find(d => d.prop === parent[0]) : column
+        const index = table.headerCheckedColumns.findIndex(d => [d].some(c => c === handleColumn))
+        if (index === -1) {
+          table.headerCheckedColumns.push(handleColumn)
+        } else {
+          table.headerCheckedColumns.splice(index, 1)
+        }
+      }
+    },
+    handleWindowMousedown(e) {
+      const { target } = e
+      if (!this.$el.contains(target)) {
+        this.table.headerCheckedColumns = []
       }
     },
     handleMousemove(e) {
@@ -308,6 +355,11 @@ export default {
     const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, contextmenuList, contextmenuListMethod, contextmenuClick } = this
     const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
+    const renderCols = renderColumns(visibleColumns)
+    // console.log(renderCols)
+    if (this.checkedColumnGroup.length) {
+      this.checkedColumnGroup
+    }
 
     return (
       <div class='eff-table__header-wrapper'>
@@ -323,11 +375,10 @@ export default {
               mouseleave: handleMouseleave
             },
             on: {
-              click: handleClick,
               'item-click': contextmenuClick
             }
           }, [
-            renderColumns(visibleColumns),
+            renderCols,
             showSpace ? <div class='eff-table__column is--space' style={height} /> : '',
             <div
               ref='dragMove'

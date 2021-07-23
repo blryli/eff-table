@@ -55,6 +55,7 @@
       >
         <TableHeader
           v-if="showHeader"
+          ref="leftHeader"
           :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
           :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
           fixed="left"
@@ -87,6 +88,7 @@
       >
         <TableHeader
           v-if="showHeader"
+          ref="rightHeader"
           :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
           fixed="right"
@@ -148,7 +150,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>visibleColumns -  {{ visibleColumns }}</p>
+    <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -303,7 +306,8 @@ export default {
       replaceControl: false,
       sortControl: false,
       tableSourceData: [],
-      editProps: {}
+      editProps: {},
+      headerCheckedColumns: []
     }
   },
   computed: {
@@ -354,7 +358,7 @@ export default {
           if (Array.isArray(item) && item.length) show = true
         } else if (key === 'columnControl') {
           if (drag && item) show = true
-        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl'].indexOf(key) > -1 && item) show = true
+        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
       if ($slots.toolbar || search) show = true
       return show

@@ -48,7 +48,7 @@ export default {
       const columnWidth = Math.max(width, 40)
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
-      if (columnIndex === 0) {
+      if (!column.parent && columnIndex === 0) {
         style.borderLeft = 0
       }
       return style

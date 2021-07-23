@@ -151,7 +151,7 @@ export const getCell = (event) => {
   let cell = event.target
 
   while (cell && cell.tagName.toUpperCase() !== 'HTML') {
-    if (hasClass(cell, 'eff-table__column')) {
+    if (hasClass(cell, 'eff-table__column') || hasClass(cell, 'eff-table__header-group')) {
       return cell
     }
     cell = cell.parentNode

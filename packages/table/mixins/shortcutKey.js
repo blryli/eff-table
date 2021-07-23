@@ -8,7 +8,7 @@ export default {
     }
   },
   mounted() {
-    on(window, 'mouseleave', this.handleWindowMouseleave)
+    on(window, 'mousedown', this.handleWindowMousedown)
     on(window, 'keyup', this.handleWindowKeyup)
     on(window, 'click', this.handleWindowClick)
   },
@@ -35,8 +35,17 @@ export default {
       this.inRoot = false
     },
     handleWindowMousedown(e) {
+      // 关闭编辑框
       if (this.edit) {
         this.$refs.edit.handleWindowMousedown(e)
+      }
+      // 取消header列选中
+      if (this.headerCheckedColumns.length) {
+        const { header, leftHeader, rightHeader } = this.$refs
+        const headers = [header, leftHeader, rightHeader]
+        headers.forEach(d => {
+          d && d.handleWindowMousedown(e)
+        })
       }
     },
     handleWindowKeyup(e) {

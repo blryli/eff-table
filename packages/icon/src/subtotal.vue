@@ -17,6 +17,8 @@ export default {
 <style lang="scss">
 .eff-icon--subtotal{
   display: inline-block;
+  width: 16px;
+  height: 16px;
   vertical-align: middle;
   &-container{
     position: relative;

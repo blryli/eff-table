@@ -73,7 +73,6 @@ export function deepClone(obj) {
 // 判断列是否可编辑
 export const columnIsEdit = function(column) {
   const { editable, edit } = column
-  console.log(column, edit, editable !== false, edit && editable !== false)
   return editable === true || edit && editable !== false
 }
 

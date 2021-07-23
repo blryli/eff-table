@@ -293,7 +293,7 @@ value: [
 |cell-dblclick|当某个单元格被双击击时会触发该事件|{ row, column, rowIndex, columnIndex, cell, event }|
 |cell-mouse-enter|当单元格 hover 进入时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
 |cell-mouse-leave|当单元格 hover 退出时会触发该事件|{ item, column, rowIndex, columnIndex, cell, event }|
-|header-click|当某一列的表头被点击时会触发该事件|{ column, columnIndex, cell, event }|
+|header-click|当某一列的表头被点击时会触发该事件|{ column, event }|
 |sort-change|表格排序条件发生变化的时候会触发该事件|sortConfig, data|
 |search-clear-filed|使用默认range范围搜索时，点击清空按钮时触发该事件|{ column, prop }|
 |table-paste|当用selectRange选择一块区域时，ctrl+v粘贴，触发这个事件|{ startRow，startColumn, data }|
