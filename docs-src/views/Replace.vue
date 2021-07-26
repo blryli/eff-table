@@ -1,0 +1,118 @@
+<template>
+  <div class="page-home page">
+    <h2>Replace 批量替换</h2>
+    <p class="hint">
+      前置条件<br>
+      <span class="primary">show-replace</span>和 <span class="primary">column-control</span>属性设置为
+      <span class="primary"> true </span><br>
+    </p>
+    <div>
+      点击
+      <div title="替换和填充" class="eff-table__replace" style="display: inline-flex"><div class="eff-table__replace-icon"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div> <div class="eff-table__replace-icon symmetry"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div></div>
+      弹出替换窗口
+      <span class="primary">右侧</span>选择字段，<span class="primary">左侧</span>编辑替换的选项
+    </div>
+
+    <section class="demo">
+      <div class="section-content">
+        <eff-table ref="table" v-model="columns" :data="data" :toolbar-config="{showReplace: true}" />
+      </div>
+    </section>
+
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
+          <div class="plus">+</div>
+          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+        </div>
+      </Collapse>
+    </section>
+  </div>
+</template>
+
+<script>
+import CodeSnippet from '../components/CodeSnippet.vue'
+import Collapse from '../components/Collapse.vue'
+
+const htmlCode = `
+  <eff-table ref="table" v-model="columns" :data="data" show-replace />
+  `
+
+const jsCode = `
+  export default {
+    data() {
+      return {
+        data: [],
+        columns: [
+          {
+            show: true,
+            type: 'index',
+            title: '序号',
+            width: 80,
+            fixed: 'left'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            width: 150
+          }
+        ]
+      }
+    }
+  }
+  `
+export default {
+  name: 'Replace',
+  components: {
+    CodeSnippet,
+    Collapse
+  },
+
+  data() {
+    return {
+      htmlCode,
+      jsCode,
+      columns: [
+        {
+          show: true,
+          type: 'index',
+          width: 80,
+          fixed: 'left'
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '名字'
+        },
+        {
+          show: true,
+          prop: 'sex',
+          title: '性别'
+        },
+        {
+          show: true,
+          prop: 'phone',
+          title: '手机',
+          width: 150
+        }
+      ],
+      data: [
+        { name: '张三', sex: '男', phone: '13715201314' },
+        { name: '李四', sex: '男', phone: '13715201314' }
+      ]
+    }
+  }
+}
+</script>

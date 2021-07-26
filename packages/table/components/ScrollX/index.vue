@@ -1,0 +1,17 @@
+<template>
+  <div class="eff-table__scrollx" @scroll="scrollEvent">
+    <div class="eff-table__scrollx-content" :style="{width: table.bodyWidth + 2 + 'px', height: '1px'}" />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ScrollX',
+  inject: ['table'],
+  methods: {
+    scrollEvent() {
+      this.table.scrollLeft = this.table.$refs.body.$el.scrollLeft = this.$el.scrollLeft
+    }
+  }
+}
+</script>
