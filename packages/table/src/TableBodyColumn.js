@@ -89,7 +89,6 @@ export default {
   created() {
     const { row, column } = this
     column.prop && initField(row, column.prop, this)
-    console.log('column', JSON.stringify({ row, column }, null, 2))
   },
   methods: {
     groupClick(e) {
