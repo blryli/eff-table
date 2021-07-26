@@ -367,5 +367,7 @@ value: [
 
 - table增加 getTableData 方法获取表格数据
 
+- 增加表头多选及多表头拖动功能
+
 
 

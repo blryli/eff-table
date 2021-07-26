@@ -1,5 +1,5 @@
 <template>
-  <div class="drag-table">
+  <div class="table-drag--card">
     <card v-if="columnControl" :show="show" title="列控制" @close="close">
       <div v-for="(d, i) in hiddenColumns" :key="i">{{ d.title }}</div>
     </card>
@@ -148,68 +148,90 @@ export default {
       this.dradingTarget = null
       const columns = [...this.columns]
       // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
-
-      const some = (column, el) => {
-        const { innerText } = hasClass(el, 'eff-table__header-group')
-          ? el.querySelector('.eff-table__header-group-title')
-          : el
-        const { title, type } = column
-        return title && title.trim() === innerText.trim() || type && hasClass(el, 'col-' + type)
-      }
-      const oldIndex = columns.findIndex(d => some(d, fromEl))
-      if (oldIndex < 0) {
-        return console.error(`没有找到title为 ${fromEl.innerText} 的节点`)
-      }
-
-      if (hasClass(toEl, 'col-fixed')) {
-        const { $message } = this
-        $message ? $message.warning('固定列不能做拖动操作！') : console.log('固定列不能做拖动操作！')
-        return
-      }
-      // tr内元素拖动
-      if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
-        const oldItem = columns.splice(oldIndex, 1)[0]
-
-        if (hasClass(toEl, 'is--space')) {
-          const index = columns.findIndex(d => d.fixed === 'right')
-          index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
-        } else {
-          let newIndex = columns.findIndex(d => some(d, toEl))
-          if (toIndex > fromIndex) {
-            newIndex += 1
-          }
-          columns.splice(newIndex, 0, oldItem)
+      if (from === to && fromIndex === toIndex) return
+      const drag = (fromEl) => {
+        const some = (column, el) => {
+          const { innerText } = hasClass(el, 'eff-table__header-group')
+            ? el.querySelector('.eff-table__header-group-title')
+            : el
+          const { title, type } = column
+          return title && title.trim() === innerText.trim() || type && hasClass(el, 'col-' + type)
         }
-      }
+        const oldIndex = columns.findIndex(d => some(d, fromEl))
+        if (oldIndex < 0) {
+          return console.error(`没有找到title为 ${fromEl.innerText} 的节点`)
+        }
 
-      // tr移出元素
-      if (this.isHeadNode(from) && to.classList.contains('eff-card__body')) {
-        columns[oldIndex].show = false
-      }
+        if (hasClass(toEl, 'col-fixed')) {
+          const { $message } = this
+          $message ? $message.warning('固定列不能做拖动操作！') : console.log('固定列不能做拖动操作！')
+          return
+        }
+        // 表头内元素拖动
+        if (this.isHeadNode(from) && this.isHeadNode(to) && fromEl !== toEl) {
+          const oldItem = columns.splice(oldIndex, 1)[0]
 
-      // 元素移入tr
-      if (this.isHeadNode(to) && from.classList.contains('eff-card__body')) {
-        if (oldIndex > -1) {
-          const oldItem = columns[oldIndex]
-          oldItem.show = true
-          columns.splice(oldIndex, 1)
           if (hasClass(toEl, 'is--space')) {
             const index = columns.findIndex(d => d.fixed === 'right')
-            index > -1
-              ? columns.splice(index, 0, oldItem)
-              : columns.push(oldItem)
+            index > -1 ? columns.splice(index, 0, oldItem) : columns.push(oldItem)
           } else {
-            const newIndex = columns.findIndex(d => some(d, toEl))
+            // 移入表头组
+            if (hasClass(toEl, 'eff-table__header-checked')) {
+              toEl = toEl.childNodes[0]
+            }
+
+            let newIndex = columns.findIndex(d => some(d, toEl))
+            if (toIndex > fromIndex) {
+              newIndex += 1
+            }
             columns.splice(newIndex, 0, oldItem)
           }
         }
+
+        // 从表头移出元素
+        if (this.isHeadNode(from) && to.classList.contains('eff-card__body')) {
+          columns[oldIndex].show = false
+        }
+
+        // 元素移入表头
+        if (this.isHeadNode(to) && from.classList.contains('eff-card__body')) {
+          if (oldIndex > -1) {
+            const oldItem = columns[oldIndex]
+            oldItem.show = true
+            columns.splice(oldIndex, 1)
+            if (hasClass(toEl, 'is--space')) {
+              const index = columns.findIndex(d => d.fixed === 'right')
+              index > -1
+                ? columns.splice(index, 0, oldItem)
+                : columns.push(oldItem)
+            } else {
+              // 移入表头组
+              if (hasClass(toEl, 'eff-table__header-checked')) {
+                toEl = toEl.childNodes[0]
+              }
+              const newIndex = columns.findIndex(d => some(d, toEl))
+              columns.splice(newIndex, 0, oldItem)
+            }
+          }
+        }
+
+        this.columns = [...columns]
+        // console.log(JSON.stringify(columns, null, 2))
+
+        this.$emit('input', this.columns)
+        this.$emit('change', this.columns)
       }
-
-      this.columns = [...columns]
-      // console.log(JSON.stringify(columns, null, 2))
-
-      this.$emit('input', this.columns)
-      this.$emit('change', this.columns)
+      // 多选表头拖动
+      if (hasClass(fromEl, 'eff-table__header-checked')) {
+        const children = [...fromEl.childNodes]
+        children.forEach((d, i) => {
+          drag(d, fromIndex + i)
+        })
+      } else {
+        // 单表头拖动
+        drag(fromEl, fromIndex)
+      }
+      this.table.headerCheckedColumns = []
     }
   }
 }

@@ -4,6 +4,7 @@ import FormField from 'pk/form/src/form-field'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
+import { initField } from 'pk/utils'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -87,7 +88,8 @@ export default {
   },
   created() {
     const { row, column } = this
-    column.prop && XEUtils.set(row, column.prop, row[column.prop])
+    column.prop && initField(row, column.prop, this)
+    console.log('column', JSON.stringify({ row, column }, null, 2))
   },
   methods: {
     groupClick(e) {

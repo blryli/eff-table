@@ -150,8 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>visibleColumns -  {{ visibleColumns }}</p>
-    <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
+    <!-- <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />

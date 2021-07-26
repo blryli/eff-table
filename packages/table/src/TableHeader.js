@@ -64,7 +64,7 @@ export default {
 
       list.forEach((item, index) => {
         if (index === 0) {
-          result[0] = [item]
+          result[0] = [item.id]
         } else if (parseInt(item.id) - parseInt(list[index - 1].id) === 1) { // 判断当前值 和 前一个值是否相差1
           result[i].push(item.id)
         } else {
@@ -131,22 +131,22 @@ export default {
       const { table } = this
       const cell = getCell(event)
       if (cell) {
-        const colid = cell.getAttribute('data-colid').split('-')
+        const colid = cell.getAttribute('data-colid')
 
-        const column = colid.reduce((acc, cur, idx) => {
+        const column = colid.split('-').reduce((acc, cur, idx) => {
           const index = +cur - 1
           acc = idx === 0 ? acc[index] : acc.children[index]
           return acc
-        }, [...table.columns])
+        }, [...table.visibleColumns])
         if (column) {
           this.checkedColumn({ column, event })
           table.$emit(`header-click`, { column, event })
         }
       }
     },
-    checkedColumn(params) {
+    checkedColumn({ column, event }) {
+      // console.log('column', JSON.stringify(column, null, 2))
       const { table } = this
-      const { column, event } = params
       if (event.ctrlKey) {
         const { parent } = column
         const handleColumn = parent ? table.visibleColumns.find(d => d.prop === parent[0]) : column
@@ -160,7 +160,8 @@ export default {
     },
     handleWindowMousedown(e) {
       const { target } = e
-      if (!this.$el.contains(target)) {
+      const dragCard = document.querySelector('.table-drag--card')
+      if (!this.$el.contains(target) && (dragCard && dragCard.contains(target) || !dragCard)) {
         this.table.headerCheckedColumns = []
       }
     },
@@ -263,6 +264,7 @@ export default {
         }
       }, 100)
     },
+    // 右键菜单功能
     contextmenuClick(index, item) {
       const { table, getContextmenuItem } = this
       const tableColumns = [...table.tableColumns]
@@ -356,9 +358,12 @@ export default {
     const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
     const renderCols = renderColumns(visibleColumns)
-    // console.log(renderCols)
+    // 将多选表头进行分组，用于多列拖动
     if (this.checkedColumnGroup.length) {
-      this.checkedColumnGroup
+      this.checkedColumnGroup.forEach(check => {
+        const columnGroup = <div class='eff-table__header-checked'>{check.reduce((acc, cur) => acc.concat(renderCols[+cur - 1]), [])}</div>
+        renderCols.splice(+check[0] - 1, check.length, columnGroup)
+      })
     }
 
     return (

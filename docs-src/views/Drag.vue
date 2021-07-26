@@ -6,7 +6,8 @@
       <span class="primary">drag</span> 属性设置为
       <span class="primary"> true </span><br>
       <span class="primary">border</span> 属性设置为
-      <span class="primary"> true </span>
+      <span class="primary"> true </span><br>
+      支持多表头同时拖动，按住<span class="primary"> ctrl </span>点击表头进行多选，可对多列进行拖动操作
     </p>
     <section class="demo">
       <div class="section-content">
@@ -15,6 +16,7 @@
           v-model="columns"
           :data="data"
           drag
+          edit
           border
         />
       </div>
@@ -315,14 +317,7 @@ export default {
         {
           show: true,
           prop: 'name',
-          title: '名字',
-          children: [
-            { prop: 'xing', title: '姓' },
-            { prop: 'ming', title: '名', children: [
-              { prop: 'zhongwen', title: '中文' },
-              { prop: 'yingwen', title: '英文' }
-            ] }
-          ]
+          title: '名字'
         },
         {
           show: true,
