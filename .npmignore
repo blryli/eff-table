@@ -15,6 +15,7 @@ tests/
 babel.config.js
 jest.config.js
 package-lock.json
+yarn.lock
 vue.config.js
 
 .git/
