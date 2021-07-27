@@ -148,6 +148,7 @@ export default {
     },
     sortClick(order) {
       const { column, column: { prop }} = this
+      column.order = column.order === order ? '' : order
       this.$emit('sort-change', { column, prop, order })
     }
   }

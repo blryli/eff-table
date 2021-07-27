@@ -259,6 +259,7 @@ value: [
 | focus         | 聚焦的方法                 | index(列索引), prop(字段) |
 | editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
 | getCheckRows   | 用于多选表格，获取当前选中的行数据 | -|
+| getCheckColumns   | 获取当前选中的列数据 | -|
 | clearSelection   | 用于多选表格，清空用户的选择 | -|
 | toggleRowSelection | 用于多选表格，切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） |row, selected|
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
@@ -368,6 +369,8 @@ value: [
 - table增加 getTableData 方法获取表格数据
 
 - 增加表头多选及多表头拖动功能
+
+- 增加 getCheckColumns 方法获取选中的列
 
 
 

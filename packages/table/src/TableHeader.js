@@ -162,7 +162,9 @@ export default {
       const { target } = e
       const dragCard = document.querySelector('.table-drag--card')
       if (!this.$el.contains(target) && (dragCard && dragCard.contains(target) || !dragCard)) {
-        this.table.headerCheckedColumns = []
+        setTimeout(() => {
+          this.table.headerCheckedColumns = []
+        }, 100)
       }
     },
     handleMousemove(e) {

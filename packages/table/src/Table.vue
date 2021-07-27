@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
+    <!-- <p>columns -  {{ columns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -249,7 +249,7 @@ export default {
     rowDrag: Boolean,
     showSummary: Boolean, // 合计
     searchClearText: { type: String, default: '' },
-    sortConfig: { type: Object, default: () => {} },
+    sortConfig: { type: Object, default: () => {} }, // 排序配置
     summaryMethod: { type: Function, default: null },
     sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
@@ -642,6 +642,10 @@ export default {
         return d
       })
       return editStore
+    },
+    // 获取选中的列
+    getCheckColumns() {
+      return XEUtils.clone(this.headerCheckedColumns, true)
     }
   }
 }

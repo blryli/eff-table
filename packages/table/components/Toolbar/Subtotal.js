@@ -7,6 +7,6 @@ export default {
     }
   },
   render(h) {
-    return h('icon', { props: { icon: 'subtotal' }, on: { click: () => console.log('click') }})
+    return h('icon', { props: { icon: 'subtotal' }, nativeOn: { click: () => console.log('click', this.table.headerCheckedColumns) }})
   }
 }

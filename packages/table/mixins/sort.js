@@ -1,3 +1,4 @@
+import XEUtils from 'xe-utils'
 export default {
   data() {
     return {
@@ -27,24 +28,27 @@ export default {
     },
     updateData() {
       let tableData = [...this.tableData]
+      const { rowId } = this
       const { column = {}, prop, order } = this.curSort
       const { sortMethod, remoteSort } = column
+      if (!this.tableSortSourceData) {
+        this.tableSortSourceData = XEUtils.clone(tableData, true)
+      }
       if (order) {
         if (!remoteSort) {
           if (sortMethod) {
             tableData = sortMethod({ data: tableData, column, prop, order, $table: this }) || tableData
           } else {
-            const reverse = order === 'asc' ? 1 : -1
-            tableData = this.sortBy(tableData, prop, reverse)
+            tableData = XEUtils.sortBy(tableData, [[prop, order]])
           }
         }
+      } else {
+        tableData = this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId]))
+        this.tableSortSourceData = null
       }
       this.tableData = tableData
       this.$emit('sort-change', this.curSort, tableData)
       return tableData
-    },
-    sortBy(data, prop, reverse) {
-      return data.sort((a, b) => a[prop] > b[prop] ? 1 * reverse : -1 * reverse)
     }
   }
 }

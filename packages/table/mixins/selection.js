@@ -24,15 +24,22 @@ export default {
   },
   watch: {
     selecteds() {
-      const { checkeds, selecteds, tableData } = this
+      const { checkeds, selecteds } = this
+      this.updateSelecteds()
       this.$emit('selection-change', checkeds, selecteds)
+    },
+    tableData() {
+      this.updateSelecteds()
+    }
+  },
+  methods: {
+    updateSelecteds() {
+      const { selecteds, tableData } = this
       const selectedsLength = selecteds.length
       const tableDataLength = tableData.length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
-    }
-  },
-  methods: {
+    },
     copyFromChecked() {
       this.isCopyFunc = true
       document.execCommand('copy')
