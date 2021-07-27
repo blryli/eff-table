@@ -1,3 +1,4 @@
+import XEUtils from 'xe-utils'
 let checkedsSet = new Set()
 
 export default {
@@ -12,7 +13,13 @@ export default {
   computed: {
     checkeds() {
       const { tableDataMap, selecteds } = this
-      return selecteds.map(id => tableDataMap.get(id))
+      return selecteds.map(id => {
+        const mapId = tableDataMap.get(id)
+        if (!mapId) {
+          console.warn(id + ' 不存在于tableData')
+        }
+        return mapId
+      }).filter(d => d)
     }
   },
   watch: {
@@ -31,7 +38,7 @@ export default {
       document.execCommand('copy')
     },
     getCheckRows() {
-      return this.checkeds
+      return XEUtils.clone(this.checkeds, true)
     },
     clearSelection() {
       checkedsSet.clear()
