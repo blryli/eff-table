@@ -8,7 +8,7 @@
     </p>
     <section class="demo">
       <div class="section-content">
-        <eff-table v-model="columns" :data="data" />
+        <eff-table v-model="columns" :data="data" :row-class-name="() => '2222'" />
       </div>
     </section>
     <section class="snippets">

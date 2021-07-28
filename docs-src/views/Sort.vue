@@ -21,6 +21,7 @@
           v-model="columns"
           :max-height="400"
           :data="data"
+          border
         />
       </div>
     </section>
@@ -75,7 +76,6 @@
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
 
 const mainSnippet = `
 data () {
@@ -133,7 +133,14 @@ export default {
       value: 2,
       mainSnippet,
       componentSnippet,
-      data: [],
+      data: [
+        { name: '张三', xing: '张', ming: '三', sex: '男', age: '20' },
+        { name: '李四', xing: '李', ming: '四', sex: '男', age: '28' },
+        { name: '张三', xing: '张', ming: '三', sex: '男', age: '28' },
+        { name: '王五', xing: '王', ming: '五', sex: '男', age: '28' },
+        { name: '张三', xing: '张', ming: '三', sex: '女', age: '20' },
+        { name: '小丽', xing: '小', ming: '丽', sex: '女', age: '18' }
+      ],
       columns: [
         {
           show: true,
@@ -143,44 +150,33 @@ export default {
         },
         {
           show: true,
-          prop: 'index',
-          title: '序号',
+          prop: 'name',
+          title: '名字',
           width: 80,
           fixed: 'left',
           sortable: true
+          // children: [
+          //   { prop: 'xing', title: '姓', sortable: true, children: [
+          //     { prop: 'zhong', title: '中文', sortable: true },
+          //     { prop: 'ying', title: '英文', sortable: true }
+          //   ] },
+          //   { prop: 'ming', title: '名', sortable: true }
+          // ]
         },
         {
           show: true,
-          prop: 'city',
-          title: '城市',
+          prop: 'sex',
+          title: '性别',
           sortable: true
         },
         {
           show: true,
-          prop: 'message',
-          title: '消息',
+          prop: 'age',
+          title: '年龄',
           sortable: true
         }
       ]
     }
-  },
-  mounted() {
-    setTimeout(() => {
-      this.data = mock.mock({
-        'array|100': [
-          {
-            'id|+1': 100,
-            'message': '@email',
-            'name': '@cname',
-            'email': '@email',
-            'city': '@city',
-            'datetime': '@datetime',
-            'index|+1': 1,
-            long: ''
-          }
-        ]
-      }).array
-    }, 1000)
   }
 }
 </script>

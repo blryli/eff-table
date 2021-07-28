@@ -91,15 +91,15 @@ export default {
           if (parentProp.length) {
             column.parent = parentProp
           }
-          column.id = parent
+          column.columnId = parent
           if (children.length) {
             acc.push(<div class={['eff-table__header-group', table.headerCheckedColumns.some(d => d === column) ? 'is--checked' : '']} data-colid={parent}>
-              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: columnIndex === 0 ? 0 : '' }}>
+              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: !column.parent && columnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='eff-table__header-group-children'>
                 {
-                  render(children, parent, parentProp.concat(column.prop))
+                  render(children, parent, parentProp.concat([column.columnId]))
                 }
               </div>
             </div>)
@@ -149,7 +149,7 @@ export default {
       const { table } = this
       if (event.ctrlKey) {
         const { parent } = column
-        const handleColumn = parent ? table.visibleColumns.find(d => d.prop === parent[0]) : column
+        const handleColumn = parent ? table.visibleColumns[+parent[0] - 1] : column
         const index = table.headerCheckedColumns.findIndex(d => [d].some(c => c === handleColumn))
         if (index === -1) {
           table.headerCheckedColumns.push(handleColumn)

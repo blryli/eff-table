@@ -89,6 +89,9 @@ function renderVModel(h, renderOpts, params) {
     },
     blur: v => {
       oldData = null
+    },
+    'visible-change': (isExpend, val) => {
+      root.setEditIsStop(isExpend)
     }
   }, onParams)
 

@@ -104,10 +104,10 @@ export default {
     )
   },
   methods: {
-    sortActive(od) {
+    sortActive(order) {
       const { table, column } = this
-      const { prop, order } = table.curSort
-      return prop === column.prop && order === od
+      const findColumn = table.sorts.find(d => [d].some(s => s === column))
+      return findColumn && findColumn.order === order
     },
     renderSelection(h) {
       const { table, columnIndex, selectionChange } = this
@@ -147,9 +147,9 @@ export default {
       this.table.$refs.popovers.tipClose()
     },
     sortClick(order) {
-      const { column, column: { prop }} = this
-      column.order = column.order === order ? '' : order
-      this.$emit('sort-change', { column, prop, order })
+      const { column } = this
+      column.order = column.order && column.order === order ? '' : order
+      this.$emit('sort-change', column)
     }
   }
 }
