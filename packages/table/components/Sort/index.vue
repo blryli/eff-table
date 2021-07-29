@@ -53,14 +53,13 @@
           所有字段
           <div class="action">
             <input placeholder="请输入字段名" @input="searchColumn">
-            <div class="item" :class="showAll ? 'sel' : ''" @click.stop="showAll = !showAll">
-              显示已选
+            <div class="item" @click.stop="showAll = !showAll">
+              {{ !showAll ? '显示已选' : '显示所有' }}
             </div>
           </div>
           <div class="list area-right justify-center" :data-key="list.length - 1">
             <template v-for="(d, i) in showList">
-              <div :key="i" :data-key="i" class="item" :class="selectList.find(v => v.prop == d.prop) ? 'sel' : ''" @click.stop="clickShow(d)">
-                <i title="是否显示" class="act el-icon-view" :class="selectList.find(v => v.prop == d.prop) ? 'sel' : ''" />
+              <div :key="i" :data-key="i" class="item" :class="selectList.find(v => v.prop == d.prop) ? 'active' : ''" @click.stop="clickShow(d)">
                 {{ d.title }}
               </div>
             </template>
@@ -342,21 +341,18 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ededed;
-    min-width: 60px;
     margin-bottom: 5px;
-    height: 30px;
+    padding: 5px 10px;
     border-radius: 4px;
-    padding: 0 4px;
-    .act {
-      margin-right: 10px;
-      font-size: 16px;
-    }
+    color: #999;
+    border: 1px solid #ddd;
+    user-select: none;
   }
-    .sel {
-    background-color: #409EFF;
-      color: white;
-    }
+  .active {
+    color: #333;
+    background-color: #f1f2f3;
+    border-color: #ccc;
+  }
 .list {
   width: 100%;
   // height: 100%;
@@ -410,14 +406,15 @@ export default {
   padding: 0 10px;
 }
 .blank {
-  border: unset;
+  position: absolute;
+  right: -18px;
   width: 10px;
-  height: 30px;
-  border-radius: 10px;
+  height: 60px;
+  border-left: 1px solid transparent;
 }
 
-.blank.sel {
-  background-color: rgba($color: #0bc7ff, $alpha: 0.6);
+.blank.active {
+  border-color: #ddd;
 }
 
 </style>

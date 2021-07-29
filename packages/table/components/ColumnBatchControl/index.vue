@@ -23,51 +23,49 @@
         <div class="left" :style="leftStyle">
           左固定
           <div class="list area-left" :data-key="leftList.length - 1">
-            <template v-for="(d, i) in leftList">
+            <template v-for="(d, i) in leftList.filter(d => !d.type || d.title)">
               <div
                 :key="i"
                 :data-key="i"
                 class="item"
-                :class="d.show ? 'sel' : ''"
+                :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
               <div
                 :key="'-'+i"
                 :data-key="i"
                 class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'left' ? 'sel': ''"
+                :class="willDragInIndex == i && willDragInArea == 'left' ? 'active': ''"
               />
             </template>
-            <template v-if="!leftList.length">
-              <div
-                :data-key="-1"
-                class="blank"
-                :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'sel': ''"
-              />
-            </template>
+            <div
+              v-if="!leftList.length"
+              :data-key="-1"
+              class="blank"
+              :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'active': ''"
+            />
           </div>
         </div>
         <div class="center" :style="centerStyle">
+          <div>列</div>
           <div class="list area-center" :data-key="centerList.length - 1">
             <template v-for="(d, i) in centerList">
               <div
                 :key="i"
                 :data-key="i"
                 class="item"
-                :class="d.show ? 'sel' : ''"
+                :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
               <div
                 :key="'-'+i"
                 :data-key="i"
                 class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'center' ? 'sel': ''"
+                :class="willDragInIndex == i && willDragInArea == 'center' ? 'active': ''"
               />
             </template>
           </div>
@@ -80,26 +78,24 @@
                 :key="i"
                 :data-key="i"
                 class="item"
-                :class="d.show ? 'sel' : ''"
+                :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                <i title="是否显示" class="act el-icon-view" :class="d.show ? 'sel' : ''" />
                 {{ d.title }}
               </div>
               <div
                 :key="'-'+i"
                 :data-key="i"
                 class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'right' ? 'sel': ''"
+                :class="willDragInIndex == i && willDragInArea == 'right' ? 'active': ''"
               />
             </template>
-            <template v-if="!rightList.length">
-              <div
-                :data-key="-1"
-                class="blank"
-                :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'sel': ''"
-              />
-            </template>
+            <div
+              v-if="!rightList.length"
+              :data-key="-1"
+              class="blank"
+              :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'active': ''"
+            />
           </div>
         </div>
       </div>
@@ -218,6 +214,7 @@ export default {
       this.value = columns
       this.$emit('update:initColumns', columns)
       this.close()
+      this.table.doLayout()
     },
     clickShow(item) {
       item.show = !item.show
@@ -285,19 +282,23 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #ededed;
-    min-width: 60px;
     margin-bottom: 5px;
-    height: 30px;
     border-radius: 4px;
-    padding: 0 4px;
+    padding: 5px 10px;
+    color: #aaa;
+    border: 1px solid #ddd;
     .act {
       margin-right: 10px;
       font-size: 16px;
+      opacity: .4;
     }
   }
-  .sel {
-    background-color: #409eff;
-    color: white;
+  .active {
+    color: #333;
+    &.act{
+      opacity: 1;
+      border-color: #ccc;
+    }
   }
 }
 
@@ -308,7 +309,6 @@ export default {
   text-align: center;
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
 }
 .right {
   display: flex;
@@ -318,24 +318,23 @@ export default {
   height: 97%;
   // height: 100%;
   text-align: center;
-  padding-top: 10px;
   width: 20%;
 }
 .center {
   flex: 1;
-  display: flex;
   height: 97%;
   padding-top: 25px;
   padding: 0 10px;
 }
 .blank {
   border: unset;
-  width: 10px;
+  width: 7px;
   height: 30px;
-  border-radius: 10px;
+  margin-left: 5px;
+  border-left: 2px solid transparent;
 }
 
-.blank.sel {
-  background-color: rgba($color: #0bc7ff, $alpha: 0.6);
+.blank.active {
+  border-color: #ddd;
 }
 </style>

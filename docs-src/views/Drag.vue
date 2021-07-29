@@ -9,6 +9,7 @@
       <span class="primary"> true </span><br>
       支持多表头同时拖动，按住<span class="primary"> ctrl </span>点击表头进行多选，可对多列进行拖动操作
     </p>
+
     <section class="demo">
       <div class="section-content">
         <eff-table

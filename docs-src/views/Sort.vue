@@ -56,7 +56,7 @@
           :max-height="400"
           :data="data"
           fullscreen
-          show-sort
+          :toolbar-config="{showSort: true}"
         />
       </div>
     </section>

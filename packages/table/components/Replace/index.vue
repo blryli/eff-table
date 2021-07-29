@@ -32,7 +32,7 @@
           <div class="action">
             <input placeholder="请输入字段名" @input="searchColumn">
             <div class="item" :class="showAll ? 'sel' : ''" @click.stop="showAll = !showAll">
-              显示已选
+              {{ showAll ? '显示已选' : '显示全选' }}
             </div>
           </div>
           <div class="list area-right justify-center" :data-key="list.length - 1">

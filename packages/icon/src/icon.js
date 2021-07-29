@@ -4,9 +4,10 @@ import RowDrag from './rowDrag'
 import ColumnBatchCtrl from './columnBatchCtrl'
 import ColumnCtrl from './columnCtrl'
 import Subtotal from './subtotal'
+import Eye from './eye'
 export default {
   name: 'Icon',
-  components: { Fixed, SearchClear, RowDrag, ColumnBatchCtrl },
+  components: { Fixed, SearchClear, RowDrag, ColumnBatchCtrl, Eye },
   props: {
     icon: { type: String, default: 'like' }
   },
@@ -18,7 +19,8 @@ export default {
       'row-drag': <RowDrag />,
       'column-ctrl': <ColumnCtrl />,
       'column-batch-ctrl': <ColumnBatchCtrl />,
-      'subtotal': <Subtotal />
+      'subtotal': <Subtotal />,
+      'eye': <Eye />
     }
     if (icons[icon]) {
       return icons[icon]

@@ -72,6 +72,21 @@
     padding: 10px;
     overflow-y: auto;
     box-sizing: border-box;
+    
+    &.inline {
+      & > * {
+        display: inline-block;
+        width: auto;
+      }
+      & > * + * {
+        margin-left: 5px;
+        margin-top: 5px;
+      }
+    }
+  }
+}
+.table-drag--card{
+  .eff-card__body{
     > * {
       padding: 8px 10px;
       border: 1px solid #ddd;
@@ -86,16 +101,6 @@
     }
     > * + * {
       margin-left: 0;
-    }
-    &.inline {
-      & > * {
-        display: inline-block;
-        width: auto;
-      }
-      & > * + * {
-        margin-left: 5px;
-        margin-top: 5px;
-      }
     }
   }
 }
