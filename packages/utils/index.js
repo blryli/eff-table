@@ -105,10 +105,16 @@ export const initField = (data, prop, vue) => {
   } else {
     data[prop] === undefined && vue.$set(data, prop, null)
   }
-  return data
+  return Promise.resolve(data)
 }
 
 // 获取字段值
 export const getFieldValue = function(data, prop) {
   return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
 }
+
+export const getColumnChildrenWidth = childs => childs.reduce((acc, cur) => {
+  cur.width = cur.children ? getColumnChildrenWidth(cur.children) : Math.max(cur.width || 0, 40.1)
+  acc += cur.width
+  return acc
+}, 0)

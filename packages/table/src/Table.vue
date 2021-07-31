@@ -150,7 +150,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>columns -  {{ columns }}</p> -->
+    <!-- <p>columns -  {{ columns }}</p>
+    <p>columnWidths -  {{ columnWidths }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -191,6 +192,7 @@ import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
+import { getColumnChildrenWidth } from 'pk/utils'
 
 export default {
   name: 'EffTable',
@@ -306,7 +308,8 @@ export default {
       sortControl: false,
       tableSourceData: [],
       editProps: {},
-      headerCheckedColumns: []
+      headerCheckedColumns: [],
+      loadingField: false
     }
   },
   computed: {
@@ -364,7 +367,24 @@ export default {
     }
   },
   watch: {
-    data(data) {
+    scrollTop(val) {
+      if (val > 2) {
+        this.scrolling = true
+        setTimeout(() => {
+          this.scrolling = false
+        }, 200)
+      }
+    },
+    scrollLeft(val) {
+      if (val > 2) {
+        this.scrolling = true
+        setTimeout(() => {
+          this.scrolling = false
+        }, 100)
+      }
+    },
+    data(data, oldData) {
+      if (this.scrolling) return
       this.loadTableData(data)
     },
     columns(val) {
@@ -390,7 +410,7 @@ export default {
     }
   },
   created() {
-    const { rowDrag, tableColumns } = this
+    const { rowDrag, tableColumns, spaceWidth } = this
     if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
       this.columns.unshift({
         show: true,
@@ -399,8 +419,16 @@ export default {
         width: 40
       })
     }
+    const setColumnWidth = column => {
+      const { children = [] } = column
+      if (children.length) {
+        column.width = getColumnChildrenWidth(children)
+      } else {
+        column.width = Math.max(column.width || 0, spaceWidth, 40.1)
+      }
+    }
     this.columns.forEach(d => {
-      d = { ...{ width: d.width || 0 }, ...d }
+      setColumnWidth(d)
     })
     this.tableColumns = [...this.columns]
     Object.assign(this, {
@@ -435,6 +463,7 @@ export default {
       }
       this.updateCache()
       this.clearScroll()
+      console.log('loadTableData')
       this.resize()
       this.scrollLeftEvent()
       return this.$nextTick()

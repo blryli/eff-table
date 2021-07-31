@@ -51,6 +51,9 @@ export default {
     scrollYwidth() {
       return this.overflowY ? 17 : 0
     },
+    scrollXwidth() {
+      return this.overflowX ? 17 : 0
+    },
     isScrollRightEnd() {
       const { bodyWrapperWidth, scrollLeft, bodyWidth, scrollYwidth } = this
       return bodyWrapperWidth + scrollLeft > bodyWidth + scrollYwidth

@@ -38,8 +38,8 @@ export default {
       return !useExpand && !useGroupColumn && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 400
     },
     renderColumn() {
-      const { columnIsVirtual, bodyColumns, columnRenderIndex, getColumnEndRenderIndex } = this
-      return columnIsVirtual ? bodyColumns.slice(columnRenderIndex, getColumnEndRenderIndex()) : bodyColumns
+      const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
+      return columnIsVirtual ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
     },
     columnFirstIndex() {
       return this.bodyColumns.filter(d => d.fixed === 'left').length
@@ -102,74 +102,38 @@ export default {
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       this.scrollLeft = scrollLeft
-      const { columnIsVirtual, bodyRect, columnLastIndex, columnWidths, getWidth } = this
+      const { columnIsVirtual, columnWidths, getWidth } = this
       if (!columnIsVirtual || scrollLeft === 0) {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
         return
       }
-      let leftScrollIndex = 0
+      let startIndex = 0
+      let endIndex = 0
       let curWidth = 0
+      let allWidth = 0
       for (let i = 0; i < columnWidths.length; i++) {
         const width = columnWidths[i]
         curWidth += width
         if (scrollLeft < curWidth) {
-          leftScrollIndex = i
+          startIndex = i
           break
         }
       }
-      const row = document.querySelector('.eff-table__body-row')
-      if (!row) return
-      const rowRect = row.getBoundingClientRect()
-      const { left, right } = rowRect
-      const { bodyLeft, bodyRight } = bodyRect
-      if (right < bodyRight) {
-        this.columnRenderIndex += 2
-        this.bodyMarginLeft = getWidth(0, this.columnRenderIndex) + 'px'
-      } else if (left > bodyLeft) {
-        this.columnRenderIndex -= 2
-        this.bodyMarginLeft = getWidth(0, this.columnRenderIndex) + 'px'
+      for (let i = 0; i < columnWidths.length; i++) {
+        const width = columnWidths[i]
+        allWidth += width
+        if (allWidth > this.columnVisibleWidth + 200) {
+          endIndex = startIndex + i + 3
+          break
+        }
       }
-
-      const offsetIndex = Math.abs(leftScrollIndex - this.columnRenderIndex)
-      if (offsetIndex > 1) {
-        this.columnRenderIndex = leftScrollIndex - 1
-        this.bodyMarginLeft = getWidth(0, leftScrollIndex - 1) + 'px'
-      }
-
-      const last = columnLastIndex - 3
-      if (this.columnRenderIndex > last) {
-        this.columnRenderIndex = last
-        this.bodyMarginLeft = getWidth(0, this.columnRenderIndex) + 'px'
-      }
+      this.columnRenderIndex = startIndex
+      this.columnRenderEndIndex = endIndex
+      this.bodyMarginLeft = getWidth(0, this.columnRenderIndex) + 'px'
     },
     getWidth(start, end) {
       return this.columnWidths.slice(start, end).reduce((acc, cur) => acc + cur, 0)
-    },
-    getColumnEndRenderIndex() {
-      const { columnRenderIndex, spaceWidth } = this
-      const bodyColumns = [...this.bodyColumns]
-
-      const columns = bodyColumns.slice(columnRenderIndex < 0 ? 0 : columnRenderIndex)
-      const len = this.bodyColumns.length
-      let index = 0
-      let allWidth = 0
-      for (let i = 0; i < columns.length; i++) {
-        const column = columns[i]
-        let { width = 0 } = column
-        !width && (width = spaceWidth)
-        const columnWidth = Math.max(width, 40)
-        allWidth += columnWidth
-        if (allWidth > this.columnVisibleWidth + 200) {
-          index = columnRenderIndex + i + 2
-          break
-        } else if (columnRenderIndex + i >= len - 1) {
-          index = len
-          break
-        }
-      }
-      this.columnRenderEndIndex = index
-      return index
     },
     toScroll(rowIndex) {
       const { renderSize, rowHeight } = this

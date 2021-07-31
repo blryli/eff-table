@@ -15,7 +15,7 @@ export default {
       this.columns.forEach(d => {
         d.order = ''
       })
-      this.updateData()
+      this.resetSort()
     },
     getSorts(columns) {
       return columns.reduce((acc, column) => {
@@ -39,7 +39,9 @@ export default {
     sortChange(column) {
       const { sortConfig: { multiple } = {}, getSorts } = this
       if (multiple) {
-        this.sorts = getSorts(this.columns)
+        const sorts = getSorts(this.columns)
+
+        this.sorts = sorts
       } else {
         // 如果sorts有值并且不是当前column，则置空order
         if (this.sorts.length && !this.sorts.some(d => d === column)) {
@@ -52,23 +54,30 @@ export default {
         }
         this.sorts = column.order ? [column] : []
       }
-      this.updateData()
+      this.toSort()
     },
-    updateData() {
+    resetSort() {
+      const { tableData, rowId } = this
+      this.tableData = this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId]))
+      this.tableSortSourceData = null
+    },
+    toSort() {
       let tableData = [...this.tableData]
-      const { rowId, sorts } = this
+      const { sorts, sortConfig = {}} = this
       if (!this.tableSortSourceData) {
         this.tableSortSourceData = XEUtils.clone(tableData, true)
       }
+      // sorts有值则排序
       if (sorts.length) {
+        const { sortMethod, remote } = sortConfig
         const sort = sorts.reduce((acc, column) => {
-          const { prop, order, remoteSort, sortMethod } = column
-          return acc.concat([remoteSort ? acc : XEUtils.isFunction(sortMethod) ? [sortMethod({ data: tableData, column, $table: this })] : [prop, order]])
+          const { prop, order } = column
+          return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data: tableData, column, prop, order, $table: this })] : [prop, order]])
         }, [])
-        tableData = XEUtils.sortBy(tableData, sort)
+        !remote && sort.length && (tableData = XEUtils.sortBy(tableData, sort))
       } else {
-        tableData = this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId]))
-        this.tableSortSourceData = null
+        // sorts没值则还原
+        this.resetSort()
       }
       this.tableData = tableData
       this.$emit('sort-change', sorts.length === 1 ? sorts[0] : sorts, tableData)

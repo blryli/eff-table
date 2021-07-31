@@ -139,9 +139,6 @@ export default {
           show: true,
           prop: 'phone',
           title: '手机'
-        },
-        {
-          show: true
         }
       ],
       data: [

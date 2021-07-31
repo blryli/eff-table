@@ -9,7 +9,8 @@ export default {
   methods: {
     validateField(prop, rule, row) {
       if (!prop) {
-        console.error('需要校验的字段，必须具有 prop 属性')
+        console.warn('需要校验的字段，必须具有 prop 属性')
+        return Promise.resolve({})
         // resolve()
       }
       const { columns, validators, rowId } = this

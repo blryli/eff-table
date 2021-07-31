@@ -189,8 +189,7 @@ export default {
           show: true,
           prop: 'name',
           title: '列10',
-          fixed: 'right',
-          width: 100
+          children: [{ prop: '111', title: '111' }, { prop: '222', title: '222' }, { prop: '333', title: '333' }, { prop: '444', title: '444' }]
         },
         {
           show: true,
@@ -198,6 +197,7 @@ export default {
           title: '列9',
           width: 200
         }
+
       ]
     }
   },
