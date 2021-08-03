@@ -146,7 +146,7 @@ export default {
   },
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, columnWidths } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
 
@@ -154,9 +154,7 @@ export default {
 
     return (
       <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
-        <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }}>
-          {columnWidths.map(d => <span style={{ display: 'inline-block', width: d + 'px', height: '1px' }}></span>)}
-        </div>
+        <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: totalHeight + 'px' }} />
         <div
           class='eff-table__body '
@@ -174,6 +172,7 @@ export default {
                 row-index={rowIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
+                vue={this}
                 messages={formatValidators[row[rowId]]}
               />, expandNode]
               ++rowIndex

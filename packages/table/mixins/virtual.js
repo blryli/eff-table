@@ -1,7 +1,6 @@
 export default {
   data() {
     return {
-      scrollIndex: 0,
       renderIndex: 0,
       columnRenderIndex: 0,
       columnRenderEndIndex: 0,
@@ -41,13 +40,19 @@ export default {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
       return columnIsVirtual ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
     },
-    columnFirstIndex() {
-      return this.bodyColumns.filter(d => d.fixed === 'left').length
+    columnAccWidths() {
+      return this.columnWidths.reduce((acc, cur) => {
+        acc.num += cur
+        acc.widths.push(acc.num)
+        return acc
+      }, { num: 0, widths: [] }).widths
     },
-    columnLastIndex() {
-      const columnWidths = [...this.columnWidths]
-      const columnLastIndex = columnWidths.findIndex((d, i) => columnWidths.slice(i).reduce((acc, cur) => acc + +cur, 0) <= this.columnVisibleWidth)
-      return columnLastIndex
+    dataAccHeight() {
+      return this.tableData.reduce((acc, cur) => {
+        acc.num += this.rowHeight
+        acc.heights.push(acc.num)
+        return acc
+      }, { num: 0, heights: [] }).heights
     }
   },
   watch: {
@@ -59,33 +64,14 @@ export default {
     scrollTop(scrollTop) {
       const { rowHeight } = this
       if (scrollTop < rowHeight) {
-        this.scrollIndex = 0
+        this.renderIndex = 0
       }
       if (this.isVirtual) {
-        this.scrollIndex = parseInt(scrollTop / rowHeight)
+        this.renderIndex = this.dataAccHeight.findIndex(d => d > scrollTop)
       }
     },
-    scrollIndex(scrollIndex, oldScrollIndex) {
-      const { renderSize, scrollTop, rowHeight, tableData, renderIndex } = this
-      const last = tableData.length - renderSize
-      const offset = Math.abs(scrollIndex - renderIndex)
-
-      if (scrollIndex < 2) {
-        this.renderIndex = 0
-        this.bodyMarginTop = 0
-      } else if (scrollIndex > last - 2) {
-        this.bodyMarginTop = last * rowHeight + 'px'
-        this.renderIndex = last
-      } else if (offset > 2 || Math.abs(scrollIndex - oldScrollIndex) > 3) {
-        this.renderIndex = scrollIndex
-        const offsetTop = scrollIndex === 2 ? rowHeight : rowHeight * 3
-        this.bodyMarginTop = scrollTop - offsetTop + 'px'
-      }
-    },
-    scrollLeft(scrollLeft, oldScrollLeft) {
-      const { columnIsVirtual, scrollLeftEvent } = this
-      this.scrollLeftDir = scrollLeft > oldScrollLeft ? 'right' : 'left'
-      columnIsVirtual && scrollLeftEvent(scrollLeft)
+    renderIndex(index) {
+      this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
     },
     columnIsVirtual(val) {
       if (val) {
@@ -93,6 +79,16 @@ export default {
       } else {
         this.bodyMarginLeft = ''
       }
+    },
+    scrollLeft(scrollLeft, oldScrollLeft) {
+      const { columnIsVirtual, scrollLeftEvent } = this
+      this.scrollLeftDir = scrollLeft > oldScrollLeft ? 'right' : 'left'
+      if (columnIsVirtual) {
+        scrollLeftEvent(scrollLeft)
+      }
+    },
+    columnRenderIndex(startIndex) {
+      this.bodyMarginLeft = (startIndex > 0 ? this.columnAccWidths[startIndex - 1] : 0) + 'px'
     }
   },
   mounted() {
@@ -102,38 +98,16 @@ export default {
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       this.scrollLeft = scrollLeft
-      const { columnIsVirtual, columnWidths, getWidth } = this
+      const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
       if (!columnIsVirtual || scrollLeft === 0) {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
         return
       }
-      let startIndex = 0
-      let endIndex = 0
-      let curWidth = 0
-      let allWidth = 0
-      for (let i = 0; i < columnWidths.length; i++) {
-        const width = columnWidths[i]
-        curWidth += width
-        if (scrollLeft < curWidth) {
-          startIndex = i
-          break
-        }
-      }
-      for (let i = 0; i < columnWidths.length; i++) {
-        const width = columnWidths[i]
-        allWidth += width
-        if (allWidth > this.columnVisibleWidth + 200) {
-          endIndex = startIndex + i + 3
-          break
-        }
-      }
+      const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
+      const endIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth) + 2
       this.columnRenderIndex = startIndex
       this.columnRenderEndIndex = endIndex
-      this.bodyMarginLeft = getWidth(0, this.columnRenderIndex) + 'px'
-    },
-    getWidth(start, end) {
-      return this.columnWidths.slice(start, end).reduce((acc, cur) => acc + cur, 0)
     },
     toScroll(rowIndex) {
       const { renderSize, rowHeight } = this

@@ -263,7 +263,7 @@ export default {
         this.$message.success('校验通过!')
       }).catch(data => {
         this.$message.error('校验不通过!')
-        console.log(JSON.stringify(data, null, 2))
+        // console.log(JSON.stringify(data, null, 2))
       })
     },
     fullValidate() {
@@ -271,7 +271,7 @@ export default {
         this.$message.success('校验通过!')
       }).catch(data => {
         this.$message.error('校验不通过!')
-        console.log(JSON.stringify(data, null, 2))
+        // console.log(JSON.stringify(data, null, 2))
       })
     },
     validateChecked() {
@@ -281,7 +281,7 @@ export default {
           this.$message.success('校验通过!')
         }).catch(data => {
           this.$message.error('校验不通过!')
-          console.log(JSON.stringify(data, null, 2))
+          // console.log(JSON.stringify(data, null, 2))
         })
       } else {
         this.$message.error('未选中行!')

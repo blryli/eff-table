@@ -150,8 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>columns -  {{ columns }}</p>
-    <p>columnWidths -  {{ columnWidths }}</p> -->
+    <!-- <p>expands -  {{ expands }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -344,8 +343,8 @@ export default {
       return style
     },
     useExpand() {
-      const { visibleColumns, expand } = this
-      return expand && visibleColumns.find(d => d.type === 'expand')
+      const { visibleColumns } = this
+      return Boolean(visibleColumns.find(d => d.type === 'expand'))
     },
     useGroupColumn() {
       const { tableData } = this
@@ -397,7 +396,9 @@ export default {
         return acc
       }, { left: [], center: [], right: [] })
       this.fixedColumns = columns
-      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => acc.concat(cur.filter(d => d.show !== false)), [])]
+      this.visibleColumns = tableColumns.reduce((acc, cur) => {
+        return cur.show !== false ? acc.concat(Object.assign(cur, { style: {}})) : acc
+      }, [])
     },
     loading(val) {
       this.isLoading = val
@@ -410,7 +411,7 @@ export default {
     }
   },
   created() {
-    const { rowDrag, tableColumns, spaceWidth } = this
+    const { rowDrag, tableColumns } = this
     if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
       this.columns.unshift({
         show: true,
@@ -420,11 +421,13 @@ export default {
       })
     }
     const setColumnWidth = column => {
-      const { children = [] } = column
+      const { width, children = [] } = column
       if (children.length) {
         column.width = getColumnChildrenWidth(children)
       } else {
-        column.width = Math.max(column.width || 0, spaceWidth, 40.1)
+        if (!width) {
+          column.width = 40.1
+        }
       }
     }
     this.columns.forEach(d => {
@@ -463,15 +466,14 @@ export default {
       }
       this.updateCache()
       this.clearScroll()
-      console.log('loadTableData')
       this.resize()
-      this.scrollLeftEvent()
       return this.$nextTick()
     },
     reloadData(data = null) {
       this.clearStatus()
       this.clearValidate()
       this.clearSelection()
+      this.expands = []
       if (!data) {
         data = this.data
       }
@@ -623,10 +625,11 @@ export default {
     },
     expandChange(obj) {
       const { rowId } = obj
-      const index = this.expands.findIndex(d => d.rowId === rowId)
-      if (index > -1) {
-        this.$set(this.expands[index], 'expanded', obj.expanded)
+      const expand = this.expands.find(d => d.rowId === rowId)
+      if (expand) {
+        this.$set(expand, 'expanded', !expand['expanded'])
       } else {
+        obj.expanded = true
         this.expands.push(obj)
       }
       this.$nextTick(() => {

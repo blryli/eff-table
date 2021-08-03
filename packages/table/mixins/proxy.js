@@ -135,7 +135,6 @@ export default {
           this.updateCache()
           this.clearSelection()
           this.resize()
-          this.scrollLeftEvent()
         } else {
           const tIndex = tableData.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {
@@ -167,7 +166,6 @@ export default {
               this.updateCache()
               this.clearSelection()
               this.resize()
-              this.scrollLeftEvent()
               this.isLoading = false
             } else {
               this.$message.error(res.message)
@@ -177,7 +175,6 @@ export default {
             this.updateCache()
             this.clearSelection()
             this.resize()
-            this.scrollLeftEvent()
             this.isLoading = false
           })
         } else {

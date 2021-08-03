@@ -40,7 +40,7 @@ export default {
       const style = {}
       let { width = 0 } = column
       const { spaceWidth } = table
-      width === 40.1 && (width = spaceWidth)
+      width === 40.1 && (width += spaceWidth)
       const columnWidth = Math.max(width, 40)
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'

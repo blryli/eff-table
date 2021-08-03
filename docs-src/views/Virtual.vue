@@ -189,7 +189,7 @@ export default {
           show: true,
           prop: 'name',
           title: '列10',
-          children: [{ prop: '111', title: '111' }, { prop: '222', title: '222' }, { prop: '333', title: '333' }, { prop: '444', title: '444' }]
+          children: [{ prop: '111', width: 100, title: '111' }, { prop: '222', width: 100, title: '222' }, { prop: '333', width: 100, title: '333' }, { prop: '444', width: 100, title: '444' }, { prop: '555', width: 100, title: '555' }, { prop: '666', width: 100, title: '666' }]
         },
         {
           show: true,
