@@ -36,7 +36,7 @@ export default {
     },
     bodyRenderWidth() {
       const { columnIsVirtual, columnWidths, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
-      return columnIsVirtual ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
+      return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
     },
     fixedHeight() {
       const { showSummary, heights, overflowX } = this

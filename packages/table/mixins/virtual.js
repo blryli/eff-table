@@ -38,7 +38,7 @@ export default {
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
-      return columnIsVirtual ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
+      return columnIsVirtual && columnRenderEndIndex ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
     },
     columnAccWidths() {
       return this.columnWidths.reduce((acc, cur) => {
@@ -105,7 +105,8 @@ export default {
         return
       }
       const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
-      const endIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth) + 2
+      const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
+      const endIndex = findEndIndex > -1 ? findEndIndex + 2 : columnAccWidths.length
       this.columnRenderIndex = startIndex
       this.columnRenderEndIndex = endIndex
     },
