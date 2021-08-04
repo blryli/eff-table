@@ -17,8 +17,8 @@ export default {
         const { toolbarLeft, more } = this.$refs
         const leftRect = toolbarLeft.getBoundingClientRect()
         const moreRect = more.getBoundingClientRect()
-        const leftChilds = [...toolbarLeft.childNodes]
-        this.hideIndex = leftChilds.findIndex(d => d && d.getBoundingClientRect().right + moreRect.width + 20 > leftRect.right) - 1
+        const leftChilds = [...toolbarLeft.childNodes].filter(d => d.nodeType === 1)
+        this.hideIndex = leftChilds.findIndex(d => d && d.getBoundingClientRect && d.getBoundingClientRect().right + moreRect.width + 20 > leftRect.right) - 1
       }, 500)
     })
   },

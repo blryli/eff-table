@@ -414,7 +414,9 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
-          edit: true
+          edit: {
+            render: () => ({ name: 'input' })
+          }
         },
         {
           show: true,
