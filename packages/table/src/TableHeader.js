@@ -60,15 +60,15 @@ export default {
     checkedColumnGroup() {
       var result = []
       var i = 0
-      const list = [...this.table.headerCheckedColumns].sort((a, b) => a.id - b.id)
+      const list = [...this.table.headerCheckedColumns].sort((a, b) => a.columnId - b.columnId)
 
       list.forEach((item, index) => {
         if (index === 0) {
-          result[0] = [item.id]
-        } else if (parseInt(item.id) - parseInt(list[index - 1].id) === 1) { // 判断当前值 和 前一个值是否相差1
-          result[i].push(item.id)
+          result[0] = [item.columnId]
+        } else if (parseInt(item.columnId) - parseInt(list[index - 1].columnId) === 1) { // 判断当前值 和 前一个值是否相差1
+          result[i].push(item.columnId)
         } else {
-          result[++i] = [item.id] // 开辟新空间。
+          result[++i] = [item.columnId] // 开辟新空间。
         }
       })
 
@@ -361,6 +361,7 @@ export default {
     const height = headerHeight + 'px'
     const renderCols = renderColumns(visibleColumns)
     // 将多选表头进行分组，用于多列拖动
+    console.log(this.checkedColumnGroup)
     if (this.checkedColumnGroup.length) {
       this.checkedColumnGroup.forEach(check => {
         const columnGroup = <div class='eff-table__header-checked'>{check.reduce((acc, cur) => acc.concat(renderCols[+cur - 1]), [])}</div>

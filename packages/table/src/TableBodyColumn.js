@@ -122,10 +122,14 @@ export default {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
         const renderOpts = XEUtils.merge({}, config, cellRender)
-        const { name, tag } = renderOpts
+        const { name, tag, format } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, renderCell: true }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, renderCell: true }
+        if (XEUtils.isFunction(format)) {
+          return format(params)
+        }
+        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
