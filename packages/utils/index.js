@@ -113,8 +113,8 @@ export const getFieldValue = function(data, prop) {
   return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
 }
 
-export const getColumnChildrenWidth = childs => childs.reduce((acc, cur) => {
-  cur.width = cur.children ? getColumnChildrenWidth(cur.children) : Math.max(cur.width || 0, 40.1)
+export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc, cur) => {
+  cur.width = cur.children ? getColumnChildrenWidth(cur.children) : Math.max(cur.width || spaceWidth, 40)
   acc += cur.width
   return acc
 }, 0)

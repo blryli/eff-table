@@ -21,7 +21,7 @@ export default {
   inject: ['table'],
   methods: {
     click() {
-      this.table.commitProxy('query')
+      this.table.refresh()
     }
   }
 }

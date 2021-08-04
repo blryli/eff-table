@@ -35,10 +35,8 @@ export default {
       column.initField = true
     }
     // 设置style
-    column.width === 40.1 && (column.width += spaceWidth)
-    const columnWidth = Math.max(column.width, 40)
-    column.style = {}
-    const { style } = column
+    const columnWidth = Math.max(column.width || spaceWidth, 40)
+    const style = {}
     style.minWidth = columnWidth + 'px'
     style.maxWidth = columnWidth + 'px'
     if (columnIndex === 0) {
@@ -127,7 +125,7 @@ export default {
         const { name, tag } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, renderCell: true }) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
@@ -215,7 +213,7 @@ export default {
     return h('div', Object.assign(data, {
       key: groupFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
-      style: column.style,
+      style: style,
       on: {
         mouseenter: event => handleMouseenter(event, slot),
         mouseleave: event => handleMouseleave(event, slot),

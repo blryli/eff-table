@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>expands -  {{ expands }}</p> -->
+    <!-- <p>columns -  {{ columns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -396,9 +396,7 @@ export default {
         return acc
       }, { left: [], center: [], right: [] })
       this.fixedColumns = columns
-      this.visibleColumns = tableColumns.reduce((acc, cur) => {
-        return cur.show !== false ? acc.concat(Object.assign(cur, { style: {}})) : acc
-      }, [])
+      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => acc.concat(cur.filter(d => d.show !== false)), [])]
     },
     loading(val) {
       this.isLoading = val
@@ -423,10 +421,10 @@ export default {
     const setColumnWidth = column => {
       const { width, children = [] } = column
       if (children.length) {
-        column.width = getColumnChildrenWidth(children)
+        column.width = getColumnChildrenWidth(children, this.spaceWidth)
       } else {
         if (!width) {
-          column.width = 40.1
+          column.width = 0
         }
       }
     }

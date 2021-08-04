@@ -311,6 +311,9 @@ export default {
       return this.$nextTick().then(() => rowIndex)
     },
     refresh() {
+      const { footerActionConfig = {}} = this
+      const { pageConfig: { pageSizes = [] } = {}} = footerActionConfig || {}
+      Object.assign(this.pager, { pageNum: 1, pageSize: pageSizes[0] || 10 })
       this.commitProxy('query')
     },
     getInsertList() {

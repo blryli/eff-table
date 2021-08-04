@@ -46,7 +46,11 @@ function renderDefault(h, renderOpts, params) {
 
 // 默认 render
 function renderCell(h, renderOpts, params) {
+  const { format } = renderOpts || {}
   const { data, prop, root } = params || {}
+  if (XEUtils.isFunction(format)) {
+    return format(params)
+  }
   return getPropValue(data, prop, root)
 }
 function setPropValue(root, data, prop, val) {
@@ -123,7 +127,10 @@ function renderTextareaEdit(h, renderOpts, params) {
 
 // 选择器 select
 function renderselectCell(h, renderOpts, params) {
-  const { props } = renderOpts || {}
+  const { props, format } = renderOpts || {}
+  if (XEUtils.isFunction(format)) {
+    return format(params)
+  }
   const { data, prop, root } = params || {}
   const cellLabel = getPropValue(data, prop, root)
   const { labelKey = 'label', valueKey = 'value' } = props || {}
@@ -183,7 +190,10 @@ function renderSelectEdit(h, renderOpts, params) {
 // 日期 datepick
 function renderdateCell(h, renderOpts = {}, params = {}) {
   const { format, props: { format: propsFormat } = {}} = renderOpts
-  const formater = format || propsFormat || 'yyyy-MM-dd'
+  if (XEUtils.isFunction(format)) {
+    return format(params)
+  }
+  const formater = propsFormat || 'yyyy-MM-dd'
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
@@ -400,7 +410,10 @@ function renderTag(h, renderOpts, params) {
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
   const { data, prop, root = {}} = params || {}
-  const { props = {}} = renderOpts
+  const { props = {}, format } = renderOpts
+  if (XEUtils.isFunction(format)) {
+    return format(params)
+  }
   const cascaderProps = props.props || {}
   const { label = 'label', value = 'value', children = 'children' } = cascaderProps
   const cascaderValue = getPropValue(data, prop, root) || []
