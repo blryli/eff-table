@@ -12,8 +12,11 @@ export function getChildren(h, opts, params, key) {
 
     if (XEUtils.isFunction(children)) return getChildren(h, children(h, params), params)
 
-    if (XEUtils.isArray(children)) return children.map((child, idx) => getChildren(h, child, params, idx))
-
+    if (XEUtils.isArray(children)) {
+      return children.map((child, idx) => {
+        return child.constructor.name === 'VNode' ? child : getChildren(h, child, params, idx)
+      })
+    }
     if (XEUtils.isObject(children)) {
       const { children: childs } = children
       const childrenRender = getChildren(h, childs, params)
