@@ -8,14 +8,11 @@ export function getChildren(h, opts, params, key) {
     if (children.on) {
       children.on = getOn({}, children.on, params)
     }
-    if (children.constructor.name === 'VNode') return children
-
+    if (['VNode', 'pe'].includes(children.constructor.name)) return children
     if (XEUtils.isFunction(children)) return getChildren(h, children(h, params), params)
 
     if (XEUtils.isArray(children)) {
-      return children.map((child, idx) => {
-        return child.constructor.name === 'VNode' ? child : getChildren(h, child, params, idx)
-      })
+      return children.map((child, idx) => getChildren(h, child, params, idx))
     }
     if (XEUtils.isObject(children)) {
       const { children: childs } = children
