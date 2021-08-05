@@ -361,7 +361,6 @@ export default {
     const height = headerHeight + 'px'
     const renderCols = renderColumns(visibleColumns)
     // 将多选表头进行分组，用于多列拖动
-    console.log(this.checkedColumnGroup)
     if (this.checkedColumnGroup.length) {
       this.checkedColumnGroup.forEach(check => {
         const columnGroup = <div class='eff-table__header-checked'>{check.reduce((acc, cur) => acc.concat(renderCols[+cur - 1]), [])}</div>

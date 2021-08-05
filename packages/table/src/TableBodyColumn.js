@@ -117,11 +117,19 @@ export default {
       })
     }
     const cellRender = function(h) {
-      const { cellRender, prop, config, type } = column
+      const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
-        const renderOpts = XEUtils.merge({}, config, cellRender)
+        const { dynamicEdit } = config
+        const dynamicConfig = {}
+        if (dynamicEdit) {
+          const renderFunc = render(h, { row, sourceRow, rowIndex, column, columnIndex, prop })
+          const { prop } = renderFunc
+          // console.log('renderFunc', JSON.stringify(renderFunc, null, 2))
+          Object.assign(dynamicConfig, { prop })
+        }
+        const renderOpts = XEUtils.merge({}, config, cellRender, dynamicConfig)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]

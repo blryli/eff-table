@@ -414,9 +414,7 @@ export default {
           show: true,
           prop: 'name',
           title: '名字',
-          edit: {
-            render: () => ({ name: 'input' })
-          }
+          edit: true
         },
         {
           show: true,
@@ -445,10 +443,10 @@ export default {
           buttons: [{ name: 'button', code: 'add', children: '新增' }]
         },
         data: [
-          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', cascader: [], vaccination: '1' },
-          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, cascader: [], vaccination: '2' },
-          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', cascader: [], vaccination: '' },
-          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, cascader: [], vaccination: '3' }
+          { id: 1, name: '张三', sex: '1', phone: '13715201314', date: '2021-04-12', address: [], address1: '', vaccination: '1' },
+          { id: 2, name: '李四', sex: '2', phone: '13715201314', date: null, address: [], address1: '', vaccination: '2' },
+          { id: 3, name: '王五', sex: '1', phone: '13715201314', date: '2021-04-12', address: [], address1: '', vaccination: '' },
+          { id: 4, name: '赵六', sex: '1', phone: '13715201314', date: null, address: [], address1: '', vaccination: '3' }
         ],
         columns: [
           {
@@ -472,10 +470,57 @@ export default {
           },
           {
             show: true,
+            prop: 'address',
+            title: '地址',
+            config: {
+              dynamicEdit: true
+            },
+            edit: {
+              render: (h, { row, prop }) => {
+                return row.sex === '1' ? {
+                  prop: 'address',
+                  name: 'cascader',
+                  props: {
+                    props: {
+                      label: 'label1',
+                      value: 'value1',
+                      children: 'children1'
+                    }
+                  },
+                  options: () => [{
+                    value1: 'zhinan',
+                    label1: '指南',
+                    children1: [{
+                      value1: 'shejiyuanze',
+                      label1: '设计原则',
+                      children1: [{
+                        value1: 'yizhi',
+                        label1: '一致'
+                      }, {
+                        value1: 'fankui',
+                        label1: '反馈'
+                      }, {
+                        value1: 'xiaolv',
+                        label1: '效率'
+                      }, {
+                        value1: 'kekong',
+                        label1: '可控'
+                      }]
+                    }]
+                  }] } : { name: 'input', prop: 'address1' }
+              }
+            }
+          },
+          {
+            show: true,
             prop: 'phone',
             title: '手机',
             config: { name: 'input' },
-            edit: true
+            edit: {
+              render: (h, { row, prop }) => {
+                return row.sex === '1' ? { name: 'select', option: [{ label: '13715209999', value: '1' }, { label: '1371527777', value: '1' }] } : { name: 'input' }
+              }
+            }
           },
           {
             show: true,
@@ -483,43 +528,6 @@ export default {
             title: '疫苗预约日期',
             config: {
               name: 'date-picker', format: 'yyyy-MM-dd'
-            },
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'cascader',
-            title: '地址',
-            config: {
-              name: 'cascader',
-              props: {
-                props: {
-                  label: 'label1',
-                  value: 'value1',
-                  children: 'children1'
-                },
-                options: () => [{
-                  value1: 'zhinan',
-                  label1: '指南',
-                  children1: [{
-                    value1: 'shejiyuanze',
-                    label1: '设计原则',
-                    children1: [{
-                      value1: 'yizhi',
-                      label1: '一致'
-                    }, {
-                      value1: 'fankui',
-                      label1: '反馈'
-                    }, {
-                      value1: 'xiaolv',
-                      label1: '效率'
-                    }, {
-                      value1: 'kekong',
-                      label1: '可控'
-                    }]
-                  }]
-                }]
-              }
             },
             edit: true
           },

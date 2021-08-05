@@ -53,6 +53,7 @@ export default {
           globalColumnIndex = columnIndex
         }
         const renderEdit = (render) => {
+          // const { dynamicEdit } = config
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
