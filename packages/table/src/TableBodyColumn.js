@@ -121,19 +121,18 @@ export default {
       if (typeof cellRender === 'function') {
         return cellRender(h, { row, rowIndex, column, columnIndex, prop })
       } else {
-        const { dynamicEdit } = config
+        // 处理动态渲染器
         const dynamicConfig = {}
-        if (dynamicEdit) {
+        if (XEUtils.isFunction(render)) {
           const renderFunc = render(h, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          const { prop } = renderFunc
-          // console.log('renderFunc', JSON.stringify(renderFunc, null, 2))
-          Object.assign(dynamicConfig, { prop })
+          renderFunc.constructor.name !== 'VNode' && Object.assign(dynamicConfig, renderFunc)
         }
-        const renderOpts = XEUtils.merge({}, config, cellRender, dynamicConfig)
+        const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
-        const compConf = renderer.get(name) || tag && renderer.get('default')
+        const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, renderCell: true }
+        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
+        // 处理format
         if (XEUtils.isFunction(format)) {
           return format(params)
         }

@@ -52,12 +52,11 @@ export default {
           this.columnIndex = columnIndex
           globalColumnIndex = columnIndex
         }
-        const renderEdit = (render) => {
-          // const { dynamicEdit } = config
+        const renderEdit = (render = {}) => {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
           const { name } = renderOpts
           const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }) || ''
         }
 
         if (typeof render === 'function') {
