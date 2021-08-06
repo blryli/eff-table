@@ -117,11 +117,12 @@ export default {
         return
       }
 
-      const map = this._getColumnMap()
-
+      const { endRow, endColumn } = this._getReac()
+      const query = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
+      const endColumnModel = this.table.$refs.body.$el.querySelector(query)
       if (this.status === 3) {
         this.endPosition = this.sightEndPosition
-        const content = map[this.sightStartPosition.rowIndex + '-' + this.sightStartPosition.columnIndex].$el.innerText
+        const content = endColumnModel.innerText
 
         const updateArr = this.handleUpdateData(content, 'sightStartPosition', 'sightEndPosition')
         this.table.$emit('edit-fields', updateArr)
@@ -131,12 +132,8 @@ export default {
       this.selectCount = this.startPosition.columnIndex === this.endPosition.columnIndex && this.startPosition.rowIndex === this.endPosition.rowIndex ? 1 : 2
 
       if (this.status === 1) {
-        const { endRow, endColumn } = this._getReac()
-        const endColumnModel = map[endRow + '-' + endColumn]
         if (endColumnModel) {
-          const width = endColumnModel.$el.offsetWidth
-          const height = endColumnModel.$el.offsetHeight
-          const { top, left } = endColumnModel.$el.getBoundingClientRect()
+          const { top, left, width, height } = endColumnModel.getBoundingClientRect()
           this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
@@ -176,13 +173,10 @@ export default {
         this.sightEndPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
 
         const { endRow, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
-        const map = this._getColumnMap()
-        const endColumnModel = map[endRow + '-' + endColumn]
-
+        const node = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
+        const endColumnModel = this.table.$refs.body.$el.querySelector(node)
         if (endColumnModel) {
-          const width = endColumnModel.$el.offsetWidth
-          const height = endColumnModel.$el.offsetHeight
-          const { top, left } = endColumnModel.$el.getBoundingClientRect()
+          const { top, left, width, height } = endColumnModel.getBoundingClientRect()
           this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
         }
 
@@ -190,19 +184,17 @@ export default {
       }
     },
     handleRect(sight = false, close = false) {
-      let borderStyle, res
+      let res
 
       if (sight) {
         res = this._getReac('sightStartPosition', 'sightEndPosition')
-        borderStyle = `2px ${this.borderStyle} rgb(17 210 232)`
       } else {
         res = this._getReac()
-        borderStyle = `2px ${this.borderStyle} #1177e8`
       }
 
-      if (close) {
-        borderStyle = ''
-      }
+      // if (close) {
+      //   console.log('close')
+      // }
 
       const { startRow, endRow, startColumn, endColumn } = res
 
@@ -211,26 +203,8 @@ export default {
       for (let i = startRow; i <= endRow; i++) {
         for (let j = startColumn; j <= endColumn; j++) {
           const column = map[i + '-' + j]
-          const style = {}
-
-          if (j === startColumn) {
-            style.borderLeft = borderStyle
-          }
-
-          if (j === endColumn) {
-            style.borderRight = borderStyle
-          }
-
-          if (i === startRow) {
-            style.borderTop = borderStyle
-          }
-
-          if (i === endRow) {
-            style.borderBottom = borderStyle
-          }
 
           if (column) {
-            column.style = style
             if (!sight) {
               this.textMap[i + '-' + j] = column.$el.innerText
             }

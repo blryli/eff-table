@@ -150,7 +150,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <p>columns -  {{ columns }}</p>
+    <p>selectRange -  {{ $refs.selectRange && $refs.selectRange._getReac() }}</p>
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />

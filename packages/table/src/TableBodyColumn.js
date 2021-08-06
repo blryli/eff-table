@@ -28,7 +28,7 @@ export default {
     const { table } = injections
     const { vue, row, rowIndex, column, columnIndex, disabled, groupFloor, groupKey, summary } = props
     const { type, prop, className } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }} = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
     // 为特殊prop时，初始化值
     if (prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
       initField(row, prop, vue)
@@ -41,6 +41,24 @@ export default {
     style.maxWidth = columnWidth + 'px'
     if (columnIndex === 0) {
       style.borderLeft = 0
+    }
+
+    // 复制功能
+    if (copy) {
+      const { startRow, endRow, startColumn, endColumn } = table.$refs.selectRange._getReac()
+      const borderStyle = `2px solid rgb(17 210 232)`
+      if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
+        style.borderLeft = borderStyle
+      }
+      if (rowIndex === startRow && columnIndex >= startColumn && columnIndex <= endColumn) {
+        style.borderTop = borderStyle
+      }
+      if (columnIndex === endColumn && rowIndex >= startRow && rowIndex <= endRow) {
+        style.borderRight = borderStyle
+      }
+      if (rowIndex === endRow && columnIndex >= startColumn && columnIndex <= endColumn) {
+        style.borderBottom = borderStyle
+      }
     }
 
     // 处理class
@@ -125,7 +143,9 @@ export default {
         const dynamicConfig = {}
         if (XEUtils.isFunction(render)) {
           const renderFunc = render(h, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          renderFunc.constructor.name !== 'VNode' && Object.assign(dynamicConfig, renderFunc)
+          if (!['VNode', 'pe'].includes(renderFunc.constructor.name)) {
+            Object.assign(dynamicConfig, renderFunc)
+          }
         }
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
@@ -224,7 +244,7 @@ export default {
     return h('div', Object.assign(data, {
       key: groupFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
-      style: style,
+      style: Object.assign(column.style || {}, style),
       on: {
         mouseenter: event => handleMouseenter(event, slot),
         mouseleave: event => handleMouseleave(event, slot),

@@ -61,7 +61,8 @@ export default {
 
         if (typeof render === 'function') {
           const renderFunc = render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          return renderFunc.constructor.name === 'VNode' ? (renderFunc || '') : renderEdit(renderFunc)
+          // VNode线上会渲染成pe对象
+          return ['VNode', 'pe'].includes(renderFunc.constructor.name) ? (renderFunc || '') : renderEdit(renderFunc)
         } else {
           return renderEdit(render)
         }
@@ -308,8 +309,8 @@ export default {
       return this.$nextTick()
     },
     fixOverflow(cell, cellIndex) {
-      const { wrapper } = this
-      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY } = this.table
+      const { wrapper, table } = this
+      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY, isScrollRightEnd } = table
       const overflow = isOverflow({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY })
       const { height: wrapperHeight } = wrapper.getBoundingClientRect()
       const colid = cell.getAttribute('data-colid')
@@ -318,7 +319,7 @@ export default {
       for (const key in overflow) {
         if (overflow[key]) {
           const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
-          if (key === 'left' || key === 'right') {
+          if ((key === 'left' && table.scrollLeft > 1) || (key === 'right' && !isScrollRightEnd)) {
             this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
             this.table.scrollTop = rowIndex * rowHeight - wrapperHeight / 2
@@ -387,12 +388,15 @@ export default {
       }, 50)
     },
     setElPos() {
-      const { left, top, width, height } = this.cell.getBoundingClientRect()
-      const { left: tLeft, top: tTop } = this.table.$el.getBoundingClientRect()
-      this.$el.style.left = `${left - tLeft - 1}px`
-      this.$el.style.top = `${top - tTop - 1}px`
-      this.$el.style.width = `${width + 1}px`
-      this.$el.style.height = `${height + 1}px`
+      const { cell, table } = this
+      if (cell) {
+        const { left, top, width, height } = cell.getBoundingClientRect()
+        const { left: tLeft, top: tTop } = table.$el.getBoundingClientRect()
+        this.$el.style.left = `${left - tLeft - 1}px`
+        this.$el.style.top = `${top - tTop - 1}px`
+        this.$el.style.width = `${width + 1}px`
+        this.$el.style.height = `${height + 1}px`
+      }
     },
     close() {
       this.show = false

@@ -8,10 +8,7 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          v-model="columns"
-          :data="data"
-          :max-height="400"
-          border
+          v-bind="tableOptions"
         />
       </div>
     </section>
@@ -129,81 +126,87 @@ export default {
       htmlCode,
       jsCode,
       data: [],
-      columns: [
-        {
-          show: true,
-          prop: 'name',
-          title: '列1',
-          width: 200
-        },
-        {
-          show: true,
-          fixed: 'left',
-          type: 'index',
-          title: '序号',
-          width: 80
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列2',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列3',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列4',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列5',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'height',
-          title: '列6',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列7',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列8',
-          width: 200
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '列10',
-          children: [{ prop: '111', width: 100, title: '111' }, { prop: '222', width: 100, title: '222' }, { prop: '333', width: 100, title: '333' }, { prop: '444', width: 100, title: '444' }, { prop: '555', width: 100, title: '555' }, { prop: '666', width: 100, title: '666' }]
-        },
-        {
-          show: true,
-          prop: 'age',
-          title: '列9',
-          width: 200
-        }
-
-      ]
+      tableOptions: {
+        maxHeight: 400,
+        edit: true,
+        border: true,
+        data: [],
+        columns: [
+          {
+            show: true,
+            prop: 'name',
+            title: '列1',
+            width: 200
+          },
+          {
+            show: true,
+            fixed: 'left',
+            type: 'index',
+            title: '序号',
+            width: 80
+          },
+          {
+            show: true,
+            prop: 'age',
+            title: '列2',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列3',
+            title: '列3',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列4',
+            title: '列4',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列5',
+            title: '列5',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列6',
+            title: '列6',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列7',
+            title: '列7',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列8',
+            title: '列8',
+            width: 200
+          },
+          {
+            show: true,
+            prop: '列10',
+            title: '列10',
+            children: [{ prop: '111', width: 100, title: '111' }, { prop: '222', width: 100, title: '222' }, { prop: '333', width: 100, title: '333' }, { prop: '444', width: 100, title: '444' }, { prop: '555', width: 100, title: '555' }, { prop: '666', width: 100, title: '666' }]
+          },
+          {
+            show: true,
+            prop: '列9',
+            title: '列9',
+            width: 200,
+            edit: true
+          }
+        ]
+      }
     }
   },
   mounted() {
     setTimeout(() => {
-      this.data = mock.mock({
+      this.tableOptions.data = mock.mock({
         'array|1000': [
           {
             'id|+1': 1,

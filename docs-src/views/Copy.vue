@@ -14,11 +14,7 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          v-model="columns"
-          :data="data"
-          :max-height="400"
-          border
-          copy
+          v-bind="tableOptions"
         />
       </div>
     </section>
@@ -88,34 +84,61 @@ export default {
     return {
       htmlCode,
       jsCode,
-      columns: [
-        {
-          show: true,
-          type: 'index',
-          width: 80,
-          fixed: 'left'
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字'
-        },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别'
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          width: 150
-        }
-      ],
-      data: [
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '男', phone: '13715201314' }
-      ]
+      tableOptions: {
+        maxHeight: 400,
+        border: true,
+        copy: true,
+        columns: [
+          {
+            show: true,
+            type: 'index',
+            width: 80,
+            fixed: 'left'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            width: 150
+          }
+        ],
+        data: [
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' },
+          { name: '张三', sex: '男', phone: '13715201314' },
+          { name: '李四', sex: '男', phone: '13715201314' }
+        ]
+      }
     }
   }
 }

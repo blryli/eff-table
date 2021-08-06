@@ -3,7 +3,7 @@ import Paginator from './Paginator.js'
 import ToolbarShrink from 'pk/toolbar-shrink'
 
 export default {
-  name: 'Toolbar',
+  name: 'FooterAction',
   components: { Paginator, ToolbarShrink },
   inject: ['table'],
   methods: {
