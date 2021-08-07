@@ -33,10 +33,10 @@ export default {
       textArr: {},
       textMap: {},
       status: 0,
-      startPosition: { columnIndex: 0, rowIndex: 0 },
-      endPosition: { columnIndex: 0, rowIndex: 0 },
-      sightStartPosition: { columnIndex: 0, rowIndex: 0 },
-      sightEndPosition: { columnIndex: 0, rowIndex: 0 },
+      startPosition: { columnIndex: -1, rowIndex: -1 },
+      endPosition: { columnIndex: -1, rowIndex: -1 },
+      sightStartPosition: { columnIndex: -1, rowIndex: -1 },
+      sightEndPosition: { columnIndex: -1, rowIndex: -1 },
       unit: {
         width: 0,
         height: 0
@@ -192,9 +192,12 @@ export default {
         res = this._getReac()
       }
 
-      // if (close) {
-      //   console.log('close')
-      // }
+      if (close) {
+        this.startPosition = { columnIndex: -1, rowIndex: -1 }
+        this.endPosition = { columnIndex: -1, rowIndex: -1 }
+        this.sightStartPosition = { columnIndex: -1, rowIndex: -1 }
+        this.sightEndPosition = { columnIndex: -1, rowIndex: -1 }
+      }
 
       const { startRow, endRow, startColumn, endColumn } = res
 
