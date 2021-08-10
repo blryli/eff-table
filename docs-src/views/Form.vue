@@ -184,7 +184,7 @@ export default {
       formOptions: {
         columns: [
           {
-            title: '名字',
+            title: '名字名字',
             prop: 'name',
             span: 8,
             itemRender: { name: 'input' },

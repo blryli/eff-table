@@ -1,6 +1,7 @@
 import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
+import { setFieldValue, getFieldValue } from 'pk/utils'
 
 let oldData = null
 
@@ -15,13 +16,6 @@ export function getOn(on, events, params = []) {
     }
   }
   return ons
-}
-
-function getPropValue(data, prop, root) {
-  if (!data || !prop) return ''
-  const { rowId } = root
-  // 特殊路径prop，用editProps做值的中转站
-  return prop in data ? data[prop] : root.editProps[rowId ? prop + data[rowId] : prop] || ''
 }
 
 function getOptions(renderOpts, params) {
@@ -46,25 +40,16 @@ function renderDefault(h, renderOpts, params) {
 
 // 默认 render
 function renderCell(h, renderOpts, params) {
-  const { data, prop, root } = params || {}
-  return getPropValue(data, prop, root)
+  const { data, prop } = params || {}
+  return getFieldValue(data, prop)
 }
-function setPropValue(root, data, prop, val) {
-  const { rowId } = root
-  prop in data ? this.$set(data, prop, val) : this.$set(root.editProps, rowId ? prop + data[rowId] : prop, val)
-  const arr = prop.split('.')
-  while (arr.length > 1) {
-    data = data[arr.shift()]
-  }
-  // data[arr[0]] = val
-  this.$set(data, arr[0], val)
-}
+
 // 双向绑定组件 v-model
 function renderVModel(h, renderOpts, params) {
   const { vue, root, data, table, row, column, prop, searchChange, rowIndex, columnIndex } = params
   if (!data || !prop) return renderDefault(h, renderOpts, params)
   const props = {
-    value: getPropValue(data, prop, root)
+    value: getFieldValue(data, prop)
   }
   const { placeholder } = renderOpts.props || {}
   const attrs = {
@@ -77,7 +62,7 @@ function renderVModel(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setPropValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, root, data, prop, val)
       // console.log('data', JSON.stringify(data, null, 2))
     },
     change: val => {
@@ -102,7 +87,7 @@ function renderVModel(h, renderOpts, params) {
 function renderTextareaEdit(h, renderOpts, params) {
   const { vue, data, prop, root } = params
   const props = {
-    value: getPropValue(data, prop, root) || null,
+    value: getFieldValue(data, prop) || null,
     type: 'textarea'
   }
   if (params.row) {
@@ -111,7 +96,7 @@ function renderTextareaEdit(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setPropValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, root, data, prop, val)
     },
     blur: v => {
       oldData = null
@@ -124,8 +109,8 @@ function renderTextareaEdit(h, renderOpts, params) {
 // 选择器 select
 function renderselectCell(h, renderOpts, params) {
   const { props } = renderOpts || {}
-  const { data, prop, root } = params || {}
-  const cellLabel = getPropValue(data, prop, root)
+  const { data, prop } = params || {}
+  const cellLabel = getFieldValue(data, prop)
   const { labelKey = 'label', valueKey = 'value' } = props || {}
   const opt = getOptions(renderOpts, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
   return opt[labelKey] || cellLabel
@@ -134,12 +119,12 @@ function renderSelect(h, renderOpts, params, renderType) {
   const { props: oProps = {}} = renderOpts
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
-    value: data[prop] === undefined ? null : getPropValue(data, prop, root),
+    value: data[prop] === undefined ? null : getFieldValue(data, prop),
     placeholder: oProps.placeholder || '请选择' + (column.title || '')
   }
   const on = {
     input: val => {
-      setPropValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, root, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => { oldData = null }
@@ -195,11 +180,11 @@ function renderdateCell(h, renderOpts = {}, params = {}) {
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
   const props = {
-    value: getPropValue(data, prop, root)
+    value: getFieldValue(data, prop)
   }
   const on = {
     input: val => {
-      setPropValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, root, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => {
@@ -237,19 +222,19 @@ function renderDatepickerSearchRange(h, renderOpts, params) {
 
 // 链接 link
 function renderLink(h, renderOpts, params) {
-  const { data, prop, root } = params
+  const { data, prop } = params
   const { props: oProps = {}} = renderOpts
   const props = {
     type: oProps.type || 'primary'
   }
-  return render(h, renderOpts, params).mergeOpts({ props }).set('children', getPropValue(data, prop, root)).render()
+  return render(h, renderOpts, params).mergeOpts({ props }).set('children', getFieldValue(data, prop)).render()
 }
 
 // 图片 image
 function renderImage(h, renderOpts, params) {
-  const { data, prop, root } = params
+  const { data, prop } = params
   const props = {
-    src: getPropValue(data, prop, root)
+    src: getFieldValue(data, prop)
   }
   return render(h, renderOpts, params).mergeOpts({ props }).render()
 }
@@ -306,7 +291,7 @@ function renderDialog(h, renderOpts, params) {
   const { data, prop } = params
 
   return [
-    h('div', { attrs: { class: 'eff-table__popup' }}, getPropValue(data, prop, root)),
+    h('div', { attrs: { class: 'eff-table__popup' }}, getFieldValue(data, prop)),
     render(h, renderOpts, params).mergeOpts({ props, on }).set('children', renderChildren).render(),
     modal
   ]
@@ -323,9 +308,9 @@ function renderForm(h, renderOpts, params) {
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
   const { vue, table, row, rowIndex, columnIndex, data, prop, root } = params
-  const isBoolean = typeof getPropValue(data, prop, root) === 'boolean'
+  const isBoolean = typeof getFieldValue(data, prop) === 'boolean'
   const props = {
-    value: isBoolean ? getPropValue(data, prop, root) : '' + getPropValue(data, prop, root),
+    value: isBoolean ? getFieldValue(data, prop) : '' + getFieldValue(data, prop),
     activeValue: isBoolean ? true : '1',
     inactiveValue: isBoolean ? false : '0'
   }
@@ -335,7 +320,7 @@ function renderSwitch(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setPropValue.call(vue, root, data, prop, isBoolean ? val : '' + val)
+      setFieldValue.call(vue, root, data, prop, isBoolean ? val : '' + val)
     },
     change: val => {
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
@@ -363,7 +348,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const { children = [] } = renderOpts
   const { data, vue, prop, root } = params
   const props = {
-    value: getPropValue(data, prop, root) || []
+    value: getFieldValue(data, prop) || []
   }
   if (params.row) {
     oldData = oldData === null ? params.row[params.prop] : oldData
@@ -371,7 +356,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setPropValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, root, data, prop, val)
     },
     blur: v => {
       oldData = null
@@ -388,8 +373,8 @@ function renderCheckboxGroup(h, renderOpts, params) {
 // 标签 tag
 function renderTag(h, renderOpts, params) {
   const { labelKey = 'label', valueKey = 'value' } = renderOpts
-  const { data, prop, root } = params || {}
-  const value = getPropValue(data, prop, root)
+  const { data, prop } = params || {}
+  const value = getFieldValue(data, prop)
   if (!value) return ''
   return (XEUtils.isArray(value) ? value : [value]).map(d => {
     const label = (getOptions(renderOpts, params).find(o => o[valueKey] === d) || {})[labelKey]
@@ -399,20 +384,24 @@ function renderTag(h, renderOpts, params) {
 
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
-  const { data, prop, root = {}} = params || {}
+  const { data, prop } = params || {}
   const { props = {}} = renderOpts
   const cascaderProps = props.props || {}
   const { label = 'label', value = 'value', children = 'children' } = cascaderProps
-  const cascaderValue = getPropValue(data, prop, root) || []
+  const cascaderValue = getFieldValue(data, prop) || []
   let opts = getOptions(renderOpts, params)
-  return cascaderValue.reduce((acc, cur) => {
-    const op = opts.find(d => d[value] === cur)
-    if (op) {
-      opts = op[children]
-      return acc.concat([op[label]])
-    }
-    return acc
-  }, []).join('/')
+  try {
+    return cascaderValue.reduce((acc, cur) => {
+      const op = opts.find(d => d[value] === cur)
+      if (op) {
+        opts = op[children]
+        return acc.concat([op[label]])
+      }
+      return acc
+    }, []).join('/')
+  } catch (error) {
+    console.error(error)
+  }
 }
 function renderCascaderEdit(h, renderOpts, params) {
   renderOpts.props.options = getOptions(renderOpts, params)

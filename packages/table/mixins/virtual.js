@@ -97,6 +97,7 @@ export default {
   },
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
+      if (!this.tableData.length) return
       this.scrollLeft = scrollLeft
       const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
       if (!columnIsVirtual || scrollLeft === 0) {

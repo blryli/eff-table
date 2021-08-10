@@ -88,6 +88,7 @@ export default {
         maxHeight: 400,
         border: true,
         copy: true,
+        edit: true,
         columns: [
           {
             show: true,
@@ -98,45 +99,49 @@ export default {
           {
             show: true,
             prop: 'name',
-            title: '名字'
+            title: '名字',
+            edit: true
           },
           {
             show: true,
             prop: 'sex',
-            title: '性别'
+            title: '性别',
+            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+            edit: true
           },
           {
             show: true,
             prop: 'phone',
             title: '手机',
-            width: 150
+            width: 150,
+            edit: true
           }
         ],
         data: [
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' },
-          { name: '张三', sex: '男', phone: '13715201314' },
-          { name: '李四', sex: '男', phone: '13715201314' }
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '1', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '2', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '1', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '2', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '1', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '2', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' },
+          { name: '张三', sex: '1', phone: '13715201314' },
+          { name: '李四', sex: '1', phone: '13715201314' },
+          { name: '张三', sex: '2', phone: '13715201314' },
+          { name: '李四', sex: '2', phone: '13715201314' }
         ]
       }
     }

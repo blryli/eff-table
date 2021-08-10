@@ -113,6 +113,18 @@ export const getFieldValue = function(data, prop) {
   return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
 }
 
+// 设置字段值
+export const setFieldValue = function(root, data, prop, val) {
+  const { rowId } = root
+  prop in data ? this.$set(data, prop, val) : this.$set(root.editProps, rowId ? prop + data[rowId] : prop, val)
+  const arr = prop.split('.')
+  while (arr.length > 1) {
+    data = data[arr.shift()]
+  }
+  // data[arr[0]] = val
+  this.$set(data, arr[0], val)
+}
+
 // 获取表头及嵌套表头的宽度
 export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc, cur) => {
   cur.width = cur.children ? getColumnChildrenWidth(cur.children) : Math.max(cur.width || spaceWidth, 40)

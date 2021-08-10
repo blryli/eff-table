@@ -150,7 +150,9 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>columns -  {{ columns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>selectRengeStore -  {{ $refs.selectRange && $refs.selectRange.selectRengeStore }}</p>
+    <p>rowMap -  {{ $refs.selectRange && $refs.selectRange.rowMap }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -191,7 +193,7 @@ import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
-import { getColumnChildrenWidth } from 'pk/utils'
+import { getColumnChildrenWidth, getFieldValue, setFieldValue } from 'pk/utils'
 
 export default {
   name: 'EffTable',
@@ -501,10 +503,43 @@ export default {
             row,
             rowIndex,
             columnIndex,
-            content: row[prop]
+            content: getFieldValue(row, prop)
           })
       }
       this.editField(fields)
+    },
+    editField(fileds) {
+      // console.log('fileds', JSON.stringify(fileds, null, 2))
+      const updateArr = []
+      fileds.forEach(filed => {
+        const { visibleColumns, updateStatus } = this
+        const { row, rowIndex, columnIndex, content } = filed
+        const column = visibleColumns[columnIndex] || {}
+        const { prop, rules } = column
+
+        if (prop) {
+          if (
+            !filed.notUpdateTableEvent &&
+            content !== row[prop]
+          ) {
+            updateArr.push({
+              rowIndex,
+              columnIndex,
+              newData: content,
+              oldData: row[prop]
+            })
+          }
+          setFieldValue.call(this, this, row, prop, getFieldValue(row, prop))
+          if (rules && rules.length) {
+            this.validateField(prop, rules, row)
+          }
+          updateStatus(row, prop)
+        }
+      })
+
+      if (updateArr.length) {
+        this.$emit('table-update-data', updateArr)
+      }
     },
     updateStatus(row, prop) {
       if (!prop) return
@@ -551,37 +586,6 @@ export default {
       tableData.forEach(d => {
         this.tableDataMap.set(d[rowId], d)
       })
-    },
-    editField(fileds) {
-      // console.log('fileds', JSON.stringify(fileds, null, 2))
-      const updateArr = []
-      fileds.forEach(filed => {
-        const { tableData, visibleColumns, updateStatus } = this
-        const { row, rowIndex, columnIndex, content } = filed
-        const column = visibleColumns[columnIndex] || {}
-        const { prop, rules } = column
-
-        if (prop) {
-          if (
-            !filed.notUpdateTableEvent &&
-            content !== tableData[rowIndex][prop]
-          ) {
-            updateArr.push({
-              rowIndex,
-              columnIndex,
-              newData: content,
-              oldData: tableData[rowIndex][prop]
-            })
-          }
-          tableData[rowIndex][prop] = content
-          rules && rules.length && this.validateField(prop, rules, row)
-          updateStatus(tableData[rowIndex], prop)
-        }
-      })
-
-      if (updateArr.length) {
-        this.$emit('table-update-data', updateArr)
-      }
     },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })

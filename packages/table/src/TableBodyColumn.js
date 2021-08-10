@@ -45,19 +45,24 @@ export default {
 
     // 复制功能
     if (copy) {
-      const { startRow, endRow, startColumn, endColumn } = table.$refs.selectRange._getReac()
-      const borderStyle = `2px solid rgb(17 210 232)`
+      const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
+      const border = `2px ${borderStyle} rgb(17 210 232)`
+      const commitRange = () => table.$refs.selectRange.setRowMap({ row, rowIndex, column, columnIndex, prop })
       if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
-        style.borderLeft = borderStyle
+        style.borderLeft = border
+        commitRange()
       }
       if (rowIndex === startRow && columnIndex >= startColumn && columnIndex <= endColumn) {
-        style.borderTop = borderStyle
+        style.borderTop = border
+        commitRange()
       }
       if (columnIndex === endColumn && rowIndex >= startRow && rowIndex <= endRow) {
-        style.borderRight = borderStyle
+        style.borderRight = border
+        commitRange()
       }
       if (rowIndex === endRow && columnIndex >= startColumn && columnIndex <= endColumn) {
-        style.borderBottom = borderStyle
+        style.borderBottom = border
+        commitRange()
       }
     }
 
@@ -156,7 +161,7 @@ export default {
         if (XEUtils.isFunction(format)) {
           return format(params)
         }
-        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? getFieldValue(row, prop) : ''
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}

@@ -37,7 +37,7 @@ export default {
     editRender() {
       const { row, column } = this
       if (!column) return ''
-      const { edit, prop, config } = column || {}
+      const { edit, prop, config = {}} = column || {}
       if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
 
@@ -54,8 +54,8 @@ export default {
         }
         const renderEdit = (render = {}) => {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
-          const { name } = renderOpts
-          const compConf = renderer.get(name)
+          if (!renderOpts.name) renderOpts.name = 'input'
+          const compConf = renderer.get(renderOpts.name)
           return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }) || ''
         }
 
@@ -255,11 +255,11 @@ export default {
     disabled(column) {
       const { edit = {}, config = {}} = column || {}
       const { disabled } = Object.assign({}, config, edit)
-      const { row, rowIndex } = this
+      const { row, rowIndex, columnIndex } = this
       if (disabled === undefined) return false
 
       if (typeof disabled === 'function') {
-        return Boolean(disabled({ row, rowIndex }))
+        return Boolean(disabled({ row, rowIndex, column, columnIndex }))
       }
       return Boolean(disabled) || false
     },

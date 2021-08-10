@@ -1,12 +1,7 @@
 <template>
   <div v-if="status >= 2" :style="toolStyle" class="tool">
 
-    <div v-if="status === 2" class="sight" @mousedown="sightMouseDown">
-      <template v-if="selectCount == 1">
-        <div class="vertical" />
-        <div class="lineae" />
-      </template>
-    </div>
+    <div v-if="status === 2" class="sight" @mousedown="sightMouseDown" @mouseup="sightMouseUp" />
     <div class="flex flex-direction">
       <div v-if="status === 2" class="copy" :class="copyBtnType" title="复制" @click.stop="onClickCopy">
         <div class="before">
@@ -21,6 +16,7 @@
 </template>
 
 <script>
+import { getFieldValue, setFieldValue } from 'pk/utils'
 
 // eslint-disable-next-line no-extend-native
 String.prototype.trim = function() {
@@ -31,24 +27,34 @@ export default {
   data() {
     return {
       textArr: {},
-      textMap: {},
+      rowMap: {},
       status: 0,
       startPosition: { columnIndex: -1, rowIndex: -1 },
       endPosition: { columnIndex: -1, rowIndex: -1 },
-      sightStartPosition: { columnIndex: -1, rowIndex: -1 },
-      sightEndPosition: { columnIndex: -1, rowIndex: -1 },
-      unit: {
-        width: 0,
-        height: 0
-      },
-      autoScrollIntervalId: null,
       borderStyle: 'solid',
       copyBtnType: 'primary',
-      toolStyle: {},
-      selectCount: 0
+      toolStyle: {}
     }
   },
   computed: {
+    selectRengeStore() {
+      const { startPosition, endPosition, borderStyle } = this
+      const startRow = endPosition.rowIndex > startPosition.rowIndex ? startPosition.rowIndex : endPosition.rowIndex
+      const endRow = endPosition.rowIndex < startPosition.rowIndex ? startPosition.rowIndex : endPosition.rowIndex
+
+      const startColumn = endPosition.columnIndex > startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
+      const endColumn = endPosition.columnIndex < startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
+
+      return { startRow, endRow, startColumn, endColumn, borderStyle: borderStyle }
+    },
+    dirBottom() {
+      const { startPosition, endPosition } = this
+      return endPosition.rowIndex > startPosition.rowIndex
+    },
+    dirRight() {
+      const { startPosition, endPosition } = this
+      return endPosition.columnIndex > startPosition.columnIndex
+    }
   },
   watch: {
     'table.scrollTop'(scrollTop, oldTop) {
@@ -56,7 +62,6 @@ export default {
         this.endPosition.y += scrollTop - oldTop
       }
       this.$set(this.toolStyle, 'display', 'none')
-      this.handleRect()
     }
   },
   inject: ['table'],
@@ -67,7 +72,6 @@ export default {
     this.table.$on('copy', () => {
       if (this.status === 2) {
         this.borderStyle = 'dashed'
-        this.handleRect()
       }
     })
 
@@ -77,14 +81,18 @@ export default {
     document.addEventListener('paste', this.onPaste, false)
   },
   destroyed() {
-    clearInterval(this.autoScrollIntervalId)
     document.removeEventListener('paste', this.onPaste, false)
   },
   methods: {
+    setRowMap(paramas) {
+      const { rowMap } = this
+      const { rowIndex, columnIndex } = paramas
+      rowMap[`${rowIndex}-${columnIndex}`] = paramas
+    },
     close() {
       this.status = 0
-      this.handleRect(true, true)
-      this.handleRect(false, true)
+      this.startPosition = { columnIndex: -1, rowIndex: -1 }
+      this.endPosition = { columnIndex: -1, rowIndex: -1 }
     },
     onClickCopy() {
       this.copyBtnType = 'success'
@@ -92,56 +100,69 @@ export default {
     },
     changeData() {
       this.textArr = []
-      const { startRow, endRow, startColumn, endColumn } = this._getReac()
+      const { startRow, endRow, startColumn, endColumn } = this.selectRengeStore
 
       let index = 0
 
       for (let i = startRow; i <= endRow; i++) {
         this.textArr.push([])
         for (let j = startColumn; j <= endColumn; j++) {
-          this.textArr[index].push(this.textMap[i + '-' + j])
+          this.textArr[index].push(this.rowMap[i + '-' + j])
         }
         index++
       }
     },
     sightMouseDown() {
-      if (this.selectCount !== 1) {
-        return
-      }
       this.status = 3
-      this.sightStartPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
-      this.sightEndPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
+    },
+    sightMouseUp() {
+      this.borderStyle = 'solid'
+      this.status = 1
     },
     selectRangeMouseUp(e) {
       if (this.status === 0) {
         return
       }
+      const { table, dirBottom, selectRengeStore } = this
 
-      const { endRow, endColumn } = this._getReac()
-      const query = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
-      const endColumnModel = this.table.$refs.body.$el.querySelector(query)
+      const { startRow, endRow, startColumn, endColumn } = selectRengeStore
+      // 批量复制
       if (this.status === 3) {
-        this.endPosition = this.sightEndPosition
-        const content = endColumnModel.innerText
-
-        const updateArr = this.handleUpdateData(content, 'sightStartPosition', 'sightEndPosition')
-        this.table.$emit('edit-fields', updateArr)
+        const batchCopy = (sourceRow, startRowIndex, endRowIndex) => {
+          for (let index = startRowIndex; index <= endRowIndex; index++) {
+            const row = table.tableData[index]
+            const cols = [startColumn, endColumn].sort()
+            const [startCol, endCol] = cols
+            for (let i = startCol; i <= endCol; i++) {
+              const col = table.bodyColumns[i]
+              const { prop } = col
+              if (prop) {
+                setFieldValue.call(this, table, row, prop, getFieldValue(sourceRow, prop))
+                this.table.updateRow(row)
+              }
+            }
+          }
+        }
+        if (dirBottom) {
+          batchCopy(table.tableData[startRow], startRow + 1, endRow)
+        } else {
+          batchCopy(table.tableData[endRow], startRow, endRow - 1)
+        }
       }
 
       this.copyBtnType = 'primary'
-      this.selectCount = this.startPosition.columnIndex === this.endPosition.columnIndex && this.startPosition.rowIndex === this.endPosition.rowIndex ? 1 : 2
 
       if (this.status === 1) {
+        const query = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
+        const endColumnModel = this.table.$refs.body.$el.querySelector(query)
         if (endColumnModel) {
           const { top, left, width, height } = endColumnModel.getBoundingClientRect()
-          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
+          this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
         }
 
         this.status = 2
         this.table.$emit('select-range-data', this.textArr)
       }
-      this.handleRect()
-
       this.status = 2
     },
     selectRangeMouseDown(e) {
@@ -151,72 +172,36 @@ export default {
       }
       this.borderStyle = 'solid'
       this.status = 1
-      this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
-      this.startPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
+      this.endPosition = { rowIndex, columnIndex }
+      this.startPosition = { rowIndex, columnIndex }
 
-      this.textMap = {}
+      this.rowMap = {}
       this.textArr = []
 
-      this.handleRect()
       this.changeData()
     },
     selectRangeMouseMove(e) {
       const { rowIndex, columnIndex } = e
       if (this.status === 1) {
-        this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
+        this.endPosition = { rowIndex, columnIndex }
 
-        this.handleRect()
         this.changeData()
       }
 
+      // 复制按钮
       if (this.status === 3) {
-        this.sightEndPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
+        console.log(rowIndex, columnIndex)
+        this.endPosition = { rowIndex, columnIndex }
+        this.borderStyle = 'solid'
 
-        const { endRow, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
+        const { endRow, endColumn } = this.selectRengeStore
         const node = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
         const endColumnModel = this.table.$refs.body.$el.querySelector(node)
         if (endColumnModel) {
           const { top, left, width, height } = endColumnModel.getBoundingClientRect()
-          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
-        }
-
-        this.handleRect(true)
-      }
-    },
-    handleRect(sight = false, close = false) {
-      let res
-
-      if (sight) {
-        res = this._getReac('sightStartPosition', 'sightEndPosition')
-      } else {
-        res = this._getReac()
-      }
-
-      if (close) {
-        this.startPosition = { columnIndex: -1, rowIndex: -1 }
-        this.endPosition = { columnIndex: -1, rowIndex: -1 }
-        this.sightStartPosition = { columnIndex: -1, rowIndex: -1 }
-        this.sightEndPosition = { columnIndex: -1, rowIndex: -1 }
-      }
-
-      const { startRow, endRow, startColumn, endColumn } = res
-
-      const map = this._getColumnMap()
-
-      for (let i = startRow; i <= endRow; i++) {
-        for (let j = startColumn; j <= endColumn; j++) {
-          const column = map[i + '-' + j]
-
-          if (column) {
-            if (!sight) {
-              this.textMap[i + '-' + j] = column.$el.innerText
-            }
-          }
+          this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
         }
       }
-    },
-    closeReac() {
-
     },
     onPaste(e) {
       if (this.status !== 2) {
@@ -224,7 +209,7 @@ export default {
       }
 
       this.table.$refs.edit && this.table.$refs.edit.close()
-      const { startRow, startColumn } = this._getReac()
+      const { startRow, startColumn } = this.selectRengeStore
 
       const updateArr = []
       const data = e.clipboardData.getData('text/plain').trim().split('\r\n')
@@ -243,39 +228,6 @@ export default {
       })
 
       this.table.$emit('edit-fields', updateArr)
-    },
-    handleUpdateData(content, startKey = 'startPosition', endKey = 'endPosition') {
-      const updateArr = []
-      const { startRow, startColumn, endRow, endColumn } = this._getReac(startKey, endKey)
-      for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-        for (let columnIndex = startColumn; columnIndex <= endColumn; columnIndex++) {
-          updateArr.push({ row: this.tableData[rowIndex], rowIndex, columnIndex, content })
-        }
-      }
-
-      return updateArr
-    },
-    _getReac(startKey = 'startPosition', endKey = 'endPosition') {
-      const startRow = this[endKey].rowIndex > this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
-      const endRow = this[endKey].rowIndex < this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
-
-      const startColumn = this[endKey].columnIndex > this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
-      const endColumn = this[endKey].columnIndex < this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
-
-      return { startRow, endRow, startColumn, endColumn }
-    },
-    _getColumnMap() {
-      const rows = this.table.$refs.body.$children
-
-      const map = {}
-      rows.forEach(v => {
-        v.$children.forEach(vv => {
-          map[vv.rowIndex + '-' + vv.columnIndex] = vv
-          vv.style = {}
-        })
-      })
-
-      return map
     }
   }
 }
@@ -295,41 +247,28 @@ export default {
   }
 
   .sight {
-    width: 14px;
-    height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    width: 5px;
+    height: 5px;
     cursor: crosshair;
-
-    div {
-      background-color: rgb(17, 119, 232);
+    background-color: #fff;
+    &::before{
       position: absolute;
-      border-radius: 4px;
-    }
-
-    .vertical {
-      width: 2px;
-      height: 10px;
-      border-top: 1px solid white;
-      border-bottom: 1px solid white;
-    }
-
-    .lineae {
-      width: 10px;
-      height: 2px;
-      margin-top: -1px;
-      border-left: 1px solid white;
-      border-right: 1px solid white;
+      left: 1px;
+      top: 1px;
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background-color: rgb(17, 119, 232);
     }
   }
 
   .flex {
-    margin-left: -4px;
-    margin-top: -35px;
+    height: 20px;
     display: flex;
     position: absolute;
-    bottom: -25px;
+    bottom: -20px;
     right: 0px;
   }
 
