@@ -100,6 +100,7 @@ export default {
             const message = messages.find(d => d.prop === column.prop) || {}
 
             return <TableBodyColumn
+              id={table.tableId + '_' + colid}
               data-colid={colid}
               row={row}
               rowIndex={rowIndex}

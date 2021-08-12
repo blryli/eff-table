@@ -73,7 +73,7 @@ export default {
     },
     labelWidth() {
       const { titleWidth, form, required, titlePrefix, titleSuffix } = this
-      let width = titleWidth || form.titleWidth || 80
+      let width = parseInt(titleWidth || form.titleWidth || 80)
       if (required) width -= 10
       if (titlePrefix) width -= 16
       if (titleSuffix) width -= 16

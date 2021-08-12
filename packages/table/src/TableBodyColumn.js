@@ -47,23 +47,30 @@ export default {
     if (copy) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
       const border = `2px ${borderStyle} rgb(17 210 232)`
-      const commitRange = () => table.$refs.selectRange.setRowMap({ row, rowIndex, column, columnIndex, prop })
+      const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
+      const commitRange = () => table.$refs.selectRange.setRowMap({ id, row, rowIndex, column, columnIndex, prop })
+      let isCommit = false
       if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
         style.borderLeft = border
         commitRange()
+        isCommit = true
       }
       if (rowIndex === startRow && columnIndex >= startColumn && columnIndex <= endColumn) {
         style.borderTop = border
         commitRange()
+        isCommit = true
       }
       if (columnIndex === endColumn && rowIndex >= startRow && rowIndex <= endRow) {
         style.borderRight = border
         commitRange()
+        isCommit = true
       }
       if (rowIndex === endRow && columnIndex >= startColumn && columnIndex <= endColumn) {
         style.borderBottom = border
         commitRange()
+        isCommit = true
       }
+      if (!isCommit) table.$refs.selectRange.deleteRowMap(id)
     }
 
     // 处理class
@@ -141,9 +148,7 @@ export default {
     }
     const cellRender = function(h) {
       const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
-      if (typeof cellRender === 'function') {
-        return cellRender(h, { row, rowIndex, column, columnIndex, prop })
-      } else {
+      const renderCell = (cellRender) => {
         // 处理动态渲染器
         const dynamicConfig = {}
         if (XEUtils.isFunction(render)) {
@@ -162,6 +167,12 @@ export default {
           return format(params)
         }
         return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? getFieldValue(row, prop) : ''
+      }
+      if (XEUtils.isFunction(cellRender)) {
+        const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
+        return ['VNode', 'pe'].includes(cellRenderFunc.constructor.name) ? (cellRenderFunc || '') : renderCell(cellRenderFunc)
+      } else {
+        return renderCell(cellRender)
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}

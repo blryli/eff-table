@@ -151,8 +151,8 @@
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>tableData -  {{ tableData }}</p> -->
-    <!-- <p>selectRengeStore -  {{ $refs.selectRange && $refs.selectRange.selectRengeStore }}</p>
-    <p>rowMap -  {{ $refs.selectRange && $refs.selectRange.rowMap }}</p> -->
+    <!-- <p>selectRengeStore -  {{ $refs.selectRange && $refs.selectRange.selectRengeStore }}</p> -->
+    <!-- <p>rowMap -  {{ $refs.selectRange && $refs.selectRange.rowMap }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -194,6 +194,7 @@ import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
 import { getColumnChildrenWidth, getFieldValue, setFieldValue } from 'pk/utils'
+import { getOptions } from 'pk/utils/render'
 
 export default {
   name: 'EffTable',
@@ -365,6 +366,9 @@ export default {
       }
       if ($slots.toolbar || search) show = true
       return show
+    },
+    tableId() {
+      return (~~(Math.random() * (1 << 30))).toString(36)
     }
   },
   watch: {
@@ -508,7 +512,7 @@ export default {
       }
       this.editField(fields)
     },
-    editField(fileds) {
+    editField(fileds, copy) {
       // console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
@@ -520,16 +524,37 @@ export default {
         if (prop) {
           if (
             !filed.notUpdateTableEvent &&
-            content !== row[prop]
+            content !== getFieldValue(row, prop)
           ) {
             updateArr.push({
               rowIndex,
               columnIndex,
               newData: content,
-              oldData: row[prop]
+              oldData: getFieldValue(row, prop)
             })
           }
-          setFieldValue.call(this, this, row, prop, getFieldValue(row, prop))
+          if (copy) {
+            const { config, edit: { render = {}} = {}} = column
+            const opts = XEUtils.merge({ name: 'input' }, config, render)
+            if (!opts.name) opts.name = 'input'
+            const { name, props } = opts
+            if (name === 'input') {
+              setFieldValue.call(this, this, row, prop, content)
+            } else if (name === 'select') {
+              const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
+              const { labelKey = 'label', valueKey = 'value' } = props || {}
+              if (options.length) {
+                const option = options.find(d => d[labelKey] === content)
+                setFieldValue.call(this, this, row, prop, option ? option[valueKey] : '')
+              }
+            } else if (name === 'date-picker') {
+              setFieldValue.call(this, this, row, prop, content)
+            } else if (name === 'cascader') {
+              if (!XEUtils.isArray(content)) return setFieldValue.call(this, this, row, prop, [])
+            }
+          } else {
+            setFieldValue.call(this, this, row, prop, content)
+          }
           if (rules && rules.length) {
             this.validateField(prop, rules, row)
           }

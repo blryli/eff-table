@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     prev() {
-      if (this.currentIndex == -1) {
+      if (this.currentIndex === -1) {
         return
       }
 

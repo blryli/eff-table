@@ -18,7 +18,7 @@ export function getOn(on, events, params = []) {
   return ons
 }
 
-function getOptions(renderOpts, params) {
+export function getOptions(renderOpts, params) {
   const { options, props = {}} = renderOpts
   const ot = options || props.options || []
   const opts = typeof ot === 'function' ? ot(params) : ot
@@ -389,9 +389,10 @@ function renderCascader(h, renderOpts, params) {
   const cascaderProps = props.props || {}
   const { label = 'label', value = 'value', children = 'children' } = cascaderProps
   const cascaderValue = getFieldValue(data, prop) || []
+  if (!XEUtils.isArray(cascaderValue)) return []
   let opts = getOptions(renderOpts, params)
   try {
-    return cascaderValue.reduce((acc, cur) => {
+    const cValue = cascaderValue.reduce((acc, cur) => {
       const op = opts.find(d => d[value] === cur)
       if (op) {
         opts = op[children]
@@ -399,8 +400,10 @@ function renderCascader(h, renderOpts, params) {
       }
       return acc
     }, []).join('/')
+    return props['show-all-levels'] === false ? cValue.split('/').slice(-1)[0] : cValue
   } catch (error) {
     console.error(error)
+    return []
   }
 }
 function renderCascaderEdit(h, renderOpts, params) {
