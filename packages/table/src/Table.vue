@@ -548,7 +548,12 @@ export default {
                 setFieldValue.call(this, this, row, prop, option ? option[valueKey] : '')
               }
             } else if (name === 'date-picker') {
-              setFieldValue.call(this, this, row, prop, content)
+              let date = content
+              if (!XEUtils.isValidDate(content)) {
+                const toStringDate = XEUtils.toStringDate(content)
+                date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
+              }
+              setFieldValue.call(this, this, row, prop, date)
             } else if (name === 'cascader') {
               if (!XEUtils.isArray(content)) return setFieldValue.call(this, this, row, prop, [])
             }

@@ -111,6 +111,14 @@ export default {
           },
           {
             show: true,
+            prop: 'date',
+            title: '日期',
+            width: 150,
+            config: { name: 'date-picker' },
+            edit: true
+          },
+          {
+            show: true,
             prop: 'phone',
             title: '手机',
             width: 150,

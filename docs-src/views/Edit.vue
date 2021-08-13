@@ -165,7 +165,7 @@ const jsCode1 = `
           edit: true,
           border: true,
           toolbarConfig: {
-            buttons: [{ name: 'button', code: 'add', children: '新增' }]
+            buttons: [{ name: 'button', code: 'add_focus', children: '新增' }]
           },
           data: [
             { id: 1, name: '张三', want: '1', sex: '1', date: '2021-04-12', address: [], address1: [], address2: '' },
@@ -332,7 +332,7 @@ export default {
         copy: true,
         border: true,
         toolbarConfig: {
-          buttons: [{ name: 'button', code: 'add', children: '新增' }]
+          buttons: [{ name: 'button', code: 'add_focus', children: '新增' }]
         },
         data: [
           { id: 1, name: '张三', want: '1', sex: '1', date: '2021-04-12', address: [], address1: [], address2: '' },
@@ -345,9 +345,7 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
-            cellRender: (h) => h('el-button', { on: { click: this.click }}, 'click'),
-            config: { name: 'input' }
-            // edit: true
+            edit: true
           },
           {
             show: true,
@@ -433,11 +431,6 @@ export default {
           }
         ]
       }
-    }
-  },
-  methods: {
-    click() {
-      console.log('click---')
     }
   }
 }
