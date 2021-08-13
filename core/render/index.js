@@ -1,6 +1,7 @@
 import map from './map'
 import XEUtils from 'xe-utils'
 import { getOn } from 'pk/utils/render'
+import { isVNode } from 'pk/utils'
 
 export function getChildren(h, opts, params, key) {
   if (opts) {
@@ -8,7 +9,7 @@ export function getChildren(h, opts, params, key) {
     if (children.on) {
       children.on = getOn({}, children.on, params)
     }
-    if (['VNode', 'pe'].includes(children.constructor.name)) return children
+    if (isVNode(children)) return children
     if (XEUtils.isFunction(children)) return getChildren(h, children(h, params), params)
 
     if (XEUtils.isArray(children)) {

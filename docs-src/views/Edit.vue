@@ -329,6 +329,7 @@ export default {
       tableOptions1: {
         maxHeight: 400,
         edit: true,
+        copy: true,
         border: true,
         toolbarConfig: {
           buttons: [{ name: 'button', code: 'add', children: '新增' }]
@@ -344,8 +345,9 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
-            config: { name: 'input' },
-            edit: true
+            cellRender: (h) => h('el-button', { on: { click: this.click }}, 'click'),
+            config: { name: 'input' }
+            // edit: true
           },
           {
             show: true,
@@ -373,6 +375,7 @@ export default {
                     prop: 'address',
                     name: 'cascader',
                     props: {
+                      'show-all-levels': false,
                       props: {
                         label: 'label1',
                         value: 'value1',
@@ -387,7 +390,7 @@ export default {
                         label1: '设计原则',
                         children1: [{
                           value1: 'yizhi',
-                          label1: '一致'
+                          label1: '一致/222 '
                         }, {
                           value1: 'fankui',
                           label1: '反馈'
@@ -430,6 +433,11 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    click() {
+      console.log('click---')
     }
   }
 }

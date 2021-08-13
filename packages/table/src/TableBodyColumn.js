@@ -3,7 +3,7 @@ import VRadio from 'pk/radio'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
-import { getFieldValue, initField } from 'pk/utils'
+import { getFieldValue, initField, isVNode } from 'pk/utils'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -146,14 +146,14 @@ export default {
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
     }
-    const cellRender = function(h) {
+    const cellRender = function() {
       const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
       const renderCell = (cellRender) => {
         // 处理动态渲染器
         const dynamicConfig = {}
         if (XEUtils.isFunction(render)) {
           const renderFunc = render(h, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          if (!['VNode', 'pe'].includes(renderFunc.constructor.name)) {
+          if (!isVNode(renderFunc)) {
             Object.assign(dynamicConfig, renderFunc)
           }
         }
@@ -170,7 +170,7 @@ export default {
       }
       if (XEUtils.isFunction(cellRender)) {
         const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
-        return ['VNode', 'pe'].includes(cellRenderFunc.constructor.name) ? (cellRenderFunc || '') : renderCell(cellRenderFunc)
+        return isVNode(cellRenderFunc) ? (cellRenderFunc || '') : renderCell(cellRenderFunc)
       } else {
         return renderCell(cellRender)
       }

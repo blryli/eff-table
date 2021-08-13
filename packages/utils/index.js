@@ -131,3 +131,6 @@ export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc
   acc += cur.width
   return acc
 }, 0)
+
+// 判断是否是VNode
+export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && renderFunc.tag.indexOf('vue-component') > -1)

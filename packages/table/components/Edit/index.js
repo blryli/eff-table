@@ -1,4 +1,4 @@
-import { columnIsEdit } from 'pk/utils'
+import { columnIsEdit, isVNode } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
@@ -62,7 +62,7 @@ export default {
         if (typeof render === 'function') {
           const renderFunc = render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop })
           // VNode线上会渲染成pe对象
-          return ['VNode', 'pe'].includes(renderFunc.constructor.name) ? (renderFunc || '') : renderEdit(renderFunc)
+          return isVNode(renderFunc) ? (renderFunc || '') : renderEdit(renderFunc)
         } else {
           return renderEdit(render)
         }

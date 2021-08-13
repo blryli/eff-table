@@ -392,15 +392,19 @@ function renderCascader(h, renderOpts, params) {
   if (!XEUtils.isArray(cascaderValue)) return []
   let opts = getOptions(renderOpts, params)
   try {
-    const cValue = cascaderValue.reduce((acc, cur) => {
+    return cascaderValue.reduce((acc, cur, index) => {
       const op = opts.find(d => d[value] === cur)
       if (op) {
         opts = op[children]
-        return acc.concat([op[label]])
+        if (props['show-all-levels'] === false) {
+          if (index === cascaderValue.length - 1) return acc.concat([op[label]])
+          return acc
+        } else {
+          return acc.concat([op[label]])
+        }
       }
       return acc
     }, []).join('/')
-    return props['show-all-levels'] === false ? cValue.split('/').slice(-1)[0] : cValue
   } catch (error) {
     console.error(error)
     return []
