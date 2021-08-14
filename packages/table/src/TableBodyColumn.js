@@ -170,7 +170,8 @@ export default {
       }
       if (XEUtils.isFunction(cellRender)) {
         const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
-        return isVNode(cellRenderFunc) ? (cellRenderFunc || '') : renderCell(cellRenderFunc)
+        console.log(cellRenderFunc)
+        return isVNode(cellRenderFunc) ? (cellRenderFunc || '') : XEUtils.isObject(cellRenderFunc) ? renderCell(cellRenderFunc) : cellRenderFunc
       } else {
         return renderCell(cellRender)
       }
