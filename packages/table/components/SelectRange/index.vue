@@ -234,6 +234,9 @@ export default {
         }
 
         columnList.forEach((vv, kk) => {
+          if (!this.table.tableData[k + startRow]) {
+            this.table.add()
+          }
           updateArr.push({ row: this.table.tableData[k + startRow], rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
         })
       })

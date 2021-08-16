@@ -40,8 +40,9 @@ export default {
   },
   render(h) {
     const { table, load } = this
-    const { toolbarConfig, search } = table
-    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort, subtotal } = toolbarConfig || {}
+    const { toolbarConfig, sortConfig, search } = table
+    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, subtotal } = toolbarConfig || {}
+    const { multiple } = sortConfig
     const renderHelp = (help, node) => {
       const { effect = 'dark', message, placement } = help
       return <Help effect={effect} message={message} placement={placement} >{node}</Help>
@@ -66,7 +67,7 @@ export default {
             editHistory && <EditHistory /> || ''
           }
           {
-            showSort && <SortCtrlBtn /> || ''
+            multiple && <SortCtrlBtn /> || ''
           }
           {
             showReplace && <ReplaceCtrlBtnVue /> || ''

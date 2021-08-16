@@ -101,11 +101,13 @@ export default {
     setRowDrag(left = false) {
       if (this.table.rowDrag) {
         const body = left ? this.table.$refs.leftBody : this.table.$refs.body
-        this.rowSortable = new Sortable({
-          el: body.$el.querySelector('.eff-table__body'),
-          handle: 'eff-icon-drag',
-          onEnd: this.handleRowEnd
-        })
+        if (body) {
+          this.rowSortable = new Sortable({
+            el: body.$el.querySelector('.eff-table__body'),
+            handle: 'eff-icon-drag',
+            onEnd: this.handleRowEnd
+          })
+        }
       }
     },
     toggleCardShow(val) {

@@ -144,7 +144,7 @@
     />
 
     <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
-    <sort v-if="sortControl" ref="sort" :init-columns.sync="tableColumns" />
+    <sort v-if="sortConfig.multiple" ref="sort" />
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
@@ -253,7 +253,7 @@ export default {
     rowDrag: Boolean,
     showSummary: Boolean, // 合计
     searchClearText: { type: String, default: '' },
-    sortConfig: { type: Object, default: () => {} }, // 排序配置
+    sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     summaryMethod: { type: Function, default: null },
     sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
@@ -307,7 +307,6 @@ export default {
         pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
       replaceControl: false,
-      sortControl: false,
       tableSourceData: [],
       editProps: {},
       headerCheckedColumns: [],
@@ -354,7 +353,7 @@ export default {
       return tableData && tableData.find(d => typeof d.children !== 'undefined')
     },
     showToolbar() {
-      const { drag, search, toolbarConfig = {}, $slots } = this
+      const { drag, search, toolbarConfig = {}, sortConfig = {}, $slots } = this
       let show = false
       for (const key in toolbarConfig) {
         const item = toolbarConfig[key]
@@ -362,9 +361,9 @@ export default {
           if (Array.isArray(item) && item.length) show = true
         } else if (key === 'columnControl') {
           if (drag && item) show = true
-        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'showSort', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
+        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
-      if ($slots.toolbar || search) show = true
+      if ($slots.toolbar || search || sortConfig.multiple) show = true
       return show
     },
     tableId() {

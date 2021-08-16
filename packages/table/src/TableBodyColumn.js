@@ -43,38 +43,56 @@ export default {
       style.borderLeft = 0
     }
 
+    let columnClass = `eff-table__column `
     // 复制功能
     if (copy) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
-      const border = `2px ${borderStyle} rgb(17 210 232)`
+      const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
       const commitRange = () => table.$refs.selectRange.setRowMap({ id, row, rowIndex, column, columnIndex, prop })
       let isCommit = false
       if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
-        style.borderLeft = border
         commitRange()
         isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-left'
+        } else {
+          style.borderLeft = border
+        }
       }
       if (rowIndex === startRow && columnIndex >= startColumn && columnIndex <= endColumn) {
-        style.borderTop = border
         commitRange()
         isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-top'
+        } else {
+          style.borderTop = border
+        }
       }
       if (columnIndex === endColumn && rowIndex >= startRow && rowIndex <= endRow) {
-        style.borderRight = border
         commitRange()
         isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-right'
+        } else {
+          style.borderRight = border
+        }
       }
       if (rowIndex === endRow && columnIndex >= startColumn && columnIndex <= endColumn) {
-        style.borderBottom = border
         commitRange()
         isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-bottom'
+        } else {
+          style.borderBottom = border
+        }
       }
-      if (!isCommit) table.$refs.selectRange.deleteRowMap(id)
+      if (!isCommit) {
+        table.$refs.selectRange.deleteRowMap(id)
+      }
     }
 
     // 处理class
-    let columnClass = `eff-table__column `
     const sourceRow = updateList.find(d => {
       return d.$old[rowId] === row[rowId]
     })

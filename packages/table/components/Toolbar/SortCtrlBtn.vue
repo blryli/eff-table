@@ -16,7 +16,7 @@ export default {
   inject: ['table'],
   methods: {
     click() {
-      this.table.sortControl = !this.table.sortControl
+      this.table.$refs.sort.show()
     }
   }
 }

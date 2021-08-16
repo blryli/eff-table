@@ -79,12 +79,7 @@ export default {
   },
   methods: {
     update() {
-      const {
-        left,
-        top,
-        width: startWidth,
-        height: startHeight
-      } = this.startRect
+      const { left, top, width: startWidth, height: startHeight } = this.startRect
       const { x, y, width, height } = this.move
       if (startWidth + width >= this.minWidth) {
         this.endRect.width = startWidth + width

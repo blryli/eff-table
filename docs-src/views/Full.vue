@@ -18,13 +18,13 @@
           border
           select-range
           copy
+          :sort-config="{multiple: true}"
           :toolbar-config="{
             refresh: true,
             showReplace: true,
             fullscreen: true,
             columnBatchControl: true,
             editHistory: true,
-            showSort: true,
             diySearch: diySearch
           }"
           :footer-action-config="{showPager: true, showBorder: true}"
