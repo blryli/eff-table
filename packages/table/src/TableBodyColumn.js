@@ -30,7 +30,7 @@ export default {
     const { type, prop, className } = column
     const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
     // 为特殊prop时，初始化值
-    if (prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
+    if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
       initField(row, prop, vue)
       column.initField = true
     }
@@ -45,7 +45,7 @@ export default {
 
     let columnClass = `eff-table__column `
     // 复制功能
-    if (copy) {
+    if (copy && !summary) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
       const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
@@ -228,14 +228,17 @@ export default {
     }
 
     const handleMouseUp = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMouseDown = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMousemove = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }

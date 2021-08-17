@@ -270,11 +270,13 @@ value: [
 | getInsertList | 获取新增的数据 ||
 | getUpdateList | 获取更新的数据 ||
 | getPendingList | 获取伪删除的数据 ||
-| insert | 插入数据的方法，返回promise |records（插入数据array）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行），insertCheckRow （存在勾选行时，插入到指定行，默认为true）|
+| insert | 插入数据的方法，返回promise |records（插入数据array）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行），insertCheckRow （存在勾选行时，插入到指定行，默认为true）。|
 | triggerPending | 把选中行标记为伪删除的方法，返回promise |-|
 | getRemoveList |  获取表格已删除数据 |-|
 | remove | 删除表格数据，返回promise |rows|
 | removeCheckRow | 删除表格已选中数据，返回promise |-|
+| tableEditPause | 暂停表格编辑功能，在触发编辑时如果有使用下拉框或者弹窗需要暂停表格编辑功能 |-|
+| tableEditRegain | 恢复表格编辑功能，下拉框或者弹窗关闭时需要恢复表格编辑功能 |-|
 
 
 ### Events

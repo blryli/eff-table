@@ -286,12 +286,12 @@ export default {
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
           this.cellIndex = cellIndex
-          this.cell = getColumn(prop).cell
+          this.cell = cell || getColumn(prop).cell
           this.show = true
 
           this.setElPos() // 设置编辑框位置
 
-          this.handleFocus()// 处理聚焦
+          this.handleFocus()// 处理聚焦d
         })
       }
       if (!cell) {

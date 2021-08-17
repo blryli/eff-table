@@ -1,22 +1,3 @@
-<template>
-  <div class="eff-table__footer" :style="style">
-    <div class="eff-table__body--x-space" :style="{width: table.bodyWidth + 'px'}" />
-    <div
-      class="eff-table__body"
-      :style="{ marginLeft: fixed ? '' : table.bodyMarginLeft }"
-    >
-      <TableBodyRow
-        :row="row"
-        :row-index="1"
-        :body-columns="fixed ? columns : table.renderColumn"
-        :fixed="fixed"
-        summary
-      />
-    </div>
-  </div>
-</template>
-
-<script>
 import TableBodyRow from './TableBodyRow'
 
 export default {
@@ -63,6 +44,25 @@ export default {
       if (this.fixed) return
       this.$el.scrollLeft = val
     }
+  },
+  render(h) {
+    const { row, columns, style, table, fixed } = this
+    return (
+      <div class='eff-table__footer' style={style}>
+        <div class='eff-table__body--x-space' style={{ width: table.bodyWidth + 'px' }} />
+        <div
+          class='eff-table__body'
+          style={ { marginLeft: fixed ? '' : table.bodyMarginLeft } }
+        >
+          <TableBodyRow
+            row={row}
+            row-index={1}
+            body-columns={fixed ? columns : table.renderColumn}
+            fixed={fixed}
+            summary={true}
+          />
+        </div>
+      </div>
+    )
   }
 }
-</script>

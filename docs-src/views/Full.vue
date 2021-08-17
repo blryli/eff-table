@@ -440,6 +440,162 @@ export default {
         },
         {
           show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
+          prop: 'cname',
+          title: '名字',
+          search: true,
+          width: 120,
+
+          edit: {
+            render: (h, { prop, row }) => {
+              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
+            }
+          }
+        },
+        {
+          show: true,
           prop: 'sex',
           title: '性别',
           width: 100,

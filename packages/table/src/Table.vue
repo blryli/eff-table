@@ -625,6 +625,12 @@ export default {
     setEditIsStop(val) {
       this.editIsStop = val
     },
+    tableEditPause() {
+      this.editIsStop = true
+    },
+    tableEditRegain() {
+      this.editIsStop = true
+    },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
