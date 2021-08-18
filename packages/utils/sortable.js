@@ -139,8 +139,7 @@ export default class Sortable {
       const { fromIndex, toIndex, from, to, fromEl } = relation
       const willInsertAfter = toIndex > fromIndex
       // console.log('进入', { fromIndex, toIndex, from, to, fromEl, toEl, willInsertAfter })
-
-      this._emit('dragenter', { from, to, fromEl, toEl, willInsertAfter })
+      this._emit('dragenter', { from, to, fromEl, toEl, fromIndex, toIndex, willInsertAfter, target })
     }
   }
 

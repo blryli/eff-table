@@ -29,7 +29,7 @@ export function getOptions(renderOpts, params) {
 function getOptionsRender(h, renderOpts, params, optionName) {
   const { props = {}} = renderOpts
   const { labelKey = 'label', valueKey = 'value' } = props
-  return getOptions(renderOpts, params).map(item => h(map.get(optionName), { key: item.value, props: { label: item[labelKey], value: item[valueKey] }}))
+  return getOptions(renderOpts, params).map(item => h(map.get(optionName), { key: item.value, props: { label: item[labelKey], value: item[valueKey], disabled: Boolean(item.disabled) }}))
 }
 
 // 默认 render

@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>editStore -  {{ getEditStore() }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
     <!-- <p>selectRengeStore -  {{ $refs.selectRange && $refs.selectRange.selectRengeStore }}</p> -->
     <!-- <p>rowMap -  {{ $refs.selectRange && $refs.selectRange.rowMap }}</p> -->
 

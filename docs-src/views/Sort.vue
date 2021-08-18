@@ -216,6 +216,66 @@ export default {
             prop: 'age',
             title: '年龄',
             sortable: true
+          },
+          {
+            show: true,
+            prop: 'age1',
+            title: '年龄1',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age2',
+            title: '年龄2',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age3',
+            title: '年龄3',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age4',
+            title: '年龄4',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age5',
+            title: '年龄5',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age6',
+            title: '年龄6',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age7',
+            title: '年龄7',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age8',
+            title: '年龄8',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age9',
+            title: '年龄9',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'age10',
+            title: '年龄10',
+            sortable: true
           }
         ]
       }

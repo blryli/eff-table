@@ -169,13 +169,13 @@ export default {
 
         let startIndex = 0
         const rowArr = Object.values(this.rowMap).reduce((acc, cur, index) => {
-          const { rowIndex } = cur
+          const { row, prop, rowIndex } = cur
           if (index === 0) {
             startIndex = rowIndex
           }
           const insertIndex = rowIndex - startIndex
           if (!acc[insertIndex]) acc[insertIndex] = []
-          const text = document.getElementById(cur.id).innerText || ''
+          const text = document.getElementById(cur.id).innerText || getFieldValue(row, prop)
           acc[insertIndex].push(text)
           return acc
         }, [])
