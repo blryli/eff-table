@@ -76,7 +76,7 @@ function renderVModel(h, renderOpts, params) {
       oldData = null
     },
     'visible-change': (isExpend, val) => {
-      root.setEditIsStop(isExpend)
+      root.setEditStop(isExpend)
     }
   }, onParams)
 
@@ -142,7 +142,7 @@ function renderSelect(h, renderOpts, params, renderType) {
       })
       Object.assign(on, {
         'visible-change': (isExpend, val) => {
-          root.setEditIsStop(isExpend)
+          root.setEditStop(isExpend)
         }
       })
     }
@@ -199,8 +199,8 @@ function renderDatepicker(h, renderOpts, params, renderType) {
       })
     } else if (renderType === 'edit') {
       Object.assign(on, {
-        focus: () => root.setEditIsStop(true),
-        blur: () => root.setEditIsStop(false)
+        focus: () => root.setEditStop(true),
+        blur: () => root.setEditStop(false)
       })
     }
   }
@@ -265,14 +265,14 @@ function renderDialog(h, renderOpts, params) {
     title: column.title
   }
 
-  if (edit.dialogVisible) root.setEditIsStop(true)
+  if (edit.dialogVisible) root.setEditStop(true)
   function submit() {
     save && save()
     closed()
   }
   function closed() {
     edit.dialogVisible = false
-    root.setEditIsStop(false)
+    root.setEditStop(false)
   }
 
   const on = getOn(renderOpts.on, {

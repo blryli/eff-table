@@ -150,13 +150,13 @@ export default {
     },
     handleWindowMousedown(e) {
       const { show, $el, table } = this
-      if (!show || $el.contains(e.target) || table.editIsStop) return
+      if (!show || $el.contains(e.target) || table.tableEditConfig.editStop) return
       this.show = false
     },
 
     handleWindowKeyup(e, keysStr) {
       const { show, table, row, inTable } = this
-      if (!show || table.editIsStop || !inTable(e.target)) return
+      if (!show || table.tableEditConfig.editStop || !inTable(e.target)) return
       e.stopPropagation()
       e.preventDefault()
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
@@ -190,13 +190,12 @@ export default {
     },
     to() {
       this.handleType = 'to'
-      const { placement = 'right', table, column: { prop }} = this
-      const { editLengthways } = table
+      const { placement = 'right', column: { prop }} = this
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX()
       } else {
-        editLengthways && this.toY(prop)
+        this.toY(prop)
       }
     },
     canFocus(column, cell) {
@@ -226,7 +225,7 @@ export default {
         this.blurEvent().then(() => editCell(column, cell))
       } else {
         // 当前行没有可聚焦元素，进行跨行编辑
-        table.editLoop ? this.toY() : shake($el, 'x')
+        table.tableEditConfig.editLoop ? this.toY() : shake($el, 'x')
       }
     },
     // 跳过pending状态的行
@@ -292,6 +291,11 @@ export default {
           this.setElPos() // 设置编辑框位置
 
           this.handleFocus()// 处理聚焦d
+
+          const { copy, $refs } = this.table
+          if (copy) {
+            $refs.selectRange.close()
+          }
         })
       }
       if (!cell) {

@@ -103,9 +103,7 @@ export default {
 | search      | 是否启用搜索      | Boolean      |            | false      |
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| editLoop   | 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑  | Boolean    |     | true      |
-| edit-stop| 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false| Boolean |     | false   |
-| edit-Lengthways    | 是否开启纵向快捷编辑    | Boolean      |            | true      |
+| edit-config             | 编辑配置               | object      |            | {}      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
@@ -236,6 +234,15 @@ value: [
   diySearch: false, // 是否启用高级搜索功能
   refresh: false, // 是否启用刷新功能
   fullscreen: false, // 是否启用全屏功能
+}
+```
+-edit-config
+
+```js
+{
+  editLoop: true, // 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑
+  editStop: false, // 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false
+  trigger: 'click', // 编辑功能触发方式，可选 click/dblclick
 }
 ```
 

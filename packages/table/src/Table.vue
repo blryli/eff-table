@@ -150,9 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
-    <!-- <p>selectRengeStore -  {{ $refs.selectRange && $refs.selectRange.selectRengeStore }}</p> -->
-    <!-- <p>rowMap -  {{ $refs.selectRange && $refs.selectRange.rowMap }}</p> -->
+    <!-- <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -244,9 +242,7 @@ export default {
     drag: Boolean,
     search: Boolean,
     edit: Boolean,
-    editStop: Boolean,
-    editLoop: { type: Boolean, default: true },
-    editLengthways: { type: Boolean, default: true },
+    editConfig: { type: Object, default: () => {} },
     loading: Boolean,
     columnControlText: { type: String, default: '' },
     columnBatchControlText: { type: String, default: '' },
@@ -293,7 +289,6 @@ export default {
       expands: [],
       columnGroupIds: [],
       expand: null,
-      editIsStop: false,
       isLoading: false,
       editStore: {
         editRow: {},
@@ -408,9 +403,6 @@ export default {
     },
     form(val) {
       this.tableForm = val
-    },
-    editStop(val) {
-      this.editIsStop = val
     }
   },
   created() {
@@ -438,7 +430,8 @@ export default {
     })
     this.tableColumns = [...this.columns]
     Object.assign(this, {
-      tableDataMap: new Map()
+      tableDataMap: new Map(),
+      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
     })
     this.loadTableData(this.data || [])
   },
@@ -543,18 +536,37 @@ export default {
               const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
               const { labelKey = 'label', valueKey = 'value' } = props || {}
               if (options.length) {
-                const option = options.find(d => d[labelKey] === content)
+                // 匹配到label才会赋值，否则置空
+                const option = options.find(d => d[labelKey] === content || d[valueKey] === content)
                 setFieldValue.call(this, this, row, prop, option ? option[valueKey] : '')
               }
             } else if (name === 'date-picker') {
               let date = content
               if (!XEUtils.isValidDate(content)) {
+                // 能转化成日期的才会赋值
                 const toStringDate = XEUtils.toStringDate(content)
                 date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
               }
               setFieldValue.call(this, this, row, prop, date)
             } else if (name === 'cascader') {
+              // 默认置空
               if (!XEUtils.isArray(content)) return setFieldValue.call(this, this, row, prop, [])
+            } else if (name === 'switch') {
+              const { props = {}} = opts
+              const activeValue = props['active-value'] || true
+              const inactiveValue = props['inactive-value'] || false
+              let data = content
+              if (content === 'true') {
+                data = activeValue
+              } else if (content === 'false') {
+                data = inactiveValue
+              } else {
+                if ([activeValue, inactiveValue, '1', '0'].indexOf(content) < 0) {
+                  data = '0'
+                }
+              }
+
+              setFieldValue.call(this, this, row, prop, data)
             }
           } else {
             setFieldValue.call(this, this, row, prop, content)
@@ -622,14 +634,14 @@ export default {
     rootMouseup(event) {
       this.$emit('table-mouse-up', { event: event })
     },
-    setEditIsStop(val) {
-      this.editIsStop = val
+    setEditStop(val) {
+      this.tableEditConfig.editStop = val
     },
     tableEditPause() {
-      this.editIsStop = true
+      this.tableEditConfig.editStop = true
     },
     tableEditRegain() {
-      this.editIsStop = true
+      this.tableEditConfig.editStop = true
     },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)

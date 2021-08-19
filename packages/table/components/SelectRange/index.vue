@@ -41,7 +41,8 @@ export default {
       endPosition: { columnIndex: -1, rowIndex: -1 },
       borderStyle: 'solid',
       copyBtnType: 'primary',
-      toolStyle: {}
+      toolStyle: {},
+      headerCheckedColumns: []
     }
   },
   computed: {
@@ -52,6 +53,7 @@ export default {
 
       const startColumn = endPosition.columnIndex > startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
       const endColumn = endPosition.columnIndex < startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
+      // console.log({ startRow, endRow, startColumn, endColumn, borderStyle: borderStyle })
 
       return { startRow, endRow, startColumn, endColumn, borderStyle: borderStyle }
     },
@@ -70,6 +72,21 @@ export default {
         this.endPosition.y += scrollTop - oldTop
       }
       this.$set(this.toolStyle, 'display', 'none')
+    },
+    // header批量选中
+    'table.headerCheckedColumns'(columns) {
+      const checkColumnIds = columns.map(d => +d.columnId)
+      if (checkColumnIds.length) {
+        this.borderStyle = 'solid'
+        this.handleType = 'copyDown'
+        this.startPosition = { rowIndex: 0, columnIndex: Math.min(...checkColumnIds) - 1 }
+        this.endPosition = { rowIndex: this.table.tableData.length - 1, columnIndex: Math.max(...checkColumnIds) - 1 }
+        this.$nextTick(() => {
+          this.selectRangeMouseUp()
+        })
+      } else {
+        // this.close()
+      }
     }
   },
   inject: ['table'],
@@ -78,6 +95,7 @@ export default {
     this.table.$on('cell-mouse-down', this.selectRangeMouseDown)
     this.table.$on('cell-mouse-move', this.selectRangeMouseMove)
     this.table.$on('copy', () => {
+      console.log(this.handleType)
       if (this.handleType === 'copyUp') {
         this.borderStyle = 'dashed'
       }
@@ -95,7 +113,7 @@ export default {
     setRowMap(paramas) {
       const { rowMap } = this
       const { id } = paramas
-      rowMap[id] = paramas
+      this.$set(rowMap, id, paramas)
     },
     deleteRowMap(id) {
       const { rowMap } = this
@@ -158,11 +176,12 @@ export default {
       this.copyBtnType = 'primary'
 
       if (this.handleType === 'copyDown') {
-        const query = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
-        const endColumnModel = table.$refs.body.$el.querySelector(query)
+        const endColumnModel = document.getElementById(`${table.tableId}_${endRow + 1}-${endColumn + 1}`)
         if (endColumnModel) {
           const { top, left, width, height } = endColumnModel.getBoundingClientRect()
           this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
+        } else {
+          this.toolStyle = { top: '100%', left: '100%' }
         }
 
         this.handleType = 'copyUp'
@@ -179,6 +198,7 @@ export default {
           acc[insertIndex].push(text)
           return acc
         }, [])
+        // console.log('rowArr', JSON.stringify(rowArr, null, 2))
         table.$emit('select-range-data', rowArr)
       }
       this.handleType = 'copyUp'
@@ -198,7 +218,7 @@ export default {
     },
     selectRangeMouseMove(e) {
       const { rowIndex, columnIndex } = e
-      const { handleType } = this
+      const { table, handleType } = this
       if (!['copyDown', 'batchCopuDown'].some(d => d === handleType)) return
       this.endPosition = { rowIndex, columnIndex }
       // 复制按钮
@@ -206,8 +226,7 @@ export default {
         this.borderStyle = 'solid'
 
         const { endRow, endColumn } = this.selectRengeStore
-        const node = `.eff-table__body-row[data-rowid="${endRow + 1}"] .eff-table__column[data-colid="${(endRow + 1) + '-' + (endColumn + 1)}"]`
-        const endColumnModel = this.table.$refs.body.$el.querySelector(node)
+        const endColumnModel = document.getElementById(`${table.tableId}_${endRow + 1}-${endColumn + 1}`)
         if (endColumnModel) {
           const { top, left, width, height } = endColumnModel.getBoundingClientRect()
           this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
@@ -240,6 +259,8 @@ export default {
           updateArr.push({ row: this.table.tableData[k + startRow], rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
         })
       })
+
+      // console.log('updateArr', JSON.stringify(updateArr, null, 2))
 
       this.table.$emit('edit-fields', updateArr, true)
     }

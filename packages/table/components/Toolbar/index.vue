@@ -57,7 +57,7 @@ export default {
     }, []) : ''
     const list = buttonsRender.concat(this.$slots.default || []) || []
     return (
-      <div class='eff-table__toobar'>
+      <div class='eff-table__toobar' style={{ height: table.rowHeight + 'px' }}>
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
           {
@@ -102,7 +102,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--rowHeight);
   padding: 0 5px;
   border: 1px solid #ddd;
   border-bottom: 0;
