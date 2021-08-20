@@ -769,7 +769,6 @@ export default {
     },
     deleted() {
       const { selectionIndexs } = this
-      console.log('selectionIndexs', selectionIndexs)
       this.data = this.data.filter((d, i) => selectionIndexs.indexOf(i) < 0)
       this.list = [...this.data]
     },
@@ -778,7 +777,7 @@ export default {
     },
     getData() {
       this.data = mock.mock({
-        'array|100': [
+        'array|1000': [
           {
             'id|+1': 1,
             'age': /\d{2}/,

@@ -73,7 +73,7 @@ export default {
         return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: this, table, form: this, vue: this, data, column, prop }) || ''
       }
     },
-    setEditIsStop(val) {
+    setEditStop(val) {
       this.editIsStop = val
     },
     tipShow(opts) {

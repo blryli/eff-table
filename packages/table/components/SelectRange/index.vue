@@ -87,7 +87,14 @@ export default {
       } else {
         // this.close()
       }
+    },
+    selectRengeStore(val) {
+      const { startRow, endRow, startColumn, endColumn } = val
+      this.table.selectRengeStore = { startRow, endRow, startColumn, endColumn }
     }
+  },
+  created() {
+    this.table.selectRengeStore = { startRow: -1, endRow: -1, startColumn: -1, endColumn: -1 }
   },
   inject: ['table'],
   mounted() {
@@ -95,7 +102,6 @@ export default {
     this.table.$on('cell-mouse-down', this.selectRangeMouseDown)
     this.table.$on('cell-mouse-move', this.selectRangeMouseMove)
     this.table.$on('copy', () => {
-      console.log(this.handleType)
       if (this.handleType === 'copyUp') {
         this.borderStyle = 'dashed'
       }
@@ -183,23 +189,6 @@ export default {
         } else {
           this.toolStyle = { top: '100%', left: '100%' }
         }
-
-        this.handleType = 'copyUp'
-
-        let startIndex = 0
-        const rowArr = Object.values(this.rowMap).reduce((acc, cur, index) => {
-          const { row, prop, rowIndex } = cur
-          if (index === 0) {
-            startIndex = rowIndex
-          }
-          const insertIndex = rowIndex - startIndex
-          if (!acc[insertIndex]) acc[insertIndex] = []
-          const text = document.getElementById(cur.id).innerText || getFieldValue(row, prop)
-          acc[insertIndex].push(text)
-          return acc
-        }, [])
-        // console.log('rowArr', JSON.stringify(rowArr, null, 2))
-        table.$emit('select-range-data', rowArr)
       }
       this.handleType = 'copyUp'
     },
@@ -242,27 +231,34 @@ export default {
       const { startRow, startColumn } = this.selectRengeStore
 
       const updateArr = []
+      const insertRows = []
       const data = e.clipboardData.getData('text/plain').trim().split('\r\n')
-      data.map((v, k) => {
+      data.map((da, idx) => {
         let columnList
 
-        if (v.indexOf('\t ') !== -1) {
-          columnList = v.split('\t ')
+        if (da.indexOf('\t ') !== -1) {
+          columnList = da.split('\t ')
         } else {
-          columnList = v.split('\t')
+          columnList = da.split('\t')
         }
 
-        columnList.forEach((vv, kk) => {
-          if (!this.table.tableData[k + startRow]) {
-            this.table.add()
-          }
-          updateArr.push({ row: this.table.tableData[k + startRow], rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
+        const rowIndex = idx + startRow
+        const row = this.table.tableData[rowIndex]
+
+        if (!row) {
+          insertRows.push({})
+        }
+        columnList.forEach((content, i) => {
+          const columnIndex = i + startColumn
+          updateArr.push({ row, rowIndex, columnIndex, content })
         })
       })
 
       // console.log('updateArr', JSON.stringify(updateArr, null, 2))
-
+      insertRows.length && this.table.insert(insertRows, -1)
       this.table.$emit('edit-fields', updateArr, true)
+      this.table.scrollTop && (this.table.scrollTop += 0.1)
+      this.table.headerCheckedColumns = []
     }
   }
 }

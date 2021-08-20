@@ -7,6 +7,14 @@
     </p>
     <section class="demo">
       <div class="section-content">
+        <v-form
+          :data="form"
+          :columns="[{title: '数据量',prop: 'number',itemRender:{
+            name: 'select',
+            options: [{label: 1000, value: 1000},{label: 3000, value: 3000},{label: 5000, value: 5000}, {label: 10000, value: 10000},{label: 20000, value: 20000}],
+            on: {change: change}
+          }}]"
+        />
         <eff-table
           v-bind="tableOptions"
         />
@@ -126,9 +134,9 @@ export default {
       htmlCode,
       jsCode,
       data: [],
+      form: { number: 1000 },
       tableOptions: {
         maxHeight: 400,
-        edit: true,
         border: true,
         data: [],
         columns: [
@@ -207,7 +215,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.tableOptions.data = mock.mock({
-        'array|1000': [
+        ['array|' + this.form.number]: [
           {
             'id|+1': 1,
             'name': function name() {
@@ -221,6 +229,25 @@ export default {
         ]
       }).array
     }, 50)
+  },
+  methods: {
+    change(val) {
+      console.log(val)
+      this.tableOptions.data = mock.mock({
+        ['array|' + val]: [
+          {
+            'id|+1': 1,
+            'name': function name() {
+              return this.index % 5 === 0 ? '' : this.cname
+            },
+            'cname': '@cname',
+            'age': /[1-7][0-9]/,
+            'height': /1[5-9][0-9]/,
+            'index|+1': 1
+          }
+        ]
+      }).array
+    }
   }
 }
 </script>

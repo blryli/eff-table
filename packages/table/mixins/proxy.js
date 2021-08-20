@@ -131,7 +131,7 @@ export default {
         }
         if (tableData === rows) {
           rows = rest = tableData.slice(0)
-          this.tableData = []
+          this.tableData = Object.freeze([])
           this.updateCache()
           this.clearSelection()
           this.resize()
@@ -260,6 +260,7 @@ export default {
      */
     insert(records, rowIndex, insertCheckRow = true) {
       const { checkeds, columns, tableData, rowId, beforeInsert } = this
+      const tbData = XEUtils.clone(tableData)
       const defRecords = columns.reduce((acc, column) => {
         const { type, prop } = column
         if (['expand', 'selection', 'radio'].indexOf(type) > -1 || !prop) return acc
@@ -278,14 +279,14 @@ export default {
       }
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach((d, i) => {
-        if (!d[rowId] || tableData.find(t => t[rowId] === d[rowId]) || records.find((t, idx) => i !== idx && t[rowId] === d[rowId])) {
+        if (!d[rowId] || tbData.find(t => t[rowId] === d[rowId]) || records.find((t, idx) => i !== idx && t[rowId] === d[rowId])) {
           this.$set(d, rowId, `row_${row_id++}`)
         }
       })
 
       const checkedsLen = checkeds.length
       if (insertCheckRow && checkedsLen) {
-        rowIndex = tableData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
+        rowIndex = tbData.findIndex(d => d[rowId] === checkeds[checkedsLen - 1][rowId]) + 1
       }
 
       const bInsert = () => beforeInsert(isObj ? records[0] : records, rowIndex)
@@ -293,17 +294,18 @@ export default {
       if (!rowIndex) {
         rowIndex = 0
         bInsert()
-        this.tableData.unshift(...records)
+        tbData.unshift(...records)
       } else {
         if (rowIndex === -1) {
-          rowIndex = this.tableData.length
+          rowIndex = tbData.length
           bInsert()
-          this.tableData.push(...records)
+          tbData.push(...records)
         } else {
           bInsert()
-          this.tableData.splice(rowIndex, 0, ...records)
+          tbData.splice(rowIndex, 0, ...records)
         }
       }
+      this.tableData = Object.freeze(tbData)
       this.editStore.insertList.push(...records)
       this.updateCache()
       this.resize()

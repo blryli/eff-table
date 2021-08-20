@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
+    <!-- <p>selectRengeStore -  {{ selectRengeStore }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -275,7 +275,7 @@ export default {
   },
   data() {
     return {
-      tableData: [],
+      tableData: Object.freeze([]),
       tableColumns: [],
       visibleColumns: [],
       fixedColumns: [],
@@ -287,7 +287,6 @@ export default {
       tableBodyEl: null,
       rowHoverIndex: null,
       expands: [],
-      columnGroupIds: [],
       expand: null,
       isLoading: false,
       editStore: {
@@ -302,9 +301,9 @@ export default {
         pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
       replaceControl: false,
-      tableSourceData: [],
       editProps: {},
       headerCheckedColumns: [],
+      selectRengeStore: [], // 复制功能选中范围
       loadingField: false
     }
   },
@@ -371,7 +370,7 @@ export default {
         this.scrolling = true
         setTimeout(() => {
           this.scrolling = false
-        }, 200)
+        }, 100)
       }
     },
     scrollLeft(val) {
@@ -430,6 +429,8 @@ export default {
     })
     this.tableColumns = [...this.columns]
     Object.assign(this, {
+      columnGroupIds: [], // 小计
+      tableSourceData: [],
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
     })
@@ -450,10 +451,10 @@ export default {
     loadTableData(data = this.data) {
       const { editStore, rowId } = this
       this.tableData =
-        data.map((d, i) => {
+        Object.freeze(data.map((d, i) => {
           !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId('_rowId'))
           return d
-        }) || []
+        }) || [])
       this.tableSourceData = XEUtils.clone(data, true)
       editStore.insertList = []
       if (rowId === '_rowId') {
@@ -508,8 +509,10 @@ export default {
       // console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
-        const { visibleColumns, updateStatus } = this
-        const { row, rowIndex, columnIndex, content } = filed
+        const { visibleColumns, updateStatus, tableData } = this
+        const { rowIndex, columnIndex, content } = filed
+        let { row } = filed
+        if (!row) row = tableData[rowIndex]
         const column = visibleColumns[columnIndex] || {}
         const { prop, rules } = column
 

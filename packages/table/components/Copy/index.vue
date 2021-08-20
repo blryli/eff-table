@@ -1,5 +1,8 @@
 <script>
+import CopyList from './CopyList'
 export default {
+  name: 'Copy',
+  components: { CopyList },
   data() {
     return {
       textArr: []
@@ -39,7 +42,6 @@ export default {
       if (!textArr.length) {
         return true
       }
-
       textArr = textArr.map(v => {
         return v.join('\t ')
       })
@@ -62,8 +64,19 @@ export default {
     }
   },
   render() {
-    return ''
+    const { table } = this
+    const { tableData, tableColumns, selectRengeStore } = table
+    return <CopyList contextual={{ table, tableData, tableColumns, selectRengeStore, vue: this }} />
   }
 }
 
 </script>
+
+<style lang="scss">
+.eff-table--copy{
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+</style>

@@ -58,11 +58,11 @@ export default {
     },
     resetSort() {
       const { tableData, rowId } = this
-      this.tableData = this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId]))
+      this.tableData = Object.freeze(this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId])))
       this.tableSortSourceData = null
     },
     toSort() {
-      let tableData = [...this.tableData]
+      let tableData = Object.freeze([...this.tableData])
       const { sorts, sortConfig = {}} = this
       if (!this.tableSortSourceData) {
         this.tableSortSourceData = XEUtils.clone(tableData, true)
@@ -74,12 +74,12 @@ export default {
           const { prop, order } = column
           return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data: tableData, column, prop, order, $table: this })] : [prop, order]])
         }, [])
-        !remote && sort.length && (tableData = XEUtils.sortBy(tableData, sort))
+        !remote && sort.length && (tableData = Object.freeze(XEUtils.sortBy(tableData, sort)))
       } else {
         // sorts没值则还原
         this.resetSort()
       }
-      this.tableData = tableData
+      this.tableData = Object.freeze(tableData)
       this.$emit('sort-change', sorts.length === 1 ? sorts[0] : sorts, tableData)
       return tableData
     }
