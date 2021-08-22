@@ -14,63 +14,55 @@
 
 - 校验(全局校验、行校验、单元格校验、异步校验)
 
+- 复制粘贴(excel般操作)
+
+- 批量替换(对数据进行批量替换操作)
+
 #### 使用
 
 ```html
-  <eff-table
-    ref="table"
-    v-model="columns"
-    :data="data"
-    edit
-  />
+  <eff-table v-bind="tableOptions" />
 ```
 
 ```js
 export default {
   data() {
     retrun {
-      data: [],
-      columns: [
-        {
-          prop: 'selection',
-          type: 'selection',
-          fixed: 'left',
-          width: 50,
-          show: true
-        },
-        {
-          prop: 'edit',
-          title: '编辑',
-          width: 135,
-          show: true,
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
+      tableOptions: {
+        edit: true,
+        border: true,
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
           },
-        },
-        {
-          prop: 'search',
-          title: '搜索',
-          width: 135,
-          show: true,
-          search: true,
-        },
-        {
-          prop: 'validator',
-          title: '校验',
-          width: 135,
-          show: true,
-          validator: {
-            rule: val => {
-              if (!val) {
-                return '校验不能为空'
-              }
-              return ''
-            }
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true
           }
-        }
-      ]
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
+      }
     }
   }
 }

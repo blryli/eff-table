@@ -95,7 +95,7 @@ export default {
       const dataHeight = tableData.length ? (tableData.length + this.groupColumnNum) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
-      let bodyHeight = bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0
+      let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0) + overflowXHeight
       if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }

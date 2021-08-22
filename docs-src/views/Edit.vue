@@ -25,12 +25,10 @@
     <p>列 <span class="primary">edit</span> 属性设置为<span class="primary"> true </span>，
       打开编辑功能，列头会显示可编辑&nbsp;<i class="eff-icon-edit" title="可编辑列" />&nbsp;图标，默认渲染成 <span class="primary"> input </span> 编辑框（<span class="primary">editable</span> 属性设置为<span class="primary"> false </span> 时取消列编辑）
     </p>
+    <p>通常配置 <span class="primary">config</span> 就可以了，特殊情况下需要单独配置 <span class="primary">cellRender</span> 及 <span class="primary">edit 的 render</span> 属性</p>
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          ref="table"
-          v-bind="tableOptions"
-        />
+        <eff-table v-bind="tableOptions" />
       </div>
     </section>
     <section class="snippets">
@@ -42,15 +40,11 @@
       </Collapse>
     </section>
 
-    <h3>对象模式</h3>
+    <h3>高级编辑</h3>
     <CodeSnippet class="javascript" :code="objCode" />
-    <p>通常配置 <span class="primary">config</span> 就可以了，特殊情况下需要单独配置 <span class="primary">cellRender</span> 及 <span class="primary">edit 的 render</span> 属性</p>
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          ref="table"
-          v-bind="tableOptions1"
-        />
+        <eff-table v-bind="tableOptions1" />
       </div>
     </section>
     <section class="snippets">
@@ -71,10 +65,7 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
 const htmlCode = `
-  <eff-table
-    ref="table"
-    v-bind="tableOptions"
-  />
+  <eff-table v-bind="tableOptions" />
   `
 
 const objCode = `

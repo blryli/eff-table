@@ -491,7 +491,9 @@ export default {
     updateRow(row) {
       const { rowId } = this
       const rowIndex = this.tableData.findIndex(d => d[rowId] === row[rowId])
-      this.$set(this.tableData, rowIndex, row)
+      const data = XEUtils.clone(this.tableData)
+      data[rowIndex] = row
+      this.tableData = Object.freeze(data)
       const fields = []
       for (const prop in row) {
         const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
