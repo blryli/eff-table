@@ -89,6 +89,9 @@ export default {
     })
   },
   beforeDestroy() {
+    this.columnSortable.destroy()
+    this.cradsSortable.destroy()
+    this.rowSortable.destroy()
     this.columnSortable = null
     this.cradsSortable = null
     this.rowSortable = null

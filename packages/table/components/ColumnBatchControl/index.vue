@@ -182,7 +182,9 @@ export default {
       }
     })
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+    this.cradsSortable.destroy()
+  },
   methods: {
     columnsInit(val) {
       const columns = deepClone(val)

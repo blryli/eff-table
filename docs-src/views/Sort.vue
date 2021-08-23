@@ -187,14 +187,13 @@ export default {
           {
             show: true,
             type: 'selection',
-            width: 80,
+            width: 40,
             fixed: 'left'
           },
           {
             show: true,
             prop: 'name',
             title: '名字',
-            width: 80,
             fixed: 'left',
             sortable: true
             // children: [

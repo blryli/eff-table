@@ -51,16 +51,26 @@ export default {
         style.borderLeft = 0
       }
       return style
+    },
+    titleWidth() {
+      const { titleWidth, form, required, titlePrefix, titleSuffix } = this
+      let width = parseInt(titleWidth || form.titleWidth || 80)
+      if (required) width -= 10
+      if (titlePrefix) width -= 16
+      if (titleSuffix) width -= 16
+      return width - 12
+    },
+    isRequired() {
+      return Boolean((this.column.rules || []).find(d => d.required))
     }
   },
   render(h) {
-    const { column, columnIndex, columnClass, columnStyle, colid, titleRender, renderSelection, handleMouseenter, handleMouseleave, sortActive, sortClick } = this
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
+    const { column, columnIndex, columnClass, columnStyle, colid, titleRender, renderSelection, handleMouseenter, handleMouseleave, isRequired, sortActive, sortClick } = this
+    const { sortable, title, titlePrefix, titleSuffix, type } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
-    const required = Boolean(rules.find(d => d.required))
 
     return (
       <div
@@ -74,10 +84,10 @@ export default {
       >
         <div ref='cell' class={{ 'eff-cell': true, sortable }}>
           {
-            required ? <i class='eff-cell--required' /> : ''
+            isRequired ? <i class='eff-cell--required' /> : ''
           }
           {
-            !type && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
+            columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
           }
           {
             titlePrefix && titlePrefix.message ? <Help class='eff-cell--title-help' effect='dark' message={titlePrefix.message}><Icon icon={prefixIcon}/></Help> : ''
@@ -137,6 +147,7 @@ export default {
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
+      // console.log(getTextWidth(cell), Math.max(width, 40), { width, spaceWidth })
 
       if (width && getTextWidth(cell) > Math.max(width, 40) || !width && getTextWidth(cell) > spaceWidth) {
         table.$refs.popovers.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })

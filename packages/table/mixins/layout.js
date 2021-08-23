@@ -4,6 +4,7 @@ export default {
     return {
       bodyWidth: 0,
       bodyWrapperWidth: 0,
+      screenfullHeight: 0,
       offset: 0,
       overflowX: false,
       headerLoad: false,
@@ -15,12 +16,14 @@ export default {
     on(window, 'resize', this.resize, { passive: true })
   },
   watch: {
-    isScreenfull() {
+    isScreenfull(val) {
       setTimeout(() => {
         this.resize()
+        val && this.$nextTick(() => {
+          this.screenfullHeight = this.$el.getBoundingClientRect().height
+        })
       }, 0)
     }
-
   },
   computed: {
     tableClass() {
@@ -84,7 +87,7 @@ export default {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, expandsHeight } = this
+      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? rowHeight : 0
@@ -94,9 +97,12 @@ export default {
       const footerActionHeight = footerAction ? rowHeight : 0
       const dataHeight = tableData.length ? (tableData.length + this.groupColumnNum) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      const tableHeight = isScreenfull ? window.screen.height : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
-      let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0) + overflowXHeight
+      const tableHeight = isScreenfull ? screenfullHeight : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
+      let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
       if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
+        bodyHeight = dataHeight + overflowXHeight
+      }
+      if (!height && !maxHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
       return {

@@ -76,11 +76,14 @@ export default {
       })
     })
   },
+  beforeDestroy() {
+    this.cradsSortable.destroy()
+  },
   methods: {
     handleDragenter({ from, to, fromEl, toEl, fromIndex, toIndex, target }) {
       if (fromEl === toEl || target === to || toEl === to || fromIndex === toIndex || this.draging) return
       this.draging = true
-      console.log({ from, to, fromEl, toEl, fromIndex, toIndex })
+      // console.log({ from, to, fromEl, toEl, fromIndex, toIndex })
       const { left: fromLeft, top: fromTop } = fromEl.getBoundingClientRect()
       const { left: toLeft, top: toTop, width: toWidth } = toEl.getBoundingClientRect()
       const fromX = toLeft - fromLeft

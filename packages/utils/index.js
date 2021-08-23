@@ -72,8 +72,8 @@ export function deepClone(obj) {
 
 // 判断列是否可编辑
 export const columnIsEdit = function(column) {
-  const { editable, edit } = column
-  return editable === true || edit && editable !== false
+  const { editable, edit, type } = column
+  return !type && (editable === true || edit && editable !== false)
 }
 
 // 根据prop初始化字段

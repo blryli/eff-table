@@ -328,9 +328,7 @@ export default {
       const { isScreenfull, height, maxHeight } = this
       const screenHeight = window.screen.height
       style['--rowHeight'] = this.rowHeight + 'px'
-      if (isScreenfull) {
-        style.height = screenHeight + 'px'
-      } else {
+      if (!isScreenfull) {
         if (height) style.height = height + 'px'
         if (maxHeight) style.maxHeight = maxHeight + 'px'
         if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
@@ -430,7 +428,7 @@ export default {
     this.tableColumns = [...this.columns]
     Object.assign(this, {
       columnGroupIds: [], // 小计
-      tableSourceData: [],
+      tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
     })
@@ -446,8 +444,12 @@ export default {
   },
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
+    this.destroy()
   },
   methods: {
+    destroy() {
+      this.tableData = []
+    },
     loadTableData(data = this.data) {
       const { editStore, rowId } = this
       this.tableData =
@@ -455,7 +457,7 @@ export default {
           !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId('_rowId'))
           return d
         }) || [])
-      this.tableSourceData = XEUtils.clone(data, true)
+      this.tableSourceData = Object.freeze(XEUtils.clone(data, true))
       editStore.insertList = []
       if (rowId === '_rowId') {
         this.clearStatus()

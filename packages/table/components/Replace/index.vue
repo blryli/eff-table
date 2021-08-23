@@ -168,7 +168,7 @@ export default {
     })
   },
   beforeDestroy() {
-
+    this.cradsSortable.destroy()
   },
   methods: {
 
