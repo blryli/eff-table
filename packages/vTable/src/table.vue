@@ -54,8 +54,8 @@
         <div class="">
           <slot ref="form" name="search" />
           <div style="text-align:right; border-top:1px solid #eee;padding-top:15px">
-            <el-button @click="reset">重置</el-button>
-            <el-button type="primary" @click="search">查询</el-button>
+            <el-button size="small" @click="reset">重置</el-button>
+            <el-button type="primary" size="small" @click="search">查询</el-button>
           </div>
         </div>
       </el-popover>
