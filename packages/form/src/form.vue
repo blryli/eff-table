@@ -41,8 +41,7 @@ export default {
     return {
       inputIndex: 0,
       editIsStop: this.focusStop,
-      popoverOpts: {},
-      editProps: {}
+      popoverOpts: {}
     }
   },
   computed: {

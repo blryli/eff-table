@@ -36,11 +36,10 @@ export default {
   },
   inject: ['table'],
   mounted() {
-    this.table.$off('table-update-data', this.onDataChange)
     this.table.$on('table-update-data', this.onDataChange)
   },
   beforeDestroy() {
-    this.destroy()
+    this.table.$off('table-update-data', this.onDataChange)
   },
   methods: {
     prev() {

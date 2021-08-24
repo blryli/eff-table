@@ -110,13 +110,12 @@ export const initField = (data, prop, vue) => {
 
 // 获取字段值
 export const getFieldValue = function(data, prop) {
-  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
+  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur] || '', data)
 }
 
 // 设置字段值
 export const setFieldValue = function(root, data, prop, val) {
-  const { rowId } = root
-  prop in data ? this.$set(data, prop, val) : this.$set(root.editProps, rowId ? prop + data[rowId] : prop, val)
+  this.$set(data, prop, val)
   const arr = prop.split('.')
   while (arr.length > 1) {
     data = data[arr.shift()]

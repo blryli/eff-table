@@ -142,6 +142,7 @@ export default {
     fieldChange(value) {
       const { table, row, rowIndex, column, columnIndex } = this
       table.$emit('field-change', { row, rowIndex, column, columnIndex, value })
+      table.dataChange()
       this.validateShowpopover()
     },
     updateStatus() {

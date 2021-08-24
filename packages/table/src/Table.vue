@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>selectRengeStore -  {{ selectRengeStore }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -258,13 +258,13 @@ export default {
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
     showHeader: { type: Boolean, default: true },
+    headerContextmenu: { type: Boolean, default: true }, // 表头右键扩展菜单
     showOverflowTooltip: Boolean,
     cellClassName: { type: [String, Function], default: '' },
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] },
     selectRange: Boolean, // 表格区域选择
     copy: Boolean, // 复制功能
-    headerContextmenu: Boolean, // 表头右键扩展菜单
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
@@ -301,7 +301,6 @@ export default {
         pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
       replaceControl: false,
-      editProps: {},
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
       loadingField: false
@@ -432,7 +431,9 @@ export default {
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
     })
-    this.loadTableData(this.data || [])
+    if ((this.data || []).length) {
+      this.loadTableData(this.data)
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -448,7 +449,9 @@ export default {
   },
   methods: {
     destroy() {
-      this.tableData = []
+      for (const key in this.$data) {
+        this.$data[key] = null
+      }
     },
     loadTableData(data = this.data) {
       const { editStore, rowId } = this
@@ -588,6 +591,7 @@ export default {
       if (updateArr.length) {
         this.$emit('table-update-data', updateArr)
       }
+      this.dataChange()
     },
     updateStatus(row, prop) {
       if (!prop) return
@@ -702,6 +706,11 @@ export default {
       this.searchForm = val
       this.$emit('search-change', val)
       if (this.proxyConfig) this.commitProxy('query')
+    },
+    dataChange() {
+      const { tableData, getEditStore } = this
+      const editStore = getEditStore()
+      this.$emit('data-change', { tableData, editStore })
     },
     clearSearch() {
       this.searchForm = []

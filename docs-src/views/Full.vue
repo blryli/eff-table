@@ -431,215 +431,17 @@ export default {
           title: '名字',
           search: true,
           width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
-        },
-        {
-          show: true,
-          prop: 'cname',
-          title: '名字',
-          search: true,
-          width: 120,
-
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
-          }
+          config: { name: 'input' },
+          edit: true
         },
         {
           show: true,
           prop: 'sex',
           title: '性别',
-          width: 100,
-          search: {
-            render: (h, { prop, row }) => {
-              return <el-select
-                value={this.form[prop]}
-                clearable={true}
-                on-change={val => this.updateForm(prop, val)}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-select
-                value={row[prop]}
-                automaticDropdown={true}
-                filterable={true}
-                defaultFirstOption={true}
-                on-change={val => (row[prop] = val)}
-                on-visible-change={this.visibleChange}
-              >
-                {
-                  this.options.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          }
+          search: true,
+          width: 120,
+          config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+          edit: true
         },
         {
           show: true,
@@ -653,96 +455,24 @@ export default {
           search: {
             operator: true
           },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} type='number' on-input={val => (row[prop] = val)} />
-            }
-          }
+          config: { name: 'input' },
+          edit: true
         },
         {
           show: true,
           prop: 'hobby',
           title: '爱好',
-          search: {
-            render: (h, { prop, row, rowIndex }) => {
-              return <el-select
-                value={this.form[prop]}
-                clearable={true}
-                multiple={true}
-                collapseTags={true}
-                on-change={val => this.updateForm(prop, val)}
-              >
-                {
-                  this.hobbys.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-select
-                value={row[prop]}
-                automaticDropdown={true}
-                filterable={true}
-                defaultFirstOption={true}
-                on-change={val => (row[prop] = val)}
-                on-visible-change={this.visibleChange}
-                style='width: 100%'
-              >
-                {
-                  this.hobbys.map(item => {
-                    return <el-option
-                      key={item.value}
-                      title={item.title}
-                      value={item.value}>
-                    </el-option>
-                  })
-                }
-              </el-select>
-            }
-          }
+          config: { name: 'select', options: () => this.hobbys },
+          search: true,
+          edit: true
         },
         {
           show: true,
           prop: 'date',
           title: '时间',
-          search: {
-            render: (h, { prop }) => {
-              return <el-date-picker
-                value={this.form[prop]}
-                type='date'
-                on-input={val => this.updateForm(prop, val)}
-              />
-            },
-            rangeRender: (h, { prop }) => {
-              return <el-date-picker
-                value={this.form[prop]}
-                type='daterange'
-                on-input={val => this.updateForm(prop, val)}
-              />
-            },
-            operator: true,
-            operatorDefault: 'equals',
-            type: 'dates'
-          },
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-date-picker
-                value={row[prop]}
-                value-format='yyyy-MM-dd'
-                on-input={val => (row[prop] = val)}
-                on-focus={val => this.visibleChange(true)}
-                on-blur={val => this.visibleChange(false)}
-                type='date'
-              />
-            }
-          }
+          config: { name: 'date-picker' },
+          search: true,
+          edit: true
         }
       ]
     }
@@ -755,7 +485,6 @@ export default {
         pageSize: 10,
         total: 1000
       })
-      console.log(this.$refs.table.pager)
     }, 50)
   },
   methods: {

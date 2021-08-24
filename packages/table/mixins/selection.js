@@ -30,6 +30,7 @@ export default {
     },
     tableData() {
       this.updateSelecteds()
+      this.dataChange()
     }
   },
   methods: {

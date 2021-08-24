@@ -172,6 +172,7 @@ export default {
       },
       tableOptions1: {
         maxHeight: 400,
+        drag: true,
         border: true,
         sortConfig: { multiple: true },
         toolbarConfig: { batchSort: true },

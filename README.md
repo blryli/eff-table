@@ -247,7 +247,7 @@ value: [
 | reloadData | 重载数据，会清空数据状态，返回promise |data|
 | getFullData      | 不传参数时获取当前表格数据，数据具有响应性，如果有参数source则返回不带rowId的数据，数据不具有响应性 |     source          |
 | getTableData      | 获取当前表格数据，数据具有响应性 |     ---          |
-| getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
+| getEditStore      | 获取当前表格数据状态对象 { editRow, insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateField | 对单元格进行校验的方法 | prop, rules, row  |
@@ -264,7 +264,6 @@ value: [
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 | updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
-| editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],removeList: [], updateList: [],pendingList: [] } |-|
 | copyFromChecked | 把选择的行数据复制到粘贴板 ||
 | getInsertList | 获取新增的数据 ||
 | getUpdateList | 获取更新的数据 ||
@@ -276,6 +275,7 @@ value: [
 | removeCheckRow | 删除表格已选中数据，返回promise |-|
 | tableEditPause | 暂停表格编辑功能，在触发编辑时如果有使用下拉框或者弹窗需要暂停表格编辑功能 |-|
 | tableEditRegain | 恢复表格编辑功能，下拉框或者弹窗关闭时需要恢复表格编辑功能 |-|
+| destroy | 置空表格数据，减少内存占用 |-|
 
 
 ### Events
@@ -307,8 +307,9 @@ value: [
 |table-mouse-leave|鼠标离开表格|{event}|
 |page-current-change|分页当前页发生改变|{pageNum}|
 |page-size-change|分页每页大小发生改变|{pageSize}|
-|table-update-data|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
-|field-change|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|table-update-data|当表格编辑或复制粘贴数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|field-change|当单元格数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|data-change|当表格发生数据变更时触发|{tableData, editStore}|
 
 ### Slot
 
