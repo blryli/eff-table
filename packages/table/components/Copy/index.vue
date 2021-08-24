@@ -1,5 +1,9 @@
 <script>
+import CopyList from './CopyList'
+import { on, off } from 'pk/utils/dom'
 export default {
+  name: 'Copy',
+  components: { CopyList },
   data() {
     return {
       textArr: []
@@ -13,7 +17,7 @@ export default {
     this.offListener()
     this.onListener()
   },
-  destroyed() {
+  beforeDestroy() {
     this.offListener()
   },
   methods: {
@@ -39,7 +43,6 @@ export default {
       if (!textArr.length) {
         return true
       }
-
       textArr = textArr.map(v => {
         return v.join('\t ')
       })
@@ -54,16 +57,27 @@ export default {
       this.table.$on('select-range-data', (textArr) => {
         this.textArr = textArr
       })
-      document.addEventListener('copy', this.onCopy, false)
+      on(document, 'copy', this.onCopy)
     },
     offListener() {
       this.table.$off('select-range-data')
-      document.removeEventListener('copy', this.onCopy, false)
+      off(document, 'copy', this.onCopy)
     }
   },
   render() {
-    return ''
+    const { table } = this
+    const { tableData, tableColumns, selectRengeStore } = table
+    return <CopyList contextual={{ table, tableData, tableColumns, selectRengeStore, vue: this }} />
   }
 }
 
 </script>
+
+<style lang="scss">
+.eff-table--copy{
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+</style>

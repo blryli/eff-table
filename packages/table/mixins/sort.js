@@ -2,7 +2,7 @@ import XEUtils from 'xe-utils'
 export default {
   data() {
     return {
-      sorts: []
+      sorts: (this.sortConfig || {}).sorts || []
     }
   },
   methods: {
@@ -39,9 +39,7 @@ export default {
     sortChange(column) {
       const { sortConfig: { multiple } = {}, getSorts } = this
       if (multiple) {
-        const sorts = getSorts(this.columns)
-
-        this.sorts = sorts
+        this.sorts = getSorts(this.columns)
       } else {
         // 如果sorts有值并且不是当前column，则置空order
         if (this.sorts.length && !this.sorts.some(d => d === column)) {
@@ -58,11 +56,11 @@ export default {
     },
     resetSort() {
       const { tableData, rowId } = this
-      this.tableData = this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId]))
+      this.tableData = Object.freeze(this.tableSortSourceData.map(d => tableData.find(t => t[rowId] === d[rowId])))
       this.tableSortSourceData = null
     },
     toSort() {
-      let tableData = [...this.tableData]
+      let tableData = XEUtils.clone(this.tableData)
       const { sorts, sortConfig = {}} = this
       if (!this.tableSortSourceData) {
         this.tableSortSourceData = XEUtils.clone(tableData, true)
@@ -79,7 +77,7 @@ export default {
         // sorts没值则还原
         this.resetSort()
       }
-      this.tableData = tableData
+      this.tableData = Object.freeze(tableData)
       this.$emit('sort-change', sorts.length === 1 ? sorts[0] : sorts, tableData)
       return tableData
     }

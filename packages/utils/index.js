@@ -72,8 +72,8 @@ export function deepClone(obj) {
 
 // 判断列是否可编辑
 export const columnIsEdit = function(column) {
-  const { editable, edit } = column
-  return editable === true || edit && editable !== false
+  const { editable, edit, type } = column
+  return !type && (editable === true || edit && editable !== false)
 }
 
 // 根据prop初始化字段
@@ -110,7 +110,18 @@ export const initField = (data, prop, vue) => {
 
 // 获取字段值
 export const getFieldValue = function(data, prop) {
-  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur], data)
+  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur] || '', data)
+}
+
+// 设置字段值
+export const setFieldValue = function(root, data, prop, val) {
+  this.$set(data, prop, val)
+  const arr = prop.split('.')
+  while (arr.length > 1) {
+    data = data[arr.shift()]
+  }
+  // data[arr[0]] = val
+  this.$set(data, arr[0], val)
 }
 
 // 获取表头及嵌套表头的宽度
@@ -119,3 +130,6 @@ export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc
   acc += cur.width
   return acc
 }, 0)
+
+// 判断是否是VNode
+export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && renderFunc.tag.indexOf('vue-component') > -1)

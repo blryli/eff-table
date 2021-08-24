@@ -1,4 +1,4 @@
-import { columnIsEdit } from 'pk/utils'
+import { columnIsEdit, isVNode } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
@@ -37,7 +37,7 @@ export default {
     editRender() {
       const { row, column } = this
       if (!column) return ''
-      const { edit, prop, config } = column || {}
+      const { edit, prop, config = {}} = column || {}
       if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
 
@@ -52,17 +52,17 @@ export default {
           this.columnIndex = columnIndex
           globalColumnIndex = columnIndex
         }
-        const renderEdit = (render) => {
-          // const { dynamicEdit } = config
+        const renderEdit = (render = {}) => {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
-          const { name } = renderOpts
-          const compConf = renderer.get(name)
-          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, edit: this }) || ''
+          if (!renderOpts.name) renderOpts.name = 'input'
+          const compConf = renderer.get(renderOpts.name)
+          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }) || ''
         }
 
         if (typeof render === 'function') {
           const renderFunc = render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          return renderFunc.constructor.name === 'VNode' ? (renderFunc || '') : renderEdit(renderFunc)
+          // VNode线上会渲染成pe对象
+          return isVNode(renderFunc) ? (renderFunc || '') : renderEdit(renderFunc)
         } else {
           return renderEdit(render)
         }
@@ -142,6 +142,7 @@ export default {
     fieldChange(value) {
       const { table, row, rowIndex, column, columnIndex } = this
       table.$emit('field-change', { row, rowIndex, column, columnIndex, value })
+      table.dataChange()
       this.validateShowpopover()
     },
     updateStatus() {
@@ -150,13 +151,13 @@ export default {
     },
     handleWindowMousedown(e) {
       const { show, $el, table } = this
-      if (!show || $el.contains(e.target) || table.editIsStop) return
+      if (!show || $el.contains(e.target) || table.tableEditConfig.editStop) return
       this.show = false
     },
 
     handleWindowKeyup(e, keysStr) {
       const { show, table, row, inTable } = this
-      if (!show || table.editIsStop || !inTable(e.target)) return
+      if (!show || table.tableEditConfig.editStop || !inTable(e.target)) return
       e.stopPropagation()
       e.preventDefault()
       const placements = { top: 'arrowup', right: 'enter', bottom: 'arrowdown', left: 'enter,shift' }
@@ -190,13 +191,12 @@ export default {
     },
     to() {
       this.handleType = 'to'
-      const { placement = 'right', table, column: { prop }} = this
-      const { editLengthways } = table
+      const { placement = 'right', column: { prop }} = this
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX()
       } else {
-        editLengthways && this.toY(prop)
+        this.toY(prop)
       }
     },
     canFocus(column, cell) {
@@ -226,7 +226,7 @@ export default {
         this.blurEvent().then(() => editCell(column, cell))
       } else {
         // 当前行没有可聚焦元素，进行跨行编辑
-        table.editLoop ? this.toY() : shake($el, 'x')
+        table.tableEditConfig.editLoop ? this.toY() : shake($el, 'x')
       }
     },
     // 跳过pending状态的行
@@ -255,11 +255,11 @@ export default {
     disabled(column) {
       const { edit = {}, config = {}} = column || {}
       const { disabled } = Object.assign({}, config, edit)
-      const { row, rowIndex } = this
+      const { row, rowIndex, columnIndex } = this
       if (disabled === undefined) return false
 
       if (typeof disabled === 'function') {
-        return Boolean(disabled({ row, rowIndex }))
+        return Boolean(disabled({ row, rowIndex, column, columnIndex }))
       }
       return Boolean(disabled) || false
     },
@@ -286,12 +286,17 @@ export default {
         this.fixOverflow(cell, cellIndex).then(() => {
           this.column = column
           this.cellIndex = cellIndex
-          this.cell = getColumn(prop).cell
+          this.cell = cell || getColumn(prop).cell
           this.show = true
 
           this.setElPos() // 设置编辑框位置
 
-          this.handleFocus()// 处理聚焦
+          this.handleFocus()// 处理聚焦d
+
+          const { copy, $refs } = this.table
+          if (copy) {
+            $refs.selectRange.close()
+          }
         })
       }
       if (!cell) {
@@ -309,8 +314,8 @@ export default {
       return this.$nextTick()
     },
     fixOverflow(cell, cellIndex) {
-      const { wrapper } = this
-      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY } = this.table
+      const { wrapper, table } = this
+      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY, isScrollRightEnd } = table
       const overflow = isOverflow({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY })
       const { height: wrapperHeight } = wrapper.getBoundingClientRect()
       const colid = cell.getAttribute('data-colid')
@@ -319,7 +324,7 @@ export default {
       for (const key in overflow) {
         if (overflow[key]) {
           const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
-          if (key === 'left' || key === 'right') {
+          if ((key === 'left' && table.scrollLeft > 1) || (key === 'right' && !isScrollRightEnd)) {
             this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
             this.table.scrollTop = rowIndex * rowHeight - wrapperHeight / 2
@@ -388,12 +393,15 @@ export default {
       }, 50)
     },
     setElPos() {
-      const { left, top, width, height } = this.cell.getBoundingClientRect()
-      const { left: tLeft, top: tTop } = this.table.$el.getBoundingClientRect()
-      this.$el.style.left = `${left - tLeft - 1}px`
-      this.$el.style.top = `${top - tTop - 1}px`
-      this.$el.style.width = `${width + 1}px`
-      this.$el.style.height = `${height + 1}px`
+      const { cell, table } = this
+      if (cell) {
+        const { left, top, width, height } = cell.getBoundingClientRect()
+        const { left: tLeft, top: tTop } = table.$el.getBoundingClientRect()
+        this.$el.style.left = `${left - tLeft - 1}px`
+        this.$el.style.top = `${top - tTop - 1}px`
+        this.$el.style.width = `${width + 1}px`
+        this.$el.style.height = `${height + 1}px`
+      }
     },
     close() {
       this.show = false

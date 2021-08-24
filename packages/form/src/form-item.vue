@@ -11,12 +11,21 @@
 
       <PrefixSuffix
         v-if="title || form.titleAlign === 'top'"
+        ref="title"
         tag="label"
         :prefix="titlePrefix"
         :suffix="titleSuffix"
         class="v-form-item__title"
         :style="{ flex: `0 0 ${tWidth}`, height: '32px' }"
-      >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</PrefixSuffix>
+      >
+        <div
+          ref="label"
+          class="v-form-item__title-label"
+          :style="{maxWidth: form.titleAlign === 'top' ? 'auto' : labelWidth + 'px'}"
+          @mouseenter="mouseenter"
+          @mouseleave="mouseleave"
+        >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</div>
+      </PrefixSuffix>
       <FormField
         class="v-form-item__content"
         :prop="prop"
@@ -31,6 +40,7 @@
 <script>
 import FormField from './form-field'
 import PrefixSuffix from 'pk/prefix-suffix'
+import { getTextWidth } from 'pk/utils/dom'
 export default {
   name: 'VFormItem',
   components: {
@@ -43,12 +53,8 @@ export default {
     span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' },
-    titlePrefix: { type: Object, default: () => ({}) },
-    titleSuffix: { type: Object, default: () => ({}) }
-  },
-  data() {
-    return {
-    }
+    titlePrefix: { type: Object, default: () => {} },
+    titleSuffix: { type: Object, default: () => {} }
   },
   inject: {
     form: { default: null },
@@ -64,6 +70,26 @@ export default {
     tWidth() {
       const { titleWidth, form } = this
       return titleWidth || form.titleWidth || '80px'
+    },
+    labelWidth() {
+      const { titleWidth, form, required, titlePrefix, titleSuffix } = this
+      let width = parseInt(titleWidth || form.titleWidth || 80)
+      if (required) width -= 10
+      if (titlePrefix) width -= 16
+      if (titleSuffix) width -= 16
+      return width - 12
+    }
+  },
+  methods: {
+    mouseenter() {
+      const { form, title, labelWidth, $refs } = this
+      const label = $refs.label
+      if (getTextWidth(label) > labelWidth) {
+        form.tipShow({ reference: label, effect: 'dark', message: title, isFixed: true })
+      }
+    },
+    mouseleave() {
+      this.form.tipClose()
     }
   }
 }
@@ -85,6 +111,7 @@ export default {
   }
   &.is-required .v-form-item__title:before {
     content: "*";
+    display: inline-block;
     line-height: var(--lineHeight);
     color: #f52b2b;
     margin-right: 3px;
@@ -97,6 +124,13 @@ export default {
     padding-right: 12px;
     line-height: var(--lineHeight);
     box-sizing: border-box;
+    &-label{
+      display: inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      vertical-align: middle;
+    }
   }
 
   &__content {

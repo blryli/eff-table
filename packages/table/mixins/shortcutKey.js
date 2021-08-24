@@ -75,7 +75,7 @@ export default {
       }
 
       if (this.selectRange || this.copy) {
-        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target)) {
+        if (document.contains(target) && !this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && (!this.$refs.header.$el.querySelector('.eff-table__header').contains(target) || this.$refs.header.$el.querySelector('.eff-table__header').contains(target) && !this.headerCheckedColumns.length)) {
           this.closeSelectRange()
         }
       }

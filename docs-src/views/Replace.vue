@@ -110,6 +110,10 @@ export default {
       ],
       data: [
         { name: '张三', sex: '男', phone: '13715201314' },
+        { name: '李四', sex: '女', phone: '13715201314' },
+        { name: '张三', sex: '男', phone: '13715201314' },
+        { name: '张三', sex: '女', phone: '13715201314' },
+        { name: '张三', sex: '男', phone: '13715201314' },
         { name: '李四', sex: '男', phone: '13715201314' }
       ]
     }

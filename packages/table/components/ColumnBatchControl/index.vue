@@ -153,37 +153,47 @@ export default {
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-
-    this.$nextTick(() => {
-      const {
-        handleDragend,
-        handleDragenter,
-        handleEnd,
-        columnBatchControl,
-        $el: cardEl
-      } = this
-      const id = Math.floor(Math.random() * 100000)
-      if (columnBatchControl) {
-        const calback = className => {
-          setTimeout(() => {
-            this.cradsSortable = new Sortable({
-              el: cardEl.querySelector(className),
-              group: id,
-              dragend: handleDragend,
-              dragenter: handleDragenter,
-              onEnd: handleEnd
-            })
-          }, 500)
-        }
-
-        calback('.left .list')
-        calback('.center .list')
-        calback('.right .list')
-      }
-    })
+    this.initSortable()
   },
-  beforeDestroy() {},
+  activated() {
+    this.initSortable()
+  },
+  deactivated() {
+    this.cradsSortable = null
+  },
+  beforeDestroy() {
+    this.cradsSortable = null
+  },
   methods: {
+    initSortable() {
+      this.$nextTick(() => {
+        const {
+          handleDragend,
+          handleDragenter,
+          handleEnd,
+          columnBatchControl,
+          $el: cardEl
+        } = this
+        const id = Math.floor(Math.random() * 100000)
+        if (columnBatchControl) {
+          const calback = className => {
+            setTimeout(() => {
+              this.cradsSortable = new Sortable({
+                el: cardEl.querySelector(className),
+                group: id,
+                dragend: handleDragend,
+                dragenter: handleDragenter,
+                onEnd: handleEnd
+              })
+            }, 500)
+          }
+
+          calback('.left .list')
+          calback('.center .list')
+          calback('.right .list')
+        }
+      })
+    },
     columnsInit(val) {
       const columns = deepClone(val)
       this.leftList = columns.filter(v => v.fixed && v.fixed === 'left')

@@ -3,7 +3,7 @@ import Paginator from './Paginator.js'
 import ToolbarShrink from 'pk/toolbar-shrink'
 
 export default {
-  name: 'Toolbar',
+  name: 'FooterAction',
   components: { Paginator, ToolbarShrink },
   inject: ['table'],
   methods: {
@@ -14,7 +14,7 @@ export default {
     const { pageNum, pageSize, total } = table.pager
     const paginator = showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
 
-    return <div class='eff-table__action eff-table__toobar' style={showBorder ? '' : 'border: unset'}>
+    return <div class='eff-table__action eff-table__toobar' style={{ border: showBorder ? '' : 'unset', height: table.rowHeight + 'px' }}>
       {
         changeOver ? [
           <div class='eff-table__toobar-left'>
@@ -43,7 +43,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--rowHeight);
   padding: 0 5px;
   border: 1px solid #ddd;
   border-top: 0;

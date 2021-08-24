@@ -15,7 +15,7 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length }, renderSize, useExpand, useGroupColumn } = this
+      const { tableData: { length } = [], renderSize, useExpand, useGroupColumn } = this
       return !useExpand && !useGroupColumn && length > 50 && length > renderSize
     },
     renderData() {
@@ -97,6 +97,7 @@ export default {
   },
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
+      if (!(this.tableData || []).length) return
       this.scrollLeft = scrollLeft
       const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
       if (!columnIsVirtual || scrollLeft === 0) {

@@ -1,0 +1,183 @@
+.border-move-left{
+  background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y;
+  background-size: 2px 12px;
+  background-position: 0 0;
+  animation: borderMoveLeft 1s infinite linear;
+  &.border-move-right{
+    background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+    linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y;
+    background-size: 2px 12px, 3px 12px;
+    background-position: 0 0, 100% 0;
+    animation: borderMoveLeftRight 1s infinite linear;
+  }
+  &.border-move-top{
+    background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+    linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+    background-size: 2px 12px, 12px 2px;
+    background-position: 0 0, 0 0;
+    animation: borderMoveLeftTop 1s infinite linear;
+    &.border-move-right{
+      background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+      linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+      linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y;
+      background-size: 2px 12px, 12px 2px, 3px 12px;
+      background-position: 0 0, 0 0, 100% 0;
+      animation: borderMoveLeftTopRight 1s infinite linear;
+      &.border-move-bottom{
+        background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+        linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+        linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+        linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+        background-size: 2px 12px, 12px 2px, 3px 12px, 12px 2px;
+        background-position: 0 0, 0 0, 100% 0, 0 100%;
+        animation: borderMoveLeftTopRightBottom 1s infinite linear;
+      }
+    }
+    &.border-move-bottom{
+      background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+      linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+      linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+      background-size: 2px 12px, 12px 2px, 12px 2px;
+      background-position: 0 0, 0 0, 0 100%;
+      animation: borderMoveLeftTopBottom 1s infinite linear;
+    }
+  }
+  &.border-move-bottom{
+    background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+    linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+    background-size: 2px 12px, 12px 2px;
+    background-position: 0 0, 0 100%;
+    animation: borderMoveLeftBottom 1s infinite linear;
+    &.border-move-right{
+      background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+      linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+      linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+      background-size: 2px 12px, 3px 12px, 12px 2px;
+      background-position: 0 0, 100% 0, 0 100%;
+      animation: borderMoveLeftRightBottom 1s infinite linear;
+    }
+  }
+}
+.border-move-right{
+  background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y;
+  background-size: 3px 12px;
+  background-position: 100% 0;
+  animation: borderMoveRight 1s infinite linear;
+  &.border-move-bottom{
+    background: linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+    linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+    background-size: 3px 12px, 12px 2px;
+    background-position: 100% 0, 0 100%;
+    animation: borderMoveRightBottom 1s infinite linear;
+  }
+}
+.border-move-top{
+  background: linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+  background-size: 12px 2px;
+  background-position: 0 0;
+  animation: borderMoveTop 1s infinite linear;
+  &.border-move-right{
+    background: linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+    linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y;
+    background-size: 12px 2px, 3px 12px;
+    background-position: 0 0, 100% 0;
+    animation: borderMoveTopRight 1s infinite linear;
+    &.border-move-bottom{
+      background: linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+      linear-gradient(0deg, transparent 6px, #409eff 0) repeat-y,
+      linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+      background-size: 12px 2px, 3px 12px, 12px 2px;
+      background-position: 0 0, 100% 0, 0 100%;
+      animation: borderMoveTopRightBottom 1s infinite linear;
+    }
+  }
+  &.border-move-bottom{
+    background: linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x,
+    linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+    background-size: 12px 2px, 12px 2px;
+    background-position: 0 0, 0 100%;
+    animation: borderMoveTopBottom 1s infinite linear;
+  }
+}
+
+.border-move-bottom{
+  background: linear-gradient(90deg, transparent 6px, #409eff 0) repeat-x;
+  background-size: 12px 2px;
+  background-position: 0 100%;
+  animation: borderMoveBottom 1s infinite linear;
+}
+@keyframes borderMoveLeft {
+  to {
+    background-position: 0 -12px;
+  }
+}
+@keyframes borderMoveRight {
+  to {
+    background-position: 100% 12px;
+  }
+}
+@keyframes borderMoveTop {
+  to {
+    background-position: 12px 0;
+  }
+}
+@keyframes borderMoveBottom {
+  to {
+    background-position: -12px 100%;
+  }
+}
+@keyframes borderMoveLeftRight {
+  to {
+    background-position: 0 -12px, 100% 12px;
+  }
+}
+@keyframes borderMoveLeftTop {
+  to {
+    background-position: 0 -12px, 12px 0;
+  }
+}
+@keyframes borderMoveLeftTopRight {
+  to {
+    background-position: 0 -12px, 12px 0, 100% 12px;
+  }
+}
+@keyframes borderMoveLeftTopRightBottom {
+  to {
+    background-position: 0 -12px, 12px 0, 100% 12px, -12px 100%;
+  }
+}
+@keyframes borderMoveRightBottom {
+  to {
+    background-position: 100% 12px, -12px 100%;
+  }
+}
+@keyframes borderMoveTopRight {
+  to {
+    background-position: 12px 0, 100% 12px;
+  }
+}
+@keyframes borderMoveLeftRightBottom {
+  to {
+    background-position: 0 -12px, 100% 12px, -12px 100%;
+  }
+}
+@keyframes borderMoveLeftBottom {
+  to {
+    background-position: 0 -12px, -12px 100%;
+  }
+}
+@keyframes borderMoveTopRightBottom {
+  to {
+    background-position: 12px 0, 100% 12px, -12px 100%;
+  }
+}
+@keyframes borderMoveTopBottom {
+  to {
+    background-position: 12px 0, -12px 100%;
+  }
+}
+@keyframes borderMoveLeftTopBottom {
+  to {
+    background-position: 0 -12px, 12px 0, -12px 100%;
+  }
+}

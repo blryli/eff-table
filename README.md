@@ -14,63 +14,55 @@
 
 - 校验(全局校验、行校验、单元格校验、异步校验)
 
+- 复制粘贴(excel般操作)
+
+- 批量替换(对数据进行批量替换操作)
+
 #### 使用
 
 ```html
-  <eff-table
-    ref="table"
-    v-model="columns"
-    :data="data"
-    edit
-  />
+  <eff-table v-bind="tableOptions" />
 ```
 
 ```js
 export default {
   data() {
     retrun {
-      data: [],
-      columns: [
-        {
-          prop: 'selection',
-          type: 'selection',
-          fixed: 'left',
-          width: 50,
-          show: true
-        },
-        {
-          prop: 'edit',
-          title: '编辑',
-          width: 135,
-          show: true,
-          edit: {
-            render: (h, { prop, row }) => {
-              return <el-input value={row[prop]} on-input={val => (row[prop] = val)} />
-            }
+      tableOptions: {
+        edit: true,
+        border: true,
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
           },
-        },
-        {
-          prop: 'search',
-          title: '搜索',
-          width: 135,
-          show: true,
-          search: true,
-        },
-        {
-          prop: 'validator',
-          title: '校验',
-          width: 135,
-          show: true,
-          validator: {
-            rule: val => {
-              if (!val) {
-                return '校验不能为空'
-              }
-              return ''
-            }
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true
           }
-        }
-      ]
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
+      }
     }
   }
 }
@@ -103,9 +95,7 @@ export default {
 | search      | 是否启用搜索      | Boolean      |            | false      |
 | searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| editLoop   | 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑  | Boolean    |     | true      |
-| edit-stop| 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false| Boolean |     | false   |
-| edit-Lengthways    | 是否开启纵向快捷编辑    | Boolean      |            | true      |
+| edit-config             | 编辑配置               | object      |            | {}      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
@@ -238,6 +228,15 @@ value: [
   fullscreen: false, // 是否启用全屏功能
 }
 ```
+-edit-config
+
+```js
+{
+  editLoop: true, // 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑
+  editStop: false, // 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false
+  trigger: 'click', // 编辑功能触发方式，可选 click/dblclick
+}
+```
 
 ### Methods
 
@@ -248,7 +247,7 @@ value: [
 | reloadData | 重载数据，会清空数据状态，返回promise |data|
 | getFullData      | 不传参数时获取当前表格数据，数据具有响应性，如果有参数source则返回不带rowId的数据，数据不具有响应性 |     source          |
 | getTableData      | 获取当前表格数据，数据具有响应性 |     ---          |
-| getEditStore      | 获取当前表格数据状态对象 { insertList, updateList, pendingList } |     ---          |
+| getEditStore      | 获取当前表格数据状态对象 { editRow, insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |
 | validateRow | 对行进行校验的方法 | rowIndex |
 | validateField | 对单元格进行校验的方法 | prop, rules, row  |
@@ -265,16 +264,18 @@ value: [
 | toggleAllSelection | 用于多选表格，切换所有行的选中状态 |-|
 | doLayout | 对 Table 进行重新布局。当 Table 或其祖先元素由隐藏切换为显示时，可能需要调用此方法 |-|
 | updateRow | 更新行数据方法，该方法会修改数据，对有变更的的字段做状态更新及校验处理 |row|
-| editStore | 获取当前表格编辑状态对象，返回值 { editRow: {},insertList: [],removeList: [], updateList: [],pendingList: [] } |-|
 | copyFromChecked | 把选择的行数据复制到粘贴板 ||
 | getInsertList | 获取新增的数据 ||
 | getUpdateList | 获取更新的数据 ||
 | getPendingList | 获取伪删除的数据 ||
-| insert | 插入数据的方法，返回promise |records（插入数据array）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行），insertCheckRow （存在勾选行时，插入到指定行，默认为true）|
+| insert | 插入数据的方法，返回promise |records（插入数据array）, rowIndex（为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行），insertCheckRow （存在勾选行时，插入到指定行，默认为true）。|
 | triggerPending | 把选中行标记为伪删除的方法，返回promise |-|
 | getRemoveList |  获取表格已删除数据 |-|
 | remove | 删除表格数据，返回promise |rows|
 | removeCheckRow | 删除表格已选中数据，返回promise |-|
+| tableEditPause | 暂停表格编辑功能，在触发编辑时如果有使用下拉框或者弹窗需要暂停表格编辑功能 |-|
+| tableEditRegain | 恢复表格编辑功能，下拉框或者弹窗关闭时需要恢复表格编辑功能 |-|
+| destroy | 置空表格数据，减少内存占用 |-|
 
 
 ### Events
@@ -306,8 +307,9 @@ value: [
 |table-mouse-leave|鼠标离开表格|{event}|
 |page-current-change|分页当前页发生改变|{pageNum}|
 |page-size-change|分页每页大小发生改变|{pageSize}|
-|table-update-data|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
-|field-change|当表格发生数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|table-update-data|当表格编辑或复制粘贴数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|field-change|当单元格数据变更时|{columnIndex, rowIndex, oldData, newData}|
+|data-change|当表格发生数据变更时触发|{tableData, editStore}|
 
 ### Slot
 

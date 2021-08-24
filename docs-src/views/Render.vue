@@ -206,19 +206,26 @@ export default {
             query: ({ page, sorts, filters, form }) => {
               console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
               const params = { ...form }
+              const pageNum = page.pageNum || 1
+              const pageSize = page.pageSize || 10
               return axios.get('url', params).catch(res => {
-                return mock.mock({
-                  'array|5': [
-                    {
-                      'id|+1': 100,
-                      'input|+1': 1,
-                      'async': '',
-                      'select': '1',
-                      'date': '',
-                      'switch': '0'
-                    }
-                  ]
-                }).array
+                return {
+                  list: mock.mock({
+                    'array|500': [
+                      {
+                        'id|+1': 100,
+                        'input|+1': 1,
+                        'async': '',
+                        'select': '1',
+                        'date': '',
+                        'switch': '0'
+                      }
+                    ]
+                  }).array.slice((pageNum - 1) * pageSize, (pageNum - 1) * pageSize + pageSize),
+                  pageNum,
+                  pageSize,
+                  total: 500
+                }
               })
             },
             save: ({ body }) => axios.post('url', body)

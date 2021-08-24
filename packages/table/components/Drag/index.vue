@@ -47,7 +47,7 @@ export default {
   },
   inject: ['table'],
   mounted() {
-    this.$watch('table.overflowX', (newVal, oldVal) => {
+    this.watchOverflowX = this.$watch('table.overflowX', (newVal, oldVal) => {
       if (!oldVal && newVal) {
         this.setRowDrag(true)
       }
@@ -92,6 +92,7 @@ export default {
     this.columnSortable = null
     this.cradsSortable = null
     this.rowSortable = null
+    this.watchOverflowX()
   },
   methods: {
     close() {
@@ -101,11 +102,13 @@ export default {
     setRowDrag(left = false) {
       if (this.table.rowDrag) {
         const body = left ? this.table.$refs.leftBody : this.table.$refs.body
-        this.rowSortable = new Sortable({
-          el: body.$el.querySelector('.eff-table__body'),
-          handle: 'eff-icon-drag',
-          onEnd: this.handleRowEnd
-        })
+        if (body) {
+          this.rowSortable = new Sortable({
+            el: body.$el.querySelector('.eff-table__body'),
+            handle: 'eff-icon-drag',
+            onEnd: this.handleRowEnd
+          })
+        }
       }
     },
     toggleCardShow(val) {

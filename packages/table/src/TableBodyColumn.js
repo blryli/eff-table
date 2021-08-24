@@ -3,7 +3,7 @@ import VRadio from 'pk/radio'
 import { getTextWidth, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
-import { getFieldValue, initField } from 'pk/utils'
+import { getFieldValue, initField, isVNode } from 'pk/utils'
 import XEUtils from 'xe-utils'
 
 export default {
@@ -28,9 +28,9 @@ export default {
     const { table } = injections
     const { vue, row, rowIndex, column, columnIndex, disabled, groupFloor, groupKey, summary } = props
     const { type, prop, className } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }} = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
     // 为特殊prop时，初始化值
-    if (prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
+    if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
       initField(row, prop, vue)
       column.initField = true
     }
@@ -43,8 +43,56 @@ export default {
       style.borderLeft = 0
     }
 
-    // 处理class
     let columnClass = `eff-table__column `
+    // 复制功能
+    if (copy && !summary) {
+      const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
+      const border = `2px ${borderStyle} #409eff`
+      const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
+      const commitRange = () => table.$refs.selectRange.setRowMap({ id, row, rowIndex, column, columnIndex, prop })
+      let isCommit = false
+      if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
+        commitRange()
+        isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-left'
+        } else {
+          style.borderLeft = border
+        }
+      }
+      if (rowIndex === startRow && columnIndex >= startColumn && columnIndex <= endColumn) {
+        commitRange()
+        isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-top'
+        } else {
+          style.borderTop = border
+        }
+      }
+      if (columnIndex === endColumn && rowIndex >= startRow && rowIndex <= endRow) {
+        commitRange()
+        isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-right'
+        } else {
+          style.borderRight = border
+        }
+      }
+      if (rowIndex === endRow && columnIndex >= startColumn && columnIndex <= endColumn) {
+        commitRange()
+        isCommit = true
+        if (borderStyle === 'dashed') {
+          columnClass += ' border-move-bottom'
+        } else {
+          style.borderBottom = border
+        }
+      }
+      if (!isCommit) {
+        table.$refs.selectRange.deleteRowMap(id)
+      }
+    }
+
+    // 处理class
     const sourceRow = updateList.find(d => {
       return d.$old[rowId] === row[rowId]
     })
@@ -116,28 +164,33 @@ export default {
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
     }
-    const cellRender = function(h) {
+    const cellRender = function() {
       const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
-      if (typeof cellRender === 'function') {
-        return cellRender(h, { row, rowIndex, column, columnIndex, prop })
-      } else {
-        const { dynamicEdit } = config
+      const renderCell = (cellRender) => {
+        // 处理动态渲染器
         const dynamicConfig = {}
-        if (dynamicEdit) {
+        if (XEUtils.isFunction(render)) {
           const renderFunc = render(h, { row, sourceRow, rowIndex, column, columnIndex, prop })
-          const { prop } = renderFunc
-          // console.log('renderFunc', JSON.stringify(renderFunc, null, 2))
-          Object.assign(dynamicConfig, { prop })
+          if (!isVNode(renderFunc)) {
+            Object.assign(dynamicConfig, renderFunc)
+          }
         }
-        const renderOpts = XEUtils.merge({}, config, cellRender, dynamicConfig)
+        const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
-        const compConf = renderer.get(name) || tag && renderer.get('default')
+        const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop, renderCell: true }
+        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
+        // 处理format
         if (XEUtils.isFunction(format)) {
           return format(params)
         }
-        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? row[prop] : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? getFieldValue(row, prop) : ''
+      }
+      if (XEUtils.isFunction(cellRender)) {
+        const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
+        return isVNode(cellRenderFunc) ? (cellRenderFunc || '') : XEUtils.isObject(cellRenderFunc) ? renderCell(cellRenderFunc) : cellRenderFunc
+      } else {
+        return renderCell(cellRender)
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
@@ -175,14 +228,17 @@ export default {
     }
 
     const handleMouseUp = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMouseDown = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMousemove = function(event) {
+      if (summary) return
       const cell = document.getElementById(row[rowId] + column.columnId)
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }
@@ -225,7 +281,7 @@ export default {
     return h('div', Object.assign(data, {
       key: groupFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
-      style: style,
+      style: Object.assign(column.style || {}, style),
       on: {
         mouseenter: event => handleMouseenter(event, slot),
         mouseleave: event => handleMouseleave(event, slot),

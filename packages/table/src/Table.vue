@@ -144,13 +144,13 @@
     />
 
     <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
-    <sort v-if="sortControl" ref="sort" :init-columns.sync="tableColumns" />
+    <sort v-if="sortConfig.multiple" ref="sort" />
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>columns -  {{ columns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -191,7 +191,8 @@ import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
-import { getColumnChildrenWidth } from 'pk/utils'
+import { getColumnChildrenWidth, getFieldValue, setFieldValue } from 'pk/utils'
+import { getOptions } from 'pk/utils/render'
 
 export default {
   name: 'EffTable',
@@ -241,16 +242,14 @@ export default {
     drag: Boolean,
     search: Boolean,
     edit: Boolean,
-    editStop: Boolean,
-    editLoop: { type: Boolean, default: true },
-    editLengthways: { type: Boolean, default: true },
+    editConfig: { type: Object, default: () => {} },
     loading: Boolean,
     columnControlText: { type: String, default: '' },
     columnBatchControlText: { type: String, default: '' },
     rowDrag: Boolean,
     showSummary: Boolean, // 合计
     searchClearText: { type: String, default: '' },
-    sortConfig: { type: Object, default: () => {} }, // 排序配置
+    sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     summaryMethod: { type: Function, default: null },
     sumText: { type: String, default: '合计' },
     rowHeight: { type: Number, default: 36 },
@@ -259,13 +258,13 @@ export default {
     highlightCurrentRow: Boolean,
     emptyText: { type: String, default: '暂无数据' },
     showHeader: { type: Boolean, default: true },
+    headerContextmenu: { type: Boolean, default: true }, // 表头右键扩展菜单
     showOverflowTooltip: Boolean,
     cellClassName: { type: [String, Function], default: '' },
     rowClassName: { type: [String, Function], default: '' },
     messages: { type: Array, default: () => [] },
     selectRange: Boolean, // 表格区域选择
     copy: Boolean, // 复制功能
-    headerContextmenu: Boolean, // 表头右键扩展菜单
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
@@ -276,7 +275,7 @@ export default {
   },
   data() {
     return {
-      tableData: [],
+      tableData: Object.freeze([]),
       tableColumns: [],
       visibleColumns: [],
       fixedColumns: [],
@@ -288,9 +287,7 @@ export default {
       tableBodyEl: null,
       rowHoverIndex: null,
       expands: [],
-      columnGroupIds: [],
       expand: null,
-      editIsStop: false,
       isLoading: false,
       editStore: {
         editRow: {},
@@ -304,10 +301,8 @@ export default {
         pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
       replaceControl: false,
-      sortControl: false,
-      tableSourceData: [],
-      editProps: {},
       headerCheckedColumns: [],
+      selectRengeStore: [], // 复制功能选中范围
       loadingField: false
     }
   },
@@ -332,9 +327,7 @@ export default {
       const { isScreenfull, height, maxHeight } = this
       const screenHeight = window.screen.height
       style['--rowHeight'] = this.rowHeight + 'px'
-      if (isScreenfull) {
-        style.height = screenHeight + 'px'
-      } else {
+      if (!isScreenfull) {
         if (height) style.height = height + 'px'
         if (maxHeight) style.maxHeight = maxHeight + 'px'
         if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
@@ -351,7 +344,7 @@ export default {
       return tableData && tableData.find(d => typeof d.children !== 'undefined')
     },
     showToolbar() {
-      const { drag, search, toolbarConfig = {}, $slots } = this
+      const { drag, search, toolbarConfig = {}, sortConfig = {}, $slots } = this
       let show = false
       for (const key in toolbarConfig) {
         const item = toolbarConfig[key]
@@ -359,10 +352,13 @@ export default {
           if (Array.isArray(item) && item.length) show = true
         } else if (key === 'columnControl') {
           if (drag && item) show = true
-        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'showSort', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
+        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
-      if ($slots.toolbar || search) show = true
+      if ($slots.toolbar || search || sortConfig.multiple) show = true
       return show
+    },
+    tableId() {
+      return (~~(Math.random() * (1 << 30))).toString(36)
     }
   },
   watch: {
@@ -371,7 +367,7 @@ export default {
         this.scrolling = true
         setTimeout(() => {
           this.scrolling = false
-        }, 200)
+        }, 100)
       }
     },
     scrollLeft(val) {
@@ -403,9 +399,6 @@ export default {
     },
     form(val) {
       this.tableForm = val
-    },
-    editStop(val) {
-      this.editIsStop = val
     }
   },
   created() {
@@ -433,9 +426,14 @@ export default {
     })
     this.tableColumns = [...this.columns]
     Object.assign(this, {
-      tableDataMap: new Map()
+      columnGroupIds: [], // 小计
+      tableSourceData: Object.freeze([]),
+      tableDataMap: new Map(),
+      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
     })
-    this.loadTableData(this.data || [])
+    if ((this.data || []).length) {
+      this.loadTableData(this.data)
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -447,16 +445,22 @@ export default {
   },
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
+    this.destroy()
   },
   methods: {
+    destroy() {
+      for (const key in this.$data) {
+        this.$data[key] = null
+      }
+    },
     loadTableData(data = this.data) {
       const { editStore, rowId } = this
       this.tableData =
-        data.map((d, i) => {
+        Object.freeze(data.map((d, i) => {
           !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId('_rowId'))
           return d
-        }) || []
-      this.tableSourceData = XEUtils.clone(data, true)
+        }) || [])
+      this.tableSourceData = Object.freeze(XEUtils.clone(data, true))
       editStore.insertList = []
       if (rowId === '_rowId') {
         this.clearStatus()
@@ -492,7 +496,9 @@ export default {
     updateRow(row) {
       const { rowId } = this
       const rowIndex = this.tableData.findIndex(d => d[rowId] === row[rowId])
-      this.$set(this.tableData, rowIndex, row)
+      const data = XEUtils.clone(this.tableData)
+      data[rowIndex] = row
+      this.tableData = Object.freeze(data)
       const fields = []
       for (const prop in row) {
         const columnIndex = this.bodyColumns.findIndex(d => d.prop === prop)
@@ -501,10 +507,91 @@ export default {
             row,
             rowIndex,
             columnIndex,
-            content: row[prop]
+            content: getFieldValue(row, prop)
           })
       }
       this.editField(fields)
+    },
+    editField(fileds, copy) {
+      // console.log('fileds', JSON.stringify(fileds, null, 2))
+      const updateArr = []
+      fileds.forEach(filed => {
+        const { visibleColumns, updateStatus, tableData } = this
+        const { rowIndex, columnIndex, content } = filed
+        let { row } = filed
+        if (!row) row = tableData[rowIndex]
+        const column = visibleColumns[columnIndex] || {}
+        const { prop, rules } = column
+
+        if (prop) {
+          if (
+            !filed.notUpdateTableEvent &&
+            content !== getFieldValue(row, prop)
+          ) {
+            updateArr.push({
+              rowIndex,
+              columnIndex,
+              newData: content,
+              oldData: getFieldValue(row, prop)
+            })
+          }
+          if (copy) {
+            const { config, edit: { render = {}} = {}} = column
+            const opts = XEUtils.merge({ name: 'input' }, config, render)
+            if (!opts.name) opts.name = 'input'
+            const { name, props } = opts
+            if (name === 'input') {
+              setFieldValue.call(this, this, row, prop, content)
+            } else if (name === 'select') {
+              const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
+              const { labelKey = 'label', valueKey = 'value' } = props || {}
+              if (options.length) {
+                // 匹配到label才会赋值，否则置空
+                const option = options.find(d => d[labelKey] === content || d[valueKey] === content)
+                setFieldValue.call(this, this, row, prop, option ? option[valueKey] : '')
+              }
+            } else if (name === 'date-picker') {
+              let date = content
+              if (!XEUtils.isValidDate(content)) {
+                // 能转化成日期的才会赋值
+                const toStringDate = XEUtils.toStringDate(content)
+                date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
+              }
+              setFieldValue.call(this, this, row, prop, date)
+            } else if (name === 'cascader') {
+              // 默认置空
+              if (!XEUtils.isArray(content)) return setFieldValue.call(this, this, row, prop, [])
+            } else if (name === 'switch') {
+              const { props = {}} = opts
+              const activeValue = props['active-value'] || true
+              const inactiveValue = props['inactive-value'] || false
+              let data = content
+              if (content === 'true') {
+                data = activeValue
+              } else if (content === 'false') {
+                data = inactiveValue
+              } else {
+                if ([activeValue, inactiveValue, '1', '0'].indexOf(content) < 0) {
+                  data = '0'
+                }
+              }
+
+              setFieldValue.call(this, this, row, prop, data)
+            }
+          } else {
+            setFieldValue.call(this, this, row, prop, content)
+          }
+          if (rules && rules.length) {
+            this.validateField(prop, rules, row)
+          }
+          updateStatus(row, prop)
+        }
+      })
+
+      if (updateArr.length) {
+        this.$emit('table-update-data', updateArr)
+      }
+      this.dataChange()
     },
     updateStatus(row, prop) {
       if (!prop) return
@@ -552,45 +639,20 @@ export default {
         this.tableDataMap.set(d[rowId], d)
       })
     },
-    editField(fileds) {
-      // console.log('fileds', JSON.stringify(fileds, null, 2))
-      const updateArr = []
-      fileds.forEach(filed => {
-        const { tableData, visibleColumns, updateStatus } = this
-        const { row, rowIndex, columnIndex, content } = filed
-        const column = visibleColumns[columnIndex] || {}
-        const { prop, rules } = column
-
-        if (prop) {
-          if (
-            !filed.notUpdateTableEvent &&
-            content !== tableData[rowIndex][prop]
-          ) {
-            updateArr.push({
-              rowIndex,
-              columnIndex,
-              newData: content,
-              oldData: tableData[rowIndex][prop]
-            })
-          }
-          tableData[rowIndex][prop] = content
-          rules && rules.length && this.validateField(prop, rules, row)
-          updateStatus(tableData[rowIndex], prop)
-        }
-      })
-
-      if (updateArr.length) {
-        this.$emit('table-update-data', updateArr)
-      }
-    },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
     },
     rootMouseup(event) {
       this.$emit('table-mouse-up', { event: event })
     },
-    setEditIsStop(val) {
-      this.editIsStop = val
+    setEditStop(val) {
+      this.tableEditConfig.editStop = val
+    },
+    tableEditPause() {
+      this.tableEditConfig.editStop = true
+    },
+    tableEditRegain() {
+      this.tableEditConfig.editStop = true
     },
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
@@ -644,6 +706,11 @@ export default {
       this.searchForm = val
       this.$emit('search-change', val)
       if (this.proxyConfig) this.commitProxy('query')
+    },
+    dataChange() {
+      const { tableData, getEditStore } = this
+      const editStore = getEditStore()
+      this.$emit('data-change', { tableData, editStore })
     },
     clearSearch() {
       this.searchForm = []

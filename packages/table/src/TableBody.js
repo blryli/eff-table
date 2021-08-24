@@ -167,7 +167,7 @@ export default {
               const expandNode = expanded ? <div class={classes}>{expand({ row, key })}</div> : ''
 
               const dom = [<TableBodyRow
-                key={rowIndex}
+                key={key}
                 row={row}
                 row-index={rowIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}

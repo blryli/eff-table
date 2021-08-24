@@ -1,14 +1,18 @@
 <template>
-  <div v-if="status >= 2" :style="toolStyle" class="tool">
-
-    <div v-if="status === 2" class="sight" @mousedown="sightMouseDown">
-      <template v-if="selectCount == 1">
-        <div class="vertical" />
-        <div class="lineae" />
-      </template>
-    </div>
+  <div v-if="['copyUp', 'batchCopuDown'].some( d=> d === handleType)" :style="toolStyle" class="tool">
+    <div
+      v-if="handleType === 'copyUp'"
+      class="sight"
+      @mousedown="batchCopyMouseDown"
+      @mouseup="batchCopyMouseUp"
+    />
     <div class="flex flex-direction">
-      <div v-if="status === 2" class="copy" :class="copyBtnType" title="复制" @click.stop="onClickCopy">
+      <div
+        v-if="handleType === 'copyUp'"
+        :class="['copy', copyBtnType]"
+        title="复制"
+        @click.stop="onClickCopy"
+      >
         <div class="before">
           <div />
           <div />
@@ -21,6 +25,8 @@
 </template>
 
 <script>
+import { getFieldValue, setFieldValue } from 'pk/utils'
+import { on, off } from 'pk/utils/dom'
 
 // eslint-disable-next-line no-extend-native
 String.prototype.trim = function() {
@@ -30,34 +36,66 @@ String.prototype.trim = function() {
 export default {
   data() {
     return {
-      textArr: {},
-      textMap: {},
-      status: 0,
-      startPosition: { columnIndex: 0, rowIndex: 0 },
-      endPosition: { columnIndex: 0, rowIndex: 0 },
-      sightStartPosition: { columnIndex: 0, rowIndex: 0 },
-      sightEndPosition: { columnIndex: 0, rowIndex: 0 },
-      unit: {
-        width: 0,
-        height: 0
-      },
-      autoScrollIntervalId: null,
+      rowMap: {},
+      handleType: 'none',
+      startPosition: { columnIndex: -1, rowIndex: -1 },
+      endPosition: { columnIndex: -1, rowIndex: -1 },
       borderStyle: 'solid',
       copyBtnType: 'primary',
       toolStyle: {},
-      selectCount: 0
+      headerCheckedColumns: []
     }
   },
   computed: {
+    selectRengeStore() {
+      const { startPosition, endPosition, borderStyle } = this
+      const startRow = endPosition.rowIndex > startPosition.rowIndex ? startPosition.rowIndex : endPosition.rowIndex
+      const endRow = endPosition.rowIndex < startPosition.rowIndex ? startPosition.rowIndex : endPosition.rowIndex
+
+      const startColumn = endPosition.columnIndex > startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
+      const endColumn = endPosition.columnIndex < startPosition.columnIndex ? startPosition.columnIndex : endPosition.columnIndex
+      // console.log({ startRow, endRow, startColumn, endColumn, borderStyle: borderStyle })
+
+      return { startRow, endRow, startColumn, endColumn, borderStyle: borderStyle }
+    },
+    dirBottom() {
+      const { startPosition, endPosition } = this
+      return endPosition.rowIndex > startPosition.rowIndex
+    },
+    dirRight() {
+      const { startPosition, endPosition } = this
+      return endPosition.columnIndex > startPosition.columnIndex
+    }
   },
   watch: {
     'table.scrollTop'(scrollTop, oldTop) {
-      if (this.status === 1) {
+      if (this.handleType === 'copyDown') {
         this.endPosition.y += scrollTop - oldTop
       }
       this.$set(this.toolStyle, 'display', 'none')
-      this.handleRect()
+    },
+    // header批量选中
+    'table.headerCheckedColumns'(columns) {
+      const checkColumnIds = columns.map(d => +d.columnId)
+      if (checkColumnIds.length) {
+        this.borderStyle = 'solid'
+        this.handleType = 'copyDown'
+        this.startPosition = { rowIndex: 0, columnIndex: Math.min(...checkColumnIds) - 1 }
+        this.endPosition = { rowIndex: this.table.tableData.length - 1, columnIndex: Math.max(...checkColumnIds) - 1 }
+        this.$nextTick(() => {
+          this.selectRangeMouseUp()
+        })
+      } else {
+        // this.close()
+      }
+    },
+    selectRengeStore(val) {
+      const { startRow, endRow, startColumn, endColumn } = val
+      this.table.selectRengeStore = { startRow, endRow, startColumn, endColumn }
     }
+  },
+  created() {
+    this.table.selectRengeStore = { startRow: -1, endRow: -1, startColumn: -1, endColumn: -1 }
   },
   inject: ['table'],
   mounted() {
@@ -65,240 +103,164 @@ export default {
     this.table.$on('cell-mouse-down', this.selectRangeMouseDown)
     this.table.$on('cell-mouse-move', this.selectRangeMouseMove)
     this.table.$on('copy', () => {
-      if (this.status === 2) {
+      if (this.handleType === 'copyUp') {
         this.borderStyle = 'dashed'
-        this.handleRect()
       }
     })
-
-    document.addEventListener('scroll', () => {
-      this.$set(this.toolStyle, 'display', 'none')
-    })
-    document.addEventListener('paste', this.onPaste, false)
+    on(document, 'scroll', this.onScroll)
+    on(document, 'paste', this.onPaste)
   },
-  destroyed() {
-    clearInterval(this.autoScrollIntervalId)
-    document.removeEventListener('paste', this.onPaste, false)
+  beforeDestroy() {
+    off(document, 'scroll', this.onScroll)
+    off(document, 'paste', this.onPaste)
   },
   methods: {
+    onScroll() {
+      this.$set(this.toolStyle, 'display', 'none')
+    },
+    setRowMap(paramas) {
+      const { rowMap } = this
+      const { id } = paramas
+      this.$set(rowMap, id, paramas)
+    },
+    deleteRowMap(id) {
+      const { rowMap } = this
+      if (id in rowMap) {
+        delete rowMap[id]
+      }
+    },
     close() {
-      this.status = 0
-      this.handleRect(true, true)
-      this.handleRect(false, true)
+      this.handleType = 'none'
+      this.startPosition = { columnIndex: -1, rowIndex: -1 }
+      this.endPosition = { columnIndex: -1, rowIndex: -1 }
     },
     onClickCopy() {
       this.copyBtnType = 'success'
       document.execCommand('copy')
     },
-    changeData() {
-      this.textArr = []
-      const { startRow, endRow, startColumn, endColumn } = this._getReac()
-
-      let index = 0
-
-      for (let i = startRow; i <= endRow; i++) {
-        this.textArr.push([])
-        for (let j = startColumn; j <= endColumn; j++) {
-          this.textArr[index].push(this.textMap[i + '-' + j])
-        }
-        index++
+    batchCopyMouseDown(e) {
+      if (e.which === 1) {
+        this.handleType = 'batchCopuDown'
       }
     },
-    sightMouseDown() {
-      if (this.selectCount !== 1) {
-        return
+    batchCopyMouseUp(e) {
+      if (e.which === 1) {
+        this.borderStyle = 'solid'
+        this.handleType = 'copyDown'
       }
-      this.status = 3
-      this.sightStartPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
-      this.sightEndPosition = { rowIndex: this.startPosition.rowIndex, columnIndex: this.startPosition.columnIndex }
     },
     selectRangeMouseUp(e) {
-      if (this.status === 0) {
+      if (this.handleType === 'none') {
         return
       }
+      const { table, dirBottom, selectRengeStore } = this
 
-      const map = this._getColumnMap()
+      const { startRow, endRow, startColumn, endColumn } = selectRengeStore
 
-      if (this.status === 3) {
-        this.endPosition = this.sightEndPosition
-        const content = map[this.sightStartPosition.rowIndex + '-' + this.sightStartPosition.columnIndex].$el.innerText
-
-        const updateArr = this.handleUpdateData(content, 'sightStartPosition', 'sightEndPosition')
-        this.table.$emit('edit-fields', updateArr)
-      }
-
-      this.copyBtnType = 'primary'
-      this.selectCount = this.startPosition.columnIndex === this.endPosition.columnIndex && this.startPosition.rowIndex === this.endPosition.rowIndex ? 1 : 2
-
-      if (this.status === 1) {
-        const { endRow, endColumn } = this._getReac()
-        const endColumnModel = map[endRow + '-' + endColumn]
-        if (endColumnModel) {
-          const width = endColumnModel.$el.offsetWidth
-          const height = endColumnModel.$el.offsetHeight
-          const { top, left } = endColumnModel.$el.getBoundingClientRect()
-          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
-        }
-
-        this.status = 2
-        this.table.$emit('select-range-data', this.textArr)
-      }
-      this.handleRect()
-
-      this.status = 2
-    },
-    selectRangeMouseDown(e) {
-      const { rowIndex, columnIndex, column } = e
-      if (['expand', 'selection'].indexOf(column.type) !== -1) {
-        return this.close()
-      }
-      this.borderStyle = 'solid'
-      this.status = 1
-      this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
-      this.startPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
-
-      this.textMap = {}
-      this.textArr = []
-
-      this.handleRect()
-      this.changeData()
-    },
-    selectRangeMouseMove(e) {
-      const { rowIndex, columnIndex } = e
-      if (this.status === 1) {
-        this.endPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
-
-        this.handleRect()
-        this.changeData()
-      }
-
-      if (this.status === 3) {
-        this.sightEndPosition = { rowIndex: rowIndex, columnIndex: columnIndex }
-
-        const { endRow, endColumn } = this._getReac('sightStartPosition', 'sightEndPosition')
-        const map = this._getColumnMap()
-        const endColumnModel = map[endRow + '-' + endColumn]
-
-        if (endColumnModel) {
-          const width = endColumnModel.$el.offsetWidth
-          const height = endColumnModel.$el.offsetHeight
-          const { top, left } = endColumnModel.$el.getBoundingClientRect()
-          this.toolStyle = { top: top + height - 7 + 'px', left: left + width - 7 + 'px' }
-        }
-
-        this.handleRect(true)
-      }
-    },
-    handleRect(sight = false, close = false) {
-      let borderStyle, res
-
-      if (sight) {
-        res = this._getReac('sightStartPosition', 'sightEndPosition')
-        borderStyle = `2px ${this.borderStyle} rgb(17 210 232)`
-      } else {
-        res = this._getReac()
-        borderStyle = `2px ${this.borderStyle} #1177e8`
-      }
-
-      if (close) {
-        borderStyle = ''
-      }
-
-      const { startRow, endRow, startColumn, endColumn } = res
-
-      const map = this._getColumnMap()
-
-      for (let i = startRow; i <= endRow; i++) {
-        for (let j = startColumn; j <= endColumn; j++) {
-          const column = map[i + '-' + j]
-          const style = {}
-
-          if (j === startColumn) {
-            style.borderLeft = borderStyle
-          }
-
-          if (j === endColumn) {
-            style.borderRight = borderStyle
-          }
-
-          if (i === startRow) {
-            style.borderTop = borderStyle
-          }
-
-          if (i === endRow) {
-            style.borderBottom = borderStyle
-          }
-
-          if (column) {
-            column.style = style
-            if (!sight) {
-              this.textMap[i + '-' + j] = column.$el.innerText
+      // 批量复制
+      if (this.handleType === 'batchCopuDown') {
+        const batchCopy = (sourceRow, startRowIndex, endRowIndex) => {
+          for (let index = startRowIndex; index <= endRowIndex; index++) {
+            const row = table.tableData[index]
+            const cols = [startColumn, endColumn].sort()
+            const [startCol, endCol] = cols
+            for (let i = startCol; i <= endCol; i++) {
+              const col = table.bodyColumns[i]
+              const { prop } = col
+              if (prop) {
+                setFieldValue.call(this, table, row, prop, getFieldValue(sourceRow, prop))
+                table.updateRow(row)
+              }
             }
           }
         }
+        if (dirBottom) {
+          batchCopy(table.tableData[startRow], startRow + 1, endRow)
+        } else {
+          batchCopy(table.tableData[endRow], startRow, endRow - 1)
+        }
+      }
+
+      this.copyBtnType = 'primary'
+
+      if (this.handleType === 'copyDown') {
+        const endColumnModel = document.getElementById(`${table.tableId}_${endRow + 1}-${endColumn + 1}`)
+        if (endColumnModel) {
+          const { top, left, width, height } = endColumnModel.getBoundingClientRect()
+          this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
+        } else {
+          this.toolStyle = { top: '100%', left: '100%' }
+        }
+      }
+      this.handleType = 'copyUp'
+    },
+    selectRangeMouseDown(e) {
+      if (e.event.which === 1) {
+        const { rowIndex, columnIndex, column } = e
+        if (['expand', 'selection'].indexOf(column.type) !== -1) {
+          return this.close()
+        }
+        this.borderStyle = 'solid'
+        this.handleType = 'copyDown'
+        this.endPosition = { rowIndex, columnIndex }
+        this.startPosition = { rowIndex, columnIndex }
+        this.rowMap = {}
       }
     },
-    closeReac() {
+    selectRangeMouseMove(e) {
+      const { rowIndex, columnIndex } = e
+      const { table, handleType } = this
+      if (!['copyDown', 'batchCopuDown'].some(d => d === handleType)) return
+      this.endPosition = { rowIndex, columnIndex }
+      // 复制按钮
+      if (handleType === 'batchCopuDown') {
+        this.borderStyle = 'solid'
 
+        const { endRow, endColumn } = this.selectRengeStore
+        const endColumnModel = document.getElementById(`${table.tableId}_${endRow + 1}-${endColumn + 1}`)
+        if (endColumnModel) {
+          const { top, left, width, height } = endColumnModel.getBoundingClientRect()
+          this.toolStyle = { top: top + height - 5 + 'px', left: left + width - 5 + 'px' }
+        }
+      }
     },
     onPaste(e) {
-      if (this.status !== 2) {
+      if (this.handleType !== 'copyUp') {
         return true
       }
 
       this.table.$refs.edit && this.table.$refs.edit.close()
-      const { startRow, startColumn } = this._getReac()
+      const { startRow, startColumn } = this.selectRengeStore
 
       const updateArr = []
+      const insertRows = []
       const data = e.clipboardData.getData('text/plain').trim().split('\r\n')
-      data.map((v, k) => {
+      data.map((da, idx) => {
         let columnList
 
-        if (v.indexOf('\t ') !== -1) {
-          columnList = v.split('\t ')
+        if (da.indexOf('\t ') !== -1) {
+          columnList = da.split('\t ')
         } else {
-          columnList = v.split('\t')
+          columnList = da.split('\t')
         }
 
-        columnList.forEach((vv, kk) => {
-          updateArr.push({ row: this.table.tableData[k + startRow], rowIndex: k + startRow, columnIndex: kk + startColumn, content: vv })
+        const rowIndex = idx + startRow
+        const row = this.table.tableData[rowIndex]
+
+        if (!row) {
+          insertRows.push({})
+        }
+        columnList.forEach((content, i) => {
+          const columnIndex = i + startColumn
+          updateArr.push({ row, rowIndex, columnIndex, content })
         })
       })
 
-      this.table.$emit('edit-fields', updateArr)
-    },
-    handleUpdateData(content, startKey = 'startPosition', endKey = 'endPosition') {
-      const updateArr = []
-      const { startRow, startColumn, endRow, endColumn } = this._getReac(startKey, endKey)
-      for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-        for (let columnIndex = startColumn; columnIndex <= endColumn; columnIndex++) {
-          updateArr.push({ row: this.tableData[rowIndex], rowIndex, columnIndex, content })
-        }
-      }
-
-      return updateArr
-    },
-    _getReac(startKey = 'startPosition', endKey = 'endPosition') {
-      const startRow = this[endKey].rowIndex > this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
-      const endRow = this[endKey].rowIndex < this[startKey].rowIndex ? this[startKey].rowIndex : this[endKey].rowIndex
-
-      const startColumn = this[endKey].columnIndex > this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
-      const endColumn = this[endKey].columnIndex < this[startKey].columnIndex ? this[startKey].columnIndex : this[endKey].columnIndex
-
-      return { startRow, endRow, startColumn, endColumn }
-    },
-    _getColumnMap() {
-      const rows = this.table.$refs.body.$children
-
-      const map = {}
-      rows.forEach(v => {
-        v.$children.forEach(vv => {
-          map[vv.rowIndex + '-' + vv.columnIndex] = vv
-          vv.style = {}
-        })
-      })
-
-      return map
+      // console.log('updateArr', JSON.stringify(updateArr, null, 2))
+      insertRows.length && this.table.insert(insertRows, -1)
+      this.table.$emit('edit-fields', updateArr, true)
+      this.table.scrollTop && (this.table.scrollTop += 0.1)
+      this.table.headerCheckedColumns = []
     }
   }
 }
@@ -318,41 +280,28 @@ export default {
   }
 
   .sight {
-    width: 14px;
-    height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    width: 5px;
+    height: 5px;
     cursor: crosshair;
-
-    div {
-      background-color: rgb(17, 119, 232);
+    background-color: #fff;
+    &::before{
       position: absolute;
-      border-radius: 4px;
-    }
-
-    .vertical {
-      width: 2px;
-      height: 10px;
-      border-top: 1px solid white;
-      border-bottom: 1px solid white;
-    }
-
-    .lineae {
-      width: 10px;
-      height: 2px;
-      margin-top: -1px;
-      border-left: 1px solid white;
-      border-right: 1px solid white;
+      left: 1px;
+      top: 1px;
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background-color: rgb(17, 119, 232);
     }
   }
 
   .flex {
-    margin-left: -4px;
-    margin-top: -35px;
+    height: 20px;
     display: flex;
     position: absolute;
-    bottom: -25px;
+    bottom: -20px;
     right: 0px;
   }
 

@@ -116,9 +116,6 @@ export default {
   },
   beforeDestroy() {
     this.addedBody && removeBody(this, 'popover')
-  },
-  deactivated() {
-    this.addedBody && removeBody(this, 'popover')
     this.addedBody = false
   },
   methods: {

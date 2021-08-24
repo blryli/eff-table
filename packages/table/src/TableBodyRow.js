@@ -20,7 +20,7 @@ export default {
     const { props, injections } = context
     const { table } = injections
     const { bodyColumns, row, rowIndex, messages, fixed, summary, groupFloor, vue } = props
-    const { showSpace, columnRenderIndex, rowId, currentRow, rowClassName, editStore } = table
+    const { showSpace, columnRenderIndex, rowId, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
       table.rowHoverIndex = rowIndex
@@ -39,7 +39,9 @@ export default {
           if (column) {
             const obj = { row, column, prop: column.prop, rowIndex, columnIndex, cell, event }
             const { edit } = table.$refs
-            !isPending && name === 'click' && edit && edit.handleEditCell(obj)
+            if (tableEdit && edit) {
+              !isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && edit.handleEditCell(obj)
+            }
             table.$emit(`cell-${name}`, obj)
           }
         }
@@ -100,6 +102,7 @@ export default {
             const message = messages.find(d => d.prop === column.prop) || {}
 
             return <TableBodyColumn
+              id={summary ? '' : table.tableId + '_' + colid}
               data-colid={colid}
               row={row}
               rowIndex={rowIndex}

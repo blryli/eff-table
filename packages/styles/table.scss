@@ -39,6 +39,7 @@
     overflow: hidden;
     padding: 0 5px;
     &--title, &--label{
+      display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

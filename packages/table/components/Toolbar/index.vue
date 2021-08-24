@@ -40,8 +40,9 @@ export default {
   },
   render(h) {
     const { table, load } = this
-    const { toolbarConfig, search } = table
-    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, showSort, subtotal } = toolbarConfig || {}
+    const { toolbarConfig, sortConfig, search } = table
+    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, subtotal } = toolbarConfig || {}
+    const { multiple } = sortConfig
     const renderHelp = (help, node) => {
       const { effect = 'dark', message, placement } = help
       return <Help effect={effect} message={message} placement={placement} >{node}</Help>
@@ -56,7 +57,7 @@ export default {
     }, []) : ''
     const list = buttonsRender.concat(this.$slots.default || []) || []
     return (
-      <div class='eff-table__toobar'>
+      <div class='eff-table__toobar' style={{ height: table.rowHeight + 'px' }}>
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
           {
@@ -66,7 +67,7 @@ export default {
             editHistory && <EditHistory /> || ''
           }
           {
-            showSort && <SortCtrlBtn /> || ''
+            multiple && <SortCtrlBtn /> || ''
           }
           {
             showReplace && <ReplaceCtrlBtnVue /> || ''
@@ -101,7 +102,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--rowHeight);
   padding: 0 5px;
   border: 1px solid #ddd;
   border-bottom: 0;

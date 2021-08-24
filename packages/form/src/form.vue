@@ -41,8 +41,7 @@ export default {
     return {
       inputIndex: 0,
       editIsStop: this.focusStop,
-      popoverOpts: {},
-      editProps: {}
+      popoverOpts: {}
     }
   },
   computed: {
@@ -73,7 +72,7 @@ export default {
         return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: this, table, form: this, vue: this, data, column, prop }) || ''
       }
     },
-    setEditIsStop(val) {
+    setEditStop(val) {
       this.editIsStop = val
     },
     tipShow(opts) {
