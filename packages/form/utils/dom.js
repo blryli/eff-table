@@ -64,22 +64,6 @@ export const getParentNodes = function(node) {
 }
 
 /**
- * 节点绑定 resize scroll 事件
- * @param {array} node
- * @param {function} handler
- */
-export const enableEventListener = function(nodes, handler) {
-  nodes.forEach(p => {
-    p.addEventListener('resize', handler, {
-      passive: true
-    })
-    p.addEventListener('scroll', handler, {
-      passive: true
-    })
-  })
-}
-
-/**
  * 节点解绑 resize scroll 事件
  * @param {array} node
  * @param {function} handler

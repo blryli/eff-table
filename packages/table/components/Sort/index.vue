@@ -81,11 +81,14 @@ export default {
   methods: {
     initSortable() {
       this.$nextTick(() => {
-        const { handleDragenter } = this
+        const { handleDragend, handleDragenter, handleEnd } = this
         this.columnSortable = new Sortable({
           el: this.$refs.sortList,
           group: 'sort-list',
-          dragenter: handleDragenter
+          chosenClass: 'enter',
+          dragend: handleDragend,
+          dragenter: handleDragenter,
+          onEnd: handleEnd
         })
       })
     },

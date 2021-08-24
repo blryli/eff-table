@@ -26,6 +26,7 @@
 
 <script>
 import { getFieldValue, setFieldValue } from 'pk/utils'
+import { on, off } from 'pk/utils/dom'
 
 // eslint-disable-next-line no-extend-native
 String.prototype.trim = function() {
@@ -106,16 +107,17 @@ export default {
         this.borderStyle = 'dashed'
       }
     })
-
-    document.addEventListener('scroll', () => {
-      this.$set(this.toolStyle, 'display', 'none')
-    })
-    document.addEventListener('paste', this.onPaste, false)
+    on(document, 'scroll', this.onScroll)
+    on(document, 'paste', this.onPaste)
   },
-  destroyed() {
-    document.removeEventListener('paste', this.onPaste, false)
+  beforeDestroy() {
+    off(document, 'scroll', this.onScroll)
+    off(document, 'paste', this.onPaste)
   },
   methods: {
+    onScroll() {
+      this.$set(this.toolStyle, 'display', 'none')
+    },
     setRowMap(paramas) {
       const { rowMap } = this
       const { id } = paramas

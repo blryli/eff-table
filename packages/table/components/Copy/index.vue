@@ -1,5 +1,6 @@
 <script>
 import CopyList from './CopyList'
+import { on, off } from 'pk/utils/dom'
 export default {
   name: 'Copy',
   components: { CopyList },
@@ -16,7 +17,7 @@ export default {
     this.offListener()
     this.onListener()
   },
-  destroyed() {
+  beforeDestroy() {
     this.offListener()
   },
   methods: {
@@ -56,11 +57,11 @@ export default {
       this.table.$on('select-range-data', (textArr) => {
         this.textArr = textArr
       })
-      document.addEventListener('copy', this.onCopy, false)
+      on(document, 'copy', this.onCopy)
     },
     offListener() {
       this.table.$off('select-range-data')
-      document.removeEventListener('copy', this.onCopy, false)
+      off(document, 'copy', this.onCopy)
     }
   },
   render() {

@@ -1,4 +1,4 @@
-import { on, off } from 'pk/utils/dom'
+import { on, off, addClass, hasClass, removeClass } from 'pk/utils/dom'
 
 const config = {
   onEnd: () => {}
@@ -12,6 +12,9 @@ let relation = {
   fromEl: null,
   toEl: null,
   clone: null,
+  chosenClass: '', // 被选中项的css 类名
+  dragClass: '', // 正在被拖拽中的css类名
+  draggable: '', // 允许拖拽的项目类名
   enterFrom: false,
   enterTo: false,
   fromGroup: null,
@@ -178,7 +181,7 @@ export default class Sortable {
   }
 
   getDragNode(el) {
-    if (!el || !el.parentNode) return false
+    if (!el || !el.parentNode || el === this.el) return false
     while (el.parentNode !== this.el && !el.contains(this.el)) {
       el = el.parentNode
     }
