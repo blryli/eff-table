@@ -103,6 +103,9 @@ export default {
 
     // 动态搜索功能
     dynamicSearch: { type: Boolean, default: false },
+
+    // 搜索条件对应模型对象
+    searchModel: { type: Object, default: () => {} },
     // 是否显示分页组件
     hasPagination: { type: Boolean, default: false },
     // 是否显示分页组件
@@ -169,7 +172,7 @@ export default {
         pageSize: this.pagination.pageSize,
         pageNum: 1
       }
-      this.$emit('search', params)
+      this.$emit('search', Object.assign({}, this.searchModel, params))
     }
   }
 }
@@ -206,6 +209,11 @@ export default {
 .v-table-footer{
   padding:8px 0;
   text-align:right
+}
+.p-header-cell {
+  background-color: #f8f8f8 ;
+  padding: 8px 0 ;
+  border: none ;
 }
 
 </style>
