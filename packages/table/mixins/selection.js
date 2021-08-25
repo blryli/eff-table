@@ -76,7 +76,6 @@ export default {
       selectionChange()
     },
     allselectionChange(selected) {
-      console.log({ selected })
       const { tableDataMap, selectionChange } = this
       this.selectionAll = selected
       this.indeterminate = false

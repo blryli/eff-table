@@ -164,7 +164,7 @@ export default {
       return h(VRadio, {
         attrs: { value: table.isChecked(row) },
         key: row[table.rowId],
-        on: { change: selected => table.rowSelectionChange(row, selected) }
+        on: { change: selected => table.rowSelectionChange(row, selected, true) }
       })
     }
     const cellRender = function() {
