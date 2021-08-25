@@ -85,7 +85,8 @@ export default {
         this.columnSortable = new Sortable({
           el: this.$refs.sortList,
           group: 'sort-list',
-          chosenClass: 'enter',
+          dragClass: 'drag',
+          chosenClass: 'chosen',
           dragend: handleDragend,
           dragenter: handleDragenter,
           onEnd: handleEnd
@@ -158,6 +159,9 @@ export default {
     margin-bottom: 10px;
     +.multiple-sort--item{
       margin-left: 10px;
+    }
+    &.chosen{
+      background-color: red;
     }
   }
 }

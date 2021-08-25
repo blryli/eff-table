@@ -1,6 +1,9 @@
-import { on, off, addClass, hasClass, removeClass } from 'pk/utils/dom'
+import { on, off, addClass, removeClass } from 'pk/utils/dom'
 
 const config = {
+  chosenClass: '', // 被选中项的css 类名
+  dragClass: '', // 正在被拖拽中的css类名
+  draggable: '', // 允许拖拽的项目类名
   onEnd: () => {}
 }
 
@@ -12,9 +15,6 @@ let relation = {
   fromEl: null,
   toEl: null,
   clone: null,
-  chosenClass: '', // 被选中项的css 类名
-  dragClass: '', // 正在被拖拽中的css类名
-  draggable: '', // 允许拖拽的项目类名
   enterFrom: false,
   enterTo: false,
   fromGroup: null,
@@ -23,10 +23,12 @@ let relation = {
 
 export default class Sortable {
   constructor(options) {
-    this.options = { ...config, ...options }
+    this.options = Object.assign(config, options)
     this.el = this.options.el
     this.dragEvents = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop']
     this.downTarget = null
+    this.enterTarget = null
+    Object.assign(relation, options)
     this.init()
   }
 
@@ -51,6 +53,7 @@ export default class Sortable {
   on_mousedown(e) {
     if (e.button === 0) {
       const target = this.getDragNode(e.target)
+      if (!target) return
       const { handle } = this.options
       if (handle) {
         if (!e.target.classList.contains(handle)) return
@@ -59,12 +62,16 @@ export default class Sortable {
       }
 
       this.downTarget = target
+      addClass(this.downTarget, this.options.dragClass)
       this.downTarget && this.downTarget.setAttribute('draggable', true)
     }
   }
 
   on_mouseup(e) {
-    e.button === 0 && this.downTarget && this.downTarget.setAttribute('draggable', false)
+    if (e.button === 0 && this.downTarget) {
+      this.downTarget.setAttribute('draggable', false)
+      removeClass(this.downTarget, this.options.dragClass)
+    }
   }
   /* 拖动目标元素时触发drag事件 */
   on_drag(e) {
@@ -100,7 +107,10 @@ export default class Sortable {
   }
 
   on_dragend(e) {
-    relation.fromEl.setAttribute('draggable', false)
+    const { fromEl } = relation
+    removeClass(this.downTarget, this.options.dragClass)
+    removeClass(this.enterTarget, this.options.chosenClass)
+    fromEl && fromEl.setAttribute('draggable', false)
     this._emit('dragend', e.target)
     const rest = {
       fromIndex: null,
@@ -126,6 +136,7 @@ export default class Sortable {
   on_dragenter(e) {
     let { target } = e
     target = this.getDragNode(target)
+    if (!target) return
 
     // 设置进入区域 to
     this.el.contains(target) && (relation.to = this.el)
@@ -138,9 +149,20 @@ export default class Sortable {
 
     let { toEl } = relation
     if (!toEl || toEl && toEl !== target) {
-      relation.toEl = toEl = target
+      const { enterTarget } = this
       const { fromIndex, toIndex, from, to, fromEl } = relation
       const willInsertAfter = toIndex > fromIndex
+      relation.toEl = toEl = target
+      if (target !== this.downTarget) {
+        if (enterTarget !== target) {
+          const { chosenClass } = this.options
+          removeClass(enterTarget, chosenClass)
+          addClass(target, chosenClass)
+          this.enterTarget = target
+        }
+      }
+      // if (fromEl !== toEl && toEl !== from) {
+      // }
       // console.log('进入', { fromIndex, toIndex, from, to, fromEl, toEl, willInsertAfter })
       this._emit('dragenter', { from, to, fromEl, toEl, fromIndex, toIndex, willInsertAfter, target })
     }
@@ -148,6 +170,7 @@ export default class Sortable {
 
   on_dragleave(e) {
     const target = this.getDragNode(e.target)
+    if (!target) return
     !this.isFilter(target) && this._emit('dragleave', { target })
   }
 
@@ -181,7 +204,7 @@ export default class Sortable {
   }
 
   getDragNode(el) {
-    if (!el || !el.parentNode || el === this.el) return false
+    if (!el || !el.parentNode) return false
     while (el.parentNode !== this.el && !el.contains(this.el)) {
       el = el.parentNode
     }
