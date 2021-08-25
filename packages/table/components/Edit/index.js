@@ -104,15 +104,13 @@ export default {
   },
   mounted() {
     on(window, 'resize', this.close)
-    on(document.getElementById('app-container'), 'scroll', this.close)
     this.$nextTick(() => {
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
       this.body = this.wrapper.querySelector('.eff-table__body')
     })
   },
   beforeDestroy() {
-    off(window, 'resize', this.handleWindowResize)
-    off(document.getElementById('app-container'), 'scroll', this.close)
+    off(window, 'resize', this.close)
     const { editRender, component, validateShowpopover } = this
     // 原生input
     if (editRender && editRender.tag === 'input') {
@@ -426,7 +424,8 @@ export default {
           table.$refs.popovers.validingTipClose()
           // 原生input
           if (editRender && editRender.tag === 'input') {
-            off(editRender.elm, 'input', fieldChange)
+            const { elm } = editRender
+            off(elm, 'input', fieldChange)
           }
           if (this.component) {
             // 实时校验

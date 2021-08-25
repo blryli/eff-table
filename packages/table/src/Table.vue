@@ -445,14 +445,8 @@ export default {
   },
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
-    this.destroy()
   },
   methods: {
-    destroy() {
-      for (const key in this.$data) {
-        this.$data[key] = null
-      }
-    },
     loadTableData(data = this.data) {
       const { editStore, rowId } = this
       this.tableData =
