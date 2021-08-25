@@ -23,7 +23,7 @@ let relation = {
 
 export default class Sortable {
   constructor(options) {
-    this.options = Object.assign(config, options)
+    this.options = Object.assign({}, config, options)
     this.el = this.options.el
     this.dragEvents = ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop']
     this.downTarget = null

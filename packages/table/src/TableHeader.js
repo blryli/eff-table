@@ -109,9 +109,9 @@ export default {
                 colid: parent,
                 column,
                 columnIndex,
-                bodyColumnIndex: index
+                bodyColumnIndex: index,
+                isChecked: table.headerCheckedColumns.some(d => d === column)
               },
-              class: { 'is--checked': table.headerCheckedColumns.some(d => d === column) },
               on: {
                 'sort-change': sortChange
               }
@@ -162,8 +162,10 @@ export default {
       const { target } = e
       const dragCard = document.querySelector('.table-drag--card')
       if (!this.$el.contains(target) && (dragCard && dragCard.contains(target) || !dragCard)) {
-        setTimeout(() => {
+        clearTimeout(timer)
+        const timer = setTimeout(() => {
           this.table.headerCheckedColumns = []
+          clearTimeout(timer)
         }, 100)
       }
     },

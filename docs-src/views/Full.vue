@@ -532,7 +532,7 @@ export default {
       this.$set(this.form, prop, val)
     },
     searchChange(val) {
-      console.log(JSON.stringify(val, null, 2))
+      // console.log(JSON.stringify(val, null, 2))
       this.searchData = val
       let list = [...this.data]
       if (val.length) {

@@ -13,12 +13,14 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         const { toolbarLeft, more } = this.$refs
+        if (!toolbarLeft || !more) return
         const leftRect = toolbarLeft.getBoundingClientRect()
         const moreRect = more.getBoundingClientRect()
         const leftChilds = [...toolbarLeft.childNodes].filter(d => d.nodeType === 1)
         this.hideIndex = leftChilds.findIndex(d => d && d.getBoundingClientRect && d.getBoundingClientRect().right + moreRect.width + 20 > leftRect.right) - 1
+        clearTimeout(timer)
       }, 500)
     })
   },

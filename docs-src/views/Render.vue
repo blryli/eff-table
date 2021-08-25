@@ -197,6 +197,10 @@ export default {
             { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
             { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
             { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
           ],
           refresh: true
@@ -204,7 +208,7 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
-              console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
+              // console.log('query', JSON.stringify({ page, sorts, filters, form }, null, 2))
               const params = { ...form }
               const pageNum = page.pageNum || 1
               const pageSize = page.pageSize || 10

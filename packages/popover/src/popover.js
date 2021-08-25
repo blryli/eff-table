@@ -94,14 +94,18 @@ export default {
   },
   watch: {
     showAlways(val) {
-      val && setTimeout(this.calculateCoordinate, 0)
+      if (val) {
+        this.timer = setTimeout(this.calculateCoordinate, 0)
+      }
     },
     show(val) {
       if (val) {
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
           this.popoverAddedBody()
           this.calculateCoordinate()
         }, 0)
+      } else {
+        this.timer = null
       }
     },
     placement(val) {

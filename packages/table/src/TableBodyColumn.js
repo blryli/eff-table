@@ -150,6 +150,9 @@ export default {
         table.columnGroupIds.splice(pos, 1)
       }
     }
+
+    const cellId = row[rowId] + column.columnId
+
     const renderSelection = function() {
       return h(VCheckbox, {
         attrs: { value: table.isChecked(row) },
@@ -204,7 +207,7 @@ export default {
     }
     const handleMouseenter = function(event, slot) {
       if (summary) return
-      const cell = document.getElementById(row[rowId] + column.columnId)
+      const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
       if (!cell) return
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
@@ -221,7 +224,7 @@ export default {
     }
     const handleMouseleave = function(event, slot) {
       if (summary) return
-      const cell = document.getElementById(row[rowId] + column.columnId)
+      const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.$refs.popovers.tipClose()
       message && table.$refs.popovers.validTipClose()
@@ -229,17 +232,17 @@ export default {
 
     const handleMouseUp = function(event) {
       if (summary) return
-      const cell = document.getElementById(row[rowId] + column.columnId)
+      const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMouseDown = function(event) {
       if (summary) return
-      const cell = document.getElementById(row[rowId] + column.columnId)
+      const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMousemove = function(event) {
       if (summary) return
-      const cell = document.getElementById(row[rowId] + column.columnId)
+      const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }
 
@@ -291,7 +294,7 @@ export default {
       }
     }), [
       groupEl,
-      <div ref='cell' id={row[rowId] + column.columnId} class='eff-cell'>
+      <div id={cellId} class='eff-cell'>
         <span class='eff-cell--label'>{slot}</span>
         {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
       </div>

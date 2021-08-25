@@ -38,9 +38,9 @@
         <router-link class="menu-list" to="/FormEdit">FormEdit 快捷编辑</router-link>
       </div>
       <div class="container">
-        <keep-alive>
-          <router-view />
-        </keep-alive>
+        <router-view />
+        <!-- <keep-alive>
+        </keep-alive> -->
       </div>
     </div>
 

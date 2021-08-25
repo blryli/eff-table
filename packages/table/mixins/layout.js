@@ -17,12 +17,16 @@ export default {
   },
   watch: {
     isScreenfull(val) {
-      setTimeout(() => {
-        this.resize()
-        val && this.$nextTick(() => {
-          this.screenfullHeight = this.$el.getBoundingClientRect().height
-        })
-      }, 0)
+      if (val) {
+        this.layoutTimer = setTimeout(() => {
+          this.resize()
+          val && this.$nextTick(() => {
+            this.screenfullHeight = this.$el.getBoundingClientRect().height
+          })
+        }, 0)
+      } else {
+        this.layoutTimer = null
+      }
     }
   },
   computed: {

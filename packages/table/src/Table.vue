@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>headerCheckedColumns -  {{ headerCheckedColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -365,16 +365,18 @@ export default {
     scrollTop(val) {
       if (val > 2) {
         this.scrolling = true
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           this.scrolling = false
+          clearTimeout(timer)
         }, 100)
       }
     },
     scrollLeft(val) {
       if (val > 2) {
         this.scrolling = true
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           this.scrolling = false
+          clearTimeout(timer)
         }, 100)
       }
     },
@@ -446,8 +448,16 @@ export default {
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
   },
+  destroyed() {
+    this.destroy()
+  },
   methods: {
-    loadTableData(data = this.data) {
+    destroy() {
+      for (const key in this.$data) {
+        this.$data[key] = null
+      }
+    },
+    loadTableData(data = this.data, opts = { clearScroll: true }) {
       const { editStore, rowId } = this
       this.tableData =
         Object.freeze(data.map((d, i) => {
@@ -461,7 +471,7 @@ export default {
         this.clearValidate()
       }
       this.updateCache()
-      this.clearScroll()
+      opts.clearScroll && this.clearScroll()
       this.resize()
       return this.$nextTick()
     },

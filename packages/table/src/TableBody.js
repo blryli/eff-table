@@ -13,10 +13,6 @@ export default {
     fixed: { type: String, default: '' }
   },
   inject: ['table'],
-  data() {
-    return {
-    }
-  },
   computed: {
     bodyStyle() {
       const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth, columnIsVirtual } = this.table
@@ -63,6 +59,7 @@ export default {
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
           $el.onscroll = $el._onscroll
+          clearTimeout(this.timer)
         }, 100)
       }
     },
@@ -83,8 +80,8 @@ export default {
   },
   beforeDestroy() {
     const { $el } = this
-    $el._onscroll = null
     $el.onscroll = null
+    $el._onscroll = null
   },
   activated() {
     // 缓存的页面，切回页面时，保持最后的滚动姿势

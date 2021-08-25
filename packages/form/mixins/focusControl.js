@@ -54,13 +54,14 @@ export default {
       // console.log(JSON.stringify(this.formItems.map(d => d.prop), null, 2))
     },
     onFocus(prop) {
-      setTimeout(() => {
+      this.focusTimer = setTimeout(() => {
         this.curprop = prop
         this.$emit('focus', prop)
       }, 50)
     },
     onBlur(prop) {
       this.$emit('blur', prop)
+      this.focusTimer = null
     },
     _clear() {
       this.curprop = null

@@ -110,7 +110,7 @@ export const initField = (data, prop, vue) => {
 
 // 获取字段值
 export const getFieldValue = function(data, prop) {
-  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => acc[cur] || '', data)
+  return prop.split('.').filter(d => d || d === 0).reduce((acc, cur) => isNoValue(acc[cur]) ? '' : acc[cur], data)
 }
 
 // 设置字段值
@@ -133,3 +133,7 @@ export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc
 
 // 判断是否是VNode
 export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && renderFunc.tag.indexOf('vue-component') > -1)
+
+// 判断是否是无效值
+
+export const isNoValue = value => value === null || value === undefined || value === ''

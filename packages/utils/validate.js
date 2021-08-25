@@ -1,4 +1,4 @@
-import { getType } from './'
+import { getType, isNoValue } from 'pk/utils'
 /**
  * 校验规则
  */
@@ -31,9 +31,9 @@ export function validateField(rules, params) {
     return new Promise((resolve, reject) => {
       const { validator, min, max, pattern, message } = rule
       const { id, prop, value, row, rowIndex, column, columnIndex } = params
-      const isNoValue = value === null || value === undefined || value === ''
+      const noValue = isNoValue(value)
       if (typeof validator === 'function') {
-        if (isNoValue) {
+        if (noValue) {
           params.value = ''
           if (!hasRequire) {
             resolve({ id, prop, message: false, row, rowIndex, column, columnIndex })
@@ -52,7 +52,7 @@ export function validateField(rules, params) {
         const len = ('' + value).length
         const minMaxMessage = `${min && max ? '长度必须在' + min + '到' + max : min ? '长度不能小于' + min : max ? '长度不能大于' + max : ''}个字符`
         const validRules = [
-          { type: 'required', rule: () => isNoValue, message: `不能为空` },
+          { type: 'required', rule: () => noValue, message: `不能为空` },
           { type: 'min', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
           { type: 'max', rule: () => len < Number(min) || len > Number(max), message: minMaxMessage },
           { type: 'pattern', rule: () => !(pattern.test(value)), message: `校验不通过` },
@@ -64,7 +64,7 @@ export function validateField(rules, params) {
         // console.log('validate', JSON.stringify({ rule, valid }, null, 2))
         if (valid) {
           e = getMessage(valid.rule(), message || valid.message || '校验不通过')
-          if (valid.type !== 'required' && !hasRequire && isNoValue) {
+          if (valid.type !== 'required' && !hasRequire && noValue) {
             e = false
           }
         }

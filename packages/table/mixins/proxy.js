@@ -92,58 +92,61 @@ export default {
       const { insertList, updateList, pendingList, removeList } = editStore
       let rest = []
       if (!rows) {
-        rows = [...tableData]
+        rows = XEUtils.clone(tableData)
       } else if (!Array.isArray(rows)) {
         rows = [rows]
       } else {
         rows = [...rows]
       }
       let timer = null
-      rows.forEach(row => {
-        // 保存记录
-        const id = row[rowId]
-        removeList.push(row)
-        if (checkeds.length) {
-          const cIndex = checkeds.findIndex(d => d[rowId] === id)
-          if (cIndex > -1) {
-            checkeds.splice(cIndex, 1)
+      let data = []
+      if (tableData === rows) {
+        rows = rest = tableData.slice(0)
+        this.updateCache()
+        this.clearSelection()
+        this.resize()
+      } else {
+        data = XEUtils.clone(tableData)
+        rows.forEach(row => {
+          // 保存记录
+          const id = row[rowId]
+          removeList.push(row)
+          if (checkeds.length) {
+            const cIndex = checkeds.findIndex(d => d[rowId] === id)
+            if (cIndex > -1) {
+              checkeds.splice(cIndex, 1)
+            }
           }
-        }
-        // 从新增中移除已删除的数据
-        const iIndex = insertList.indexOf(row)
-        if (iIndex > -1) {
-          insertList.splice(iIndex, 1)
-        } else {
-          clearTimeout(timer)
-          timer = setTimeout(() => {
-            this.$message.success('成功删除所选记录!')
-          }, 50)
-        }
-        // 从修改中移除已删除的数据
-        const uIndex = updateList.findIndex(d => d[rowId] === id)
-        if (uIndex > -1) {
-          updateList.splice(uIndex, 1)
-        }
-        // 从伪删除中移除已删除的数据
-        const pIndex = pendingList.findIndex(d => d[rowId] === id)
-        if (pIndex > -1) {
-          pendingList.splice(pIndex, 1)
-        }
-        if (tableData === rows) {
-          rows = rest = tableData.slice(0)
-          this.tableData = Object.freeze([])
-          this.updateCache()
-          this.clearSelection()
-          this.resize()
-        } else {
+          // 从新增中移除已删除的数据
+          const iIndex = insertList.indexOf(row)
+          if (iIndex > -1) {
+            insertList.splice(iIndex, 1)
+          } else {
+            clearTimeout(timer)
+            timer = setTimeout(() => {
+              this.$message.success('成功删除所选记录!')
+              clearTimeout(timer)
+            }, 50)
+          }
+          // 从修改中移除已删除的数据
+          const uIndex = updateList.findIndex(d => d[rowId] === id)
+          if (uIndex > -1) {
+            updateList.splice(uIndex, 1)
+          }
+          // 从伪删除中移除已删除的数据
+          const pIndex = pendingList.findIndex(d => d[rowId] === id)
+          if (pIndex > -1) {
+            pendingList.splice(pIndex, 1)
+          }
           const tIndex = tableData.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {
-            const rItems = tableData.splice(tIndex, 1)
+            const rItems = data.splice(tIndex, 1)
             rest.push(rItems[0])
           }
-        }
-        // console.log('remove', JSON.stringify({ insertList, removeList }, null, 2))
-      })
+          // console.log('remove', JSON.stringify({ insertList, removeList }, null, 2))
+        })
+      }
+      this.tableData = Object.freeze(data)
       return this.$nextTick().then(() => ({ rows: rest }))
     },
     delete(deleted) {
