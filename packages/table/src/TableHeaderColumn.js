@@ -17,7 +17,7 @@ export default {
   inject: ['table'],
   functional: true,
   render(h, context) {
-    const { props, data, injections } = context
+    const { props, data, parent, injections } = context
     const { table } = injections
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
@@ -96,8 +96,10 @@ export default {
       table.$refs.popovers.tipClose()
     }
     const sortClick = (order) => {
+      const { sortChange } = parent
+      if (!sortChange) return
       column.order = column.order && column.order === order ? '' : order
-      this.$emit('sort-change', column)
+      sortChange(column)
     }
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title

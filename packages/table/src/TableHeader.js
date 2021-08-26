@@ -81,7 +81,7 @@ export default {
       this.$emit('sort-change', sort)
     },
     renderColumns(columns) {
-      const { table, sortChange } = this
+      const { table } = this
       const { rowHeight } = table
       let index = 0
       const render = (columns, colid = '', parentProp = []) => {
@@ -111,9 +111,6 @@ export default {
                 columnIndex,
                 bodyColumnIndex: index,
                 isChecked: table.headerCheckedColumns.some(d => d === column)
-              },
-              on: {
-                'sort-change': sortChange
               }
             }}
             />)

@@ -318,7 +318,7 @@ export default {
     refresh() {
       const { footerActionConfig = {}} = this
       const { pageConfig: { pageSizes = [] } = {}} = footerActionConfig || {}
-      Object.assign(this.pager, { pageNum: 1, pageSize: pageSizes[0] || 10 })
+      this.$set(this, 'pager', { pageNum: 1, pageSize: pageSizes[0] || 10, total: this.pager.total })
       this.commitProxy('query')
     },
     getInsertList() {

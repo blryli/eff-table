@@ -115,7 +115,6 @@ export const getFieldValue = function(data, prop) {
 
 // 设置字段值
 export const setFieldValue = function(root, data, prop, val) {
-  this.$set(data, prop, val)
   const arr = prop.split('.')
   while (arr.length > 1) {
     data = data[arr.shift()]

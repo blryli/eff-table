@@ -63,14 +63,14 @@ function renderVModel(h, renderOpts, params) {
   const on = getOn(renderOpts.on, {
     input: val => {
       setFieldValue.call(vue, root, data, prop, val)
+      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
+        table.editField([{ row, rowIndex, columnIndex, content: val }])
+      }
       // console.log('data', JSON.stringify(data, null, 2))
     },
     change: val => {
       if (!table) return
       searchChange && searchChange(val)
-      if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
-        table.editField([{ row, rowIndex, columnIndex, content: val }])
-      }
     },
     blur: v => {
       oldData = null
