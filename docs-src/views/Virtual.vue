@@ -9,11 +9,18 @@
       <div class="section-content">
         <v-form
           :data="form"
-          :columns="[{title: '数据量',prop: 'number',itemRender:{
-            name: 'select',
-            options: [{label: 1000, value: 1000},{label: 3000, value: 3000},{label: 5000, value: 5000}, {label: 10000, value: 10000},{label: 20000, value: 20000}],
-            on: {change: change}
-          }}]"
+          :columns="[
+            {title: '列数量',prop: 'columnNum',itemRender:{
+              name: 'select',
+              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000}],
+              on: {change: setColumns}
+            }},
+            {title: '行数量',prop: 'dataNum',itemRender:{
+              name: 'select',
+              options: [{label: 1000, value: 1000},{label: 3000, value: 3000},{label: 5000, value: 5000}, {label: 10000, value: 10000},{label: 20000, value: 20000}],
+              on: {change: setData}
+            }},
+          ]"
         />
         <eff-table
           v-bind="tableOptions"
@@ -134,116 +141,39 @@ export default {
       htmlCode,
       jsCode,
       data: [],
-      form: { number: 1000 },
+      form: { dataNum: 1000, columnNum: 100 },
       tableOptions: {
         maxHeight: 400,
         border: true,
         data: [],
-        columns: [
-          {
-            show: true,
-            prop: 'name',
-            title: '列1',
-            width: 200
-          },
-          {
-            show: true,
-            fixed: 'left',
-            type: 'index',
-            title: '序号',
-            width: 80
-          },
-          {
-            show: true,
-            prop: 'age',
-            title: '列2',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列3',
-            title: '列3',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列4',
-            title: '列4',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列5',
-            title: '列5',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列6',
-            title: '列6',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列7',
-            title: '列7',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列8',
-            title: '列8',
-            width: 200
-          },
-          {
-            show: true,
-            prop: '列10',
-            title: '列10',
-            children: [{ prop: '111', width: 100, title: '111' }, { prop: '222', width: 100, title: '222' }, { prop: '333', width: 100, title: '333' }, { prop: '444', width: 100, title: '444' }, { prop: '555', width: 100, title: '555' }, { prop: '666', width: 100, title: '666' }]
-          },
-          {
-            show: true,
-            prop: '列9',
-            title: '列9',
-            width: 200,
-            edit: true
-          }
-        ]
+        columns: []
       }
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.tableOptions.data = mock.mock({
-        ['array|' + this.form.number]: [
+    this.setColumns(10)
+    // this.setColumns(this.form.columnNum)
+    this.setData(this.form.dataNum)
+  },
+  methods: {
+    setColumns(val) {
+      let num = 1
+      this.tableOptions.columns = mock.mock({
+        ['array|' + val]: [
           {
-            'id|+1': 1,
-            'name': function name() {
-              return this.index % 5 === 0 ? '' : this.cname
-            },
-            'cname': '@cname',
-            'age': /[1-7][0-9]/,
-            'height': /1[5-9][0-9]/,
-            'index|+1': 1
+            show: true,
+            prop: 'name',
+            title: () => '列' + num++,
+            width: 200
           }
         ]
       }).array
-    }, 50)
-  },
-  methods: {
-    change(val) {
-      // console.log(val)
+    },
+    setData(val) {
       this.tableOptions.data = mock.mock({
         ['array|' + val]: [
           {
-            'id|+1': 1,
-            'name': function name() {
-              return this.index % 5 === 0 ? '' : this.cname
-            },
-            'cname': '@cname',
-            'age': /[1-7][0-9]/,
-            'height': /1[5-9][0-9]/,
-            'index|+1': 1
+            'name': '@name'
           }
         ]
       }).array

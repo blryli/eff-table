@@ -150,7 +150,7 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>selecteds -  {{ selecteds }}</p> -->
+    <!-- <p>columnRenderEndIndex -  {{ columnRenderEndIndex }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -394,7 +394,31 @@ export default {
         return acc
       }, { left: [], center: [], right: [] })
       this.fixedColumns = columns
-      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => acc.concat(cur.filter(d => d.show !== false)), [])]
+      const setColumn = (column, columnCopy) => {
+        const { children } = column
+        if ((children || []).length) {
+          column.children = children.reduce((acc, cur) => {
+            return cur.show !== false ? acc.concat(setColumn(cur, columnCopy)) : acc
+          }, [])
+        } else {
+          columnCopy.columnLen += 1
+        }
+        return column
+      }
+      const getColumns = (columns) => {
+        return columns.reduce((acc, column) => {
+          if (column.show !== false) {
+            column.columnLen = 0
+            return acc.concat(setColumn(column, column))
+          } else return acc
+        }, [])
+      }
+      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => {
+        return acc.concat(getColumns(cur))
+      }, [])]
+    },
+    'tableColumns.length'() {
+      this.resize()
     },
     loading(val) {
       this.isLoading = val

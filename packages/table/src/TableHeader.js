@@ -18,6 +18,7 @@ export default {
       isDraging: false,
       isColumnsChange: false,
       searchData: [],
+      marginLeft: '',
       contextmenuList: [
         { title: '前移一列', disabled: false, show: true },
         { title: '后移一列', disabled: false, show: true },
@@ -73,6 +74,38 @@ export default {
       })
 
       return result.filter(d => d.length > 1)
+    },
+    getColumnsStore() {
+      const { table } = this
+      const { columnIsVirtual, visibleColumns, columnRenderIndex, columnRenderEndIndex, columnAccWidths } = table
+      if (columnIsVirtual) {
+        let renderIndex = 0
+        let startIndex = 0
+        let startRenderIndex = 0
+        const columns = []
+        for (let index = 0; index < visibleColumns.length; index++) {
+          const column = visibleColumns[index]
+          renderIndex += column.columnLen
+          if (renderIndex >= columnRenderIndex) {
+            if (!columns.length) {
+              startIndex = index
+              startRenderIndex = renderIndex - column.columnLen
+            }
+            columns.push(column)
+            if (columnRenderEndIndex && renderIndex >= columnRenderEndIndex) {
+              break
+            }
+          }
+        }
+        this.marginLeft = (startRenderIndex > 0 ? columnAccWidths[startRenderIndex - 1] : 0) + 'px'
+        return { columns, startIndex }
+      }
+      this.marginLeft = ''
+      return { columns: visibleColumns, startIndex: 0 }
+    },
+    xSpaceWidth() {
+      const { table: { leftWidth, rightWidth, bodyWidth }, fixed } = this
+      return fixed === 'left' ? leftWidth : fixed === 'right' ? rightWidth : bodyWidth
     }
   },
   inject: ['table'],
@@ -80,21 +113,23 @@ export default {
     sortChange(sort) {
       this.$emit('sort-change', sort)
     },
-    renderColumns(columns) {
+    renderColumns() {
       const { table } = this
       const { rowHeight } = table
-      let index = 0
+      const { columns = [], startIndex } = this.getColumnsStore
+      let index = startIndex
       const render = (columns, colid = '', parentProp = []) => {
         return columns.reduce((acc, column, columnIndex) => {
+          const renderColumnIndex = columnIndex + startIndex
           const { children = [] } = column
-          const parent = colid ? `${colid}-${columnIndex + 1}` : `${columnIndex + 1}`
+          const parent = colid ? `${colid}-${renderColumnIndex + 1}` : `${renderColumnIndex + 1}`
           if (parentProp.length) {
             column.parent = parentProp
           }
           column.columnId = parent
           if (children.length) {
             acc.push(<div class={['eff-table__header-group', table.headerCheckedColumns.some(d => d === column) ? 'is--checked' : '']} data-colid={parent}>
-              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: !column.parent && columnIndex === 0 ? 0 : '' }}>
+              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: !column.parent && renderColumnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='eff-table__header-group-children'>
@@ -108,7 +143,7 @@ export default {
               attrs: {
                 colid: parent,
                 column,
-                columnIndex,
+                columnIndex: renderColumnIndex,
                 bodyColumnIndex: index,
                 isChecked: table.headerCheckedColumns.some(d => d === column)
               }
@@ -355,10 +390,12 @@ export default {
     off(this.$el, 'scroll', this.handleScroll)
   },
   render(h) {
-    const { table, visibleColumns, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, contextmenuList, contextmenuListMethod, contextmenuClick } = this
+    const { table, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, marginLeft, xSpaceWidth, contextmenuList, contextmenuListMethod, contextmenuClick } = this
     const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }} = table
     const height = headerHeight + 'px'
-    const renderCols = renderColumns(visibleColumns)
+    const renderCols = renderColumns()
+    // console.log(renderCols)
+
     // 将多选表头进行分组，用于多列拖动
     if (this.checkedColumnGroup.length) {
       this.checkedColumnGroup.forEach(check => {
@@ -369,12 +406,13 @@ export default {
 
     return (
       <div class='eff-table__header-wrapper'>
+        <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         {
           h('Contextmenu', {
             props: { list: contextmenuList, listMethod: contextmenuListMethod, disabled: !drag || !headerContextmenu },
             class: { 'eff-table__header': true, 'is--move': isDraging },
             ref: 'header',
-            style: { height },
+            style: { height, marginLeft },
             nativeOn: {
               click: handleClick,
               mousemove: handleMousemove,

@@ -92,15 +92,17 @@ export default {
     }
   },
   mounted() {
-    const { columnIsVirtual, scrollLeftEvent } = this
-    columnIsVirtual && scrollLeftEvent()
+    this.$nextTick(() => {
+      const { columnIsVirtual, scrollLeftEvent } = this
+      columnIsVirtual && scrollLeftEvent()
+    })
   },
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       if (!(this.tableData || []).length) return
       this.scrollLeft = scrollLeft
       const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
-      if (!columnIsVirtual || scrollLeft === 0) {
+      if (!columnIsVirtual) {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
         return
