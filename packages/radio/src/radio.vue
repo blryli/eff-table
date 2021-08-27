@@ -26,17 +26,17 @@ export default {
   },
   watch: {
     value(val) {
+      this.isChecked = false
+      if (this.disabled) return
       this.isChecked = val
     }
   },
   methods: {
     handleChange() {
       if (this.disabled) return
-      if (!this.isChecked) {
-        this.isChecked = !this.isChecked
-        this.$emit('input', this.isChecked)
-        this.$emit('change', this.isChecked)
-      }
+      this.isChecked = !this.isChecked
+      this.$emit('input', this.isChecked)
+      this.$emit('change', this.isChecked)
     }
   }
 }

@@ -100,11 +100,17 @@ export default {
       }
       let timer = null
       let data = []
-      if (tableData === rows) {
-        rows = rest = tableData.slice(0)
+      if (tableData.length === rows.length) {
+        rest = tableData.slice(0)
+        Object.assign(this.editStore, {
+          editRow: {},
+          insertList: [],
+          removeList: this.editStore.removeList.concat(rows),
+          updateList: [],
+          pendingList: []
+        })
         this.updateCache()
         this.clearSelection()
-        this.resize()
       } else {
         data = XEUtils.clone(tableData)
         rows.forEach(row => {
@@ -138,7 +144,7 @@ export default {
           if (pIndex > -1) {
             pendingList.splice(pIndex, 1)
           }
-          const tIndex = tableData.findIndex(d => d[rowId] === id)
+          const tIndex = data.findIndex(d => d[rowId] === id)
           if (tIndex > -1) {
             const rItems = data.splice(tIndex, 1)
             rest.push(rItems[0])
@@ -147,7 +153,10 @@ export default {
         })
       }
       this.tableData = Object.freeze(data)
-      return this.$nextTick().then(() => ({ rows: rest }))
+      return this.$nextTick().then(() => {
+        this.resize()
+        return { rows: rest }
+      })
     },
     delete(deleted) {
       const { checkeds } = this

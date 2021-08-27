@@ -59,4 +59,22 @@
       top: 5px;
     }
   }
+  &.is--disabled{
+    .eff-table__checkbox-icon{
+      border: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+    &.is-checked,
+    &.is-indeterminate {
+      .eff-table__checkbox-icon {
+        background-color: #f5f5f5;
+        border-color: #ccc;
+      }
+    }
+    &.is-checked {
+      .eff-table__checkbox-icon:after {
+        border-color: #aaa;
+      }
+    }
+  }
 }

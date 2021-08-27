@@ -114,7 +114,7 @@ value: [
   {
     show: true,// boolean 列是否显示
 
-    type: 'selection', // string
+    type: '', // string selection/radio/index
 
     width: 80, // number
 
@@ -202,6 +202,8 @@ value: [
     sortMethod: null, // 排序的时候使用的方法 function(a, b)
 
     remoteSort: false, // 服务端排序，需要监听 sort-change 事件
+
+    selectable: false, // 仅对 type=selection 的列有效，类型为 Function，Function 的返回值用来决定这一行的 CheckBox 是否可以勾选
   }
 ]
 ```

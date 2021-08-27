@@ -76,10 +76,10 @@ export default {
     ]
 
     const rowStyle = {}
-    const { overflowX, columnIsVirtual, bodyRenderWidth, bodyWidth, rowHeight } = table
+    const { overflowX, bodyRenderWidth, rowHeight } = table
     rowStyle.height = rowHeight + 'px'
     if (overflowX && !fixed) {
-      rowStyle.width = (columnIsVirtual ? bodyRenderWidth : bodyWidth) + 'px'
+      rowStyle.width = bodyRenderWidth + 'px'
     }
     // debugger
 

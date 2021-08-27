@@ -40,8 +40,9 @@
       </Collapse>
     </section>
 
-    <h3>高级编辑</h3>
     <CodeSnippet class="javascript" :code="objCode" />
+
+    <h3>高级编辑</h3>
     <section class="demo">
       <div class="section-content">
         <eff-table v-bind="tableOptions1" />

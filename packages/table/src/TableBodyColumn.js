@@ -153,16 +153,19 @@ export default {
 
     const cellId = row[rowId] + column.columnId
 
+    const { selectable } = column
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex }) : false
+
     const renderSelection = function() {
       return h(VCheckbox, {
-        attrs: { value: table.isChecked(row) },
+        props: { value: table.isChecked(row), disabled: isDisabled },
         key: row[table.rowId],
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
     }
     const renderRadio = function(h) {
       return h(VRadio, {
-        attrs: { value: table.isChecked(row) },
+        props: { value: table.isChecked(row), disabled: isDisabled },
         key: row[table.rowId],
         on: { change: selected => table.rowSelectionChange(row, selected, true) }
       })

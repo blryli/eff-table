@@ -28,13 +28,13 @@ export default {
     },
     // 列虚拟滚动
     columnVisibleWidth() {
-      const { bodyWrapperWidth, leftWidth, rightWidth, overflowY } = this
-      return bodyWrapperWidth - leftWidth - rightWidth - (overflowY ? 17 : 0)
+      const { bodyWrapperWidth, overflowY } = this
+      return bodyWrapperWidth - (overflowY ? 17 : 0)
     },
     columnIsVirtual() {
       // return false
-      const { useGroupColumn, useExpand, bodyWidth, leftWidth, rightWidth, columnVisibleWidth } = this
-      return !useExpand && !useGroupColumn && bodyWidth - leftWidth - rightWidth > columnVisibleWidth + 400
+      const { useGroupColumn, useExpand, bodyWidth, columnVisibleWidth } = this
+      return !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
