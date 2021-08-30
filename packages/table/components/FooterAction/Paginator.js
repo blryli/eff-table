@@ -4,7 +4,7 @@ export default {
   name: 'Paginator',
   inject: ['table'],
   props: [
-    'pageNum',
+    'pager',
     'pageSize',
     'total'
   ],
@@ -23,13 +23,14 @@ export default {
   },
   render(h) {
     const render = renderer.get('default').renderDefault
+    const { pageNum, pageSize, total } = this
 
     return render(h, {
       props: Object.assign({
         pageSizes: [10, 50, 100, 200, 300, 400],
         layout: 'total, sizes, prev, pager, next, jumper',
         pagerCount: 5
-      }, this.table.footerActionConfig.pageConfig, this.table.pager),
+      }, this.table.footerActionConfig.pageConfig, { pageNum, pageSize, total }),
       on: {
         'size-change': this.onSizeChange,
         'current-change': this.onCurrentChange

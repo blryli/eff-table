@@ -76,9 +76,9 @@ export default {
       return result.filter(d => d.length > 1)
     },
     getColumnsStore() {
-      const { table } = this
-      const { columnIsVirtual, visibleColumns, columnRenderIndex, columnRenderEndIndex, columnAccWidths } = table
-      if (columnIsVirtual) {
+      const { table, fixed, visibleColumns } = this
+      const { columnIsVirtual, columnRenderIndex, columnRenderEndIndex, columnAccWidths } = table
+      if (!fixed && columnIsVirtual) {
         let renderIndex = 0
         let startIndex = 0
         let startRenderIndex = 0

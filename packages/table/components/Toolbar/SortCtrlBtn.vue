@@ -16,7 +16,8 @@ export default {
   inject: ['table'],
   methods: {
     click() {
-      this.table.$refs.sort.show()
+      // this.table.$refs.sort.show()
+      this.table.sortChange()
     }
   }
 }

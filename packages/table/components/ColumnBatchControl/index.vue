@@ -23,7 +23,7 @@
         <div class="left" :style="leftStyle">
           左固定
           <div class="list area-left" :data-key="leftList.length - 1">
-            <template v-for="(d, i) in leftList.filter(d => !d.type || d.title)">
+            <template v-for="(d, i) in leftList">
               <div
                 :key="i"
                 :data-key="i"
@@ -31,7 +31,7 @@
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                {{ d.title }}
+                {{ d.title || d.type }}
               </div>
               <div
                 :key="'-'+i"
@@ -62,6 +62,7 @@
                 {{ d.title }}
               </div>
               <div
+                v-if="!rightList.length"
                 :key="'-'+i"
                 :data-key="i"
                 class="blank"

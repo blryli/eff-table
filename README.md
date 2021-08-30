@@ -199,10 +199,6 @@ value: [
     // 排序
     sortable: false, // 对应列是否可以排序
 
-    sortMethod: null, // 排序的时候使用的方法 function(a, b)
-
-    remoteSort: false, // 服务端排序，需要监听 sort-change 事件
-
     selectable: false, // 仅对 type=selection 的列有效，类型为 Function，Function 的返回值用来决定这一行的 CheckBox 是否可以勾选
   }
 ]
@@ -230,13 +226,23 @@ value: [
   fullscreen: false, // 是否启用全屏功能
 }
 ```
--edit-config
+- edit-config
 
 ```js
 {
   editLoop: true, // 是否启用行循环编辑，在最后一个单元格跳下一个及第一个单元格跳上一个时进行跨行编辑
   editStop: false, // 是否暂停编辑，当编辑组件弹窗或下拉框时出现时应设置为true，关闭时设置为false
   trigger: 'click', // 编辑功能触发方式，可选 click/dblclick
+}
+```
+
+- sort-config
+
+```js
+{
+   multiple: false, // 是否启用多字段排序
+   sortMethod: null, // 排序的时候使用的方法 function(a, b)
+   remote: false, // 服务端排序，需要监听 sort-change 事件
 }
 ```
 

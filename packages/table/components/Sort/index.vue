@@ -47,10 +47,7 @@ export default {
   name: 'TableMultipleSort',
   components: { Card },
   props: {
-    initColumns: { type: Array, default: () => [] },
-    columnControl: Boolean
   },
-  dragToEl: {},
   data() {
     return {
       visible: false,
@@ -60,12 +57,6 @@ export default {
     }
   },
   inject: ['table'],
-  computed: {
-
-  },
-  watch: {
-
-  },
   mounted() {
     this.initSortable()
   },
@@ -81,51 +72,15 @@ export default {
   methods: {
     initSortable() {
       this.$nextTick(() => {
-        const { handleDragend, handleDragenter, handleEnd } = this
+        const { handleEnd } = this
         this.columnSortable = new Sortable({
           el: this.$refs.sortList,
           group: 'sort-list',
           dragClass: 'drag',
-          chosenClass: 'chosen',
-          dragend: handleDragend,
-          dragenter: handleDragenter,
+          chosenClass: 'is--draging',
           onEnd: handleEnd
         })
       })
-    },
-    handleDragenter({ from, to, fromEl, toEl, fromIndex, toIndex, target }) {
-      if (fromEl === toEl || target === to || toEl === to || fromIndex === toIndex || this.draging) return
-      this.draging = true
-      // console.log({ from, to, fromEl, toEl, fromIndex, toIndex })
-      // 动画，待完成
-      // const { left: fromLeft, top: fromTop } = fromEl.getBoundingClientRect()
-      // const { left: toLeft, top: toTop, width: toWidth } = toEl.getBoundingClientRect()
-      // const fromX = toLeft - fromLeft
-      // const toX = fromLeft - toLeft
-      // const fromY = toTop - fromTop
-      // const toY = fromTop - toTop
-      // if (fromTop > toTop) {
-      //   this.currentIndex >= toIndex ? from.insertBefore(fromEl, toEl) : from.insertBefore(toEl, fromEl)
-      //   toEl.style.transform = `translate3d(${-(toWidth + 10)}px, 0, 0)`
-      //   fromEl.style.transform = `translate3d(${-fromX}px, ${-fromY}px, 0)`
-      //   setTimeout(() => {
-      //     Object.assign(fromEl.style, { transition: 'all .3s', transform: `translate3d(0, 0, 0)` })
-      //     console.log({ fromEl, toEl })
-      //     Object.assign(toEl.style, { transition: 'all .3s', transform: `translate3d(0, 0, 0)` })
-      //   }, 0)
-      // } else {
-      //   Object.assign(fromEl.style, { transition: 'all .3s', transform: `translate3d(${fromX}px, ${fromY}px, 0)` })
-      //   Object.assign(toEl.style, { transition: 'all .3s', transform: `translate3d(${toX}px, ${toY}px, 0)` })
-      // }
-      // setTimeout(() => {
-      //   fromEl.style = ''
-      //   toEl.style = ''
-      //   if (fromTop === toTop) {
-      //     this.currentIndex >= toIndex ? from.insertBefore(fromEl, toEl) : from.insertBefore(toEl, fromEl)
-      //   }
-      //   this.currentIndex = toIndex
-      //   this.draging = false
-      // }, 300)
     },
     show() {
       this.columns = XEUtils.clone(this.table.tableColumns, true)
@@ -136,9 +91,16 @@ export default {
     },
     confirm() {
       this.visible = false
+      this.table.tableColumns = [...this.columns]
+      this.table.sortChange()
     },
     sortClick(order, column) {
       this.$set(column, 'order', column.order === order ? '' : order)
+    },
+    handleEnd({ fromIndex, toIndex }) {
+      const { columns } = this
+      const oldItem = columns.splice(fromIndex, 1)[0]
+      columns.splice(toIndex, 0, oldItem)
     }
   }
 }
@@ -160,8 +122,8 @@ export default {
     +.multiple-sort--item{
       margin-left: 10px;
     }
-    &.chosen{
-      background-color: red;
+    &.is--draging{
+      background-color: #c7daf1;
     }
   }
 }

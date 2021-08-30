@@ -108,12 +108,16 @@ function renderTextareaEdit(h, renderOpts, params) {
 
 // 选择器 select
 function renderselectCell(h, renderOpts, params) {
-  const { props } = renderOpts || {}
-  const { data, prop } = params || {}
-  const cellLabel = getFieldValue(data, prop)
-  const { labelKey = 'label', valueKey = 'value' } = props || {}
-  const opt = getOptions(renderOpts, params).find(d => ('' + d[valueKey]) === ('' + cellLabel)) || {}
-  return opt[labelKey] || cellLabel
+  try {
+    const { props } = renderOpts || {}
+    const { data, prop } = params || {}
+    const cellLabel = getFieldValue(data, prop)
+    const { labelKey = 'label', valueKey = 'value' } = props || {}
+    const opt = getOptions(renderOpts, params).find(d => d[valueKey] && ('' + d[valueKey]) === ('' + cellLabel)) || {}
+    return opt[labelKey] || cellLabel
+  } catch (error) {
+    console.error(error)
+  }
 }
 function renderSelect(h, renderOpts, params, renderType) {
   const { props: oProps = {}} = renderOpts
@@ -166,21 +170,24 @@ function renderSelectEdit(h, renderOpts, params) {
 }
 
 // 日期 datepick
-function renderdateCell(h, renderOpts = {}, params = {}) {
-  const { format, props: { format: propsFormat } = {}} = renderOpts
-  const formater = format || propsFormat || 'yyyy-MM-dd'
+function renderDateCell(h, renderOpts = {}, params = {}) {
+  const { props = {}} = renderOpts
+  const valueFormat = props['value-format'] || props['valueFormat'] || 'yyyy-MM-dd'
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
     const [start, end] = cellLabel
-    return [XEUtils.toDateString(start, formater), '~', XEUtils.toDateString(end, formater)]
+    return [XEUtils.toDateString(start, valueFormat), '~', XEUtils.toDateString(end, valueFormat)]
   }
-  return XEUtils.toDateString(cellLabel, formater)
+  return XEUtils.toDateString(cellLabel, valueFormat)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
+  const { props: sourceProps = {}} = renderOpts
+  const valueFormat = sourceProps['value-format'] || sourceProps['valueFormat'] || 'yyyy-MM-dd'
+
   const props = {
-    value: getFieldValue(data, prop)
+    value: XEUtils.toDateString(getFieldValue(data, prop), valueFormat)
   }
   const on = {
     input: val => {
@@ -372,26 +379,30 @@ function renderCheckboxGroup(h, renderOpts, params) {
 
 // 标签 tag
 function renderTag(h, renderOpts, params) {
-  const { labelKey = 'label', valueKey = 'value' } = renderOpts
-  const { data, prop } = params || {}
-  const value = getFieldValue(data, prop)
-  if (!value) return ''
-  return (XEUtils.isArray(value) ? value : [value]).map(d => {
-    const label = (getOptions(renderOpts, params).find(o => o[valueKey] === d) || {})[labelKey]
-    return render(h, renderOpts, params).set('children', label).render()
-  })
+  try {
+    const { labelKey = 'label', valueKey = 'value' } = renderOpts
+    const { data, prop } = params || {}
+    const value = getFieldValue(data, prop)
+    if (!value) return ''
+    return (XEUtils.isArray(value) ? value : [value]).map(d => {
+      const label = (getOptions(renderOpts, params).find(o => o[valueKey] && o[valueKey] === d) || {})[labelKey]
+      return render(h, renderOpts, params).set('children', label).render()
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 // 级联选择器 cascader
 function renderCascader(h, renderOpts, params) {
-  const { data, prop } = params || {}
-  const { props = {}} = renderOpts
-  const cascaderProps = props.props || {}
-  const { label = 'label', value = 'value', children = 'children' } = cascaderProps
-  const cascaderValue = getFieldValue(data, prop) || []
-  if (!XEUtils.isArray(cascaderValue)) return []
-  let opts = getOptions(renderOpts, params)
   try {
+    const { data, prop } = params || {}
+    const { props = {}} = renderOpts
+    const cascaderProps = props.props || {}
+    const { label = 'label', value = 'value', children = 'children' } = cascaderProps
+    const cascaderValue = getFieldValue(data, prop) || []
+    if (!XEUtils.isArray(cascaderValue)) return []
+    let opts = getOptions(renderOpts, params)
     return cascaderValue.reduce((acc, cur, index) => {
       const op = opts.find(d => d[value] === cur)
       if (op) {
@@ -433,7 +444,7 @@ const renderMap = Object.assign({
     renderSearch: renderSelectSearch
   },
   'date-picker': {
-    renderDefault: renderdateCell,
+    renderDefault: renderDateCell,
     renderEdit: renderDatepickerEdit,
     renderSearch: renderDatepicker,
     renderSearchRange: renderDatepickerSearchRange

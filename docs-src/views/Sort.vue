@@ -4,14 +4,11 @@
     <p class="hint">
       单字段排序<br>
       设置v-model字段的
-      <span class="primary">sortable</span>属性 = <span class="primary">true</span> 开启
+      <span class="primary">sortable</span>属性 = <span class="primary">true</span> 开启<br>
+      也可以通过sort(prop, 'asc' || 'desc')方法进行排序
     </p>
-    <div>
-      也可以通过组件的sort方法去排序，参数为（字段名，"asc" || "desc"）
-    </div>
-    <br>
 
-    <!-- <section class="demo">
+    <section class="demo">
       <div class="section-content">
         <eff-table ref="table" v-bind="tableOptions">
           <template slot="toolbar">
@@ -31,19 +28,18 @@
           <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
         </div>
       </Collapse>
-    </section> -->
+    </section>
 
     <p class="hint">
       多字段排序<br>
       设置
       <span class="primary">multiple-sort</span> = <span class="primary">true</span> 开启
     </p>
-    <div>
+    <!-- <div>
       点击
       <div title="自定义排序" style="display: inline-flex" class="eff-table__sort flex justify-between"><div class="eff-table__sort-left" /> <div class="eff-table__sort-right" /></div>
       展开排序框，在<span class="primary">右侧</span>选择字段后，点击<span class="primary">左侧</span>选择排序方式，点击确定即可执行排序
-    </div>
-    <br>
+    </div> -->
 
     <section class="demo">
       <div class="section-content">
@@ -195,7 +191,6 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
-            fixed: 'left',
             sortable: true
             // children: [
             //   { prop: 'xing', title: '姓', sortable: true, children: [
@@ -215,66 +210,6 @@ export default {
             show: true,
             prop: 'age',
             title: '年龄',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age1',
-            title: '年龄1',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age2',
-            title: '年龄2',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age3',
-            title: '年龄3',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age4',
-            title: '年龄4',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age5',
-            title: '年龄5',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age6',
-            title: '年龄6',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age7',
-            title: '年龄7',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age8',
-            title: '年龄8',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age9',
-            title: '年龄9',
-            sortable: true
-          },
-          {
-            show: true,
-            prop: 'age10',
-            title: '年龄10',
             sortable: true
           }
         ]

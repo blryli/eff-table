@@ -12,7 +12,7 @@ export default {
       this.sortChange(column)
     },
     clearSort() {
-      this.columns.forEach(d => {
+      this.tableColumns.forEach(d => {
         d.order = ''
       })
       this.resetSort()
@@ -34,12 +34,12 @@ export default {
         const { children } = acc
         acc = children ? children[+cur - 1] : acc[+cur - 1]
         return acc
-      }, this.columns)
+      }, this.tableColumns)
     },
     sortChange(column) {
       const { sortConfig: { multiple } = {}, getSorts } = this
       if (multiple) {
-        this.sorts = getSorts(this.columns)
+        this.sorts = getSorts(this.tableColumns)
       } else {
         // 如果sorts有值并且不是当前column，则置空order
         if (this.sorts.length && !this.sorts.some(d => d === column)) {

@@ -144,13 +144,13 @@
     />
 
     <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
-    <sort v-if="sortConfig.multiple" ref="sort" />
+    <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>columnRenderEndIndex -  {{ columnRenderEndIndex }}</p> -->
+    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -189,7 +189,7 @@ import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
-import Sort from '../components/Sort/index'
+// import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
 import { getColumnChildrenWidth, getFieldValue, setFieldValue } from 'pk/utils'
 import { getOptions } from 'pk/utils/render'
@@ -210,8 +210,8 @@ export default {
     Copy,
     columnBatchControl,
     FooterAction,
-    Replace,
-    Sort
+    Replace
+    // Sort
   },
   mixins: [
     Column,
@@ -344,7 +344,7 @@ export default {
       return tableData && tableData.find(d => typeof d.children !== 'undefined')
     },
     showToolbar() {
-      const { drag, search, toolbarConfig = {}, sortConfig = {}, $slots } = this
+      const { drag, search, toolbarConfig = {}, $slots } = this
       let show = false
       for (const key in toolbarConfig) {
         const item = toolbarConfig[key]
@@ -354,7 +354,7 @@ export default {
           if (drag && item) show = true
         } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
-      if ($slots.toolbar || search || sortConfig.multiple) show = true
+      if ($slots.toolbar || search) show = true
       return show
     },
     tableId() {
