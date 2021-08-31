@@ -123,13 +123,6 @@ export const setFieldValue = function(root, data, prop, val) {
   this.$set(data, arr[0], val)
 }
 
-// 获取表头及嵌套表头的宽度
-export const getColumnChildrenWidth = (childs, spaceWidth) => childs.reduce((acc, cur) => {
-  cur.width = cur.children ? getColumnChildrenWidth(cur.children) : Math.max(cur.width || spaceWidth, 40)
-  acc += cur.width
-  return acc
-}, 0)
-
 // 判断是否是VNode
 export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && renderFunc.tag.indexOf('vue-component') > -1)
 

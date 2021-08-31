@@ -5,6 +5,7 @@ import ColumnBatchCtrl from './columnBatchCtrl'
 import ColumnCtrl from './columnCtrl'
 import Subtotal from './subtotal'
 import Eye from './eye'
+import Deleted from './deleted'
 export default {
   name: 'Icon',
   components: { Fixed, SearchClear, RowDrag, ColumnBatchCtrl, Eye },
@@ -20,7 +21,8 @@ export default {
       'column-ctrl': <ColumnCtrl />,
       'column-batch-ctrl': <ColumnBatchCtrl />,
       'subtotal': <Subtotal />,
-      'eye': <Eye />
+      'eye': <Eye />,
+      'delete': <Deleted />
     }
     if (icons[icon]) {
       return icons[icon]

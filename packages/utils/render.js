@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
-import { setFieldValue, getFieldValue } from 'pk/utils'
+import { setFieldValue, getFieldValue, isNoValue } from 'pk/utils'
 
 let oldData = null
 
@@ -113,7 +113,7 @@ function renderselectCell(h, renderOpts, params) {
     const { data, prop } = params || {}
     const cellLabel = getFieldValue(data, prop)
     const { labelKey = 'label', valueKey = 'value' } = props || {}
-    const opt = getOptions(renderOpts, params).find(d => d[valueKey] && ('' + d[valueKey]) === ('' + cellLabel)) || {}
+    const opt = getOptions(renderOpts, params).find(d => !isNoValue(d[valueKey]) && ('' + d[valueKey]) === ('' + cellLabel)) || {}
     return opt[labelKey] || cellLabel
   } catch (error) {
     console.error(error)
@@ -385,7 +385,7 @@ function renderTag(h, renderOpts, params) {
     const value = getFieldValue(data, prop)
     if (!value) return ''
     return (XEUtils.isArray(value) ? value : [value]).map(d => {
-      const label = (getOptions(renderOpts, params).find(o => o[valueKey] && o[valueKey] === d) || {})[labelKey]
+      const label = (getOptions(renderOpts, params).find(o => !isNoValue(0[valueKey]) && ('' + o[valueKey] === '' + d)) || {})[labelKey]
       return render(h, renderOpts, params).set('children', label).render()
     })
   } catch (error) {

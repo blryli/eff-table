@@ -11,6 +11,7 @@
       <div style="display: inline-block" title="搜索" class="eff-table__diy_search"><div /> <div /></div>展开搜索框<span class="primary">，新增条件</span>后，点击<span class="primary">搜索</span>即可执行搜索
     </div>
     <br>
+    <Icon icon="delete" />
     <section class="demo">
       <div class="section-content">
         <eff-table

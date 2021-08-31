@@ -191,7 +191,7 @@ import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 // import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
-import { getColumnChildrenWidth, getFieldValue, setFieldValue } from 'pk/utils'
+import { getFieldValue, setFieldValue } from 'pk/utils'
 import { getOptions } from 'pk/utils/render'
 
 export default {
@@ -437,19 +437,6 @@ export default {
         width: 40
       })
     }
-    const setColumnWidth = column => {
-      const { width, children = [] } = column
-      if (children.length) {
-        column.width = getColumnChildrenWidth(children, this.spaceWidth)
-      } else {
-        if (!width) {
-          column.width = 0
-        }
-      }
-    }
-    this.columns.forEach(d => {
-      setColumnWidth(d)
-    })
     this.tableColumns = [...this.columns]
     Object.assign(this, {
       columnGroupIds: [], // 小计
