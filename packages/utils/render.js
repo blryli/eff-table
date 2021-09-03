@@ -113,8 +113,15 @@ function renderselectCell(h, renderOpts, params) {
     const { data, prop } = params || {}
     const cellLabel = getFieldValue(data, prop)
     const { labelKey = 'label', valueKey = 'value' } = props || {}
-    const opt = getOptions(renderOpts, params).find(d => !isNoValue(d[valueKey]) && ('' + d[valueKey]) === ('' + cellLabel)) || {}
-    return opt[labelKey] || cellLabel
+    const getLabel = value => {
+      const opt = getOptions(renderOpts, params).find(d => !isNoValue(d[valueKey]) && ('' + d[valueKey]) === ('' + value)) || {}
+      return opt[labelKey] || value
+    }
+    if (XEUtils.isArray(cellLabel)) {
+      return cellLabel.reduce((acc, cur) => acc ? acc + '，' + getLabel(cur) : getLabel(cur), '')
+    } else {
+      return getLabel(cellLabel)
+    }
   } catch (error) {
     console.error(error)
   }
@@ -171,15 +178,14 @@ function renderSelectEdit(h, renderOpts, params) {
 
 // 日期 datepick
 function renderDateCell(h, renderOpts = {}, params = {}) {
-  const { props = {}} = renderOpts
-  const valueFormat = props['value-format'] || props['valueFormat'] || 'yyyy-MM-dd'
+  const { props: { format = 'yyyy-MM-dd' } = {}} = renderOpts
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
     const [start, end] = cellLabel
-    return [XEUtils.toDateString(start, valueFormat), '~', XEUtils.toDateString(end, valueFormat)]
+    return [XEUtils.toDateString(start, format), '~', XEUtils.toDateString(end, format)]
   }
-  return XEUtils.toDateString(cellLabel, valueFormat)
+  return XEUtils.toDateString(cellLabel, format)
 }
 function renderDatepicker(h, renderOpts, params, renderType) {
   const { vue, root, data, prop, searchChange } = params
@@ -380,12 +386,12 @@ function renderCheckboxGroup(h, renderOpts, params) {
 // 标签 tag
 function renderTag(h, renderOpts, params) {
   try {
-    const { labelKey = 'label', valueKey = 'value' } = renderOpts
+    const { labelKey = 'label' } = renderOpts
     const { data, prop } = params || {}
     const value = getFieldValue(data, prop)
     if (!value) return ''
     return (XEUtils.isArray(value) ? value : [value]).map(d => {
-      const label = (getOptions(renderOpts, params).find(o => !isNoValue(0[valueKey]) && ('' + o[valueKey] === '' + d)) || {})[labelKey]
+      const label = (getOptions(renderOpts, params).find(o => !isNoValue(o[labelKey]) && ('' + o[labelKey] === '' + d)) || {})[labelKey]
       return render(h, renderOpts, params).set('children', label).render()
     })
   } catch (error) {

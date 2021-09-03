@@ -15,6 +15,7 @@ export default {
     columnIndex: { type: Number, default: 0 },
     message: { type: Object, default: () => {} },
     fixed: { type: String, default: '' },
+    rowid: { type: String, default: '' },
     disabled: Boolean,
     groupFloor: { type: Number, default: 0 },
     groupKey: { type: String, default: '' },
@@ -26,9 +27,10 @@ export default {
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { vue, row, rowIndex, column, columnIndex, disabled, groupFloor, groupKey, summary } = props
+    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, groupFloor, groupKey, summary } = props
     const { type, prop, className } = column
     const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
+    const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
       initField(row, prop, vue)
@@ -129,44 +131,22 @@ export default {
     style.paddingLeft = groupFloor * 28 + 'px'
     // row[columnIndex] summary合计列
 
-    const groupClick = function(e) {
-      const pos = table.columnGroupIds.indexOf(row[table.rowId])
-
-      if (pos === -1) {
-        table.columnGroupIds.push(row[table.rowId])
-        if (!row.children || !row.children.length) {
-          column.groupStatus = 3
-
-          table.commitProxy('loadChildren', row, (arr) => {
-            vue.$set(row, 'children', arr)
-            column.groupStatus = 2
-            table.groupColumnNum += arr.length
-          })
-        } else {
-          table.groupColumnNum += row.children.length
-        }
-      } else {
-        table.groupColumnNum -= row.children.length
-        table.columnGroupIds.splice(pos, 1)
-      }
-    }
-
     const cellId = row[rowId] + column.columnId
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex }) : false
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) : false
 
     const renderSelection = function() {
       return h(VCheckbox, {
         props: { value: table.isChecked(row), disabled: isDisabled },
-        key: row[table.rowId],
+        key: _rowId,
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
     }
     const renderRadio = function(h) {
       return h(VRadio, {
         props: { value: table.isChecked(row), disabled: isDisabled },
-        key: row[table.rowId],
+        key: _rowId,
         on: { change: selected => table.rowSelectionChange(row, selected, true) }
       })
     }
@@ -190,7 +170,7 @@ export default {
         if (XEUtils.isFunction(format)) {
           return format(params)
         }
-        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowIndex + 1 : prop ? getFieldValue(row, prop) : ''
+        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowid : prop ? getFieldValue(row, prop) : ''
       }
       if (XEUtils.isFunction(cellRender)) {
         const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
@@ -200,11 +180,13 @@ export default {
       }
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
-    const expandClick = function() {
-      table.expandChange({ rowId: row[rowId], height: 0 })
+    const expandClick = function(e) {
+      !disabled && table.expandChange({ rowId: row[rowId], height: 0 })
     }
     const expandRender = function() {
-      const expand = <span class={{ 'eff-icon-expand': true, 'is--expanded': rowExpanded.expanded, 'is--disabled': disabled }} on-click={e => !disabled && expandClick(e)} />
+      const expand = <span class='eff-table--expand' on-click={e => expandClick(e)}>
+        <span class={{ 'eff-icon--arrow': true, 'is--expanded': rowExpanded.expanded, 'is--disabled': disabled }} />
+      </span>
 
       return expand
     }
@@ -249,6 +231,38 @@ export default {
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }
 
+    // 表格树 tree
+    const { lazy, loadMethod, children = 'children' } = table.treeConfig
+
+    const childs = row[children] || []
+    const groupClick = function(e) {
+      vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
+      if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) { // 异步加载
+        loadMethod(row).then(res => {
+          vue.$set(row, children, res)
+        })
+      }
+    }
+
+    let treeSwitch = ''
+    if ((childs.length || row.hasChildren) && column.prop === groupKey) {
+      treeSwitch = <span class='eff-table--expand' on-click={e => groupClick(e)}>
+        <span class={{ 'eff-icon--arrow': true, 'is--expanded': table.treeIds[_rowId] }} />
+      </span>
+
+      if (lazy) {
+        treeSwitch = <div class='icon-loading'>
+          {
+            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
+              return <div>
+                <span class='blank'></span>
+              </div>
+            })
+          }
+        </div>
+      }
+    }
+
     let slot
     if (type === 'expand') {
       slot = expandRender(h)
@@ -264,26 +278,6 @@ export default {
       slot = cellRender(h)
     }
 
-    let groupEl = ''
-    if ((row.children && row.children.length || row.hasChildren) && column.prop === groupKey) {
-      if (column.groupStatus < 3) {
-        column.groupStatus = table.columnGroupIds.indexOf(row[table.rowId]) === -1 ? 1 : 2
-      }
-
-      groupEl = <span class={{ 'eff-icon-expand': true, 'is--expanded': column.groupStatus === 2 }} on-click={e => groupClick(e)} />
-
-      if (column.groupStatus === 3) {
-        groupEl = <div class='icon-loading'>
-          {
-            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
-              return <div>
-                <span class='blank'></span>
-              </div>
-            })
-          }
-        </div>
-      }
-    }
     return h('div', Object.assign(data, {
       key: groupFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
@@ -296,7 +290,7 @@ export default {
         mousemove: event => handleMousemove(event)
       }
     }), [
-      groupEl,
+      treeSwitch,
       <div id={cellId} class='eff-cell'>
         <span class='eff-cell--label'>{slot}</span>
         {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}

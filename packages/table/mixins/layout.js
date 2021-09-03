@@ -1,4 +1,5 @@
 import { on, off } from 'pk/utils/dom'
+import { getTreeRow } from 'pk/utils'
 export default {
   data() {
     return {
@@ -9,7 +10,7 @@ export default {
       overflowX: false,
       headerLoad: false,
       bodyLoad: false,
-      groupColumnNum: 0
+      toolbarHeightOffset: 0
     }
   },
   created() {
@@ -30,6 +31,30 @@ export default {
     }
   },
   computed: {
+    treeNum() {
+      // console.log()
+      const { tableData, rowId, treeIds, treeConfig } = this
+      const { children = 'children' } = treeConfig
+
+      let num = 0
+      const closeIds = []
+      for (const key in treeIds) {
+        const value = treeIds[key]
+        if (value) {
+          const { row, childRow } = getTreeRow(key, children, tableData, rowId)
+          if (!closeIds.find(d => key.startsWith(d))) {
+            if (childRow) {
+              num += childRow[children].length
+            } else {
+              num += row[children].length
+            }
+          }
+        } else {
+          closeIds.push(key)
+        }
+      }
+      return num
+    },
     tableClass() {
       let tClass = 'eff-table__container'
       const { overflowX, overflowY, border, stripe, heights } = this
@@ -91,15 +116,15 @@ export default {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, expandsHeight } = this
+      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
-      const toolbarHeight = toolbar ? rowHeight : 0
+      const toolbarHeight = toolbar ? rowHeight + toolbarHeightOffset : 0
       const headerHeight = headerLoad && header ? rowHeight * headerRanked : 0
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
       const footerActionHeight = footerAction ? rowHeight : 0
-      const dataHeight = tableData.length ? (tableData.length + this.groupColumnNum) * rowHeight + expandsHeight : rowHeight
+      const dataHeight = tableData.length ? (tableData.length + this.treeNum) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? screenfullHeight : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
@@ -136,6 +161,17 @@ export default {
       }
       return node.getBoundingClientRect().width
     },
+    // 工具栏高度自适应
+    setToolbarHeightOffset() {
+      const { $refs, rowHeight } = this
+      if (!$refs.toolbar) return
+      const toolbar = $refs.toolbar.$el
+      const toolbarLefts = [...toolbar.querySelector('.eff-table__toobar-left').childNodes]
+      const toolbarRights = [...toolbar.querySelector('.eff-table__toobar-right').childNodes]
+      const toolbarChildsHeight = toolbarLefts.concat(toolbarRights).map(d => d.offsetHeight || 0)
+      const offsetHeight = rowHeight - Math.max(...toolbarChildsHeight)
+      this.toolbarHeightOffset = offsetHeight < 12 ? 12 - offsetHeight : 0
+    },
     resize() {
       this.$nextTick(() => {
         const { $el, setOverflowX, scrollLeftEvent } = this
@@ -144,12 +180,13 @@ export default {
         setOverflowX()
         scrollLeftEvent()
         this.tableBodyEl = $el.querySelector('.eff-table__body')
+        this.setToolbarHeightOffset()
       })
     },
     setOverflowX() {
-      const { minWidth, bodyWrapperWidth, scrollYwidth } = this
-      this.bodyWidth = Math.max(bodyWrapperWidth - 2, minWidth) - scrollYwidth
-      this.overflowX = minWidth > (bodyWrapperWidth - 2 - scrollYwidth)
+      const { minWidth, bodyWrapperWidth, scrollYwidth, allMinWidth } = this
+      this.bodyWidth = Math.max(bodyWrapperWidth - 2, minWidth, allMinWidth) - scrollYwidth
+      this.overflowX = minWidth > (bodyWrapperWidth - 2 - scrollYwidth) || allMinWidth > minWidth && allMinWidth > (bodyWrapperWidth - 2 - scrollYwidth)
     },
     doLayout() {
       this.resize()

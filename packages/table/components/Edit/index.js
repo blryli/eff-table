@@ -1,4 +1,4 @@
-import { columnIsEdit, isVNode } from 'pk/utils'
+import { columnIsEdit, isVNode, getTreeRow } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
@@ -14,6 +14,8 @@ export default {
   data() {
     return {
       show: false,
+      row: null,
+      rowid: null,
       column: null,
       rowIndex: null,
       cell: null,
@@ -30,20 +32,19 @@ export default {
   },
   inject: ['table', 'root'],
   computed: {
-    row() {
-      const { table, rowIndex } = this
-      return table.tableData[rowIndex]
-    },
     editRender() {
       const { row, column } = this
-      if (!column) return ''
+      if (!row || !column) return ''
       const { edit, prop, config = {}} = column || {}
       if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
+        const { tableSourceData, treeConfig, rowId } = table
+        const { children = 'children' } = treeConfig
+        const { childRow } = getTreeRow(row[rowId], children, tableSourceData, rowId)
 
         const columnIndex = this.getColumnIndex(column.prop)
         const { render } = edit || {}
-        const sourceRow = table.tableSourceData[rowIndex]
+        const sourceRow = childRow
 
         // debugger
 
@@ -74,7 +75,8 @@ export default {
       this.dialogVisible = true
     },
     rowIndex(val) {
-      this.table.editStore.editRow = val === null ? {} : this.table.tableData[val]
+      this.row = this.table.tableData[val]
+      this.table.editStore.editRow = val === null ? {} : this.row
       this.dialogVisible = true
     },
     message() {
@@ -253,22 +255,24 @@ export default {
     disabled(column) {
       const { edit = {}, config = {}} = column || {}
       const { disabled } = Object.assign({}, config, edit)
-      const { row, rowIndex, columnIndex } = this
+      const { row, rowid, rowIndex, columnIndex } = this
       if (disabled === undefined) return false
 
       if (typeof disabled === 'function') {
-        return Boolean(disabled({ row, rowIndex, column, columnIndex }))
+        return Boolean(disabled({ row, rowid, rowIndex, column, columnIndex }))
       }
       return Boolean(disabled) || false
     },
 
-    handleEditCell({ column, cell, rowIndex }) {
+    handleEditCell({ row, rowid, column, cell, rowIndex }) {
       this.handleType = 'click'
       if (!columnIsEdit(column)) {
         this.close()
         return
       }
       this.blurEvent().then(() => {
+        this.row = row
+        this.rowid = rowid
         this.rowIndex = rowIndex
         this.editCell(column, cell)
       })

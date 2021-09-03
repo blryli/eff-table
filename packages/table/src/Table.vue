@@ -150,7 +150,8 @@
     <!-- <p>minWidth{{ minWidth }}</p>
     <p>columnWidths{{ columnWidths }}</p>
     <p>bodyWidth{{ bodyWidth }}</p>-->
-    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p>
+    <p>treeIds -  {{ treeIds }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -268,6 +269,7 @@ export default {
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
+    treeConfig: { type: Object, default: () => ({}) }, // 树配置
     rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
@@ -285,7 +287,7 @@ export default {
       lineShow: false,
       isScreenfull: false,
       tableBodyEl: null,
-      rowHoverIndex: null,
+      hoverRowid: null,
       expands: [],
       expand: null,
       isLoading: false,
@@ -303,7 +305,8 @@ export default {
       replaceControl: false,
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
-      loadingField: false
+      loadingField: false,
+      treeIds: {}
     }
   },
   computed: {
@@ -439,7 +442,6 @@ export default {
     }
     this.tableColumns = [...this.columns]
     Object.assign(this, {
-      columnGroupIds: [], // 小计
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)

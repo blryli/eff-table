@@ -56,4 +56,9 @@ export default {
     }
   }
 }
+.eff-table--expand{
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 </style>

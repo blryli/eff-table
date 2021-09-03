@@ -7,6 +7,7 @@ export default {
   props: {
     bodyColumns: { type: Array, default: () => [] },
     row: { type: Object, default: () => {} },
+    rowid: { type: String, default: '' },
     messages: { type: Array, default: () => [] },
     fixed: { type: String, default: '' },
     rowIndex: Number,
@@ -19,28 +20,31 @@ export default {
   render(h, context) {
     const { props, injections } = context
     const { table } = injections
-    const { bodyColumns, row, rowIndex, messages, fixed, summary, groupFloor, vue } = props
-    const { showSpace, columnRenderIndex, rowId, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig } = table
+    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, groupFloor, vue } = props
+    const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
-      table.rowHoverIndex = rowIndex
+      table.hoverRowid = rowid
     }
     const handleMouseleave = function() {
-      table.rowHoverIndex = null
+      table.hoverRowid = null
     }
     const handleEvent = function(event, name) {
       const cell = getCell(event)
-      let column
+      let column = null
       if (cell) {
         const colid = cell.getAttribute('data-colid')
         if (colid) {
           const [, columnIndex] = colid.split('-')
           column = table.bodyColumns[columnIndex - 1]
           if (column) {
-            const obj = { row, column, prop: column.prop, rowIndex, columnIndex, cell, event }
+            const obj = { row, rowid, column, prop: column.prop, rowIndex, columnIndex, cell, event }
             const { edit } = table.$refs
             if (tableEdit && edit) {
-              !isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && edit.handleEditCell(obj)
+              const arrow = cell.querySelector('.eff-table--expand')
+              if (!isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target))) {
+                edit.handleEditCell(obj)
+              }
             }
             table.$emit(`cell-${name}`, obj)
           }
@@ -57,7 +61,6 @@ export default {
       if (summary) return
       handleEvent(event, 'dblclick')
     }
-    const id = row[rowId]
 
     let groupKey
     bodyColumns.map(v => {
@@ -68,7 +71,7 @@ export default {
 
     const rowClassNames = ['eff-table__body-row', {
       'current-row': currentRow === rowIndex,
-      'is--hover': table.rowHoverIndex === rowIndex,
+      'is--hover': table.hoverRowid === rowid,
       'is--new': editStore.insertList.find(d => d[rowId] === row[rowId]),
       'is--pending': isPending
     },
@@ -81,15 +84,13 @@ export default {
     if (overflowX && !fixed) {
       rowStyle.width = bodyRenderWidth + 'px'
     }
-    // debugger
 
     return (
       <div
         class={rowClassNames}
         style={rowStyle}
-        rowid={id}
-        data-rowid={rowIndex + 1}
-        key={id}
+        data-rowid={rowid}
+        key={rowid}
         on-click={handleClick}
         on-dblclick={handleDoubleClick}
         on-mouseenter={handleMouseenter}
@@ -104,7 +105,9 @@ export default {
             return <TableBodyColumn
               id={summary ? '' : table.tableId + '_' + colid}
               data-colid={colid}
+              data-rowid={rowid}
               row={row}
+              rowid={rowid}
               rowIndex={rowIndex}
               column={column}
               columnIndex={columnIndex}

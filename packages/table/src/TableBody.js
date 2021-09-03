@@ -103,42 +103,42 @@ export default {
       table.scrollTop = scrollTop
     },
     getGroupNode(row, rowIndex) {
-      if (!(row.children && row.children.length && this.table.columnGroupIds.indexOf(row[this.table.rowId]) !== -1)) {
-        return { groupNodes: [], index: rowIndex }
+      const { table, fixed, bodyColumns, formatValidators } = this
+      const { renderColumn, rowId, treeIds } = table
+      const { children = 'children' } = table.treeConfig
+      if (!(row[children] && row[children].length && treeIds[row[rowId]])) {
+        return []
       }
 
-      const { table, fixed, bodyColumns, formatValidators } = this
-      const { renderColumn, rowId } = table
       const groupNodes = []
-
       const groupFloor = 1
 
-      const func = (arr, groupFloor) => {
-        arr.forEach((v, k) => {
+      const func = (arr, groupFloor, rowid) => {
+        arr.forEach((d, i) => {
+          const row_id = `${rowid ? rowid + '.' : ''}${i + 1}`
+
           const dom = <TableBodyRow
-            key={'group-' + groupFloor + rowIndex}
-            row={v}
+            key={'group-' + groupFloor + rowIndex + i}
+            row={d}
+            rowid={`${rowIndex + 1}.${row_id}`}
             group-floor={groupFloor}
             row-index={rowIndex}
             body-columns={fixed ? bodyColumns : renderColumn}
             fixed={fixed}
-            messages={formatValidators[v[rowId]]}
+            vue={this}
+            messages={formatValidators[d[rowId]]}
           />
-          ++rowIndex
 
           groupNodes.push(dom)
-
-          if (!(v.children && v.children.length && this.table.columnGroupIds.indexOf(v[this.table.rowId]) !== -1)) {
-            return
+          if (d[children] && d[children].length && treeIds[`${row[rowId]}-${row_id}`]) {
+            func(d[children], groupFloor + 1, row_id)
           }
-
-          func(v.children, groupFloor + 1)
         })
       }
 
-      func(row.children, groupFloor)
+      func(row[children], groupFloor)
 
-      return { groupNodes, index: rowIndex }
+      return groupNodes
     }
   },
   render(h) {
@@ -146,8 +146,6 @@ export default {
     const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
-
-    let rowIndex = renderIndex
 
     return (
       <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
@@ -158,24 +156,25 @@ export default {
           style={bodyStyle}
         >
           {
-            renderData.map((row, key) => {
+            renderData.map((row, rowIndex) => {
+              const currentIndex = rowIndex + renderIndex
+              const rowid = `${currentIndex + 1}`
               const { expanded } = expands.find(d => d.rowId === row[rowId]) || {}
               const classes = `eff-table__expanded expandid-${row[rowId]}`
-              const expandNode = expanded ? <div class={classes}>{expand({ row, key })}</div> : ''
+              const expandNode = expanded ? <div class={classes}>{expand({ row, rowIndex })}</div> : ''
 
               const dom = [<TableBodyRow
-                key={key}
+                key={currentIndex}
                 row={row}
-                row-index={rowIndex}
+                rowid={rowid}
+                row-index={currentIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 vue={this}
-                messages={formatValidators[row[rowId]]}
+                messages={formatValidators[row[rowId] + rowid]}
               />, expandNode]
-              ++rowIndex
 
-              const { groupNodes, index } = this.getGroupNode(row, rowIndex)
-              rowIndex = index
+              const groupNodes = this.getGroupNode(row, currentIndex)
               return dom.concat(groupNodes)
             })
           }

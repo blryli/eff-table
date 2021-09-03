@@ -585,7 +585,7 @@
   box-sizing: border-box;
 }
 
-.eff-icon-expand{
+.eff-icon--arrow{
   display: inline-block;
   position: relative;
   width: 14px;
@@ -607,6 +607,9 @@
   }
   &.is--expanded{
     transform: rotate(90deg);
+    &::before{
+      top: 3px;
+    }
   }
 }
 

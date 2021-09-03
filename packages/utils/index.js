@@ -129,3 +129,23 @@ export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && ren
 // 判断是否是无效值
 
 export const isNoValue = value => value === null || value === undefined || value === ''
+
+/**
+ * * 根据行id获取row、childRow
+ * @param {treeid} treeid 行id
+ * @param {children} children 行子集名称
+ * @param {tableData} tableData  表格数据
+ * @param {rowId} rowId  行主键
+ */
+export const getTreeRow = (treeid, children, tableData, rowId) => {
+  if (!treeid) return
+  const [id, childId] = treeid.split('-')
+  const row = tableData.find(d => d[rowId] === id) || null
+  let childRow = null
+  if (row && childId) {
+    const childIds = childId.split('.')
+    // console.log({ treeid, row, childId, childIds })
+    childRow = childIds.reduce((acc, cur) => acc[children] && acc[children][+cur - 1], row)
+  }
+  return { row, childRow }
+}

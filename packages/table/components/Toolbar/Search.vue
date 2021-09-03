@@ -8,7 +8,7 @@
       <div />
       <div />
     </div>
-    <diy-search :show.sync="show" />
+    <diy-search ref="search" />
   </div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     click() {
-      this.show = !this.show
+      this.$refs.search.open()
     }
   }
 }

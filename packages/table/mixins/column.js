@@ -4,6 +4,9 @@ export default {
       const { bodyColumns, spaceWidth } = this
       return bodyColumns.reduce((acc, cur) => acc.concat(Math.max(cur.width || spaceWidth, 40)), [])
     },
+    allMinWidth() {
+      return this.columnWidths.reduce((acc, cur) => acc + cur, 0)
+    },
     leftWidth() {
       const { bodyColumns, spaceWidth } = this
       return bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + Math.max(cur.width || spaceWidth, 40) : acc, 0)

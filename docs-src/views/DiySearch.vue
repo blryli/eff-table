@@ -11,15 +11,9 @@
       <div style="display: inline-block" title="搜索" class="eff-table__diy_search"><div /> <div /></div>展开搜索框<span class="primary">，新增条件</span>后，点击<span class="primary">搜索</span>即可执行搜索
     </div>
     <br>
-    <Icon icon="delete" />
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          v-model="columns"
-          :data="data"
-          border
-          :toolbar-config="{diySearch}"
-        />
+        <eff-table v-bind="tableOptions" />
       </div>
     </section>
 
@@ -91,38 +85,42 @@ export default {
     return {
       htmlCode,
       jsCode,
+      tableOptions: {
+        border: true,
+        edit: true,
+        toolbarConfig: { diySearch: true },
+        columns: [
+          {
+            type: 'index',
+            width: 80
+          },
+          {
+            prop: 'name',
+            title: '名字'
+          },
+          {
+            prop: 'sex',
+            title: '性别'
+          },
+          {
+            prop: 'age',
+            title: '年龄'
+          },
+          {
+            prop: 'hobby',
+            title: '爱好',
+            cellRender: (h) => ({ name: 'tag', options: ({ row, prop }) => row[prop].map(d => ({ label: d })) })
+          }
+        ],
+        data: [
+          { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
+          { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] }
+        ]
+      },
       diySearch: {
         fields: ['field1', 'field2', 'field3'],
         op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
-      },
-      columns: [
-        {
-          show: true,
-          type: 'index',
-          width: 80,
-          fixed: 'left'
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字'
-        },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别'
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          width: 150
-        }
-      ],
-      data: [
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '男', phone: '13715201314' }
-      ]
+      }
     }
   }
 }
