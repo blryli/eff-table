@@ -292,7 +292,7 @@ export default {
       // console.log('records', JSON.stringify(records, null, 2))
       records.forEach((d, i) => {
         if (!d[rowId] || tbData.find(t => t[rowId] === d[rowId]) || records.find((t, idx) => i !== idx && t[rowId] === d[rowId])) {
-          this.$set(d, rowId, `row_${row_id++}`)
+          this.$set(d, rowId, `row_id_${++row_id}`)
         }
       })
 

@@ -170,6 +170,11 @@ export default {
         if (XEUtils.isFunction(format)) {
           return format(params)
         }
+        // props支持函数
+        const { props } = renderOpts
+        if (props && typeof props === 'function') {
+          renderOpts.props = props(params)
+        }
         return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowid : prop ? getFieldValue(row, prop) : ''
       }
       if (XEUtils.isFunction(cellRender)) {

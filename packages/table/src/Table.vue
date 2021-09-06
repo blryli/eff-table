@@ -147,9 +147,6 @@
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
-    <!-- <p>minWidth{{ minWidth }}</p>
-    <p>columnWidths{{ columnWidths }}</p>
-    <p>bodyWidth{{ bodyWidth }}</p>-->
     <!-- <p>tableData -  {{ tableData }}</p>
     <p>treeIds -  {{ treeIds }}</p> -->
 
@@ -174,6 +171,7 @@ import Layout from '../mixins/layout'
 import validate from '../mixins/validate'
 import sort from '../mixins/sort'
 import proxy from '../mixins/proxy'
+import tree from '../mixins/tree'
 import virtual from '../mixins/virtual'
 import shortcutKey from '../mixins/shortcutKey'
 import TableHeader from './TableHeader'
@@ -222,7 +220,8 @@ export default {
     sort,
     virtual,
     shortcutKey,
-    proxy
+    proxy,
+    tree
   ],
   provide() {
     return {
@@ -305,8 +304,7 @@ export default {
       replaceControl: false,
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
-      loadingField: false,
-      treeIds: {}
+      loadingField: false
     }
   },
   computed: {
@@ -527,7 +525,7 @@ export default {
             content: getFieldValue(row, prop)
           })
       }
-      this.editField(fields)
+      return this.editField(fields)
     },
     editField(fileds, copy) {
       // console.log('fileds', JSON.stringify(fileds, null, 2))
@@ -609,6 +607,7 @@ export default {
         this.$emit('table-update-data', updateArr)
       }
       this.dataChange()
+      return this.$nextTick()
     },
     updateStatus(row, prop) {
       if (!prop) return
@@ -642,6 +641,7 @@ export default {
           ? this.editStore.updateList.push(newRow)
           : this.editStore.updateList.splice(index, 1, newRow)
       }
+      return this.$nextTick()
     },
     // 更新数据行map
     updateCache() {

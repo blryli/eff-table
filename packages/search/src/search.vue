@@ -12,9 +12,11 @@
       ref="table"
       :columns="columns"
       :toolbar-config="toolbarConfig"
+      :tree-config="treeConfig"
       :max-height="400"
       edit
       border
+      @data-change="dataChange"
     />
   </card>
 </template>
@@ -52,6 +54,7 @@ export default {
   data() {
     return {
       table: null,
+      treeConfig: { expandAll: true },
       columns: [
         {
           type: 'index',
@@ -61,8 +64,9 @@ export default {
           title: '条件连接符',
           prop: 'conditionConnector',
           config: { name: 'select', options: [{ label: '&', value: '&' }, { label: '||', value: '||' }] },
-          edit: { disabled: ({ row, rowIndex, rowid }) => {
-            return Boolean(!rowid || rowid && rowid.slice(-1) === '1')
+          edit: { disabled: ({ row, rowid }) => {
+            this.table
+            return this.isFristRow(rowid)
           } }
         },
         {
@@ -70,7 +74,9 @@ export default {
           prop: 'fieldName',
           config: { name: 'select', options: () => this.formFieldList.map(d => ({ label: d.fieldName, value: d.fieldName })) },
           width: 100,
-          edit: true
+          edit: { disabled: ({ row }) => {
+            return this.hasChildren(row)
+          } }
         },
         {
           title: '操作符',
@@ -79,13 +85,18 @@ export default {
             const { operateTypeList = [] } = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
             return operateTypeList.map(d => ({ label: d, value: d }))
           } },
-          edit: true,
+          edit: { disabled: ({ row }) => {
+            return this.hasChildren(row)
+          } },
           width: 100
         },
         {
           title: '字段值',
           prop: 'fieldValue',
           edit: {
+            disabled: ({ row }) => {
+              return this.hasChildren(row)
+            },
             render: (h, { row, prop }) => {
               const field = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
               const { fieldType, componentType, dataSourceType } = field
@@ -125,7 +136,53 @@ export default {
         }
       ],
       toolbarConfig: {
-        buttons: [{ name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }}]
+        buttons: [
+          { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }},
+          { tag: 'div', children: (h, { table }) => {
+            const getStr = data => {
+              return data.reduce((acc, cur) => {
+                const { rowId } = table
+                const rowid = cur[rowId]
+                if (this.hasChildren(cur)) {
+                  const { conditionConnector = '' } = cur
+                  const childStr = getStr(cur.children)
+                  if (rowid === table.tableData[0][rowId]) {
+                    return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
+                  } else {
+                    if (conditionConnector) {
+                      return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
+                    }
+                    return acc
+                    // console.log(rowid)
+                    // if (this.isFristRow(rowid)) {
+                    //   return childStr ? acc + `（ ${childStr} ）` : acc
+                    // } else {
+                    //   console.log(conditionConnector)
+                    //   if (conditionConnector) {
+                    //     return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
+                    //   }
+                    // }
+                  }
+                  // return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
+                } else {
+                  const { conditionConnector, fieldName, operator, fieldValue } = cur
+                  if (fieldName && operator && fieldValue) {
+                    if (this.isFristRow(rowid)) {
+                      return acc + `${fieldName} ${operator} ${fieldValue} `
+                    }
+                    if (conditionConnector) {
+                      return acc + `${conditionConnector} ${fieldName} ${operator} ${fieldValue} `
+                    }
+                    return acc
+                  } else {
+                    return acc
+                  }
+                }
+              }, '')
+            }
+            return getStr(this.table && this.table.getTableData() || [])
+          } }
+        ]
       },
       show: false,
       formFieldList: [
@@ -181,7 +238,8 @@ export default {
           },
           staticSourceList: []
         }
-      ]
+      ],
+      data: []
     }
   },
   inject: ['table'],
@@ -191,11 +249,18 @@ export default {
   },
   mounted() {
     this.table = this.$refs.table
+    this.data = [{ 'conditionConnector': '', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': 'not in', 'fieldValue': '222', 'children': [], '_rowId': 'row_100-1' }, { 'conditionConnector': '&', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': '=', 'fieldValue': '111', 'children': [], '_rowId': 'row_100-2.1' }, { 'conditionConnector': '&', 'fieldName': 'sex', 'operator': 'not in', 'fieldValue': '1', 'children': [], '_rowId': 'row_100-2.2' }], '_rowId': 'row_100-2' }], '_rowId': 'row_100' }]
+    this.table.loadTableData(this.data).then(() => {
+      this.table.treeExpandAll()
+    })
   },
   beforeDestroy() {
 
   },
   methods: {
+    dataChange({ tableData }) {
+      // console.log(tableData)
+    },
     search() {
     },
     add() {
@@ -205,14 +270,22 @@ export default {
     addChild(event, data) {
       const { rowId } = this.table
       const { row } = data
+      const { fieldName, operator, fieldValue } = row
+      const rowid = row[rowId]
+      const childRowid = `${rowid}${rowid.indexOf('-') === -1 ? '-' : '.'}${row.children.length + 1}`
       const child = {
         conditionConnector: '',
         fieldName: '',
         operator: '',
         fieldValue: '',
         children: [],
-        [rowId]: `${row[rowId]}${row[rowId].indexOf('-') === -1 ? '-' : '.'}${row.children.length + 1}`
+        [rowId]: childRowid
       }
+      if (!row.children || !row.children.length) {
+        Object.assign(row, { fieldName: '', operator: '', fieldValue: '' })
+        Object.assign(child, { conditionConnector: '', fieldName, operator, fieldValue })
+      }
+      this.table.setTreeExpand(rowid, true)
       row.children.push(child)
       this.table.updateRow(row)
     },
@@ -227,6 +300,12 @@ export default {
     },
     reset() {
       this.list = []
+    },
+    isFristRow(rowid) {
+      return Boolean(!rowid || rowid && rowid.slice(-1) === '1')
+    },
+    hasChildren(row) {
+      return row.children && row.children.length
     }
   }
 }

@@ -1,5 +1,5 @@
 import { on, off } from 'pk/utils/dom'
-import { getTreeRow } from 'pk/utils'
+
 export default {
   data() {
     return {
@@ -31,30 +31,6 @@ export default {
     }
   },
   computed: {
-    treeNum() {
-      // console.log()
-      const { tableData, rowId, treeIds, treeConfig } = this
-      const { children = 'children' } = treeConfig
-
-      let num = 0
-      const closeIds = []
-      for (const key in treeIds) {
-        const value = treeIds[key]
-        if (value) {
-          const { row, childRow } = getTreeRow(key, children, tableData, rowId)
-          if (!closeIds.find(d => key.startsWith(d))) {
-            if (childRow) {
-              num += childRow[children].length
-            } else {
-              num += row[children].length
-            }
-          }
-        } else {
-          closeIds.push(key)
-        }
-      }
-      return num
-    },
     tableClass() {
       let tClass = 'eff-table__container'
       const { overflowX, overflowY, border, stripe, heights } = this

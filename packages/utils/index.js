@@ -137,7 +137,8 @@ export const isNoValue = value => value === null || value === undefined || value
  * @param {tableData} tableData  表格数据
  * @param {rowId} rowId  行主键
  */
-export const getTreeRow = (treeid, children, tableData, rowId) => {
+export const getTreeRow = (rowid, children, tableData, rowId) => {
+  const treeid = `${rowid}`
   if (!treeid) return
   const [id, childId] = treeid.split('-')
   const row = tableData.find(d => d[rowId] === id) || null

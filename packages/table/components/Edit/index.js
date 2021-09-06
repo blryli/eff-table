@@ -55,9 +55,15 @@ export default {
         }
         const renderEdit = (render = {}) => {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
+          const params = { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }
           if (!renderOpts.name) renderOpts.name = 'input'
+          // props支持函数
+          const { props } = renderOpts
+          if (props && typeof props === 'function') {
+            renderOpts.props = props(params)
+          }
           const compConf = renderer.get(renderOpts.name)
-          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }) || ''
+          return compConf && compConf.renderEdit && compConf.renderEdit($createElement, renderOpts, params) || ''
         }
 
         if (typeof render === 'function') {
@@ -68,15 +74,20 @@ export default {
           return renderEdit(render)
         }
       }
+    },
+    hasTree() {
+      return this.table.treeNum
     }
   },
   watch: {
     component() {
       this.dialogVisible = true
     },
-    rowIndex(val) {
-      this.row = this.table.tableData[val]
-      this.table.editStore.editRow = val === null ? {} : this.row
+    rowIndex(rowIndex) {
+      if (!this.hasTree) {
+        this.row = this.table.tableData[rowIndex]
+      }
+      this.table.editStore.editRow = rowIndex === null ? {} : this.row
       this.dialogVisible = true
     },
     message() {
@@ -190,6 +201,7 @@ export default {
       if (this.scrollNum > 2) this.show = false
     },
     to() {
+      if (this.hasTree) return
       this.handleType = 'to'
       const { placement = 'right', column: { prop }} = this
 
@@ -410,7 +422,7 @@ export default {
       this.baseText = null
     },
     blurEvent() {
-      const { component, table, rowIndex, columnIndex, column, editRender, fieldChange } = this
+      const { component, table, row, rowIndex, columnIndex, column, editRender, fieldChange } = this
       const { tableData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
@@ -424,7 +436,7 @@ export default {
           this.updateStatus()
           const { close } = component
           close && close()
-          column && table.$emit('blur', { prop: column.prop, row: this.row, rowIndex, columnIndex })
+          column && table.$emit('blur', { prop: column.prop, row, rowIndex, columnIndex })
           table.$refs.popovers.validingTipClose()
           // 原生input
           if (editRender && editRender.tag === 'input') {
