@@ -19,7 +19,7 @@
         <router-link class="menu-list" to="/Validate">Validate 校验</router-link>
         <router-link class="menu-list" to="/Virtual">Virtual 虚拟滚动</router-link>
         <router-link class="menu-list" to="/Copy">Copy 复制</router-link>
-        <router-link class="menu-list" to="/DiySearch">DiySearch 高级搜索</router-link>
+        <router-link class="menu-list" to="/SeniorQuery">SeniorQuery 高级搜索</router-link>
         <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>

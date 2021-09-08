@@ -269,6 +269,7 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
+    seniorQueryConfig: { type: Object, default: () => ({}) }, // 树配置
     rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
@@ -354,7 +355,7 @@ export default {
           if (Array.isArray(item) && item.length) show = true
         } else if (key === 'columnControl') {
           if (drag && item) show = true
-        } else if (['refresh', 'diySearch', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
+        } else if (['refresh', 'seniorQuery', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
       if ($slots.toolbar || search) show = true
       return show

@@ -221,7 +221,7 @@ value: [
   columnBatchControl: false, // 是否启用列批量控制功能
   showReplace: false, // 是否启用列批量替换功能
   editHistory: false, // 是否启用历史操作控制功能
-  diySearch: false, // 是否启用高级搜索功能
+  seniorQuery: false, // 是否启用高级搜索功能
   refresh: false, // 是否启用刷新功能
   fullscreen: false, // 是否启用全屏功能
 }

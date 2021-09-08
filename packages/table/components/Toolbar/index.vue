@@ -5,7 +5,7 @@ import columnBatchControlBtn from './ColumnBatchControlBtn'
 import EditHistory from './EditHistory'
 import Clear from './Clear'
 import Refresh from './Refresh'
-import Search from './Search'
+import Query from './Query'
 import Subtotal from './Subtotal'
 import { renderer, getOn } from 'pk/utils/render'
 import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
@@ -16,7 +16,7 @@ import Help from 'pk/help'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Search, SortCtrlBtn, ToolbarShrink, Subtotal },
+  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Query, SortCtrlBtn, ToolbarShrink, Subtotal },
   inject: ['table'],
   data() {
     return {
@@ -41,7 +41,7 @@ export default {
   render(h) {
     const { table, load } = this
     const { toolbarConfig, search } = table
-    const { buttons = [], refresh, diySearch, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, subtotal } = toolbarConfig || {}
+    const { buttons = [], refresh, seniorQuery, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, subtotal } = toolbarConfig || {}
     // const { multiple } = sortConfig
     const renderHelp = (help, node) => {
       const { effect = 'dark', message, placement } = help
@@ -73,7 +73,7 @@ export default {
             showReplace && <ReplaceCtrlBtnVue /> || ''
           }
           {
-            diySearch && <Search /> || ''
+            seniorQuery && <Query /> || ''
           }
           {
             refresh && <Refresh /> || ''

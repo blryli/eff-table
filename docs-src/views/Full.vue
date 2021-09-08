@@ -25,7 +25,7 @@
             fullscreen: true,
             columnBatchControl: true,
             editHistory: true,
-            diySearch: diySearch
+            seniorQuery: seniorQuery
           }"
           :footer-action-config="{showPager: true, showBorder: true}"
           @selection-change="selectionChange"
@@ -413,7 +413,7 @@ export default {
       }],
       data: [],
       list: [],
-      diySearch: {
+      seniorQuery: {
         fields: ['field1', 'field2', 'field3'],
         op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
       },

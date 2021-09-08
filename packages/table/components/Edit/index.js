@@ -225,11 +225,27 @@ export default {
       if (placement === 'right') {
         toCellIndex = cellIndex + 1
         toColumns = filterColumns(columns.slice(toCellIndex))
-        column = toColumns[0] || false
+        if (toColumns) {
+          column = toColumns[0] || false
+        } else {
+          if (this.rowIndex < this.table.tableData.length - 1) {
+            this.rowIndex += 1
+            this.focus(this.rowIndex)
+            return
+          }
+        }
       } else {
         toCellIndex = cellIndex
         toColumns = filterColumns(columns.slice(0, toCellIndex))
-        column = toColumns[toColumns.length - 1] || false
+        if (toColumns) {
+          column = toColumns[toColumns.length - 1] || false
+        } else {
+          if (this.rowIndex > 0) {
+            this.rowIndex -= 1
+            this.focus(this.rowIndex)
+            return
+          }
+        }
       }
       const { cell } = getColumn(column.prop)
 
@@ -270,6 +286,7 @@ export default {
       const { disabled } = Object.assign({}, config, edit)
       const { row, rowIndex, columnIndex } = this
       if (disabled === undefined) return false
+      console.log({ disabled })
 
       if (typeof disabled === 'function') {
         return Boolean(disabled({ row, rowid: row[rowId], rowIndex, column, columnIndex }))

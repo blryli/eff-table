@@ -9,7 +9,7 @@
     @close="close"
   >
     <template slot="header">
-      <VRender :config="{name: 'button', props: {type: 'primary'}, children: '搜 索', on: {click: search}}" />
+      <VRender :config="{name: 'button', props: {type: 'primary', size: 'mini'}, children: '搜 索', on: {click: search}}" />
     </template>
     <eff-table
       ref="table"
@@ -54,11 +54,11 @@ import XEUtils from 'xe-utils'
 let num = 1
 const getTreeId = () => '_tree' + num++
 export default {
-  name: 'DiySearch',
+  name: 'SeniorQuery',
   components: { Card },
   data() {
     return {
-      table: null,
+      queryTable: null,
       treeConfig: { expandAll: true },
       columns: [
         {
@@ -191,77 +191,22 @@ export default {
         ]
       },
       show: false,
-      formFieldList: [
-        {
-          fieldName: 'name', // 字段名
-          fieldType: 'string', // 字段类型
-          fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
-          operateTypeList: ['=', 'not in'], // 操作类型
-          componentType: 'input', // 组件类型（input，select）
-          dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
-          apiSource: { // 接口数据（数据源类型为2时必填）
-            fullPath: '', // 接口全路径
-            requestType: '' // 请求类型
-          },
-          staticSourceList: [] // 静态数据集合
-        },
-        {
-          fieldName: 'sex',
-          fieldType: 'string',
-          fieldChildType: '',
-          operateTypeList: ['=', 'not in'],
-          componentType: 'select',
-          dataSourceType: 1,
-          apiSource: {
-            fullPath: '',
-            requestType: ''
-          },
-          staticSourceList: [{ label: '男', value: '1' }, { label: '女', value: '2' }]
-        },
-        {
-          fieldName: 'age',
-          fieldType: 'number',
-          fieldChildType: '',
-          operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
-          componentType: 'input',
-          dataSourceType: 1,
-          apiSource: {
-            fullPath: '',
-            requestType: ''
-          },
-          staticSourceList: []
-        },
-        {
-          fieldName: 'hobby',
-          fieldType: 'array',
-          fieldChildType: '',
-          operateTypeList: ['=', 'not in'],
-          componentType: 'select',
-          dataSourceType: 2,
-          apiSource: {
-            fullPath: '',
-            requestType: ''
-          },
-          staticSourceList: []
-        }
-      ],
-      data: []
+      formFieldList: []
     }
   },
   inject: ['table'],
   mounted() {
-    this.table = this.$refs.table
-    this.data = [{ 'conditionConnector': '', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': 'not in', 'fieldValue': '222', 'children': [], '_rowId': 'row_100-1' }, { 'conditionConnector': '&', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': '=', 'fieldValue': '111', 'children': [], '_rowId': 'row_100-2.1' }, { 'conditionConnector': '&', 'fieldName': 'sex', 'operator': 'not in', 'fieldValue': '1', 'children': [], '_rowId': 'row_100-2.2' }], '_rowId': 'row_100-2' }], '_rowId': 'row_100' }]
-    this.table.loadTableData([]).then(() => {
-      this.table.treeExpandAll()
-    })
+    this.queryTable = this.$refs.table
+    const { seniorQueryConfig = {}} = this.table
+    const { fieldList } = seniorQueryConfig
+    this.formFieldList = fieldList
   },
   methods: {
     search() {
-      this.table.validate(null, true).catch(res => {
-        console.log(res)
+      this.queryTable.validate(null, true).catch(res => {
+        // console.log(res)
       })
-      const { tableData, treeConfig: { children = 'children' } = {}} = this.table
+      const { tableData, treeConfig: { children = 'children' } = {}} = this.queryTable
       const updateSeniorQuery = data => {
         return data.reduce((acc, cur) => {
           const child = cur[children] || []
@@ -270,13 +215,14 @@ export default {
         }, [])
       }
       this.table.seniorQuery = updateSeniorQuery(tableData)
+      this.table.commitProxy('query')
     },
     add() {
-      const { insert, focus } = this.table
+      const { insert, focus } = this.queryTable
       insert({ children: [] }, -1).then(rowIndex => focus(rowIndex))
     },
     addChild(event, data) {
-      const { rowId } = this.table
+      const { rowId } = this.queryTable
       const { row } = data
       const { fieldName, operator, fieldValue } = row
       const rowid = row[rowId]
@@ -293,27 +239,26 @@ export default {
         Object.assign(row, { fieldName: '', operator: '', fieldValue: '' })
         Object.assign(child, { conditionConnector: '', fieldName, operator, fieldValue })
       }
-      this.table.setTreeExpand(rowid, true)
+      this.queryTable.setTreeExpand(rowid, true)
       row.children.push(child)
-      this.table.updateRow(row)
+      this.queryTable.updateRow(row)
     },
     deletedChild(event, data) {
-      this.table.removeTreeExpand(data.row)
+      this.queryTable.removeTreeExpand(data.row)
     },
     open() {
       this.show = true
-      this.table.doLayout()
+      this.queryTable.doLayout()
     },
     close() {
       this.show = false
     },
     clear() {
-      this.data = []
-      this.table.reloadData(this.data)
+      this.queryTable.reloadData([])
     },
     isFristRow(rowid) {
       if (!rowid) return false
-      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.table
+      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.queryTable
       const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children) || {}
       return Boolean(!rowid || !path || path.slice(-1)[0] === '0')
     },

@@ -1,9 +1,9 @@
 <template>
   <div class="page-home page">
-    <h2>DiySearch 自定义搜索</h2>
+    <h2>seniorQuery 自定义搜索</h2>
     <p class="hint">
       前置条件<br>
-      <span class="primary">toolbarConfig.diySearch</span> 属性有内容（请参照底下代码）
+      <span class="primary">toolbarConfig.seniorQuery</span> 属性有内容（请参照底下代码）
 
     </p>
     <div>
@@ -34,14 +34,14 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
 const htmlCode = `
-  <eff-table v-model="columns" :data="data" :toolbar-config="{diySearch}" /> 
+  <eff-table v-model="columns" :data="data" :toolbar-config="{seniorQuery}" /> 
   `
 const jsCode = `
   export default {
     data() {
       return {
         data: [],
-        diySearch: {
+        seniorQuery: {
           fields: ['field1', 'field2', 'field3'],
           op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
         },
@@ -75,7 +75,7 @@ const jsCode = `
   }
   `
 export default {
-  name: 'DiySearch',
+  name: 'SeniorQuery',
   components: {
     CodeSnippet,
     Collapse
@@ -88,7 +88,76 @@ export default {
       tableOptions: {
         border: true,
         edit: true,
-        toolbarConfig: { diySearch: true },
+        toolbarConfig: { seniorQuery: true },
+        seniorQueryConfig: {
+          fieldList: [
+            {
+              fieldName: 'name', // 字段名
+              fieldType: 'string', // 字段类型
+              fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
+              operateTypeList: ['=', 'not in'], // 操作类型
+              componentType: 'input', // 组件类型（input，select）
+              dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
+              apiSource: { // 接口数据（数据源类型为2时必填）
+                fullPath: '', // 接口全路径
+                requestType: '' // 请求类型
+              },
+              staticSourceList: [] // 静态数据集合
+            },
+            {
+              fieldName: 'sex',
+              fieldType: 'string',
+              fieldChildType: '',
+              operateTypeList: ['=', 'not in'],
+              componentType: 'select',
+              dataSourceType: 1,
+              apiSource: {
+                fullPath: '',
+                requestType: ''
+              },
+              staticSourceList: [{ label: '男', value: '1' }, { label: '女', value: '2' }]
+            },
+            {
+              fieldName: 'age',
+              fieldType: 'number',
+              fieldChildType: '',
+              operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
+              componentType: 'input',
+              dataSourceType: 1,
+              apiSource: {
+                fullPath: '',
+                requestType: ''
+              },
+              staticSourceList: []
+            },
+            {
+              fieldName: 'hobby',
+              fieldType: 'array',
+              fieldChildType: '',
+              operateTypeList: ['=', 'not in'],
+              componentType: 'select',
+              dataSourceType: 2,
+              apiSource: {
+                fullPath: '',
+                requestType: ''
+              },
+              staticSourceList: []
+            }
+          ]
+        },
+        proxyConfig: {
+          request: {
+            query: ({ page, sorts, filters, form, seniorQuery }) => {
+              console.log('query', JSON.stringify({ page, sorts, filters, form, seniorQuery }, null, 2))
+              const params = { ...form }
+              const pageNum = page.pageNum || 1
+              const pageSize = page.pageSize || 10
+              return new Promise(resolve => {
+                resolve([{}])
+              })
+            }
+          }
+        },
         columns: [
           {
             type: 'index',
@@ -117,7 +186,7 @@ export default {
           { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] }
         ]
       },
-      diySearch: {
+      seniorQuery: {
         fields: ['field1', 'field2', 'field3'],
         op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
       }

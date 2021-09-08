@@ -8,17 +8,17 @@
       <div />
       <div />
     </div>
-    <diy-search ref="search" />
+    <SeniorQuery ref="seniorQuery" />
   </div>
 </template>
 
 <script>
-import DiySearch from 'packages/search'
+import SeniorQuery from 'packages/senior-query'
 export default {
-  name: 'Search',
+  name: 'Query',
   inject: ['table'],
   components: {
-    DiySearch
+    SeniorQuery
   },
   data() {
     return {
@@ -27,7 +27,7 @@ export default {
   },
   methods: {
     click() {
-      this.$refs.search.open()
+      this.$refs.seniorQuery.open()
     }
   }
 }
