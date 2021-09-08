@@ -8,6 +8,9 @@
     :min-width="400"
     @close="close"
   >
+    <template slot="header">
+      <VRender :config="{name: 'button', props: {type: 'primary'}, children: '搜 索', on: {click: search}}" />
+    </template>
     <eff-table
       ref="table"
       :columns="columns"
@@ -16,13 +19,13 @@
       :max-height="400"
       edit
       border
-      @data-change="dataChange"
     />
   </card>
 </template>
 
 <script>
 import Card from 'pk/card'
+import XEUtils from 'xe-utils'
 
 // 返回字段集合
 // {
@@ -48,6 +51,8 @@ import Card from 'pk/card'
 //   },
 //   staticSourceList: [] // 静态数据集合
 // }
+let num = 1
+const getTreeId = () => '_tree' + num++
 export default {
   name: 'DiySearch',
   components: { Card },
@@ -67,7 +72,10 @@ export default {
           edit: { disabled: ({ row, rowid }) => {
             this.table
             return this.isFristRow(rowid)
-          } }
+          } },
+          rules: [
+            { required: ({ rowid }) => !this.isFristRow(rowid) }
+          ]
         },
         {
           title: '字段名',
@@ -76,7 +84,11 @@ export default {
           width: 100,
           edit: { disabled: ({ row }) => {
             return this.hasChildren(row)
-          } }
+          } },
+          rules: [
+            { required: true }
+          ]
+
         },
         {
           title: '操作符',
@@ -86,16 +98,19 @@ export default {
             return operateTypeList.map(d => ({ label: d, value: d }))
           } },
           edit: { disabled: ({ row }) => {
-            return this.hasChildren(row)
+            return this.hasChildren(row) || !row.fieldName
           } },
-          width: 100
+          width: 100,
+          rules: [
+            { required: true }
+          ]
         },
         {
           title: '字段值',
           prop: 'fieldValue',
           edit: {
             disabled: ({ row }) => {
-              return this.hasChildren(row)
+              return this.hasChildren(row) || !row.fieldName
             },
             render: (h, { row, prop }) => {
               const field = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
@@ -124,7 +139,10 @@ export default {
                 return { name: 'input' }
               }
             }
-          }
+          },
+          rules: [
+            { required: true }
+          ]
         },
         {
           title: '操作',
@@ -138,49 +156,37 @@ export default {
       toolbarConfig: {
         buttons: [
           { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }},
+          { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete' }, on: { click: this.clear }},
           { tag: 'div', children: (h, { table }) => {
-            const getStr = data => {
+            const getTreeGroup = data => {
               return data.reduce((acc, cur) => {
                 const { rowId } = table
                 const rowid = cur[rowId]
-                if (this.hasChildren(cur)) {
+                if (this.hasChildren(cur)) { // 有树节点
                   const { conditionConnector = '' } = cur
-                  const childStr = getStr(cur.children)
+                  const childStr = getTreeGroup(cur.children)
                   if (rowid === table.tableData[0][rowId]) {
-                    return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
-                  } else {
-                    if (conditionConnector) {
-                      return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
-                    }
-                    return acc
-                    // console.log(rowid)
-                    // if (this.isFristRow(rowid)) {
-                    //   return childStr ? acc + `（ ${childStr} ）` : acc
-                    // } else {
-                    //   console.log(conditionConnector)
-                    //   if (conditionConnector) {
-                    //     return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
-                    //   }
-                    // }
+                    return childStr ? acc + `（ ${childStr} ）` : acc
                   }
-                  // return childStr ? acc + `${conditionConnector}（ ${childStr} ）` : acc
+                  if (conditionConnector) {
+                    return childStr ? acc + `${acc ? conditionConnector : ''}（ ${childStr} ）` : acc
+                  }
                 } else {
                   const { conditionConnector, fieldName, operator, fieldValue } = cur
                   if (fieldName && operator && fieldValue) {
-                    if (this.isFristRow(rowid)) {
+                    if (this.isFristRow(rowid)) { // 首行
                       return acc + `${fieldName} ${operator} ${fieldValue} `
                     }
                     if (conditionConnector) {
-                      return acc + `${conditionConnector} ${fieldName} ${operator} ${fieldValue} `
+                      return acc + `${acc ? conditionConnector : ''} ${fieldName} ${operator} ${fieldValue} `
                     }
                     return acc
-                  } else {
-                    return acc
                   }
+                  return acc
                 }
               }, '')
             }
-            return getStr(this.table && this.table.getTableData() || [])
+            return getTreeGroup(this.table && this.table.getTableData() || [])
           } }
         ]
       },
@@ -243,25 +249,27 @@ export default {
     }
   },
   inject: ['table'],
-  computed: {
-  },
-  watch: {
-  },
   mounted() {
     this.table = this.$refs.table
     this.data = [{ 'conditionConnector': '', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': 'not in', 'fieldValue': '222', 'children': [], '_rowId': 'row_100-1' }, { 'conditionConnector': '&', 'fieldName': '', 'operator': '', 'fieldValue': '', 'children': [{ 'conditionConnector': '', 'fieldName': 'name', 'operator': '=', 'fieldValue': '111', 'children': [], '_rowId': 'row_100-2.1' }, { 'conditionConnector': '&', 'fieldName': 'sex', 'operator': 'not in', 'fieldValue': '1', 'children': [], '_rowId': 'row_100-2.2' }], '_rowId': 'row_100-2' }], '_rowId': 'row_100' }]
-    this.table.loadTableData(this.data).then(() => {
+    this.table.loadTableData([]).then(() => {
       this.table.treeExpandAll()
     })
   },
-  beforeDestroy() {
-
-  },
   methods: {
-    dataChange({ tableData }) {
-      // console.log(tableData)
-    },
     search() {
+      this.table.validate(null, true).catch(res => {
+        console.log(res)
+      })
+      const { tableData, treeConfig: { children = 'children' } = {}} = this.table
+      const updateSeniorQuery = data => {
+        return data.reduce((acc, cur) => {
+          const child = cur[children] || []
+          const { conditionConnector, fieldName, operator, fieldValue } = cur
+          return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
+        }, [])
+      }
+      this.table.seniorQuery = updateSeniorQuery(tableData)
     },
     add() {
       const { insert, focus } = this.table
@@ -272,7 +280,7 @@ export default {
       const { row } = data
       const { fieldName, operator, fieldValue } = row
       const rowid = row[rowId]
-      const childRowid = `${rowid}${rowid.indexOf('-') === -1 ? '-' : '.'}${row.children.length + 1}`
+      const childRowid = `${rowid}${getTreeId()}`
       const child = {
         conditionConnector: '',
         fieldName: '',
@@ -290,6 +298,7 @@ export default {
       this.table.updateRow(row)
     },
     deletedChild(event, data) {
+      this.table.removeTreeExpand(data.row)
     },
     open() {
       this.show = true
@@ -298,11 +307,15 @@ export default {
     close() {
       this.show = false
     },
-    reset() {
-      this.list = []
+    clear() {
+      this.data = []
+      this.table.reloadData(this.data)
     },
     isFristRow(rowid) {
-      return Boolean(!rowid || rowid && rowid.slice(-1) === '1')
+      if (!rowid) return false
+      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.table
+      const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children) || {}
+      return Boolean(!rowid || !path || path.slice(-1)[0] === '0')
     },
     hasChildren(row) {
       return row.children && row.children.length

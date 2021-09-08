@@ -130,7 +130,7 @@ export default {
           />
 
           groupNodes.push(dom)
-          if (d[children] && d[children].length && treeIds[`${row[rowId]}-${row_id}`]) {
+          if (d[children] && d[children].length && treeIds[d[rowId]]) {
             func(d[children], groupFloor + 1, row_id)
           }
         })
@@ -171,7 +171,7 @@ export default {
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 vue={this}
-                messages={formatValidators[row[rowId] + rowid]}
+                messages={formatValidators[row[rowId]]}
               />, expandNode]
 
               const groupNodes = this.getGroupNode(row, currentIndex)

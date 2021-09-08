@@ -1,3 +1,4 @@
+import XEUtils from 'node_modules/xe-utils/ctor'
 import { getType, isNoValue } from 'pk/utils'
 /**
  * 校验规则
@@ -25,7 +26,10 @@ function getMessage(rule, message) {
  * 字段校验
  */
 export function validateField(rules, params) {
-  const hasRequire = rules.find(v => v.required)
+  let hasRequire = (rules.find(d => d.required) || { required: false }).required
+  if (XEUtils.isFunction(hasRequire)) {
+    hasRequire = hasRequire(params)
+  }
 
   const valildator = rules.map(rule => {
     return new Promise((resolve, reject) => {
@@ -60,7 +64,8 @@ export function validateField(rules, params) {
           { type: 'phone', rule: () => !(/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/.test(value)), message: `请输入正确的手机号` }
         ]
         let e = false
-        const valid = validRules.find(valid => (valid.type === 'required' ? rule.required : Object.keys(rule).includes(valid.type)) || rule.type === valid.type)
+        const required = rule.required
+        const valid = validRules.find(valid => (valid.type === 'required' ? (XEUtils.isFunction(required) ? required(params) : required) : Object.keys(rule).includes(valid.type)) || rule.type === valid.type)
         // console.log('validate', JSON.stringify({ rule, valid }, null, 2))
         if (valid) {
           e = getMessage(valid.rule(), message || valid.message || '校验不通过')

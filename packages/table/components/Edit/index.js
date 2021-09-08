@@ -1,4 +1,4 @@
-import { columnIsEdit, isVNode, getTreeRow } from 'pk/utils'
+import { columnIsEdit, isVNode } from 'pk/utils'
 import { on, off } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import { isOverflow, shake } from './dom'
@@ -40,11 +40,11 @@ export default {
         const { rowIndex, table, $createElement } = this
         const { tableSourceData, treeConfig, rowId } = table
         const { children = 'children' } = treeConfig
-        const { childRow } = getTreeRow(row[rowId], children, tableSourceData, rowId)
+        const rowid = row[rowId]
+        const { item: sourceRow } = XEUtils.findTree(tableSourceData, item => item[rowId] === rowid, children) || {}
 
         const columnIndex = this.getColumnIndex(column.prop)
         const { render } = edit || {}
-        const sourceRow = childRow
 
         // debugger
 
@@ -55,7 +55,7 @@ export default {
         }
         const renderEdit = (render = {}) => {
           const renderOpts = XEUtils.merge({ name: 'input' }, config, render)
-          const params = { root: table, table, vue: this, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }
+          const params = { root: table, table, vue: this, data: row, row, rowid, sourceRow, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this }
           if (!renderOpts.name) renderOpts.name = 'input'
           // props支持函数
           const { props } = renderOpts
@@ -67,7 +67,7 @@ export default {
         }
 
         if (typeof render === 'function') {
-          const renderFunc = render($createElement, { row, sourceRow, rowIndex, column, columnIndex, prop })
+          const renderFunc = render($createElement, { row, rowid, sourceRow, rowIndex, column, columnIndex, prop })
           // VNode线上会渲染成pe对象
           return isVNode(renderFunc) ? (renderFunc || '') : renderEdit(renderFunc)
         } else {
@@ -265,13 +265,14 @@ export default {
       }
     },
     disabled(column) {
+      const { rowId } = this.table
       const { edit = {}, config = {}} = column || {}
       const { disabled } = Object.assign({}, config, edit)
-      const { row, rowid, rowIndex, columnIndex } = this
+      const { row, rowIndex, columnIndex } = this
       if (disabled === undefined) return false
 
       if (typeof disabled === 'function') {
-        return Boolean(disabled({ row, rowid, rowIndex, column, columnIndex }))
+        return Boolean(disabled({ row, rowid: row[rowId], rowIndex, column, columnIndex }))
       }
       return Boolean(disabled) || false
     },
@@ -426,7 +427,7 @@ export default {
       const { tableData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
-        if (column && column.prop && rowIndex !== null) {
+        if (column && column.prop && rowIndex !== null && tableData[rowIndex]) {
           const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: globalBaseText }
           if (data.oldData !== null && data.oldData !== data.newData) {
             this.table.$emit('table-update-data', data)

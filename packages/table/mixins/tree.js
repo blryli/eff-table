@@ -1,4 +1,5 @@
-import { getTreeRow } from 'pk/utils'
+import XEUtils from 'xe-utils'
+
 export default {
   data() {
     return {
@@ -7,25 +8,19 @@ export default {
   },
   computed: {
     treeNum() {
-      // console.log()
-      const { tableData, rowId, treeIds, treeConfig } = this
-      const { children = 'children' } = treeConfig
+      const { tableData, rowId, treeIds, treeConfig: { children = 'children' } = {}} = this
 
       let num = 0
       const closeIds = []
-      for (const key in treeIds) {
-        const value = treeIds[key]
+      for (const rowid in treeIds) {
+        const value = treeIds[rowid]
         if (value) {
-          const { row, childRow } = getTreeRow(key, children, tableData, rowId)
-          if (!closeIds.find(d => key.startsWith(d))) {
-            if (childRow) {
-              num += childRow[children].length
-            } else {
-              num += row[children].length
-            }
+          const { item: row } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
+          if (row && !closeIds.find(d => rowid.startsWith(d))) {
+            num += row[children].length
           }
         } else {
-          closeIds.push(key)
+          closeIds.push(rowid)
         }
       }
       return num
@@ -55,6 +50,36 @@ export default {
     },
     clearTreeExpand() {
       this.setTreeExpandAll(this.tableData || [], false)
+    },
+    removeTreeExpand(row) {
+      const { rowId, tableData, treeConfig } = this
+      const { children = 'children' } = treeConfig
+      const rowid = row[rowId]
+      const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
+      const len = path.length
+      const resetFirstRow = (firstRow) => {
+        if (firstRow && firstRow.conditionConnector) {
+          Object.assign(firstRow, { conditionConnector: '' })
+        }
+        this.tableData = Object.freeze(this.tableData)
+      }
+      if (len === 1) {
+        delete this.treeIds[rowid]
+        this.remove(row).then(() => {
+          resetFirstRow(this.tableData[0])
+        })
+      } else {
+        path.reduce((acc, cur, idx) => {
+          if (idx === path.length - 1) {
+            delete this.treeIds[rowid]
+            acc.splice(cur, 1)
+            resetFirstRow(acc[0])
+
+            return acc
+          }
+          return acc[cur]
+        }, tableData)
+      }
     }
   }
 }

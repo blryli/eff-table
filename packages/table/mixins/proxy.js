@@ -57,7 +57,7 @@ export default {
       })
     },
     getList(query) {
-      const { pager: page, sorts, filters, searchForm } = this
+      const { pager: page, sorts, filters, searchForm, seniorQuery } = this
       // 配置模式
       if (typeof query === 'object') {
         const formData = Object.assign({}, { form: searchForm })
@@ -74,8 +74,8 @@ export default {
         const { getMethos, url } = query
         return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
-        // 函数模式
-        return query({ page, sorts, filters, form: searchForm })
+        // 函数模式 seniorQuery
+        return query({ page, sorts, filters, form: searchForm, seniorQuery })
       }
     },
     /**

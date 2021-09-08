@@ -165,7 +165,7 @@ export default {
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
         const sourceRow = table.tableSourceData[rowIndex]
-        const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
+        const params = { root: table, table, vue, data: row, row, rowid: _rowId, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {
           return format(params)

@@ -147,8 +147,8 @@
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
-    <!-- <p>tableData -  {{ tableData }}</p>
-    <p>treeIds -  {{ treeIds }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>seniorQuery -  {{ seniorQuery }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -304,7 +304,8 @@ export default {
       replaceControl: false,
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
-      loadingField: false
+      loadingField: false,
+      seniorQuery: [] // 高级搜索
     }
   },
   computed: {
