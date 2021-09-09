@@ -63,7 +63,7 @@ class Render {
   render() {
     const { h, opts, params, children } = this
     const { name, tag, defaultSlot, disabled, help } = opts
-    const { vue = {}, renderHelp } = params
+    const { vue = {}} = params
     const { renderMap = {}} = vue && vue.$EFF || {}
     // 处理禁用
     if (disabled) {
@@ -71,10 +71,8 @@ class Render {
     }
     const render = h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
     // 处理 help
-    if (help && renderHelp) {
-      return renderHelp(help, render)
-    }
-    return render
+    const helpRender = h('Help', { props: help }, [render])
+    return help ? helpRender : render
   }
 }
 

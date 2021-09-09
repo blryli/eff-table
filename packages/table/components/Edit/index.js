@@ -203,12 +203,12 @@ export default {
     to() {
       if (this.hasTree) return
       this.handleType = 'to'
-      const { placement = 'right', column: { prop }} = this
+      const { placement = 'right' } = this
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX()
       } else {
-        this.toY(prop)
+        this.toY()
       }
     },
     canFocus(column, cell) {
@@ -225,27 +225,12 @@ export default {
       if (placement === 'right') {
         toCellIndex = cellIndex + 1
         toColumns = filterColumns(columns.slice(toCellIndex))
-        if (toColumns) {
-          column = toColumns[0] || false
-        } else {
-          if (this.rowIndex < this.table.tableData.length - 1) {
-            this.rowIndex += 1
-            this.focus(this.rowIndex)
-            return
-          }
-        }
+        column = toColumns[0] || false
       } else {
         toCellIndex = cellIndex
         toColumns = filterColumns(columns.slice(0, toCellIndex))
-        if (toColumns) {
-          column = toColumns[toColumns.length - 1] || false
-        } else {
-          if (this.rowIndex > 0) {
-            this.rowIndex -= 1
-            this.focus(this.rowIndex)
-            return
-          }
-        }
+        console.log({ toColumns })
+        column = toColumns[toColumns.length - 1] || false
       }
       const { cell } = getColumn(column.prop)
 
@@ -270,14 +255,14 @@ export default {
       }
       return 1
     },
-    toY(prop) {
+    toY() {
       const { table, placement, rowIndex, $el } = this
       if (['right', 'bottom'].includes(placement)) {
         const skipNum = this.getSkipPendingNum(rowIndex + 1, rowIndex + 10)
-        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
+        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum) : shake($el, 'y')
       } else {
         const skipNum = this.getSkipPendingNum(0, rowIndex)
-        skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
+        skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum) : shake($el, 'y')
       }
     },
     disabled(column) {
@@ -285,8 +270,8 @@ export default {
       const { edit = {}, config = {}} = column || {}
       const { disabled } = Object.assign({}, config, edit)
       const { row, rowIndex, columnIndex } = this
-      if (disabled === undefined) return false
-      console.log({ disabled })
+      if (!row || disabled === undefined) return false
+      // console.log({ disabled })
 
       if (typeof disabled === 'function') {
         return Boolean(disabled({ row, rowid: row[rowId], rowIndex, column, columnIndex }))
@@ -470,7 +455,7 @@ export default {
       }
       return this.$nextTick()
     },
-    focus(rowIndex, prop = (this.table.visibleColumns.find(d => d.prop && d.edit) || {}).prop) {
+    focus(rowIndex, prop = (this.table.visibleColumns.find(d => this.canFocus(d)) || {}).prop) {
       if (!prop) return
       this.blurEvent().then(() => {
         const { table, getColumn, editCell, fixOverflowX } = this

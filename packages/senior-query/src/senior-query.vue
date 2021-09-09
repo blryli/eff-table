@@ -3,7 +3,7 @@
     :show="show"
     title="高级搜索"
     :min-height="300"
-    :height="600"
+    :height="500"
     :width="800"
     :min-width="400"
     @close="close"
@@ -19,6 +19,7 @@
       :max-height="400"
       edit
       border
+      @data-change="dataChange"
     />
   </card>
 </template>
@@ -86,7 +87,7 @@ export default {
             return this.hasChildren(row)
           } },
           rules: [
-            { required: true }
+            { required: ({ row }) => !this.hasChildren(row) }
           ]
 
         },
@@ -102,7 +103,7 @@ export default {
           } },
           width: 100,
           rules: [
-            { required: true }
+            { required: ({ row }) => !this.hasChildren(row) }
           ]
         },
         {
@@ -114,34 +115,34 @@ export default {
             },
             render: (h, { row, prop }) => {
               const field = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
-              const { fieldType, componentType, dataSourceType } = field
+              const { fieldType, componentType, dataSourceType, apiSource } = field
               // 下拉框
               if (componentType === 'select') {
-                if (dataSourceType === 2) { // 动态数据源
-                  // const { fullPath, requestType } = apiSource
-                  const api = new Promise(resolve => {
-                    setTimeout(() => {
-                      resolve([{ label: '游泳', value: '游泳' }, { label: 'K歌', value: 'K歌' }])
-                    }, 1000)
-                  })
-                  api.then(res => {
-                    field.staticSourceList = res
-                  })
-                }
                 const props = {}
+                const on = {}
+                if (dataSourceType === 2) { // 动态数据源
+                  const { fullPath, requestType } = apiSource
+                  // 远程搜索
+                  Object.assign(props, {
+                    filterable: true,
+                    remote: true,
+                    'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType })
+                  })
+                  // 初始化options
+                  Object.assign(on, { focus: () => this.remoteMethod({ query: '', field, fullPath, requestType }) })
+                }
                 // 如果是数组
                 if (fieldType === 'array') {
-                  props.multiple = true
-                  props['collapse-tags'] = true
+                  Object.assign(props, { multiple: true, 'collapse-tags': true })
                 }
-                return { name: 'select', options: () => field.staticSourceList, props }
+                return { name: 'select', options: () => field.staticSourceList, props, on }
               } else {
                 return { name: 'input' }
               }
             }
           },
           rules: [
-            { required: true }
+            { required: ({ row }) => !this.hasChildren(row) }
           ]
         },
         {
@@ -157,41 +158,12 @@ export default {
         buttons: [
           { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }},
           { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete' }, on: { click: this.clear }},
-          { tag: 'div', children: (h, { table }) => {
-            const getTreeGroup = data => {
-              return data.reduce((acc, cur) => {
-                const { rowId } = table
-                const rowid = cur[rowId]
-                if (this.hasChildren(cur)) { // 有树节点
-                  const { conditionConnector = '' } = cur
-                  const childStr = getTreeGroup(cur.children)
-                  if (rowid === table.tableData[0][rowId]) {
-                    return childStr ? acc + `（ ${childStr} ）` : acc
-                  }
-                  if (conditionConnector) {
-                    return childStr ? acc + `${acc ? conditionConnector : ''}（ ${childStr} ）` : acc
-                  }
-                } else {
-                  const { conditionConnector, fieldName, operator, fieldValue } = cur
-                  if (fieldName && operator && fieldValue) {
-                    if (this.isFristRow(rowid)) { // 首行
-                      return acc + `${fieldName} ${operator} ${fieldValue} `
-                    }
-                    if (conditionConnector) {
-                      return acc + `${acc ? conditionConnector : ''} ${fieldName} ${operator} ${fieldValue} `
-                    }
-                    return acc
-                  }
-                  return acc
-                }
-              }, '')
-            }
-            return getTreeGroup(this.table && this.table.getTableData() || [])
-          } }
+          { name: 'button', props: { icon: 'el-icon-view' }, help: { effect: 'dark', message: () => this.treeGroup }, children: '预览' }
         ]
       },
       show: false,
-      formFieldList: []
+      formFieldList: [],
+      treeGroup: ''
     }
   },
   inject: ['table'],
@@ -202,20 +174,34 @@ export default {
     this.formFieldList = fieldList
   },
   methods: {
-    search() {
-      this.queryTable.validate(null, true).catch(res => {
-        // console.log(res)
+    dataChange({ tableData }) {
+      this.treeGroup = this.getTreeGroup(tableData)
+    },
+    remoteMethod({ query, field, fullPath, requestType }) {
+      const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? '/' + query : ''}`
+      const params = requestType.toUpperCase() === 'POST' ? query : null
+      this.$EFF.request[requestType.toLowerCase()](path, params).then(res => {
+        field.staticSourceList = res
+      }).catch(res => {
+        console.log(res)
       })
-      const { tableData, treeConfig: { children = 'children' } = {}} = this.queryTable
-      const updateSeniorQuery = data => {
-        return data.reduce((acc, cur) => {
-          const child = cur[children] || []
-          const { conditionConnector, fieldName, operator, fieldValue } = cur
-          return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
-        }, [])
-      }
-      this.table.seniorQuery = updateSeniorQuery(tableData)
-      this.table.commitProxy('query')
+    },
+    search() {
+      this.queryTable.validate(null, true).then(res => {
+        const { tableData, treeConfig: { children = 'children' } = {}} = this.queryTable
+        const updateSeniorQuery = data => {
+          return data.reduce((acc, cur) => {
+            const child = cur[children] || []
+            const { conditionConnector, fieldName, operator, fieldValue } = cur
+            return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
+          }, [])
+        }
+        this.table.seniorQuery = updateSeniorQuery(tableData)
+        this.close()
+        this.table.commitProxy('query')
+      }).catch(res => {
+        console.log(res)
+      })
     },
     add() {
       const { insert, focus } = this.queryTable
@@ -264,6 +250,35 @@ export default {
     },
     hasChildren(row) {
       return row.children && row.children.length
+    },
+    getTreeGroup(data) {
+      const { queryTable } = this
+      return data.reduce((acc, cur) => {
+        const { rowId } = queryTable
+        const rowid = cur[rowId]
+        if (this.hasChildren(cur)) { // 有树节点
+          const { conditionConnector = '' } = cur
+          const childStr = this.getTreeGroup(cur.children)
+          if (rowid === queryTable.tableData[0][rowId]) {
+            return childStr ? acc + `（ ${childStr} ）` : acc
+          }
+          if (conditionConnector) {
+            return childStr ? acc + `${acc ? conditionConnector : ''}（ ${childStr} ）` : acc
+          }
+        } else {
+          const { conditionConnector, fieldName, operator, fieldValue } = cur
+          if (fieldName && operator && fieldValue) {
+            if (this.isFristRow(rowid)) { // 首行
+              return acc + `${fieldName} ${operator} ${fieldValue} `
+            }
+            if (conditionConnector) {
+              return acc + `${acc ? conditionConnector : ''} ${fieldName} ${operator} ${fieldValue} `
+            }
+            return acc
+          }
+          return acc
+        }
+      }, '')
     }
   }
 }

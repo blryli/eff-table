@@ -1,7 +1,6 @@
 import VCheckbox from 'pk/checkbox'
 import { columnIsEdit } from 'pk/utils'
 import { getTextWidth } from 'pk/utils/dom'
-import Help from 'pk/help'
 import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
 
@@ -106,7 +105,7 @@ export default {
 
     const renderHelp = (title, icon) => {
       const { message } = title || {}
-      return message ? h(Help, {
+      return message ? h('help', {
         class: 'eff-cell--title-help',
         props: { effect: 'dark', message }
       }, [h(Icon, { props: { icon }})]) : ''

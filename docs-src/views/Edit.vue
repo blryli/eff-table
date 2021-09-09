@@ -343,7 +343,7 @@ export default {
             show: true,
             prop: 'sex',
             title: '性别',
-            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+            config: { name: 'select', help: { message: '1111' }, options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
             edit: true
           },
           {

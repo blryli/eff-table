@@ -40,7 +40,7 @@ export default {
       })
     },
     validate(rows, all) {
-      const { tableData, columns, editStore } = this
+      const { table, tableData, columns, editStore, treeConfig: { children = 'children' } = {}} = this
       const { insertList, updateList, pendingList } = editStore
       let validData
       if (rows === true) {
@@ -50,9 +50,15 @@ export default {
       } else {
         validData = all ? tableData : insertList.concat(updateList)
       }
-      validData = validData.filter(d => !pendingList.some(p => p === d))
+      // 支持表格树的校验
+      const getChilds = rows => {
+        return rows.reduce((acc, row) => {
+          return !pendingList.some(p => p === row) ? acc.concat([row, ...getChilds(row[children] || [])]) : acc
+        }, [])
+      }
+      validData = getChilds(validData)
 
-      return validate(validData, columns, this.validateField)
+      return validate(validData, columns, this.validateField, table)
     },
     clearValidate(props) {
       const clear = prop => {

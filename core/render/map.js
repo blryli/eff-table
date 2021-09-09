@@ -24,6 +24,7 @@ const map = {
 
   // 内置组件
   'popup': 'popup',
+  'help': 'help',
   'layout': 'layout',
   'panel': 'panel',
   'form': 'v-form',

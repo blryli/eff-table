@@ -34,42 +34,113 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
 const htmlCode = `
-  <eff-table v-model="columns" :data="data" :toolbar-config="{seniorQuery}" /> 
+  <eff-table v-bind="tableOptions" />
   `
 const jsCode = `
   export default {
     data() {
       return {
-        data: [],
-        seniorQuery: {
-          fields: ['field1', 'field2', 'field3'],
-          op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
-        },
-        columns: [
-          {
-            show: true,
-            type: 'index',
-            title: '序号',
-            width: 80,
-            fixed: 'left'
+        tableOptions: {
+          border: true,
+          edit: true,
+          toolbarConfig: { seniorQuery: true },
+          seniorQueryConfig: {
+            fieldList: [
+              {
+                fieldName: 'name', // 字段名
+                fieldType: 'string', // 字段类型
+                fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
+                operateTypeList: ['=', 'not in'], // 操作类型
+                componentType: 'input', // 组件类型（input，select）
+                dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
+                apiSource: { // 接口数据（数据源类型为2时必填）
+                  fullPath: '', // 接口全路径
+                  requestType: '' // 请求类型
+                },
+                staticSourceList: [] // 静态数据集合
+              },
+              {
+                fieldName: 'sex',
+                fieldType: 'string',
+                fieldChildType: '',
+                operateTypeList: ['=', 'not in'],
+                componentType: 'select',
+                dataSourceType: 2,
+                apiSource: {
+                  fullPath: '/path',
+                  requestType: 'get'
+                },
+                staticSourceList: []
+              },
+              {
+                fieldName: 'age',
+                fieldType: 'number',
+                fieldChildType: '',
+                operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
+                componentType: 'input',
+                dataSourceType: 1,
+                apiSource: {
+                  fullPath: '',
+                  requestType: ''
+                },
+                staticSourceList: []
+              },
+              {
+                fieldName: 'hobby',
+                fieldType: 'array',
+                fieldChildType: '',
+                operateTypeList: ['=', 'not in'],
+                componentType: 'select',
+                dataSourceType: 2,
+                apiSource: {
+                  fullPath: '/path',
+                  requestType: 'get'
+                },
+                staticSourceList: []
+              }
+            ]
           },
-          {
-            show: true,
-            prop: 'name',
-            title: '名字'
+          proxyConfig: {
+            request: {
+              query: ({ page, sorts, filters, form, seniorQuery }) => {
+                // console.log('query', JSON.stringify({ page, sorts, filters, form, seniorQuery }, null, 2))
+                return new Promise(resolve => {
+                  setTimeout(() => {
+                    resolve([
+                      { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
+                      { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] },
+                      { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
+                      { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] }
+                    ])
+                  }, 500)
+                })
+              }
+            }
           },
-          {
-            show: true,
-            prop: 'sex',
-            title: '性别'
-          },
-          {
-            show: true,
-            prop: 'phone',
-            title: '手机',
-            width: 150
-          }
-        ]
+          columns: [
+            {
+              type: 'index',
+              width: 80
+            },
+            {
+              prop: 'name',
+              title: '名字'
+            },
+            {
+              prop: 'sex',
+              title: '性别'
+            },
+            {
+              prop: 'age',
+              title: '年龄'
+            },
+            {
+              prop: 'hobby',
+              title: '爱好',
+              cellRender: (h) => ({ name: 'tag', options: ({ row, prop }) => row[prop].map(d => ({ label: d })) })
+            }
+          ]
+        }
       }
     }
   }
@@ -110,12 +181,12 @@ export default {
               fieldChildType: '',
               operateTypeList: ['=', 'not in'],
               componentType: 'select',
-              dataSourceType: 1,
+              dataSourceType: 2,
               apiSource: {
-                fullPath: '',
-                requestType: ''
+                fullPath: '/path',
+                requestType: 'get'
               },
-              staticSourceList: [{ label: '男', value: '1' }, { label: '女', value: '2' }]
+              staticSourceList: []
             },
             {
               fieldName: 'age',
@@ -138,8 +209,8 @@ export default {
               componentType: 'select',
               dataSourceType: 2,
               apiSource: {
-                fullPath: '',
-                requestType: ''
+                fullPath: '/path',
+                requestType: 'get'
               },
               staticSourceList: []
             }
@@ -148,12 +219,16 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form, seniorQuery }) => {
-              console.log('query', JSON.stringify({ page, sorts, filters, form, seniorQuery }, null, 2))
-              const params = { ...form }
-              const pageNum = page.pageNum || 1
-              const pageSize = page.pageSize || 10
+              // console.log('query', JSON.stringify({ page, sorts, filters, form, seniorQuery }, null, 2))
               return new Promise(resolve => {
-                resolve([{}])
+                setTimeout(() => {
+                  resolve([
+                    { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
+                    { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] },
+                    { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
+                    { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] }
+                  ])
+                }, 500)
               })
             }
           }
@@ -180,39 +255,9 @@ export default {
             title: '爱好',
             cellRender: (h) => ({ name: 'tag', options: ({ row, prop }) => row[prop].map(d => ({ label: d })) })
           }
-        ],
-        data: [
-          { name: '张三', sex: '男', age: 18, hobby: ['游泳', 'K歌', '女'] },
-          { name: '李四', sex: '女', age: 18, hobby: ['游泳', 'K歌', '男'] }
         ]
-      },
-      seniorQuery: {
-        fields: ['field1', 'field2', 'field3'],
-        op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
       }
     }
   }
 }
 </script>
-
-<style lang="scss">
-.eff-table .cell .el-radio__label{
-  display: none;
-}
-.table-toobar__left{
-  button{
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    cursor: pointer;
-    &:hover, &:focus{
-      border-color: #ccc;
-      background-color: #f5f5f5;
-    }
-    &:active{
-      border-color: #aaa;
-      background-color: #f5f5f5;
-    }
-  }
-}
-</style>
