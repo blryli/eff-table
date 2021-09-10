@@ -3,100 +3,73 @@
     <card
       v-if="columnBatchControl"
       :show="show"
-      title="列编辑"
-      :init-style="cardStyle"
+      title="列批量控制"
       :min-height="300"
       :height="300"
       :width="800"
       :min-width="400"
       @close="close"
       @save="save"
-      @resetColumns="resetColumns"
     >
       <template slot="header">
         <div>
-          <el-button type="default" size="mini" @click="resetColumns">还原</el-button>
-          <el-button type="success" size="mini" @click="save">保存</el-button>
+          <el-button size="mini" @click="resetColumns">还原</el-button>
+          <el-button size="mini" @click="save">保存</el-button>
         </div>
       </template>
-      <div class="main">
-        <div class="left" :style="leftStyle">
-          左固定
-          <div class="list area-left" :data-key="leftList.length - 1">
+      <div class="eff-column__batch-control">
+        <div class="eff-column__batch-control--left" :style="leftStyle">
+          <div class="eff-column__batch-control--title">
+            <span>左固定列</span> <small>({{ leftList.length }})</small>
+          </div>
+          <div class="eff-column__batch-control--list area-left" :data-key="leftList.length - 1">
             <template v-for="(d, i) in leftList">
               <div
                 :key="i"
                 :data-key="i"
-                class="item"
+                class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
                 {{ d.title || d.type }}
               </div>
-              <div
-                :key="'-'+i"
-                :data-key="i"
-                class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'left' ? 'active': ''"
-              />
             </template>
-            <div
-              v-if="!leftList.length"
-              :data-key="-1"
-              class="blank"
-              :class="willDragInIndex == -1 && willDragInArea == 'left' ? 'active': ''"
-            />
           </div>
         </div>
-        <div class="center" :style="centerStyle">
-          <div>列</div>
-          <div class="list area-center" :data-key="centerList.length - 1">
+        <div class="eff-column__batch-control--center" :style="centerStyle">
+          <div class="eff-column__batch-control--title">
+            <span>基础列</span> <small>({{ centerList.length }})</small>
+          </div>
+          <div class="eff-column__batch-control--list area-center" :data-key="centerList.length - 1">
             <template v-for="(d, i) in centerList">
               <div
                 :key="i"
                 :data-key="i"
-                class="item"
+                class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
                 {{ d.title }}
               </div>
-              <div
-                v-if="!rightList.length"
-                :key="'-'+i"
-                :data-key="i"
-                class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'center' ? 'active': ''"
-              />
             </template>
           </div>
         </div>
-        <div class="right" :style="rightStyle">
-          右固定
-          <div class="list area-right" :data-key="rightList.length - 1">
+        <div class="eff-column__batch-control--right" :style="rightStyle">
+          <div class="eff-column__batch-control--title">
+            <span>右固定列</span> <small>({{ rightList.length }})</small>
+          </div>
+          <div class="eff-column__batch-control--list area-right" :data-key="rightList.length - 1">
             <template v-for="(d, i) in rightList">
               <div
                 :key="i"
                 :data-key="i"
-                class="item"
+                class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
                 {{ d.title }}
               </div>
-              <div
-                :key="'-'+i"
-                :data-key="i"
-                class="blank"
-                :class="willDragInIndex == i && willDragInArea == 'right' ? 'active': ''"
-              />
             </template>
-            <div
-              v-if="!rightList.length"
-              :data-key="-1"
-              class="blank"
-              :class="willDragInIndex == -1 && willDragInArea == 'right' ? 'active': ''"
-            />
           </div>
         </div>
       </div>
@@ -123,9 +96,6 @@ export default {
     return {
       columns: [],
       show: false,
-      cardStyle: {},
-      willDragInIndex: -2,
-      willDragInArea: 'left',
       leftList: [],
       rightList: [],
       centerList: [],
@@ -166,11 +136,12 @@ export default {
     this.cradsSortable = null
   },
   methods: {
+    toggleCardShow(e) {
+      this.show = !this.show
+    },
     initSortable() {
       this.$nextTick(() => {
         const {
-          handleDragend,
-          handleDragenter,
           handleEnd,
           columnBatchControl,
           $el: cardEl
@@ -182,16 +153,16 @@ export default {
               this.cradsSortable = new Sortable({
                 el: cardEl.querySelector(className),
                 group: id,
-                dragend: handleDragend,
-                dragenter: handleDragenter,
+                dragClass: 'drag',
+                chosenClass: 'is--draging',
                 onEnd: handleEnd
               })
             }, 500)
           }
 
-          calback('.left .list')
-          calback('.center .list')
-          calback('.right .list')
+          calback('.eff-column__batch-control--left .eff-column__batch-control--list')
+          calback('.eff-column__batch-control--center .eff-column__batch-control--list')
+          calback('.eff-column__batch-control--right .eff-column__batch-control--list')
         }
       })
     },
@@ -230,65 +201,57 @@ export default {
     clickShow(item) {
       item.show = !item.show
     },
-    clickFixed(item, type) {
-      if (item.fixed && item.fixed === type) {
-        delete item.fixed
-      } else {
-        item.fixed = type
-      }
-      this.$forceUpdate()
-    },
-    toggleCardShow(e) {
-      this.show = !this.show
-    },
     close() {
       this.show = false
       this.$emit('cardClose')
     },
-    reset() {},
-    confirm() {},
-    handleEnd(e) {
-      const fromArea = e.fromEl.parentElement.className.replace(
-        'list area-',
-        ''
-      )
-      const fromIndex = e.fromEl.dataset.key
-
-      const from = this[fromArea + 'List'].splice(fromIndex, 1)[0]
-      this[this.willDragInArea + 'List'].splice(
-        parseInt(this.willDragInIndex) + 1,
-        0,
-        from
-      )
-
-      this.willDragInArea = ''
-      this.willDragInIndex = -2
-    },
-    handleDragend(e) {},
-    handleDragenter(e) {
-      this.willDragInArea = e.to.className.replace('list area-', '')
-      this.willDragInIndex = e.toEl.dataset.key
+    handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
+      console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.main {
+.eff-column__batch-control {
   display: flex;
   width: 100%;
   padding: 0;
   height: 100%;
-}
-.list {
-  width: 100%;
-  // height: 100%;
-  display: flex;
-  margin-top: 10px;
-  height: calc(90% - 100px);
-  flex-wrap: wrap;
-  align-content: flex-start;
-  justify-content: center;
-  .item {
+  &--left {
+    border-right: 1px solid #ededed;
+    height: 97%;
+    width: 20%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+  &--center {
+    flex: 1;
+    height: 97%;
+    padding-top: 25px;
+    padding: 0 10px;
+  }
+  &--right {
+    display: flex;
+    flex-direction: column;
+
+    border-left: 1px solid #ededed;
+    height: 97%;
+    // height: 100%;
+    text-align: center;
+    width: 20%;
+  }
+  &--list {
+    width: 100%;
+    // height: 100%;
+    display: flex;
+    margin-top: 10px;
+    height: calc(90% - 100px);
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: center;
+  }
+  &--item {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,54 +261,28 @@ export default {
     padding: 5px 10px;
     color: #aaa;
     border: 1px solid #ddd;
-    .act {
-      margin-right: 10px;
-      font-size: 16px;
-      opacity: .4;
-    }
-  }
-  .active {
-    color: #333;
-    &.act{
+    margin-right: 10px;
+    cursor: move;
+    margin-right: 10px;
+    font-size: 12px;
+    opacity: .6;
+    &.active {
+      color: #333;
       opacity: 1;
       border-color: #ccc;
     }
+    &.is--draging{
+      opacity: 1;
+      border-color: #c7daf1;
+      background-color: #c7daf1;
+    }
   }
-}
-
-.left {
-  border-right: 1px solid #ededed;
-  height: 97%;
-  width: 20%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-}
-.right {
-  display: flex;
-  flex-direction: column;
-
-  border-left: 1px solid #ededed;
-  height: 97%;
-  // height: 100%;
-  text-align: center;
-  width: 20%;
-}
-.center {
-  flex: 1;
-  height: 97%;
-  padding-top: 25px;
-  padding: 0 10px;
-}
-.blank {
-  border: unset;
-  width: 7px;
-  height: 30px;
-  margin-left: 5px;
-  border-left: 2px solid transparent;
-}
-
-.blank.active {
-  border-color: #ddd;
+  &--title{
+    text-align: center;
+    span{
+      font-weight: bold;
+      color: #888;
+    }
+  }
 }
 </style>

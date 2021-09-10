@@ -1,5 +1,6 @@
 <template>
   <div
+    :key="tableId"
     class="eff-table"
     :class="{
       'is--screenfull': isScreenfull,
@@ -148,7 +149,7 @@
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>tableData -  {{ tableData }}</p> -->
-    <!-- <p>seniorQuery -  {{ seniorQuery }}</p> -->
+    <p>checkeds -  {{ checkeds }}</p>
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -269,7 +270,8 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
-    seniorQueryConfig: { type: Object, default: () => ({}) }, // 树配置
+    columnConfig: { type: Object, default: () => ({}) }, // 列配置
+    seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
     rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
@@ -311,9 +313,11 @@ export default {
   },
   computed: {
     bodyColumns() {
+      const { width, sort } = this.tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur
+          if (!cur.width && width) cur.width = width
           if (children.length) {
             children.forEach(d => cur.fixed && (d.fixed = cur.fixed))
             return acc.concat(plat(children))
@@ -321,9 +325,11 @@ export default {
           return acc.concat(cur)
         }, [])
       }
-      const arr = plat(this.visibleColumns)
-
-      return arr
+      const column = this.visibleColumns
+      // if(sort.length) {
+      //   column = column.sort((a, b) => )
+      // }
+      return plat(column)
     },
     style() {
       const style = {}
@@ -444,7 +450,8 @@ export default {
     Object.assign(this, {
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
-      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig)
+      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
+      tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig)
     })
     if ((this.data || []).length) {
       this.loadTableData(this.data)

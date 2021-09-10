@@ -36,9 +36,9 @@ export default {
         return acc
       }, this.tableColumns)
     },
-    sortChange(column) {
+    sortChange(column, subtotal) {
       const { sortConfig: { multiple } = {}, getSorts } = this
-      if (multiple) {
+      if (multiple || subtotal) {
         this.sorts = getSorts(this.tableColumns)
       } else {
         // 如果sorts有值并且不是当前column，则置空order
@@ -52,7 +52,7 @@ export default {
         }
         this.sorts = column.order ? [column] : []
       }
-      this.toSort()
+      return this.toSort()
     },
     resetSort() {
       const { tableData, rowId } = this
@@ -79,7 +79,7 @@ export default {
       }
       this.tableData = Object.freeze(tableData)
       this.$emit('sort-change', sorts.length === 1 ? sorts[0] : sorts, tableData)
-      return tableData
+      return this.$nextTick()
     }
   }
 }

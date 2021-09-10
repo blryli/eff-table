@@ -61,4 +61,7 @@ export default {
   display: flex;
   align-items: center;
 }
+.eff-card__header{
+  background-color: #f6f7f8;
+}
 </style>

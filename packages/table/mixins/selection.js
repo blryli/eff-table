@@ -1,5 +1,4 @@
 import XEUtils from 'xe-utils'
-let checkedsSet = new Set()
 
 export default {
   data() {
@@ -9,6 +8,9 @@ export default {
       indeterminate: false,
       isCopyFunc: false
     }
+  },
+  created() {
+    Object.assign(this, { checkedsSet: new Set() })
   },
   computed: {
     checkeds() {
@@ -49,11 +51,11 @@ export default {
       return XEUtils.clone(this.checkeds, true)
     },
     clearSelection() {
-      checkedsSet.clear()
+      this.checkedsSet.clear()
       this.selectionChange()
     },
     toggleRowSelection(row, selected) {
-      const { tableDataMap, rowId, toggleSelection } = this
+      const { tableDataMap, rowId, toggleSelection, checkedsSet } = this
       const id = row[rowId]
       if (tableDataMap.has(id)) {
         toggleSelection(row, checkedsSet.has(id), selected)
@@ -69,7 +71,7 @@ export default {
       const { checkeds, tableDataMap, rowId, toggleSelection, selectionChange } = this
       const id = row[rowId]
       if (isRadio) {
-        checkedsSet.clear()
+        this.checkedsSet.clear()
       }
       toggleSelection(row, !selected)
       this.$emit('select', checkeds, tableDataMap.get(id))
@@ -79,28 +81,28 @@ export default {
       const { tableDataMap, selectionChange } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? checkedsSet = new Set([...tableDataMap.keys()]) : checkedsSet.clear()
+      selected ? this.checkedsSet = new Set([...tableDataMap.keys()]) : this.checkedsSet.clear()
       selectionChange()
       this.$emit('select-all', this.checkeds)
     },
     toggleSelection(row, has, selected) {
       const id = row[this.rowId]
-      selected ? checkedsSet.add(id) : has ? checkedsSet.delete(id) : checkedsSet.add(id)
+      selected ? this.checkedsSet.add(id) : has ? this.checkedsSet.delete(id) : this.checkedsSet.add(id)
 
       this.selectionChange()
     },
     setCurrentRow(row) {
       const { tableDataMap, rowId, selectionChange } = this
       const id = row[rowId]
-      checkedsSet.clear()
+      this.checkedsSet.clear()
       if (tableDataMap.has(id)) {
-        checkedsSet.add(id)
+        this.checkedsSet.add(id)
       }
 
       selectionChange()
     },
     selectionChange() {
-      this.selecteds = [...checkedsSet]
+      this.selecteds = [...this.checkedsSet]
       this.$forceUpdate()
     },
     isChecked(row) {

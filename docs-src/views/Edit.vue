@@ -286,6 +286,7 @@ export default {
       tableOptions: {
         edit: true,
         border: true,
+        columnConfig: { width: 100, sort: ['id', 'name', 'phone', 'sex'] },
         columns: [
           {
             show: true,
