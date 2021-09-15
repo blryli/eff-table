@@ -1,7 +1,6 @@
 <template>
   <div class="drag-table">
     <card
-      v-if="columnBatchControl"
       :show="show"
       title="列批量控制"
       :min-height="300"
@@ -9,7 +8,6 @@
       :width="800"
       :min-width="400"
       @close="close"
-      @save="save"
     >
       <template slot="header">
         <div>
@@ -20,13 +18,13 @@
       <div class="eff-column__batch-control">
         <div class="eff-column__batch-control--left" :style="leftStyle">
           <div class="eff-column__batch-control--title">
-            <span>左固定列</span> <small>({{ leftList.length }})</small>
+            <span>左固定列</span> <small>({{ subfieldColumns.left.length }})</small>
           </div>
-          <div class="eff-column__batch-control--list area-left" :data-key="leftList.length - 1">
-            <template v-for="(d, i) in leftList">
+          <div class="eff-column__batch-control--list left" :data-index="0">
+            <template v-for="(d, i) in subfieldColumns.left">
               <div
                 :key="i"
-                :data-key="i"
+                :data-index="i"
                 class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
@@ -36,38 +34,38 @@
             </template>
           </div>
         </div>
-        <div class="eff-column__batch-control--center" :style="centerStyle">
+        <div class="eff-column__batch-control--center">
           <div class="eff-column__batch-control--title">
-            <span>基础列</span> <small>({{ centerList.length }})</small>
+            <span>基础列</span> <small>({{ subfieldColumns.center.length }})</small>
           </div>
-          <div class="eff-column__batch-control--list area-center" :data-key="centerList.length - 1">
-            <template v-for="(d, i) in centerList">
+          <div class="eff-column__batch-control--list center" :data-index="subfieldColumns.left.length">
+            <template v-for="(d, i) in subfieldColumns.center">
               <div
                 :key="i"
-                :data-key="i"
+                :data-index="i"
                 class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                {{ d.title }}
+                {{ d.title || d.type }}
               </div>
             </template>
           </div>
         </div>
         <div class="eff-column__batch-control--right" :style="rightStyle">
           <div class="eff-column__batch-control--title">
-            <span>右固定列</span> <small>({{ rightList.length }})</small>
+            <span>右固定列</span> <small>({{ subfieldColumns.right.length }})</small>
           </div>
-          <div class="eff-column__batch-control--list area-right" :data-key="rightList.length - 1">
-            <template v-for="(d, i) in rightList">
+          <div class="eff-column__batch-control--list right" :data-index="subfieldColumns.left.length + subfieldColumns.center.length">
+            <template v-for="(d, i) in subfieldColumns.right">
               <div
                 :key="i"
-                :data-key="i"
+                :data-index="i"
                 class="eff-column__batch-control--item"
                 :class="d.show ? 'active' : ''"
                 @click.stop="clickShow(d)"
               >
-                {{ d.title }}
+                {{ d.title || d.type }}
               </div>
             </template>
           </div>
@@ -80,57 +78,56 @@
 <script>
 import Card from 'pk/card'
 import Sortable from 'pk/utils/sortable'
-import { deepClone } from 'pk/utils/index'
+import { hasClass } from 'pk/utils/dom'
+import { getSubfieldColumns } from 'pk/utils'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TablecolumnBatchControl',
   components: { Card },
   props: {
-    initColumns: { type: Array, default: () => [] },
-    columnBatchControl: Boolean
+    value: { type: Array, default: () => ([]) }
   },
   dragToEl: {},
   data() {
-    // const { offsetHeight } = this.table.$el
-
     return {
-      columns: [],
-      show: false,
-      leftList: [],
-      rightList: [],
-      centerList: [],
-      realColumns: []
+      columns: XEUtils.clone(this.table.tableColumns, true),
+      show: false
     }
   },
   inject: ['table'],
   computed: {
     leftStyle() {
-      return { width: this.leftList.length ? '25%' : '60px' }
-    },
-    centerStyle() {
-      return 'auto'
+      return { width: this.subfieldColumns.left.length ? '25%' : '60px' }
     },
     rightStyle() {
-      return { width: this.rightList.length ? '25%' : '60px' }
+      return { width: this.subfieldColumns.right.length ? '25%' : '60px' }
+    },
+    subfieldColumns() {
+      return getSubfieldColumns(this.columns)
     }
   },
   watch: {
-    initColumns: {
-      immediate: true,
-      handler(val) {
-        this.columnsInit(val)
-      }
+    value(val) {
+      this.columns = XEUtils.clone(val, true)
     }
   },
   mounted() {
-    this.realColumns = deepClone(this.initColumns)
-    this.initSortable()
-  },
-  activated() {
-    this.initSortable()
-  },
-  deactivated() {
-    this.cradsSortable = null
+    this.$nextTick(() => {
+      const { handleEnd, $el: cardEl } = this
+      const id = Math.floor(Math.random() * 100000)
+      this.cradsSortable = []
+      const setSortable = (pos, idx) => {
+        this.cradsSortable[idx] = new Sortable({
+          el: cardEl.querySelector(`.eff-column__batch-control--${pos} .eff-column__batch-control--list`),
+          group: id,
+          dragClass: 'drag',
+          chosenClass: 'is--draging',
+          onEnd: handleEnd
+        })
+      }
+      ['left', 'center', 'right'].forEach((d, idx) => setSortable(d, idx))
+    })
   },
   beforeDestroy() {
     this.cradsSortable = null
@@ -139,62 +136,11 @@ export default {
     toggleCardShow(e) {
       this.show = !this.show
     },
-    initSortable() {
-      this.$nextTick(() => {
-        const {
-          handleEnd,
-          columnBatchControl,
-          $el: cardEl
-        } = this
-        const id = Math.floor(Math.random() * 100000)
-        if (columnBatchControl) {
-          const calback = className => {
-            setTimeout(() => {
-              this.cradsSortable = new Sortable({
-                el: cardEl.querySelector(className),
-                group: id,
-                dragClass: 'drag',
-                chosenClass: 'is--draging',
-                onEnd: handleEnd
-              })
-            }, 500)
-          }
-
-          calback('.eff-column__batch-control--left .eff-column__batch-control--list')
-          calback('.eff-column__batch-control--center .eff-column__batch-control--list')
-          calback('.eff-column__batch-control--right .eff-column__batch-control--list')
-        }
-      })
-    },
-    columnsInit(val) {
-      const columns = deepClone(val)
-      this.leftList = columns.filter(v => v.fixed && v.fixed === 'left')
-      this.rightList = columns.filter(v => v.fixed && v.fixed === 'right')
-      this.centerList = columns.filter(v => !v.fixed)
-      this.columns = columns
-    },
     resetColumns() {
-      this.columns = deepClone(this.realColumns)
-      this.columnsInit(this.columns)
+      this.columns = XEUtils.clone(this.value, true)
     },
     save() {
-      const columns = []
-      const callback = (arr, type) => {
-        arr.forEach(v => {
-          if (type) {
-            v.fixed = type
-          } else {
-            delete v.fixed
-          }
-          columns.push(v)
-        })
-      }
-      callback(this.leftList, 'left')
-      callback(this.centerList)
-      callback(this.rightList, 'right')
-
-      this.value = columns
-      this.$emit('update:initColumns', columns)
+      this.$emit('input', this.columns)
       this.close()
       this.table.doLayout()
     },
@@ -207,6 +153,24 @@ export default {
     },
     handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
       console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+      const fromIdx = +from.getAttribute('data-index') + fromIndex
+      const toIdx = +to.getAttribute('data-index') + toIndex
+      const columns = XEUtils.clone(this.columns, true)
+      // 变为左固定
+      if (hasClass(to, 'left')) {
+        columns[fromIdx].fixed = 'left'
+      }
+      // 变为右固定
+      if (hasClass(to, 'right')) {
+        columns[fromIdx].fixed = 'right'
+      }
+      // 取消固定
+      if (hasClass(to, 'center')) {
+        columns[fromIdx].fixed = ''
+      }
+      const oldItem = columns.splice(fromIdx, 1)[0]
+      columns.splice(toIdx, 0, oldItem)
+      this.columns = columns
     }
   }
 }
@@ -246,7 +210,7 @@ export default {
     // height: 100%;
     display: flex;
     margin-top: 10px;
-    height: calc(90% - 100px);
+    height: calc(100% - 20px);
     flex-wrap: wrap;
     align-content: flex-start;
     justify-content: center;
@@ -255,26 +219,29 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ededed;
     margin-bottom: 5px;
     border-radius: 4px;
     padding: 5px 10px;
-    color: #aaa;
-    border: 1px solid #ddd;
+    color: #666;
+    border-color: #ccc;
+    background-color: #e5e5e5;
     margin-right: 10px;
-    cursor: move;
     margin-right: 10px;
     font-size: 12px;
-    opacity: .6;
+    cursor: default;
+    user-select: none;
     &.active {
-      color: #333;
-      opacity: 1;
-      border-color: #ccc;
+      color: #fff;
+      border-color: #888;
+      background-color: #888;
     }
     &.is--draging{
-      opacity: 1;
-      border-color: #c7daf1;
-      background-color: #c7daf1;
+      color: #fff;
+      border-color: #666;
+      background-color: #666;
+    }
+    &.drag{
+      cursor: move;
     }
   }
   &--title{

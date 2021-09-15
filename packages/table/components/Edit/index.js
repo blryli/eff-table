@@ -38,8 +38,8 @@ export default {
       const { edit, prop, config = {}} = column || {}
       if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
-        const { tableSourceData, treeConfig, rowId } = table
-        const { children = 'children' } = treeConfig
+        const { tableSourceData, tableTreeConfig, rowId } = table
+        const { children } = tableTreeConfig
         const rowid = row[rowId]
         const { item: sourceRow } = XEUtils.findTree(tableSourceData, item => item[rowId] === rowid, children) || {}
 
@@ -203,12 +203,12 @@ export default {
     to() {
       if (this.hasTree) return
       this.handleType = 'to'
-      const { placement = 'right' } = this
+      const { placement = 'right', column: { prop }} = this
 
       if (['left', 'right'].indexOf(placement) > -1) {
         this.toX()
       } else {
-        this.toY()
+        this.toY(prop)
       }
     },
     canFocus(column, cell) {
@@ -229,7 +229,6 @@ export default {
       } else {
         toCellIndex = cellIndex
         toColumns = filterColumns(columns.slice(0, toCellIndex))
-        console.log({ toColumns })
         column = toColumns[toColumns.length - 1] || false
       }
       const { cell } = getColumn(column.prop)
@@ -255,14 +254,14 @@ export default {
       }
       return 1
     },
-    toY() {
+    toY(prop) {
       const { table, placement, rowIndex, $el } = this
       if (['right', 'bottom'].includes(placement)) {
         const skipNum = this.getSkipPendingNum(rowIndex + 1, rowIndex + 10)
-        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum) : shake($el, 'y')
+        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
       } else {
         const skipNum = this.getSkipPendingNum(0, rowIndex)
-        skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum) : shake($el, 'y')
+        skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
       }
     },
     disabled(column) {

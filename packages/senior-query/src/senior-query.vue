@@ -265,6 +265,7 @@ export default {
           if (conditionConnector) {
             return childStr ? acc + `${acc ? conditionConnector : ''}（ ${childStr} ）` : acc
           }
+          return acc + `（ ${childStr} ）`
         } else {
           const { conditionConnector, fieldName, operator, fieldValue } = cur
           if (fieldName && operator && fieldValue) {
@@ -278,7 +279,7 @@ export default {
           }
           return acc
         }
-      }, '')
+      }, '') || ''
     }
   }
 }

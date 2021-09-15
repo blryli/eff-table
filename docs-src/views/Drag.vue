@@ -426,16 +426,52 @@ export default {
         },
         {
           show: true,
+          prop: 'column1',
+          title: '列1',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column2',
+          title: '列2',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column3',
+          title: '列3',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column4',
+          title: '列4',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column5',
+          title: '列5',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column6',
+          title: '列6',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'column7',
+          title: '列7',
+          width: 200
+        },
+        {
+          show: true,
           prop: 'height',
           title: '身高',
           fixed: 'right',
           width: 100
-        },
-        {
-          show: true,
-          prop: 'weight',
-          title: '体重',
-          width: 200
         }
       ],
       data1: [

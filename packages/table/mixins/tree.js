@@ -8,15 +8,15 @@ export default {
   },
   computed: {
     treeNum() {
-      const { tableData, rowId, treeIds, treeConfig: { children = 'children' } = {}} = this
+      const { tableData, rowId, treeIds, tableTreeConfig: { children } = {}} = this
 
       let num = 0
       const closeIds = []
       for (const rowid in treeIds) {
         const value = treeIds[rowid]
         if (value) {
-          const { item: row } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
-          if (row && !closeIds.find(d => rowid.startsWith(d))) {
+          const { item: row } = XEUtils.findTree(tableData, item => `${item[rowId]}` === `${rowid}`, children)
+          if (row && !closeIds.find(d => rowid.startsWith(d)) && row[children]) {
             num += row[children].length
           }
         } else {
@@ -35,8 +35,7 @@ export default {
         console.error('setTreeExpandAll方法第一个参数必须是数组')
         return
       }
-      const { treeConfig, treeIds, rowId } = this
-      const { children = 'children' } = treeConfig
+      const { tableTreeConfig: { children }, treeIds, rowId } = this
       data.forEach(d => {
         const child = d[children]
         if (child && child.length) {
@@ -52,8 +51,7 @@ export default {
       this.setTreeExpandAll(this.tableData || [], false)
     },
     removeTreeExpand(row) {
-      const { rowId, tableData, treeConfig } = this
-      const { children = 'children' } = treeConfig
+      const { rowId, tableData, tableTreeConfig: { children }} = this
       const rowid = row[rowId]
       const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
       const len = path.length

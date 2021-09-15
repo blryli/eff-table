@@ -48,6 +48,9 @@ export default {
     xSpaceWidth() {
       const { table: { leftWidth, rightWidth, bodyWidth }, fixed } = this
       return fixed === 'left' ? leftWidth : fixed === 'right' ? rightWidth : bodyWidth
+    },
+    treeIndex() {
+      return this.table.bodyColumns.findIndex(d => !['selection', 'radio', 'expand'].find(c => d.type === c))
     }
   },
   watch: {
@@ -102,26 +105,26 @@ export default {
       table.fixedType = fixed
       table.scrollTop = scrollTop
     },
-    getGroupNode(row, rowIndex) {
-      const { table, fixed, bodyColumns, formatValidators } = this
-      const { renderColumn, rowId, treeIds } = table
-      const { children = 'children' } = table.treeConfig
+    getTrees(row, rowIndex) {
+      const { table, fixed, bodyColumns, formatValidators, treeIndex } = this
+      const { renderColumn, rowId, treeIds, tableTreeConfig: { children }} = table
       if (!(row[children] && row[children].length && treeIds[row[rowId]])) {
         return []
       }
 
-      const groupNodes = []
-      const groupFloor = 1
+      const trees = []
+      const treeFloor = 1
 
-      const func = (arr, groupFloor, rowid) => {
+      const func = (arr, treeFloor, rowid) => {
         arr.forEach((d, i) => {
           const row_id = `${rowid ? rowid + '.' : ''}${i + 1}`
 
           const dom = <TableBodyRow
-            key={'group-' + groupFloor + rowIndex + i}
+            key={'tree-' + treeFloor + rowIndex + i}
             row={d}
             rowid={`${rowIndex + 1}.${row_id}`}
-            group-floor={groupFloor}
+            treeFloor={treeFloor}
+            treeIndex={treeIndex}
             row-index={rowIndex}
             body-columns={fixed ? bodyColumns : renderColumn}
             fixed={fixed}
@@ -129,20 +132,20 @@ export default {
             messages={formatValidators[d[rowId]]}
           />
 
-          groupNodes.push(dom)
+          trees.push(dom)
           if (d[children] && d[children].length && treeIds[d[rowId]]) {
-            func(d[children], groupFloor + 1, row_id)
+            func(d[children], treeFloor + 1, row_id)
           }
         })
       }
 
-      func(row[children], groupFloor)
+      func(row[children], treeFloor)
 
-      return groupNodes
+      return trees
     }
   },
   render(h) {
-    const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators } = this
+    const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
     const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
@@ -168,14 +171,15 @@ export default {
                 row={row}
                 rowid={rowid}
                 row-index={currentIndex}
+                treeIndex={treeIndex}
                 body-columns={fixed ? bodyColumns : renderColumn}
                 fixed={fixed}
                 vue={this}
                 messages={formatValidators[row[rowId]]}
               />, expandNode]
 
-              const groupNodes = this.getGroupNode(row, currentIndex)
-              return dom.concat(groupNodes)
+              const trees = this.getTrees(row, currentIndex)
+              return dom.concat(trees)
             })
           }
           {

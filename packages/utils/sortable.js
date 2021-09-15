@@ -110,6 +110,7 @@ export default class Sortable {
     const { fromEl } = relation
     removeClass(this.downTarget, this.options.dragClass)
     removeClass(this.enterTarget, this.options.chosenClass)
+    removeClass(relation.toEl, this.options.chosenClass)
     fromEl && fromEl.setAttribute('draggable', false)
     this._emit('dragend', e.target)
     const rest = {

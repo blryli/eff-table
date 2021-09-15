@@ -11,7 +11,7 @@ export default {
       // console.log('commitProxy', code)
       const { add, insert, focus, triggerPending, checkoutSelectType } = this
       const { request } = this.proxyConfig || {}
-      const { query, delete: deleted, save, loadChildren } = request || {}
+      const { query, delete: deleted, save } = request || {}
       const code = ags[0]
       const codes = [
         { code: 'add', fn: () => add() },
@@ -24,8 +24,7 @@ export default {
         { code: 'remove_check_row', fn: () => this.removeCheckRow() },
         { code: 'query', fn: () => query && typeof query === 'function' ? this.query(query) : this.loadTableData() },
         { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
-        { code: 'refresh', fn: () => this.refresh() },
-        { code: 'loadChildren', fn: () => typeof loadChildren === 'function' && loadChildren(ags[1], ags[2]) }
+        { code: 'refresh', fn: () => this.refresh() }
       ]
       const ccode = codes.find(d => d.code === code)
       return ccode && ccode.fn(ags)

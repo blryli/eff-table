@@ -135,21 +135,18 @@
     />
 
     <column-batch-control
-      v-if="border && drag"
+      v-if="border && drag && (toolbarConfig || {}).columnBatchControl"
       ref="columnBatchControl"
-      :init-columns.sync="tableColumns"
-      :column-batch-control="toolbarConfig.columnBatchControl"
+      v-model="tableColumns"
       @cardClose="handleCardClose"
-      @change="dargChange"
-      @row-change="dragRowChange"
     />
 
     <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
-    <!-- <p>tableData -  {{ tableData }}</p> -->
-    <p>checkeds -  {{ checkeds }}</p>
+    <!-- <p>treeIds -  {{ treeIds }}</p> -->
+    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -191,7 +188,7 @@ import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
 // import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
-import { getFieldValue, setFieldValue } from 'pk/utils'
+import { getFieldValue, setFieldValue, getSubfieldColumns, getComColumns } from 'pk/utils'
 import { getOptions } from 'pk/utils/render'
 
 export default {
@@ -325,11 +322,11 @@ export default {
           return acc.concat(cur)
         }, [])
       }
-      const column = this.visibleColumns
-      // if(sort.length) {
-      //   column = column.sort((a, b) => )
+      const columns = this.visibleColumns
+      // if (sort.length) {
+      //   columns = columns.sort((a, b) => sort.indexOf(a.prop))
       // }
-      return plat(column)
+      return plat(columns)
     },
     style() {
       const style = {}
@@ -394,37 +391,29 @@ export default {
       this.loadTableData(data)
     },
     columns(val) {
-      this.tableColumns = val
+      this.fixedColumns = getSubfieldColumns(val)
+      this.tableColumns = Object.values(this.fixedColumns).reduce((acc, cur) => acc.concat(cur), [])
     },
     tableColumns(tableColumns) {
-      const columns = tableColumns.reduce((acc, column) => {
-        const { fixed = 'center' } = column
-        acc[fixed] ? acc[fixed].push(column) : acc.center.push(column)
-        return acc
-      }, { left: [], center: [], right: [] })
-      this.fixedColumns = columns
-      const setColumn = (column, columnCopy) => {
+      // 设置列长度（包含子集）
+      const setColumnLen = (column, columnCopy) => {
         const { children } = column
         if ((children || []).length) {
           column.children = children.reduce((acc, cur) => {
-            return cur.show !== false ? acc.concat(setColumn(cur, columnCopy)) : acc
+            return cur.show !== false ? acc.concat(setColumnLen(cur, columnCopy)) : acc
           }, [])
         } else {
           columnCopy.columnLen += 1
         }
         return column
       }
-      const getColumns = (columns) => {
-        return columns.reduce((acc, column) => {
-          if (column.show !== false) {
-            column.columnLen = 0
-            return acc.concat(setColumn(column, column))
-          } else return acc
-        }, [])
-      }
-      this.visibleColumns = [...Object.values(columns).reduce((acc, cur) => {
-        return acc.concat(getColumns(cur))
-      }, [])]
+      this.visibleColumns = tableColumns.reduce((acc, column) => {
+        if (column.show !== false) {
+          if (column.columnLen === undefined) column.columnLen = 0
+          return acc.concat(!column.columnLen ? setColumnLen(column, column) : column)
+        }
+        return acc
+      }, [])
     },
     'tableColumns.length'() {
       this.resize()
@@ -446,12 +435,13 @@ export default {
         width: 40
       })
     }
-    this.tableColumns = [...this.columns]
+    this.tableColumns = getComColumns(this.columns)
     Object.assign(this, {
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
-      tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig)
+      tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
+      tableTreeConfig: Object.assign({ children: 'children' }, this.treeConfig)
     })
     if ((this.data || []).length) {
       this.loadTableData(this.data)
@@ -769,6 +759,13 @@ export default {
     // 获取选中的列
     getCheckColumns() {
       return XEUtils.clone(this.headerCheckedColumns, true)
+    },
+    // 获取表格列，用于记忆功能
+    getColumnsStore() {
+      return this.tableColumns.map(column => {
+        const { show, type, prop, fixed = '', width = 0 } = column
+        return { show, type, prop, fixed, width }
+      })
     }
   }
 }

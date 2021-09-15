@@ -23,10 +23,10 @@ export default {
     }
   },
   methods: {
-    btnChange() {
+    handleColumnControl() {
       this.table.$refs.drag.toggleCardShow()
     },
-    btnEdit() {
+    handleColumnBatchControl() {
       this.table.$refs.columnBatchControl.toggleCardShow()
     },
     btnClick(code, e, index) {
@@ -77,10 +77,10 @@ export default {
             search && <Clear /> || ''
           }
           {
-            columnBatchControl && <columnBatchControlBtn on-change={this.btnEdit} /> || ''
+            columnBatchControl && <columnBatchControlBtn on-change={this.handleColumnBatchControl} /> || ''
           }
           {
-            columnControl && <ColumnCtrlBtn on-change={this.btnChange} /> || ''
+            columnControl && <ColumnCtrlBtn on-change={this.handleColumnControl} /> || ''
           }
           {
             fullscreen && <Fullscreen /> || ''

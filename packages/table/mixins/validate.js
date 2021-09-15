@@ -40,7 +40,7 @@ export default {
       })
     },
     validate(rows, all) {
-      const { table, tableData, columns, editStore, treeConfig: { children = 'children' } = {}} = this
+      const { table, tableData, columns, editStore, tableTreeConfig: { children } = {}} = this
       const { insertList, updateList, pendingList } = editStore
       let validData
       if (rows === true) {

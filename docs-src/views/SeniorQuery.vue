@@ -183,7 +183,7 @@ export default {
               componentType: 'select',
               dataSourceType: 2,
               apiSource: {
-                fullPath: '/path',
+                fullPath: 'http://10.10.46.92:6521/api/person/senior/query',
                 requestType: 'get'
               },
               staticSourceList: []

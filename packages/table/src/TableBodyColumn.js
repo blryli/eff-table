@@ -5,9 +5,11 @@ import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
 import { getFieldValue, initField, isVNode } from 'pk/utils'
 import XEUtils from 'xe-utils'
+import Icon from 'pk/icon'
 
 export default {
   name: 'TableBodyColumn',
+  components: { Icon },
   props: {
     row: { type: Object, default: () => {} },
     rowIndex: { type: Number, default: 0 },
@@ -17,8 +19,8 @@ export default {
     fixed: { type: String, default: '' },
     rowid: { type: String, default: '' },
     disabled: Boolean,
-    groupFloor: { type: Number, default: 0 },
-    groupKey: { type: String, default: '' },
+    treeFloor: { type: Number, default: 0 },
+    treeIndex: { type: Number, default: 0 },
     vue: { type: Object, default: null },
     summary: Boolean
   },
@@ -27,7 +29,7 @@ export default {
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, groupFloor, groupKey, summary } = props
+    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary } = props
     const { type, prop, className } = column
     const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
     const _rowId = row[rowId]
@@ -128,7 +130,9 @@ export default {
     if (row.rowIsSum) {
       style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
     }
-    style.paddingLeft = groupFloor * 28 + 'px'
+    if (columnIndex === treeIndex) {
+      style.paddingLeft = treeFloor * 28 + 'px'
+    }
     // row[columnIndex] summary合计列
 
     const cellId = row[rowId] + column.columnId
@@ -189,7 +193,7 @@ export default {
       !disabled && table.expandChange({ rowId: row[rowId], height: 0 })
     }
     const expandRender = function() {
-      const expand = <span class='eff-table--expand' on-click={e => expandClick(e)}>
+      const expand = <span class='eff-table--expand-handle' on-click={e => expandClick(e)}>
         <span class={{ 'eff-icon--arrow': true, 'is--expanded': rowExpanded.expanded, 'is--disabled': disabled }} />
       </span>
 
@@ -237,35 +241,26 @@ export default {
     }
 
     // 表格树 tree
-    const { lazy, loadMethod, children = 'children' } = table.treeConfig
+    const { lazy, loadMethod, children } = table.tableTreeConfig
+    let treeIcon = ''
 
     const childs = row[children] || []
     const groupClick = function(e) {
-      vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
-      if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) { // 异步加载
-        loadMethod(row).then(res => {
+      // 异步加载
+      if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
+        vue.$set(table.treeIds, _rowId, false)
+        loadMethod({ row, rowIndex }).then(res => {
+          vue.$set(table.treeIds, _rowId, true)
           vue.$set(row, children, res)
         })
+      } else {
+        vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
-
-    let treeSwitch = ''
-    if ((childs.length || row.hasChildren) && column.prop === groupKey) {
-      treeSwitch = <span class='eff-table--expand' on-click={e => groupClick(e)}>
-        <span class={{ 'eff-icon--arrow': true, 'is--expanded': table.treeIds[_rowId] }} />
+    if ((childs.length || row.hasChild) && columnIndex === treeIndex) {
+      treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
+        {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <span class={{ 'eff-icon--arrow': true, 'is--expanded': table.treeIds[_rowId] }} />}
       </span>
-
-      if (lazy) {
-        treeSwitch = <div class='icon-loading'>
-          {
-            [0, 0, 0, 0, 0, 0, 0, 0].map(v => {
-              return <div>
-                <span class='blank'></span>
-              </div>
-            })
-          }
-        </div>
-      }
     }
 
     let slot
@@ -284,7 +279,7 @@ export default {
     }
 
     return h('div', Object.assign(data, {
-      key: groupFloor + '-' + rowIndex + '-' + columnIndex,
+      key: treeFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
       style: Object.assign(column.style || {}, style),
       on: {
@@ -295,7 +290,7 @@ export default {
         mousemove: event => handleMousemove(event)
       }
     }), [
-      treeSwitch,
+      treeIcon,
       <div id={cellId} class='eff-cell'>
         <span class='eff-cell--label'>{slot}</span>
         {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}

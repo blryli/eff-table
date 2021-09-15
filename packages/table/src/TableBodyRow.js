@@ -12,7 +12,8 @@ export default {
     fixed: { type: String, default: '' },
     rowIndex: Number,
     summary: Boolean,
-    groupFloor: { type: Number, default: 0 },
+    treeFloor: { type: Number, default: 0 },
+    treeIndex: { type: Number, default: 0 },
     vue: { type: Object, default: null }
   },
   functional: true,
@@ -20,7 +21,7 @@ export default {
   render(h, context) {
     const { props, injections } = context
     const { table } = injections
-    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, groupFloor, vue } = props
+    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, treeFloor, treeIndex, vue } = props
     const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
@@ -41,7 +42,7 @@ export default {
             const obj = { row, rowid, column, prop: column.prop, rowIndex, columnIndex, cell, event }
             const { edit } = table.$refs
             if (tableEdit && edit) {
-              const arrow = cell.querySelector('.eff-table--expand')
+              const arrow = cell.querySelector('.eff-table--expand-handle')
               if (!isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target))) {
                 edit.handleEditCell(obj)
               }
@@ -61,13 +62,6 @@ export default {
       if (summary) return
       handleEvent(event, 'dblclick')
     }
-
-    let groupKey
-    bodyColumns.map(v => {
-      if (['expand', 'selection', 'radio'].indexOf(v.type) === -1) {
-        groupKey = !groupKey ? v.prop : groupKey
-      }
-    })
 
     const rowClassNames = ['eff-table__body-row', {
       'current-row': currentRow === rowIndex,
@@ -116,8 +110,8 @@ export default {
               vue={vue}
               disabled={isPending}
               summary={summary}
-              groupFloor={groupKey === column.prop ? groupFloor : 0 }
-              groupKey={groupKey}
+              treeFloor={treeFloor}
+              treeIndex={treeIndex}
             />
           })
         }
