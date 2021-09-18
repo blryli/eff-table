@@ -1,78 +1,76 @@
 <template>
-  <div class="drag-table">
-    <card
-      :show="show"
-      title="列批量控制"
-      :min-height="300"
-      :height="300"
-      :width="800"
-      :min-width="400"
-      @close="close"
-    >
-      <template slot="header">
-        <div>
-          <el-button size="mini" @click="resetColumns">还原</el-button>
-          <el-button size="mini" @click="save">保存</el-button>
+  <card
+    :show="show"
+    title="列批量控制"
+    :min-height="300"
+    :height="300"
+    :width="800"
+    :min-width="400"
+    @close="close"
+  >
+    <template slot="header">
+      <div>
+        <el-button size="mini" @click="resetColumns">还原</el-button>
+        <el-button size="mini" @click="save">保存</el-button>
+      </div>
+    </template>
+    <div class="eff-column__batch-control">
+      <div class="eff-column__batch-control--left" :style="leftStyle">
+        <div class="eff-column__batch-control--title">
+          <span>左固定列</span> <small>({{ subfieldColumns.left.length }})</small>
         </div>
-      </template>
-      <div class="eff-column__batch-control">
-        <div class="eff-column__batch-control--left" :style="leftStyle">
-          <div class="eff-column__batch-control--title">
-            <span>左固定列</span> <small>({{ subfieldColumns.left.length }})</small>
-          </div>
-          <div class="eff-column__batch-control--list left" :data-index="0">
-            <template v-for="(d, i) in subfieldColumns.left">
-              <div
-                :key="i"
-                :data-index="i"
-                class="eff-column__batch-control--item"
-                :class="d.show ? 'active' : ''"
-                @click.stop="clickShow(d)"
-              >
-                {{ d.title || d.type }}
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="eff-column__batch-control--center">
-          <div class="eff-column__batch-control--title">
-            <span>基础列</span> <small>({{ subfieldColumns.center.length }})</small>
-          </div>
-          <div class="eff-column__batch-control--list center" :data-index="subfieldColumns.left.length">
-            <template v-for="(d, i) in subfieldColumns.center">
-              <div
-                :key="i"
-                :data-index="i"
-                class="eff-column__batch-control--item"
-                :class="d.show ? 'active' : ''"
-                @click.stop="clickShow(d)"
-              >
-                {{ d.title || d.type }}
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="eff-column__batch-control--right" :style="rightStyle">
-          <div class="eff-column__batch-control--title">
-            <span>右固定列</span> <small>({{ subfieldColumns.right.length }})</small>
-          </div>
-          <div class="eff-column__batch-control--list right" :data-index="subfieldColumns.left.length + subfieldColumns.center.length">
-            <template v-for="(d, i) in subfieldColumns.right">
-              <div
-                :key="i"
-                :data-index="i"
-                class="eff-column__batch-control--item"
-                :class="d.show ? 'active' : ''"
-                @click.stop="clickShow(d)"
-              >
-                {{ d.title || d.type }}
-              </div>
-            </template>
-          </div>
+        <div class="eff-column__batch-control--list left" :data-index="0">
+          <template v-for="(d, i) in subfieldColumns.left">
+            <div
+              :key="i"
+              :data-index="i"
+              class="eff-column__batch-control--item"
+              :class="d.show ? 'active' : ''"
+              @click.stop="clickShow(d)"
+            >
+              {{ d.title || d.type }}
+            </div>
+          </template>
         </div>
       </div>
-    </card>
-  </div>
+      <div class="eff-column__batch-control--center">
+        <div class="eff-column__batch-control--title">
+          <span>基础列</span> <small>({{ subfieldColumns.center.length }})</small>
+        </div>
+        <div class="eff-column__batch-control--list center" :data-index="subfieldColumns.left.length">
+          <template v-for="(d, i) in subfieldColumns.center">
+            <div
+              :key="i"
+              :data-index="i"
+              class="eff-column__batch-control--item"
+              :class="d.show ? 'active' : ''"
+              @click.stop="clickShow(d)"
+            >
+              {{ d.title || d.type }}
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="eff-column__batch-control--right" :style="rightStyle">
+        <div class="eff-column__batch-control--title">
+          <span>右固定列</span> <small>({{ subfieldColumns.right.length }})</small>
+        </div>
+        <div class="eff-column__batch-control--list right" :data-index="subfieldColumns.left.length + subfieldColumns.center.length">
+          <template v-for="(d, i) in subfieldColumns.right">
+            <div
+              :key="i"
+              :data-index="i"
+              class="eff-column__batch-control--item"
+              :class="d.show ? 'active' : ''"
+              @click.stop="clickShow(d)"
+            >
+              {{ d.title || d.type }}
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </card>
 </template>
 
 <script>
@@ -152,7 +150,7 @@ export default {
       this.$emit('cardClose')
     },
     handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
-      console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+      // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
       const fromIdx = +from.getAttribute('data-index') + fromIndex
       const toIdx = +to.getAttribute('data-index') + toIndex
       const columns = XEUtils.clone(this.columns, true)

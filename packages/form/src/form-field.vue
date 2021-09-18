@@ -69,7 +69,7 @@ export default {
   },
   created() {
     const { data = {}, prop } = this
-    initField(data, prop, this)
+    prop && initField(data, prop, this)
     // console.log('builder', this.data, JSON.stringify(this.data, null, 2))
   },
   mounted() {
@@ -188,6 +188,9 @@ export default {
 <style lang="scss">
 .v-form-filed{
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &--message {
     position: absolute;
     top: 100%;

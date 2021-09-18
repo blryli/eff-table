@@ -1,52 +1,54 @@
 <template>
-  <div class="drag-table">
-    <card
-      :show="true"
-      title="批量替换"
-      :init-style="cardStyle"
-      :min-height="300"
-      :height="300"
-      :width="800"
-      :min-width="400"
-      @close="close"
-    >
-      <template slot="header">
-        <div>
-          <el-button type="default" size="mini" @click="reset"> 重置 </el-button>
-          <el-button type="default" size="mini" @click="confirm"> 确定 </el-button>
+  <card
+    :show="show"
+    class="eff-replace"
+    title="批量替换"
+    :min-height="300"
+    :height="500"
+    :width="800"
+    :min-width="400"
+    @close="close"
+  >
+    <template slot="header">
+      <el-button type="default" size="mini" @click="confirm"> 确定 </el-button>
+    </template>
+    <div class="eff-replace-container">
+      <div class="eff-replace-left">
+        <div class="eff-replace-left--list">
+          <v-form
+            ref="form"
+            :data-index="0"
+            :columns="leftColumns"
+            :data="data"
+            rowledge="10px"
+          />
         </div>
-      </template>
-      <div class="main">
-        <div class="center" :style="centerStyle">
-          <div class="list area-center flex justify-around">
-            <v-form
-              class="full-width"
-              :columns="formColumns"
-              :data="data"
-            />
-
+        <div class="eff-replace-history">
+          <div class="eff-replace-history-header">
+            <strong>替换记录</strong>
+            <span class="eff-replace-history-header--clear" @click="clearHistory">清除记录</span>
           </div>
-        </div>
-        <div class="right" :style="rightStyle">
-          所有字段
-          <div class="action">
-            <input placeholder="请输入字段名" @input="searchColumn">
-            <div class="item" :class="showAll ? 'sel' : ''" @click.stop="showAll = !showAll">
-              {{ showAll ? '显示已选' : '显示全选' }}
+          <div class="eff-replace-history-list">
+            <div v-for="(d, i) in historyList" :key="i" class="eff-replace-history-item">
+              {{ `第${d.rowIndex+1}行 [${d.title}] 列的值由 [${d.oldValue}] ${d.back ? '还原':'替换'}为 [${d.newValue}]` }} <span v-if="!d.back" class="eff-replace-history--back" @click="() => back(d)">还原</span>
             </div>
-          </div>
-          <div class="list area-right justify-center" :data-key="list.length - 1">
-            <template v-for="(d, i) in showList">
-              <div :key="i" :data-key="i" class="item" :class="selectList.find(v => v.prop == d.prop) ? 'sel' : ''" @click.stop="clickShow(d)">
-                <i title="是否显示" class="act el-icon-view" :class="selectList.find(v => v.prop == d.prop) ? 'sel' : ''" />
-                {{ d.title }}
-              </div>
-            </template>
           </div>
         </div>
       </div>
-    </card>
-  </div>
+      <div class="hr" />
+      <div class="eff-replace-right">
+        <VRender :config="{name: 'input', props: {value: searchValue}, attrs: {placeholder:'搜索字段'}, on: {input: val => searchValue = val}}" />
+        <div class="eff-replace-right--list">
+          <template v-for="(d, i) in rightColumns">
+            <div :key="i" :data-key="i" class="eff-replace-item">
+              {{ d.title }}
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <!-- {{ updateList }} -->
+  </card>
 </template>
 
 <script>
@@ -54,314 +56,245 @@ import vForm from 'pk/form/src/form'
 
 import Card from 'pk/card'
 import { deepClone } from 'pk/utils/index'
+import { hasClass } from 'pk/utils/dom'
+import XEUtils from 'xe-utils'
+import Sortable from 'pk/utils/sortable'
 
 export default {
   name: 'TableReplace',
   components: { Card, vForm },
   props: {
-    initColumns: { type: Array, default: () => [] },
-    columnControl: Boolean
+    columns: { type: Array, default: () => [] }
   },
   dragToEl: {},
   data() {
     return {
-      selectList: [],
-      list: [],
-      cardStyle: {},
-      willDragInIndex: -2,
-      willDragInArea: 'left',
+      show: false,
+      list: XEUtils.clone(this.columns, true),
       realColumns: [],
-      searchInput: '',
-      replaceInput: '',
-      showAll: false,
-      data: {}
+      searchValue: '',
+      data: {},
+      historyList: []
     }
   },
   inject: ['table'],
   computed: {
-    showList() {
-      if (this.showAll) {
-        return this.selectList
-      }
-
-      return this.list
+    columnsStore() {
+      return this.list.reduce((acc, cur) => {
+        const pos = cur.pos || 'right'
+        acc[pos].push(cur)
+        return acc
+      }, { left: [], right: [] })
     },
-    leftStyle() {
-      return { width: this.leftList.length ? '25%' : '60px' }
+    leftColumns() {
+      return this.columnsStore.left.reduce((acc, cur) => {
+        const { prop, options } = cur
+        return acc.concat([{ prop: 'search' + prop, path: prop, itemRender: { name: 'select', options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: cur.title, span: 13 }, { span: 8, placeholder: '请输入填充内容', prop: 'replace' + prop, path: prop, itemRender: cur.config }, { span: 3, itemRender: { name: 'button', props: { type: 'text', icon: 'el-icon-delete' }, on: { click: e => this.deleted(cur) }}}])
+      }, [])
     },
-    centerStyle() {
-      return 'auto'
-    },
-    rightStyle() {
-      return { width: '25%' }
-    },
-    formColumns() {
-      const columns = []
-      this.selectList.map((v, k) => {
-        columns.push({ prop: 'search' + k, itemRender: { name: 'select', options: v.options }, placeholder: '请选择替换内容', options: [{ label: 1, value: 1 }], title: v.title, span: 14 })
-        columns.push({ span: 10, placeholder: '请输入填充内容', prop: 'replace' + k })
-      })
-
-      return columns
+    rightColumns() {
+      return this.columnsStore.right.reduce((acc, cur) => {
+        return (!this.searchValue || this.searchValue && cur.title.indexOf(this.searchValue) > -1) ? acc.concat([cur]) : acc
+      }, [])
     }
   },
   watch: {
-    initColumns: {
-      immediate: true,
-      handler(val) {
-        this.all = []
-        this.list = []
-        const call = (arr) => {
-          arr.forEach((v, k) => {
-            if (!v.title) {
-              return
-            }
-            this.all.push(v)
-            this.list.push(v)
-            // this.insertSelectList(v)
-            if (v.children) {
-              call(v.children)
-            }
-          })
-        }
-        call(val)
-      }
-    },
-    selectList: {
-      immediate: true,
-      handler(val) {
-        this.openSelect = this.selectList.map(v => false)
-      }
+    'columns.length'() {
+      this.list = XEUtils.clone(this.columns, true)
     }
   },
   mounted() {
     this.realColumns = deepClone(this.initColumns)
-    const { offsetHeight } = this.table.$el
-    this.cardStyle = {
-      bottom: 0,
-      right: 0,
-      width: 700,
-      height: offsetHeight < 667 ? 667 : offsetHeight
-    }
+    this.$nextTick(() => {
+      const { handleEnd } = this
+      const id = Math.floor(Math.random() * 100000)
+      this.cradsSortable = []
+      const setSortable = (pos, idx) => {
+        this.cradsSortable[idx] = new Sortable({
+          el: this.$el.querySelector(`.eff-replace-${pos}--list`),
+          group: id,
+          dragClass: 'drag',
+          chosenClass: 'is--draging',
+          filter: 'v-form',
+          onEnd: handleEnd
+        })
+      }
+      ['left', 'right'].forEach((d, idx) => setSortable(d, idx))
+    })
   },
-  methods: {
-    openSelectWindow(v) {
-      v.openSelect = !v.openSelect
-      this.$forceUpdate()
-    },
-    insertSelectList(v) {
-      v.openSelect = false
-      v.options = [{ label: '全部', value: '全部' }, { label: '空值', value: '空值' }]
 
-      const tmp = []
-      this.table.tableData.forEach(vv => {
-        const value = vv[v.prop]
-        if (tmp.indexOf(value) === -1) {
-          tmp.push(value)
-          v.options.push({
-            label: value,
-            value: value
-          })
-        }
-      })
-      this.selectList.push(v)
-    },
-    searchColumn(input) {
-      input = input.data
-      if (!input) {
-        this.list = this.all
-        return
-      }
-      this.list = this.all.filter(v => {
-        return v.title.indexOf(input) !== -1
-      })
-    },
-    clickShow(v) {
-      const index = this.selectList.findIndex(vv => vv.prop === v.prop)
-      if (index !== -1) {
-        this.selectList.splice(index, 1)
+  methods: {
+    handleEnd({ fromIndex, toIndex, from, to, fromEl, toEl }) {
+      // console.log({ fromIndex, toIndex, from, to, fromEl, toEl })
+      const { list, table } = this
+      const index = list.findIndex(d => d.title === fromEl.innerText)
+      if (hasClass(to, 'eff-replace-left--list')) {
+        list[index].pos = 'left'
+        list[index].options = [{ label: '全部', value: '全部' }, { label: '空值', value: '空值' }].concat(table.tableData.reduce((acc, cur) => {
+          const value = cur[list[index].prop]
+          return value && !acc.find(d => d.label === value) ? acc.concat([{ label: value, value }]) : acc
+        }, []))
       } else {
-        this.insertSelectList(v)
+        list[index].pos = 'right'
       }
+      this.list = [...list]
+    },
+    deleted(column) {
+      const index = this.list.findIndex(da => [da].some(d => d === column))
+      this.list[index].pos = 'right'
+      this.list = [...this.list]
     },
     confirm() {
-      this.table.tableData.forEach(row => {
-        this.selectList.forEach((item, key) => {
-          const searchValue = this.data['search' + key]
-          const replaceValue = this.data['replace' + key]
+      if (!this.leftColumns.length) return
+      const tableData = [...this.table.tableData]
+      tableData.forEach((row, rowIndex) => {
+        this.leftColumns.forEach((column) => {
+          const { prop, path, title, options } = column
+          const searchValue = this.data['search' + path]
+          const replaceValue = this.data['replace' + path]
+          const oldValue = row[path]
 
-          if (!searchValue) {
-            return
-          }
+          if (!prop || prop.indexOf('search') < 0 || !searchValue) return
 
           let willReplace = false
           if (searchValue === '全部') {
             willReplace = true
           } else if (searchValue === '空值') {
-            if (!row[item.column.prop]) {
+            if (!oldValue) {
               willReplace = true
             }
           } else {
-            if (row[item.prop] === searchValue) {
+            if (oldValue === searchValue) {
               willReplace = true
             }
           }
 
           if (willReplace) {
-            row[item.prop] = replaceValue
+            row[path] = replaceValue
+            oldValue !== replaceValue && this.historyList.unshift({ title, column, rowIndex, oldValue, newValue: replaceValue, back: false })
           }
         })
+        this.table.updateRow(row)
       })
-
-      this.table.$forceUpdate()
-
-      this.close()
+      // this.close()
+      this.$message.success('替换成功！')
     },
-    reset() {
-      // this.list = []
-      this.selectList = []
+    open() {
+      this.show = true
     },
     close() {
-      this.table.replaceControl = false
+      this.show = false
     },
-    replace() {
-
+    clearHistory() {
+      this.historyList = []
     },
-    insert() {
-
+    back(history) {
+      const { title, rowIndex, column, oldValue, newValue } = history
+      const row = this.table.tableData[rowIndex]
+      row[column.path] = oldValue
+      this.table.updateRow(row)
+      this.historyList.unshift({ title, column, rowIndex, oldValue: newValue, newValue: oldValue, back: true })
+      this.$message.success('还原成功！')
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-.main {
-  display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  width: 100%;
-  padding: 0;
-  height: 100%;
-}
-
- input {
-        -webkit-appearance: none;
-    background-color: #fff;
-    background-image: none;
-    border-radius: 4px;
-    border: 1px solid #dcdfe6;
-    box-sizing: border-box;
-    color: #606266;
-    display: inline-block;
-    font-size: inherit;
-    height: 40px;
-    line-height: 40px;
-    outline: none;
-    padding: 0 15px;
-    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-    width: 80%;
+.eff-replace{
+  > *{
+    font-size: 12px;
   }
-  input:focus {
-    outline: none;
-      border-color: #409eff;
+  &-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
   }
-
-.action {
-  width: 100%;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  // padding: 0px 20px;
-
-  .item {
-    width: 75%;
-    margin-top: 10px;
+  &-left{
+    width: 100%;
+    height: calc(100% - 100px);
+    position: relative;
+    flex: 1;
+    padding-bottom: 100px;
+    &--list{
+      width: 100%;
+      height: calc(100% - 100px);
+    }
   }
-  .item+.item {
-    margin-left: 10px;
+  &-right{
+    width: 40%;
+    &--list {
+      width: 100%;
+      // height: 100%;
+      display: flex;
+      margin-top: 10px;
+      height: calc(100% - 20px);
+      flex-wrap: wrap;
+      align-content: flex-start;
+      justify-content: center;
+    }
   }
-}
-
-  .item {
+  &-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ededed;
-    min-width: 60px;
     margin-bottom: 5px;
-    height: 30px;
     border-radius: 4px;
-    padding: 0 4px;
-    .act {
-      margin-right: 10px;
-      font-size: 16px;
+    padding: 5px 10px;
+    color: #666;
+    border-color: #ccc;
+    background-color: #e5e5e5;
+    margin-right: 10px;
+    margin-right: 10px;
+    font-size: 12px;
+    cursor: default;
+    user-select: none;
+    &.active {
+      color: #fff;
+      border-color: #888;
+      background-color: #888;
+    }
+    &.is--draging{
+      color: #fff;
+      border-color: #666;
+      background-color: #666;
+    }
+    &.drag{
+      cursor: move;
     }
   }
-    .sel {
-    background-color: #409EFF;
-      color: white;
+  &-history{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-top: 1px solid #ddd;
+    font-size: 12px;
+    &-header{
+      width: 100%;
+      height: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      &--clear{
+        cursor: pointer;
+        color: #409eff;
+      }
     }
-.list {
-  width: 100%;
-  // height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  height: calc(90% - 100px);
-  flex-wrap: wrap;
-  align-content: flex-start;
-  > .item + .item {
-    margin-left: 10px;
-  }
-
-  .mmitem {
-    width: 100%;
-    .selectWindow {
-      position: absolute;
-      left: 0;
-      top: 28px;
-      left: 19px;
-      width: 80%;
+    &-list{
+      height: 82px;
+      overflow: auto;
+      line-height: 18px;
+    }
+    &--back{
+      color: #409eff;
+      cursor: pointer;
     }
   }
 }
-
-.left {
-  border-right: 1px solid #ededed;
-  height: 97%;
-  width: 20%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  padding-top: 10px;
+.hr{
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+  margin: 0 10px;
 }
-.right {
-  display: flex;
-  flex-direction: column;
-
-  border-left: 1px solid #ededed;
-  height: 97%;
-  // height: 100%;
-  text-align: center;
-  padding-top: 10px;
-  width: 20%;
-}
-.center {
-  flex: 1;
-  display: flex;
-  height: 97%;
-  padding-top: 25px;
-  padding: 0 10px;
-}
-.blank {
-  border: unset;
-  width: 10px;
-  height: 30px;
-  border-radius: 10px;
-}
-
-.blank.sel {
-  background-color: rgba($color: #0bc7ff, $alpha: 0.6);
-}
-
 </style>

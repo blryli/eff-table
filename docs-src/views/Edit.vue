@@ -200,29 +200,29 @@ const jsCode1 = `
                       name: 'cascader',
                       props: {
                         props: {
-                          label: 'label1',
-                          value: 'value1',
-                          children: 'children1'
+                          label: 'label',
+                          value: 'value',
+                          children: 'children'
                         }
                       },
                       options: () => [{
-                        value1: 'zhinan',
-                        label1: '指南',
-                        children1: [{
-                          value1: 'shejiyuanze',
-                          label1: '设计原则',
-                          children1: [{
-                            value1: 'yizhi',
-                            label1: '一致'
+                        value: 'zhinan',
+                        label: '指南',
+                        children: [{
+                          value: 'shejiyuanze',
+                          label: '设计原则',
+                          children: [{
+                            value: 'yizhi',
+                            label: '一致'
                           }, {
-                            value1: 'fankui',
-                            label1: '反馈'
+                            value: 'fankui',
+                            label: '反馈'
                           }, {
-                            value1: 'xiaolv',
-                            label1: '效率'
+                            value: 'xiaolv',
+                            label: '效率'
                           }, {
-                            value1: 'kekong',
-                            label1: '可控'
+                            value: 'kekong',
+                            label: '可控'
                           }]
                         }]
                       }]
@@ -288,11 +288,6 @@ export default {
         border: true,
         columnConfig: { sort: [{ show: true, prop: 'id', fixed: '', width: 0 }, { show: true, prop: 'name', fixed: '', width: 0 }, { show: true, prop: 'phone', fixed: '', width: 0 }, { show: true, prop: 'sex', fixed: '', width: 0 }] },
         columns: [
-          {
-            show: true,
-            prop: 'id',
-            title: 'ID'
-          },
           {
             show: true,
             prop: 'name',
@@ -368,29 +363,29 @@ export default {
                     props: {
                       'show-all-levels': false,
                       props: {
-                        label: 'label1',
-                        value: 'value1',
-                        children: 'children1'
+                        label: 'label',
+                        value: 'value',
+                        children: 'children'
                       }
                     },
                     options: () => [{
-                      value1: 'zhinan',
-                      label1: '指南',
-                      children1: [{
-                        value1: 'shejiyuanze',
-                        label1: '设计原则',
-                        children1: [{
-                          value1: 'yizhi',
-                          label1: '一致/222 '
+                      value: 'zhinan',
+                      label: '指南',
+                      children: [{
+                        value: 'shejiyuanze',
+                        label: '设计原则',
+                        children: [{
+                          value: 'yizhi',
+                          label: '一致/222 '
                         }, {
-                          value1: 'fankui',
-                          label1: '反馈'
+                          value: 'fankui',
+                          label: '反馈'
                         }, {
-                          value1: 'xiaolv',
-                          label1: '效率'
+                          value: 'xiaolv',
+                          label: '效率'
                         }, {
-                          value1: 'kekong',
-                          label1: '可控'
+                          value: 'kekong',
+                          label: '可控'
                         }]
                       }]
                     }]

@@ -216,6 +216,14 @@ export const getTextWidth = function(node) {
 }
 
 /**
+ * * 判断文本是否溢出
+ * @param {node} node
+ */
+export const textOverflow = function(node) {
+  return getTextWidth(node) - 0.3 > node.clientWidth
+}
+
+/**
      * 单元格的值为：'' | null | undefined 时都属于空值
      */
 export const eqCellNull = function(cellValue) {

@@ -53,13 +53,16 @@ export default {
     removeTreeExpand(row) {
       const { rowId, tableData, tableTreeConfig: { children }} = this
       const rowid = row[rowId]
-      const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
+      const getTree = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)
+      if (!getTree) return
+      const { path } = getTree
       const len = path.length
       const resetFirstRow = (firstRow) => {
         if (firstRow && firstRow.conditionConnector) {
           Object.assign(firstRow, { conditionConnector: '' })
         }
         this.tableData = Object.freeze(this.tableData)
+        this.$emit('data-change', { tableData: this.tableData })
       }
       if (len === 1) {
         delete this.treeIds[rowid]

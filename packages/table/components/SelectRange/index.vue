@@ -236,13 +236,7 @@ export default {
       const insertRows = []
       const data = e.clipboardData.getData('text/plain').trim().split('\r\n')
       data.map((da, idx) => {
-        let columnList
-
-        if (da.indexOf('\t ') !== -1) {
-          columnList = da.split('\t ')
-        } else {
-          columnList = da.split('\t')
-        }
+        const columnList = da.split('\t')
 
         const rowIndex = idx + startRow
         const row = this.table.tableData[rowIndex]

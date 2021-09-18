@@ -141,12 +141,12 @@
       @cardClose="handleCardClose"
     />
 
-    <replace v-if="replaceControl" ref="replace" :init-columns.sync="tableColumns" />
+    <replace v-if="toolbarConfig.showReplace" ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>tableColumns -  {{ tableColumns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -301,7 +301,6 @@ export default {
         pageNum: 1,
         pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
       },
-      replaceControl: false,
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
       loadingField: false,
@@ -526,12 +525,99 @@ export default {
       }
       return this.editField(fields)
     },
+    handleCopy({ row, rowIndex, column, columnIndex, prop, content }) {
+      const { config, edit: { render = {}} = {}} = column
+      const opts = XEUtils.merge({ name: 'input' }, config, render)
+      if (!opts.name) opts.name = 'input'
+      const { name, props } = opts
+      if (name === 'input') {
+        setFieldValue.call(this, this, row, prop, content)
+      } else if (name === 'select') { // 下拉框
+        const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
+        const { labelKey = 'label', valueKey = 'value', mutiple } = props || {}
+        const getValue = value => {
+          const option = options.find(d => d[labelKey] === value || d[valueKey] === value)
+          return option ? option[valueKey] : ''
+        }
+        // 匹配到label或value才会赋值，否则置空
+        if (options.length) {
+          if (mutiple && content.indexOf('，') > -1) {
+            const ct = content.split('，').reduce((acc, cur) => {
+              const val = getValue(cur)
+              return val ? acc.concat([val]) : acc
+            }, [])
+            setFieldValue.call(this, this, row, prop, ct)
+          } else {
+            setFieldValue.call(this, this, row, prop, getValue(content))
+          }
+        }
+      } else if (name === 'date-picker') { // 日期
+        const format = props.valueFormat || props['value-format']
+        let date = content
+        if (!XEUtils.isValidDate(content)) {
+          // 能转化成日期的才会赋值
+          const toStringDate = XEUtils.toStringDate(content, format)
+          date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
+        }
+        setFieldValue.call(this, this, row, prop, date)
+      } else if (name === 'cascader') { // 级联选择器
+        const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
+        const { label = 'label', value = 'value', children = 'children' } = props.props
+        const getOpts = (options, parent = []) => {
+          return options.reduce((acc, cur, idx) => {
+            const l = cur[label]
+            const v = cur[value]
+            if (cur[children]) {
+              return acc.concat(getOpts(cur[children], parent.concat([{ label: l, value: v }])))
+            }
+            acc.push(parent.concat([{ label: l, value: v }]))
+            return acc
+          }, [])
+        }
+        const paths = getOpts(options)
+        let showValue = ''
+        if (props['show-all-levels'] === false) { // 仅显示最后一级
+          const path = paths.find(pa => pa.find(d => Object.values(d).indexOf(content) > -1))
+          if (path) showValue = path.map(d => d[value])
+        } else { // 全路径
+          const getStr = path => {
+            return path.reduce((acc, cur) => {
+              const l = cur[label]
+              const v = cur[value]
+              acc.labelStr += acc.labelStr ? '/' + l : l
+              acc.valueStr += acc.valueStr ? '/' + v : v
+              return acc
+            }, { labelStr: '', valueStr: '' })
+          }
+          const path = paths.find(d => Object.values(getStr(d)).indexOf(content) > -1)
+          if (path) showValue = path.map(d => d[value])
+        }
+        return setFieldValue.call(this, this, row, prop, showValue)
+      } else if (name === 'switch') { // 开关
+        const { props = {}} = opts
+        const activeValue = props['active-value'] || true
+        const inactiveValue = props['inactive-value'] || false
+        let data = content
+        if (content === 'true') {
+          data = activeValue
+        } else if (content === 'false') {
+          data = inactiveValue
+        } else {
+          if ([activeValue, inactiveValue, '1', '0'].indexOf(content) < 0) {
+            data = '0'
+          }
+        }
+
+        setFieldValue.call(this, this, row, prop, data)
+      }
+    },
     editField(fileds, copy) {
       // console.log('fileds', JSON.stringify(fileds, null, 2))
       const updateArr = []
       fileds.forEach(filed => {
         const { visibleColumns, updateStatus, tableData } = this
-        const { rowIndex, columnIndex, content } = filed
+        const { rowIndex, columnIndex } = filed
+        const content = filed.content.trim()
         let { row } = filed
         if (!row) row = tableData[rowIndex]
         const column = visibleColumns[columnIndex] || {}
@@ -550,48 +636,7 @@ export default {
             })
           }
           if (copy) {
-            const { config, edit: { render = {}} = {}} = column
-            const opts = XEUtils.merge({ name: 'input' }, config, render)
-            if (!opts.name) opts.name = 'input'
-            const { name, props } = opts
-            if (name === 'input') {
-              setFieldValue.call(this, this, row, prop, content)
-            } else if (name === 'select') {
-              const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
-              const { labelKey = 'label', valueKey = 'value' } = props || {}
-              if (options.length) {
-                // 匹配到label才会赋值，否则置空
-                const option = options.find(d => d[labelKey] === content || d[valueKey] === content)
-                setFieldValue.call(this, this, row, prop, option ? option[valueKey] : '')
-              }
-            } else if (name === 'date-picker') {
-              let date = content
-              if (!XEUtils.isValidDate(content)) {
-                // 能转化成日期的才会赋值
-                const toStringDate = XEUtils.toStringDate(content)
-                date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
-              }
-              setFieldValue.call(this, this, row, prop, date)
-            } else if (name === 'cascader') {
-              // 默认置空
-              if (!XEUtils.isArray(content)) return setFieldValue.call(this, this, row, prop, [])
-            } else if (name === 'switch') {
-              const { props = {}} = opts
-              const activeValue = props['active-value'] || true
-              const inactiveValue = props['inactive-value'] || false
-              let data = content
-              if (content === 'true') {
-                data = activeValue
-              } else if (content === 'false') {
-                data = inactiveValue
-              } else {
-                if ([activeValue, inactiveValue, '1', '0'].indexOf(content) < 0) {
-                  data = '0'
-                }
-              }
-
-              setFieldValue.call(this, this, row, prop, data)
-            }
+            this.handleCopy({ row, rowIndex, column, columnIndex, prop, content })
           } else {
             setFieldValue.call(this, this, row, prop, content)
           }

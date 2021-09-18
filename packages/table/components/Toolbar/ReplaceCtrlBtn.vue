@@ -21,7 +21,7 @@ export default {
   inject: ['table'],
   methods: {
     click() {
-      this.table.replaceControl = !this.table.replaceControl
+      this.table.$refs.replace.show = !this.table.$refs.replace.show
     }
   }
 }

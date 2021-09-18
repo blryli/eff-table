@@ -28,7 +28,8 @@ const map = {
   'layout': 'layout',
   'panel': 'panel',
   'form': 'v-form',
-  'form-item': 'v-form-item'
+  'form-item': 'v-form-item',
+  'ciphertext': 'ciphertext' // 加密组件
 }
 
 export default {

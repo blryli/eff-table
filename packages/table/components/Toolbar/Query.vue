@@ -8,7 +8,7 @@
       <div />
       <div />
     </div>
-    <SeniorQuery ref="seniorQuery" />
+    <SeniorQuery ref="seniorQuery" :field-list="fieldList" @change="change" />
   </div>
 </template>
 
@@ -22,12 +22,22 @@ export default {
   },
   data() {
     return {
-      show: false
+      show: false,
+      fieldList: []
     }
+  },
+  created() {
+    const { seniorQueryConfig = {}} = this.table
+    const { fieldList } = seniorQueryConfig
+    this.fieldList = fieldList
   },
   methods: {
     click() {
       this.$refs.seniorQuery.open()
+    },
+    change(tableData) {
+      this.table.seniorQuery = tableData
+      this.table.commitProxy('query')
     }
   }
 }

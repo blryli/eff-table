@@ -1,5 +1,6 @@
 <template>
   <card
+    class="eff-senior-query"
     :show="show"
     title="高级搜索"
     :min-height="300"
@@ -11,6 +12,10 @@
     <template slot="header">
       <VRender :config="{name: 'button', props: {type: 'primary', size: 'mini'}, children: '搜 索', on: {click: search}}" />
     </template>
+    <div class="eff-senior-query--view">
+      <span class="eff-senior-query--view-title">预览</span>
+      <Conditions v-model="treeGroup" @remove="removeTreeExpand" />
+    </div>
     <eff-table
       ref="table"
       :columns="columns"
@@ -27,6 +32,7 @@
 <script>
 import Card from 'pk/card'
 import XEUtils from 'xe-utils'
+import Conditions from './Conditions'
 
 // 返回字段集合
 // {
@@ -38,7 +44,7 @@ import XEUtils from 'xe-utils'
 //   childConditionList: [] // 被包含的条件
 // }
 
-// 表单字段集合 formFieldList
+// 表单字段集合 fieldList
 // {
 //   fieldName: '', // 字段名
 //   fieldType: '', // 字段类型
@@ -56,10 +62,11 @@ let num = 1
 const getTreeId = () => '_tree' + num++
 export default {
   name: 'SeniorQuery',
-  components: { Card },
+  components: { Card, Conditions },
+  props: { fieldList: { type: Array, default: () => ([]) }},
   data() {
     return {
-      queryTable: null,
+      table: null,
       treeConfig: { expandAll: true },
       columns: [
         {
@@ -71,7 +78,6 @@ export default {
           prop: 'conditionConnector',
           config: { name: 'select', options: [{ label: '&', value: '&' }, { label: '||', value: '||' }] },
           edit: { disabled: ({ row, rowid }) => {
-            this.table
             return this.isFristRow(rowid)
           } },
           rules: [
@@ -81,7 +87,7 @@ export default {
         {
           title: '字段名',
           prop: 'fieldName',
-          config: { name: 'select', options: () => this.formFieldList.map(d => ({ label: d.fieldName, value: d.fieldName })) },
+          config: { name: 'select', options: () => this.fieldList.map(d => ({ label: d.fieldName, value: d.fieldName })) },
           width: 100,
           edit: { disabled: ({ row }) => {
             return this.hasChildren(row)
@@ -95,7 +101,7 @@ export default {
           title: '操作符',
           prop: 'operator',
           config: { name: 'select', options: ({ row }) => {
-            const { operateTypeList = [] } = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
+            const { operateTypeList = [] } = this.fieldList.find(d => d.fieldName === row.fieldName) || {}
             return operateTypeList.map(d => ({ label: d, value: d }))
           } },
           edit: { disabled: ({ row }) => {
@@ -114,7 +120,7 @@ export default {
               return this.hasChildren(row) || !row.fieldName
             },
             render: (h, { row, prop }) => {
-              const field = this.formFieldList.find(d => d.fieldName === row.fieldName) || {}
+              const field = this.fieldList.find(d => d.fieldName === row.fieldName) || {}
               const { fieldType, componentType, dataSourceType, apiSource } = field
               // 下拉框
               if (componentType === 'select') {
@@ -157,21 +163,16 @@ export default {
       toolbarConfig: {
         buttons: [
           { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }},
-          { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete' }, on: { click: this.clear }},
-          { name: 'button', props: { icon: 'el-icon-view' }, help: { effect: 'dark', message: () => this.treeGroup }, children: '预览' }
+          { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete' }, on: { click: this.clear }}
+          // { name: 'button', props: { icon: 'el-icon-view' }, help: { effect: 'dark', message: () => this.treeGroup }, children: '预览' }
         ]
       },
       show: false,
-      formFieldList: [],
-      treeGroup: ''
+      treeGroup: []
     }
   },
-  inject: ['table'],
   mounted() {
-    this.queryTable = this.$refs.table
-    const { seniorQueryConfig = {}} = this.table
-    const { fieldList } = seniorQueryConfig
-    this.formFieldList = fieldList
+    this.table = this.$refs.table
   },
   methods: {
     dataChange({ tableData }) {
@@ -187,8 +188,8 @@ export default {
       })
     },
     search() {
-      this.queryTable.validate(null, true).then(res => {
-        const { tableData, treeConfig: { children = 'children' } = {}} = this.queryTable
+      this.table.validate(null, true).then(res => {
+        const { tableData, treeConfig: { children = 'children' } = {}} = this.table
         const updateSeniorQuery = data => {
           return data.reduce((acc, cur) => {
             const child = cur[children] || []
@@ -196,19 +197,18 @@ export default {
             return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
           }, [])
         }
-        this.table.seniorQuery = updateSeniorQuery(tableData)
         this.close()
-        this.table.commitProxy('query')
+        this.$emit('change', updateSeniorQuery(tableData))
       }).catch(res => {
         console.log(res)
       })
     },
     add() {
-      const { insert, focus } = this.queryTable
+      const { insert, focus } = this.table
       insert({ children: [] }, -1).then(rowIndex => focus(rowIndex))
     },
     addChild(event, data) {
-      const { rowId } = this.queryTable
+      const { rowId } = this.table
       const { row } = data
       const { fieldName, operator, fieldValue } = row
       const rowid = row[rowId]
@@ -225,26 +225,29 @@ export default {
         Object.assign(row, { fieldName: '', operator: '', fieldValue: '' })
         Object.assign(child, { conditionConnector: '', fieldName, operator, fieldValue })
       }
-      this.queryTable.setTreeExpand(rowid, true)
+      this.table.setTreeExpand(rowid, true)
       row.children.push(child)
-      this.queryTable.updateRow(row)
+      this.table.updateRow(row)
     },
     deletedChild(event, data) {
-      this.queryTable.removeTreeExpand(data.row)
+      this.removeTreeExpand(data.row)
+    },
+    removeTreeExpand(row) {
+      this.table.removeTreeExpand(row)
     },
     open() {
       this.show = true
-      this.queryTable.doLayout()
+      this.table.doLayout()
     },
     close() {
       this.show = false
     },
     clear() {
-      this.queryTable.reloadData([])
+      this.table.reloadData([])
     },
     isFristRow(rowid) {
       if (!rowid) return false
-      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.queryTable
+      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.table
       const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children) || {}
       return Boolean(!rowid || !path || path.slice(-1)[0] === '0')
     },
@@ -252,35 +255,99 @@ export default {
       return row.children && row.children.length
     },
     getTreeGroup(data) {
-      const { queryTable } = this
-      return data.reduce((acc, cur) => {
-        const { rowId } = queryTable
-        const rowid = cur[rowId]
-        if (this.hasChildren(cur)) { // 有树节点
-          const { conditionConnector = '' } = cur
-          const childStr = this.getTreeGroup(cur.children)
-          if (rowid === queryTable.tableData[0][rowId]) {
-            return childStr ? acc + `（ ${childStr} ）` : acc
+      const { table } = this
+      return data.reduce((acc, row) => {
+        const { rowId } = table
+        const rowid = row[rowId]
+        if (this.hasChildren(row)) { // 有树节点
+          const { conditionConnector = '' } = row
+          const children = this.getTreeGroup(row.children)
+          if (rowid === table.tableData[0][rowId]) {
+            return children ? acc.concat([{ row, rowid, children }]) : acc
           }
           if (conditionConnector) {
-            return childStr ? acc + `${acc ? conditionConnector : ''}（ ${childStr} ）` : acc
+            return children ? acc.concat([{ row, rowid, conditionConnector, children }]) : acc
           }
-          return acc + `（ ${childStr} ）`
+          return acc.concat([{ row, rowid, children }])
         } else {
-          const { conditionConnector, fieldName, operator, fieldValue } = cur
+          const { conditionConnector, fieldName, operator, fieldValue } = row
           if (fieldName && operator && fieldValue) {
             if (this.isFristRow(rowid)) { // 首行
-              return acc + `${fieldName} ${operator} ${fieldValue} `
+              return acc.concat([{ row, rowid, code: `${fieldName} ${operator} ${fieldValue} ` }])
             }
             if (conditionConnector) {
-              return acc + `${acc ? conditionConnector : ''} ${fieldName} ${operator} ${fieldValue} `
+              return acc.concat([{ row, rowid, code: `${fieldName} ${operator} ${fieldValue} `, conditionConnector }])
             }
             return acc
           }
           return acc
         }
-      }, '') || ''
+      }, []) || []
     }
   }
 }
 </script>
+
+<style lang="scss">
+.eff-senior-query--view{
+  margin-bottom: 10px;
+  font-size: 12px;
+  &-title{
+    margin-right: 10px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  span{
+    display: inline-block;
+  }
+}
+.eff-view-list{
+  &-item{
+    &--code{
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      color: #409eff;
+      border: 1px solid #d9ecff;
+      background-color: #ecf5ff;
+    }
+    &--close {
+      position: relative;
+      width: 14px;
+      height: 14px;
+      margin-left: 5px;
+      border-radius: 50%;
+      margin-bottom: -3px;
+      box-sizing: content-box;
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 6px;
+        width: 9px;
+        height: 1px;
+        background-color: #409eff;
+      }
+      &::before {
+        transform: rotate(-45deg);
+      }
+      &::after {
+        transform: rotate(45deg);
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: #409eff;
+        &::before,
+        &::after {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+  &-connector{
+    margin: 0 5px;
+  }
+}
+</style>

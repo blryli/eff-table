@@ -1,6 +1,6 @@
 import VCheckbox from 'pk/checkbox'
 import VRadio from 'pk/radio'
-import { getTextWidth, eqCellValue } from 'pk/utils/dom'
+import { textOverflow, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
 import { getFieldValue, initField, isVNode } from 'pk/utils'
@@ -31,7 +31,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary } = props
     const { type, prop, className } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy } = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -135,7 +135,7 @@ export default {
     }
     // row[columnIndex] summary合计列
 
-    const cellId = row[rowId] + column.columnId
+    const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
 
     const { selectable } = column
     const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) : false
@@ -202,6 +202,7 @@ export default {
     const handleMouseenter = function(event, slot) {
       if (summary) return
       const cell = document.getElementById(cellId)
+      const cellLabel = cell.querySelector('.eff-cell--label')
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
       if (!cell) return
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
@@ -210,8 +211,8 @@ export default {
 
       let placement = 'top'
 
-      if (column.width && getTextWidth(cell) > Math.max(column.width, 40) || !column.width && getTextWidth(cell) > table.spaceWidth) {
-        table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cell.innerText, isFixed: true })
+      if (textOverflow(cellLabel)) {
+        table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true })
         placement = 'bottom'
       }
       message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message, isFixed: true })

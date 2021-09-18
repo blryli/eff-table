@@ -158,7 +158,7 @@ export default {
   methods: {
     setColumns(val) {
       let num = 1
-      this.tableOptions.columns = mock.mock({
+      this.tableOptions.columns = [{ type: 'index' }].concat(mock.mock({
         ['array|' + val]: [
           {
             show: true,
@@ -167,7 +167,7 @@ export default {
             width: 200
           }
         ]
-      }).array
+      }).array)
     },
     setData(val) {
       this.tableOptions.data = mock.mock({

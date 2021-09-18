@@ -23,14 +23,15 @@ export default {
   },
   render(h) {
     const render = renderer.get('default').renderDefault
-    const { pageNum, pageSize, total } = this
+    const { pageNum, pageSize, total, table } = this
+    const { footerActionConfig: { pageConfig = {}} = {}} = table
 
     return render(h, {
       props: Object.assign({
         pageSizes: [10, 50, 100, 200, 300, 400],
-        layout: 'total, sizes, prev, pager, next, jumper',
+        layout: 'sizes,next,pager,prev,jumper,total',
         pagerCount: 5
-      }, this.table.footerActionConfig.pageConfig, { pageNum, pageSize, total }),
+      }, pageConfig, { pageNum, pageSize, total }),
       on: {
         'size-change': this.onSizeChange,
         'current-change': this.onCurrentChange

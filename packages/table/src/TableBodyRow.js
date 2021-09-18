@@ -43,7 +43,8 @@ export default {
             const { edit } = table.$refs
             if (tableEdit && edit) {
               const arrow = cell.querySelector('.eff-table--expand-handle')
-              if (!isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target))) {
+              const ciphertext = cell.querySelector('.eff-table--ciphertext')
+              if (!isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target)) && !ciphertext) {
                 edit.handleEditCell(obj)
               }
             }

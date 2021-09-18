@@ -12,6 +12,7 @@ import FormField from './form-field'
 import Icon from './icon'
 import steps from './steps'
 import help from './help'
+import ciphertext from './ciphertext'
 
 const directives = []
 const components = [
@@ -26,7 +27,8 @@ const components = [
   VTable,
   Styles,
   steps,
-  help
+  help,
+  ciphertext
 ]
 
 export {
@@ -42,7 +44,8 @@ export {
   Panel,
   VTable,
   steps,
-  help
+  help,
+  ciphertext
 }
 
 const install = function(Vue, opts = {}) {

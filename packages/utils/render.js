@@ -432,7 +432,7 @@ function renderCascaderEdit(h, renderOpts, params) {
   return renderVModel(h, renderOpts, params)
 }
 const vModelMap = ['radio', 'radio-group', 'checkbox']
-const defMap = ['default', 'button', 'tooltip', 'layout', 'dropdown', 'help']
+const defMap = ['default', 'button', 'tooltip', 'layout', 'dropdown', 'help', 'ciphertext']
 const renderMap = Object.assign({
   input: {
     renderDefault: renderCell,

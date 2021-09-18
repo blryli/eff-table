@@ -103,7 +103,7 @@ export default {
             show: true,
             prop: 'date',
             title: '日期',
-            config: { name: 'date-picker' },
+            config: { name: 'date-picker', props: { format: 'yyyy-MM-dd', valueFormat: 'yyyy-MM-dd' }},
             edit: true
           },
           // {
@@ -119,33 +119,101 @@ export default {
             prop: 'phone',
             title: '手机',
             edit: true
+          },
+          {
+            show: true,
+            prop: 'hobby',
+            title: '爱好',
+            config: { name: 'select', props: { mutiple: true }, options: [{ label: '游泳', value: '1' }, { label: 'K歌', value: '2' }] },
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'address',
+            title: '住址',
+            width: 200,
+            config: { name: 'cascader',
+              props: {
+                'show-all-levels': false,
+                props: {
+                  label: 'label',
+                  value: 'value',
+                  children: 'children'
+                }
+              },
+              options: () => [
+                {
+                  value: 'gd',
+                  label: '广东省',
+                  children: [{
+                    value: 'szs',
+                    label: '深圳市',
+                    children: [{
+                      value: 'baoan',
+                      label: '宝安区'
+                    }, {
+                      value: 'nanshan',
+                      label: '南山区'
+                    }, {
+                      value: 'longhua',
+                      label: '龙华区'
+                    }, {
+                      value: 'futian',
+                      label: '福田区'
+                    }]
+                  }]
+                },
+                {
+                  value: 'hn',
+                  label: '湖南省',
+                  children: [{
+                    value: 'cz',
+                    label: '郴州市'
+                    // children: [{
+                    //   value: 'baoan',
+                    //   label: '宝安区'
+                    // }, {
+                    //   value: 'nanshan',
+                    //   label: '南山区'
+                    // }, {
+                    //   value: 'longhua',
+                    //   label: '龙华区'
+                    // }, {
+                    //   value: 'futian',
+                    //   label: '福田区'
+                    // }]
+                  }]
+                }
+              ]
+            },
+            edit: true
           }
         ],
         data: [
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '1', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '2', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '1', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '2', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '1', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '2', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' },
-          { name: '张三', sex: '1', phone: '13715201314' },
-          { name: '李四', sex: '1', phone: '13715201314' },
-          { name: '张三', sex: '2', phone: '13715201314' },
-          { name: '李四', sex: '2', phone: '13715201314' }
+          { name: '张三', sex: '1', date: '2021-09-17', phone: '13715201314', hobby: ['1', '2'], address: ['gd', 'szs', 'baoan'] },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-22', phone: '13715201314', hobby: [], address: ['gd', 'szs', 'longhua'] },
+          { name: '李四', sex: '1', date: '', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '2', date: '', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1'], address: '' },
+          { name: '张三', sex: '1', date: '2021-08-12', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['2'], address: '' },
+          { name: '张三', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '1', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '张三', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' },
+          { name: '李四', sex: '2', date: '2021-09-20', phone: '13715201314', hobby: ['1', '2'], address: '' }
         ]
       }
     }

@@ -1,6 +1,6 @@
 import VCheckbox from 'pk/checkbox'
 import { columnIsEdit } from 'pk/utils'
-import { getTextWidth } from 'pk/utils/dom'
+import { textOverflow } from 'pk/utils/dom'
 import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
 
@@ -18,17 +18,17 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
+    const { spaceWidth, drag: tableDrag, tableId } = table
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
-    const renderId = 'header-column-' + colid
+    const renderId = `header-column-${tableId}-${colid}`
 
     const isRequired = Boolean(rules.find(d => d.required))
 
     const columnStyle = {}
     const { width = 0 } = column
-    const { spaceWidth } = table
     const columnWidth = Math.max(width || spaceWidth, 40)
     columnStyle.minWidth = columnWidth + 'px'
     columnStyle.maxWidth = columnWidth + 'px'
@@ -36,7 +36,6 @@ export default {
       columnStyle.borderLeft = 0
     }
 
-    const { drag: tableDrag } = table
     const { titleClassName, drag, edit, fixed, prop } = column
 
     let columnClass = `eff-table__column`
@@ -82,13 +81,13 @@ export default {
     }
     const handleMouseenter = () => {
       const cell = document.getElementById(renderId)
+      const cellTitle = cell.querySelector('.eff-cell--title')
       if (!cell) return
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
-      // console.log(getTextWidth(cell), cell.getBoundingClientRect().width)
-      if (getTextWidth(cell) > cell.getBoundingClientRect().width) {
-        table.$refs.popovers.tipShow({ reference: cell.parentNode, message: [{ type: 'info', message: cell.innerText }] })
+      if (textOverflow(cellTitle)) {
+        table.$refs.popovers.tipShow({ reference: cell.parentNode, effect: 'dark', message: cellTitle.innerText })
       }
     }
     const handleMouseleave = () => {
@@ -110,15 +109,6 @@ export default {
         props: { effect: 'dark', message }
       }, [h(Icon, { props: { icon }})]) : ''
     }
-
-    // const titleWidth = () => {
-    //   const { titleWidth, form, required, titlePrefix, titleSuffix } = this
-    //   let width = parseInt(titleWidth || form.titleWidth || 80)
-    //   if (required) width -= 10
-    //   if (titlePrefix) width -= 16
-    //   if (titleSuffix) width -= 16
-    //   return width - 12
-    // }
 
     return h('div', XEUtils.merge(data, {
       key: colid,

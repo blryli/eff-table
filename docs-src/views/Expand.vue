@@ -2,9 +2,9 @@
   <div class="page-home page">
     <h2>Expand 展开行</h2>
     <p class="hint">
-      当行内容过多并且不想显示横向滚动条时，可以使用 Table 展开行功能。
+      当行内容过多并且不想显示横向滚动条时，可以使用 Table 展开行功能。<br>
+      通过设置 <span class="primary">{ type: 'expand' }</span> 列和 <span class="primary">scope slot</span> 可以开启展开行功能（展开行不能用于虚拟滚动）
     </p>
-    <p>通过设置 type="expand" 和 scope slot 可以开启展开行功能（展开行不能用于虚拟滚动）</p>
     <section class="demo">
       <div class="section-content">
         <eff-table

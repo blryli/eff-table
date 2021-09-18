@@ -15,7 +15,14 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-model="columns" :data="data" :toolbar-config="{showReplace: true}" />
+        <eff-table
+          ref="table"
+          v-model="columns"
+          :data="data"
+          :toolbar-config="{showReplace: true}"
+          edit
+          border
+        />
       </div>
     </section>
 
@@ -94,27 +101,39 @@ export default {
         {
           show: true,
           prop: 'name',
-          title: '名字'
+          title: '名字',
+          config: { name: 'input' },
+          edit: true
         },
         {
           show: true,
           prop: 'sex',
-          title: '性别'
+          title: '性别',
+          config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+          edit: true
         },
         {
           show: true,
           prop: 'phone',
           title: '手机',
-          width: 150
+          config: { name: 'input' },
+          edit: true
+        },
+        {
+          show: true,
+          prop: 'date',
+          title: '日期',
+          config: { name: 'date-picker' },
+          edit: true
         }
       ],
       data: [
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '女', phone: '13715201314' },
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '张三', sex: '女', phone: '13715201314' },
-        { name: '张三', sex: '男', phone: '13715201314' },
-        { name: '李四', sex: '男', phone: '13715201314' }
+        { name: '张三', sex: '男', phone: '', date: '2021-9-15' },
+        { name: '李四', sex: '', phone: '13715201314', date: '2021-9-15' },
+        { name: '', sex: '男', phone: '13715201314', date: '2021-9-15' },
+        { name: '张三', sex: '女', phone: '13715201314', date: '2021-9-15' },
+        { name: '张三', sex: '男', phone: '13715201314', date: '' },
+        { name: '李四', sex: '男', phone: '13715201314', date: '2021-9-15' }
       ]
     }
   }
