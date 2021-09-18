@@ -32,7 +32,7 @@
 <script>
 import Card from 'pk/card'
 import XEUtils from 'xe-utils'
-import Conditions from './Conditions'
+import Conditions from './conditions'
 
 // 返回字段集合
 // {
