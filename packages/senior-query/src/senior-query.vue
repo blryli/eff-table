@@ -32,7 +32,6 @@
 <script>
 import Card from 'pk/card'
 import XEUtils from 'xe-utils'
-import Conditions from './conditions'
 
 // 返回字段集合
 // {
@@ -62,7 +61,33 @@ let num = 1
 const getTreeId = () => '_tree' + num++
 export default {
   name: 'SeniorQuery',
-  components: { Card, Conditions },
+  components: {
+    Card,
+    Conditions: {
+      name: 'Conditions',
+      functional: true,
+      render(h, context) {
+        const { props: { value }, listeners } = context
+        const { remove } = listeners
+        const getRender = list => {
+          return list.reduce((acc, cur) => {
+            const { row, code, children, conditionConnector } = cur
+            const connector = conditionConnector ? h('span', { class: 'eff-view-list-connector' }, conditionConnector) : ''
+            if (children) {
+              return acc.concat(h('span', {}, [connector, '( ', getRender(children), ' )']))
+            } else {
+              return acc.concat([h('span', { class: 'eff-view-list-item' }, [
+                connector, h('span', { class: 'eff-view-list-item--code' },
+                  [h('span', {}, code), h('span', { class: 'eff-view-list-item--close', on: { click: () => remove && remove(row) }})]
+                )
+              ])])
+            }
+          }, [])
+        }
+        return h('span', { class: 'eff-view-list' }, getRender(value))
+      }
+    }
+  },
   props: { fieldList: { type: Array, default: () => ([]) }},
   data() {
     return {
