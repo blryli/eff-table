@@ -12,6 +12,7 @@ export default {
     fixed: { type: String, default: '' },
     rowIndex: Number,
     summary: Boolean,
+    subtotal: Boolean,
     treeFloor: { type: Number, default: 0 },
     treeIndex: { type: Number, default: 0 },
     vue: { type: Object, default: null }
@@ -21,7 +22,7 @@ export default {
   render(h, context) {
     const { props, injections } = context
     const { table } = injections
-    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, treeFloor, treeIndex, vue } = props
+    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, subtotal, treeFloor, treeIndex, vue } = props
     const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
@@ -55,12 +56,12 @@ export default {
       table.$emit(`row-${name}`, { row, column, rowIndex, event })
     }
     const handleClick = function(event) {
-      if (summary) return
+      if (summary || subtotal) return
       table.highlightCurrentRow && (table.currentRow = rowIndex)
       handleEvent(event, 'click')
     }
     const handleDoubleClick = function(event) {
-      if (summary) return
+      if (summary || subtotal) return
       handleEvent(event, 'dblclick')
     }
 
@@ -111,6 +112,7 @@ export default {
               vue={vue}
               disabled={isPending}
               summary={summary}
+              subtotal={subtotal}
               treeFloor={treeFloor}
               treeIndex={treeIndex}
             />

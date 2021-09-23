@@ -2,16 +2,11 @@
   <div class="page-home page">
     <h2>Replace 批量替换</h2>
     <p class="hint">
-      前置条件<br>
-      <span class="primary">show-replace</span>和 <span class="primary">column-control</span>属性设置为
+      <span class="primary">show-replace</span>属性设置为
       <span class="primary"> true </span><br>
+      点击按钮 <Icon icon="replace" /> 打开替换窗口，
+      <span class="primary">右侧</span>拖动字段到<span class="primary">左侧</span>编辑替换的选项，点击确定进行替换
     </p>
-    <div>
-      点击
-      <div title="替换和填充" class="eff-table__replace" style="display: inline-flex"><div class="eff-table__replace-icon"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div> <div class="eff-table__replace-icon symmetry"><div class="eff-table__replace-round" /> <div class="eff-table__replace-range" /></div></div>
-      弹出替换窗口
-      <span class="primary">右侧</span>选择字段，<span class="primary">左侧</span>编辑替换的选项
-    </div>
 
     <section class="demo">
       <div class="section-content">

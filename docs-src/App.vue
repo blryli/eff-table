@@ -22,13 +22,12 @@
         <router-link class="menu-list" to="/SeniorQuery">SeniorQuery 高级搜索</router-link>
         <router-link class="menu-list" to="/Replace">Replace 批量替换</router-link>
         <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
+        <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
         <router-link class="menu-list" to="/Tree">Tree 树</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>
         <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
-        <router-link class="menu-list" to="/SmallSum">SmallSum 小计</router-link>
-        <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>

@@ -1,20 +1,17 @@
 export default {
-  name: 'Refresh',
   functional: true,
   render(h, context) {
-    const { props: { title = '刷新' }} = context
-    return (<div
-      class='eff-icon-refresh'
-      title={title}
-    >
-      <div class='eff-icon-refresh-icon'>
-        <div class='eff-icon-refresh-blank' />
-        <div class='eff-icon-refresh-round' />
-      </div>
-      <div class='eff-icon-refresh-icon symmetry'>
-        <div class='eff-icon-refresh-blank' />
-        <div class='eff-icon-refresh-round' />
-      </div>
-    </div>)
+    const { data } = context
+    data.class = 'eff-icon-refresh' + `${data.class ? ' ' + data.class : ''}`
+    return h('div', data, [
+      h('span', { class: 'eff-icon-refresh-icon' }, [
+        h('span', { class: 'eff-icon-refresh-blank' }),
+        h('span', { class: 'eff-icon-refresh-round' })
+      ]),
+      h('span', { class: 'eff-icon-refresh-icon symmetry' }, [
+        h('span', { class: 'eff-icon-refresh-blank' }),
+        h('span', { class: 'eff-icon-refresh-round' })
+      ])
+    ])
   }
 }

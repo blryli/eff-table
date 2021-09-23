@@ -462,6 +462,7 @@ $icon-thin-color: #888;
   top: 0px;
 }
 
+// 刷新
 .eff-icon-refresh{
   position: relative;
   display: flex;
@@ -526,6 +527,19 @@ $icon-thin-color: #888;
     transform: rotate(35deg);
   }
 }
+.table-refresh{
+  &:hover{
+    animation: effRefresh 2s infinite;
+  }
+}
+@keyframes effRefresh {
+  0%{
+    transform: rotate(0);
+  }
+  100%{
+    transform: rotate(-360deg);
+  }
+}
 
 .tree-loading{
    animation: treeLoading 2s infinite;
@@ -587,5 +601,462 @@ $icon-thin-color: #888;
       border-right: 2px solid currentColor;
       box-sizing: border-box;
     }
+  }
+}
+
+// 清空搜索
+.eff-icon-clear-search{
+  display: inline-block;
+  vertical-align: middle;
+  width: 16px;
+  &-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 18px;
+    height: 16px;
+    box-sizing: border-box;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+  &--top{
+    width: 8px;
+    height: 6px;
+    border: 2px solid #999;
+    border-radius: 2px;
+    box-sizing: border-box;
+  }
+  &--center{
+    width: 100%;
+    height: 6px;
+    margin-top: -2px;
+    border: 2px solid #999;
+    border-radius: 2px;
+    box-sizing: border-box;
+  }
+  &--bottom{
+    position: relative;
+    margin-top: -1px;
+    width: 14px;
+    height: 8px;
+    border: 2px solid #999;
+    box-sizing: border-box;
+    &::before{
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 2px;
+      width: 2px;
+      height: 2px;
+      background-color: #999;
+    }
+    &::after{
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 5px;
+      width: 2px;
+      height: 3px;
+      background-color: #999;
+    }
+  }
+  &:hover{
+    animation: effIsmove .8s infinite;
+    .eff-icon-clear-search--bottom{
+      animation: effSkewX .8s infinite;
+    }
+  }
+}
+@keyframes effIsmove {
+  0%{
+    transform: translateX(-2px);
+  }
+  25%{
+    transform: translateX(0);
+  }
+  50%{
+    transform: translateX(2px);
+  }
+  75%{
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(-2px);
+  }
+}
+@keyframes effSkewX {
+  0%{
+    transform: skewX(20deg);
+  }
+  25%{
+    transform: skewX(0deg);
+  }
+  50%{
+    transform: skewX(-20deg);
+  }
+  75%{
+    transform: skewX(0deg);
+  }
+  100%{
+    transform: skewX(20deg);
+  }
+}
+
+// 小计
+.eff-icon--subtotal{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  &-container{
+    position: relative;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+
+  &-plus{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    box-sizing: border-box;
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 3px;
+      width: 8px;
+      height: 2px;
+      background-color: #999;
+    }
+    &::after{
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      width: 2px;
+      height: 8px;
+      background-color: #999;
+    }
+  }
+  &-line{
+    position: absolute;
+    left: -3px;
+    bottom: 7px;
+    width: 22px;
+    height: 1px;
+    background-color: #999;
+    transform: rotate(-45deg);
+  }
+  &-equal{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+    height: 6px;
+    box-sizing: border-box;
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 6px;
+      height: 2px;
+      background-color: #999;
+    }
+    &::after{
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 5px;
+      width: 6px;
+      height: 2px;
+      background-color: #999;
+    }
+  }
+  &:hover{
+    .eff-icon--subtotal-equal{
+      &::after{
+        animation: effRotate 1s infinite;
+      }
+    }
+  }
+}
+@keyframes effRotate {
+  0%{
+    transform: rotate(0);
+  }
+  30%{
+    transform: rotate(0);
+  }
+  100%{
+    transform: rotate(-360deg);
+  }
+}
+
+
+// 多列排序
+.eff-icon--multi-sort{
+  position: relative;
+  width: 16px;
+  height: 16px;
+  &--arrow{
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// 眼睛
+.eff-icon-eye{
+  position: relative;
+  width: 16px;
+  height: 16px;
+  &__box{
+    display: flex;
+    flex-direction: column;
+    width: 16px;
+    height: 16px;
+  }
+  &__top{
+    position: relative;
+    width: 16px;
+    height: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -9px;
+      display: block;
+      width: 16px;
+      height: 14px;
+      border: 1px solid #333;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+  }
+  &__bottom{
+    position: relative;
+    width: 16px;
+    height: 10px;
+    overflow: hidden;
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: -9px;
+      display: block;
+      width: 16px;
+      height: 14px;
+      border: 1px solid #333;
+      border-radius: 50%;
+      box-sizing: border-box;
+    }
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border: 1px solid #333;
+    border-radius: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// 列控制
+.eff-icon-column-ctrl{
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+
+  &__front{
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    height: 8px;
+    border: 2px solid #888;
+    box-sizing: content-box;
+    &::before, &::after{
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 2px;
+      background-color: #888;
+    }
+    &::before{
+      left: 1px;
+      top: 1px;
+      z-index: 1;
+      box-shadow: 0 -1px 1px rgba($color: #fff, $alpha: 1.0);
+    }
+    &::after{
+      top: 1px;
+      right: 1px;
+    }
+  }
+
+  &__end{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+    height: 6px;
+    border: 2px solid #888;
+    background-color: white;
+    box-shadow: -1px -1px 1px rgba($color: #fff, $alpha: 1.0);
+    box-sizing: content-box;
+  }
+
+  &:hover{
+    cursor: pointer;
+
+    .eff-icon-column-ctrl__front{
+      &::before{
+        animation: identifier 1s ease-in-out infinite;
+      }
+    }
+  }
+}
+
+@keyframes identifier {
+  0%{
+    left: 1px;
+    top: 1px;
+  }
+  90%{
+    left: 7px;
+    top: 7px;
+  }
+  100%{
+    left: 7px;
+    top: 7px;
+  }
+}
+
+// 列批量控制
+.eff-icon-batch-control{
+  display: inline-flex;
+  flex-wrap: wrap;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  box-sizing: border-box;
+  &__point {
+    width: 26%;
+    height: 26%;
+    margin-right: 7%;
+    background-color: #888;
+    border-radius: 10px;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+@keyframes identifier {
+  0%{
+    left: 1px;
+    top: 1px;
+    position: absolute;
+  }
+  90%{
+    left: 7px;
+    top: 7px;
+    position: absolute;
+
+  }
+  100%{
+    left: 7px;
+    top: 7px;
+    position: absolute;
+
+  }
+}
+
+// 批量替换
+.eff-icon-replace{
+  position: relative;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  transform: scale(0.95);
+  &-icon{
+    left: -2px;
+    top: -4px;
+    position: absolute;
+    &.symmetry{
+    transform: rotateZ(180deg);
+    left: 5px;
+    top: 5px;
+    }
+  }
+  &-round{
+    position: relative;
+    width: 8px;
+    height: 10px;
+    font-size: 20px;
+    left: 3px;
+    top: 3px;
+    border: 2px solid #888;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+    border-radius: 50%;
+    transform: rotate(312deg) scale(1);
+
+    // animation: rotate linear .5s infinite;
+    &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: -4px;
+      width: 1.2px;
+      height: 5px;
+      background-color: #888;
+      transform: rotate(20deg);
+    }
+    &::after{
+      content: '';
+      position: absolute;
+      left: 1px;
+      top: -1px;
+      width: 1.2px;
+      height: 5px;
+      background-color: #999;
+      transform: rotate(110deg);
+    }
+  }
+  &-range{
+    position: absolute;
+    left: 1px;
+    top: 12px;
+    width: 7px;
+    height: 7px;
+    border: 2px solid #888;
+    z-index: 2;
+    box-sizing: border-box;
+  }
+}
+@keyframes effRefresh {
+  0%{
+    transform: rotate(0);
+  }
+  100%{
+    transform: rotate(-360deg);
   }
 }

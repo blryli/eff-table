@@ -48,42 +48,62 @@ export default {
     width: 16px;
     height: 16px;
     cursor: pointer;
+    overflow: hidden;
 
     div:nth-child(1) {
       position: relative;
+      left: 2px;
       border: 2px solid #999;
       border-radius: 100%;
       width: 14px;
       height: 14px;
       box-sizing: border-box;
-       animation: alternate;
-    }
-    &:hover{
-      div:nth-child(1) {
-        animation: effSearchScale 1s infinite;
-        transition: all 1s;
-      }
+      animation: alternate;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &::before{
+          content: '';
+          border-radius: 50%;
+          display: inline-block;
+          overflow: hidden;
+          width: 3px;
+          height: 3px;
+          background-color: #fff;
+        }
     }
     div:nth-child(2) {
       position: relative;
-      border: 2px solid #999;
+      background-color: #999;
       border-radius: 100%;
       width: 4px;
-      transform: rotate( 309deg );
-      left: -4px;
+      height: 2px;
+      transform: rotate( -45deg );
+      left: 0;
       top: -2px;
+    }
+    &:hover{
+      div:nth-child(1){
+        background-color: #ddd;
+        &::before{
+          animation: effSearchScale 1s infinite;
+        }
+      }
     }
   }
 
   @keyframes effSearchScale {
   0%{
-    border-width: 2px;
+    width: 3px;
+    height: 3px;
   }
   50% {
-    border-width: 7px;
+    width: 10px;
+    height: 10px;
   }
   100%{
-    border-width: 2px;
+    width: 3px;
+    height: 3px;
   }
 }
 </style>

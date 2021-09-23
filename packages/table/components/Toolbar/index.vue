@@ -1,21 +1,17 @@
 <script>
 import Fullscreen from './Fullscreen'
-import ColumnCtrlBtn from './ColumnCtrlBtn'
-import columnBatchControlBtn from './ColumnBatchControlBtn'
 import EditHistory from './EditHistory'
-import Clear from './Clear'
-import Refresh from './Refresh'
 import Query from './Query'
 import Subtotal from './Subtotal'
 import { renderer, getOn } from 'pk/utils/render'
-import ReplaceCtrlBtnVue from './ReplaceCtrlBtn.vue'
 import SortCtrlBtn from './SortCtrlBtn.vue'
 import ToolbarShrink from 'pk/toolbar-shrink'
+import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, ColumnCtrlBtn, Clear, columnBatchControlBtn, EditHistory, Refresh, Query, SortCtrlBtn, ToolbarShrink, Subtotal },
+  components: { Fullscreen, EditHistory, Query, SortCtrlBtn, ToolbarShrink, Subtotal, Icon },
   inject: ['table'],
   data() {
     return {
@@ -51,39 +47,40 @@ export default {
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
     }, []) : ''
     const list = buttonsRender.concat(this.$slots.default || []) || []
+    const replaceClick = () => (table.$refs.replace.show = !table.$refs.replace.show)
     return (
       <div class='eff-table__toobar' style={{ height: table.heights.toolbarHeight + 'px' }}>
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
           {
-            subtotal && <Subtotal /> || ''
+            subtotal && <Subtotal title='小计' /> || ''
           }
           {
-            editHistory && <EditHistory /> || ''
+            editHistory && <EditHistory title='编辑记录' /> || ''
           }
           {
             // multiple && <SortCtrlBtn /> || ''
           }
           {
-            showReplace && <ReplaceCtrlBtnVue /> || ''
+            showReplace && <Icon icon='replace' title='批量替换' on-click={replaceClick} /> || ''
           }
           {
-            seniorQuery && <Query /> || ''
+            seniorQuery && <Query title='高级搜索' /> || ''
           }
           {
-            refresh && <Refresh /> || ''
+            refresh && <Icon icon='refresh' class='table-refresh' title='刷新' on-click={table.refresh} /> || ''
           }
           {
-            search && <Clear /> || ''
+            search && <Icon icon='clear-search' title='清空搜索' on-click={table.clearSearch} /> || ''
           }
           {
-            columnBatchControl && <columnBatchControlBtn on-change={this.handleColumnBatchControl} /> || ''
+            columnBatchControl && <Icon icon='column-batch-ctrl' title='列批量控制' on-click={this.handleColumnBatchControl} /> || ''
           }
           {
-            columnControl && <ColumnCtrlBtn on-change={this.handleColumnControl} /> || ''
+            columnControl && <Icon icon='column-ctrl' title='列控制' on-click={this.handleColumnControl} /> || ''
           }
           {
-            fullscreen && <Fullscreen /> || ''
+            fullscreen && <Fullscreen title='全屏' /> || ''
           }
         </div>
       </div>

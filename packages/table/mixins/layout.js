@@ -92,7 +92,7 @@ export default {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, expandsHeight } = this
+      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? rowHeight + toolbarHeightOffset : 0
@@ -100,7 +100,7 @@ export default {
       const searchHeight = search ? rowHeight : 0
       const footerHeight = footer ? rowHeight : 0
       const footerActionHeight = footerAction ? rowHeight : 0
-      const dataHeight = tableData.length ? (tableData.length + this.treeNum) * rowHeight + expandsHeight : rowHeight
+      const dataHeight = tableData.length ? (tableData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? screenfullHeight : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)

@@ -146,7 +146,7 @@
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>subtotalColumns -  {{ subtotalColumns }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -304,12 +304,15 @@ export default {
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
       loadingField: false,
-      seniorQuery: [] // 高级搜索
+      seniorQuery: [], // 高级搜索
+      subtotalColumns: [], // 小计列
+      subtotalData: [], // 小计数据
+      $message: this.$message
     }
   },
   computed: {
     bodyColumns() {
-      const { width, sort } = this.tableColumnConfig
+      const { width } = this.tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur

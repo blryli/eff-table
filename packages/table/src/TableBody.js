@@ -1,4 +1,5 @@
 import TableBodyRow from './TableBodyRow'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'TableBody',
@@ -146,7 +147,7 @@ export default {
   },
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
 
@@ -166,20 +167,35 @@ export default {
               const classes = `eff-table__expanded expandid-${row[rowId]}`
               const expandNode = expanded ? <div class={classes}>{expand({ row, rowIndex })}</div> : ''
 
-              const dom = [<TableBodyRow
-                key={currentIndex}
-                row={row}
-                rowid={rowid}
-                row-index={currentIndex}
-                treeIndex={treeIndex}
-                body-columns={fixed ? bodyColumns : renderColumn}
-                fixed={fixed}
-                vue={this}
-                messages={formatValidators[row[rowId]]}
-              />, expandNode]
+              const rowFun = (row, key = '') => {
+                const uniqueId = XEUtils.uniqueId()
+                if (key) {
+                  return <TableBodyRow
+                    key={currentIndex + key + uniqueId}
+                    rowid={uniqueId}
+                    row={row}
+                    body-columns={fixed ? bodyColumns : renderColumn}
+                    fixed={fixed}
+                    subtotal={true}
+                  />
+                }
+                return [<TableBodyRow
+                  key={currentIndex}
+                  row={row}
+                  rowid={rowid}
+                  row-index={currentIndex}
+                  treeIndex={treeIndex}
+                  body-columns={fixed ? bodyColumns : renderColumn}
+                  fixed={fixed}
+                  vue={this}
+                  messages={formatValidators[row[rowId]]}
+                />, expandNode]
+              }
 
               const trees = this.getTrees(row, currentIndex)
-              return dom.concat(trees)
+              const subtotalFindRow = subtotalData.filter(s => s.index === rowIndex)
+              const subtotalRow = subtotalFindRow.length ? rowFun(subtotalFindRow.reduce((acc, cur) => XEUtils.merge(acc, cur.row), {}), 'subtotal') : []
+              return rowFun(row).concat(trees).concat(subtotalRow)
             })
           }
           {

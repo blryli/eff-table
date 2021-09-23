@@ -22,14 +22,15 @@ export default {
     treeFloor: { type: Number, default: 0 },
     treeIndex: { type: Number, default: 0 },
     vue: { type: Object, default: null },
-    summary: Boolean
+    summary: Boolean,
+    subtotal: Boolean
   },
   inject: ['table'],
   functional: true,
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary } = props
+    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className } = column
     const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId } = table
     const _rowId = row[rowId]
@@ -47,9 +48,14 @@ export default {
       style.borderLeft = 0
     }
 
+    // 小计
+    if (subtotal) {
+      style.backgroundColor = '#FDF6EC'
+    }
+
     let columnClass = `eff-table__column `
     // 复制功能
-    if (copy && !summary) {
+    if (copy && !summary && !subtotal) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
       const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
@@ -126,10 +132,7 @@ export default {
       }
     }
 
-    // 小计
-    if (row.rowIsSum) {
-      style.backgroundColor = 'rgba(64, 184, 131, 0.18)'
-    }
+    // tree树paddingLeft
     if (columnIndex === treeIndex) {
       style.paddingLeft = treeFloor * 28 + 'px'
     }
@@ -141,6 +144,7 @@ export default {
     const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) : false
 
     const renderSelection = function() {
+      if (subtotal) return ''
       return h(VCheckbox, {
         props: { value: table.isChecked(row), disabled: isDisabled },
         key: _rowId,
@@ -148,6 +152,7 @@ export default {
       })
     }
     const renderRadio = function(h) {
+      if (subtotal) return ''
       return h(VRadio, {
         props: { value: table.isChecked(row), disabled: isDisabled },
         key: _rowId,
@@ -200,7 +205,7 @@ export default {
       return expand
     }
     const handleMouseenter = function(event, slot) {
-      if (summary) return
+      if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       const cellLabel = cell.querySelector('.eff-cell--label')
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
@@ -218,7 +223,7 @@ export default {
       message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message, isFixed: true })
     }
     const handleMouseleave = function(event, slot) {
-      if (summary) return
+      if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.$refs.popovers.tipClose()
@@ -226,17 +231,17 @@ export default {
     }
 
     const handleMouseUp = function(event) {
-      if (summary) return
+      if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-up', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMouseDown = function(event) {
-      if (summary) return
+      if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     }
     const handleMousemove = function(event) {
-      if (summary) return
+      if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }

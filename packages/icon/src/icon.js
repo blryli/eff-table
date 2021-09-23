@@ -7,28 +7,33 @@ import Subtotal from './subtotal'
 import Eye from './eye'
 import Deleted from './deleted'
 import Refresh from './refresh'
+import Replace from './replace'
 export default {
   name: 'Icon',
-  components: { Fixed, SearchClear, RowDrag, ColumnBatchCtrl, Eye },
+  functional: true,
+  components: { Fixed, SearchClear, RowDrag, ColumnCtrl, ColumnBatchCtrl, Subtotal, Eye, Deleted, Refresh, Replace },
   props: {
     icon: { type: String, default: 'like' }
   },
-  render(h) {
-    const { icon } = this
+  render(h, context) {
+    const { props, data } = context
+    const { icon } = props
     const icons = {
-      'fixed': <Fixed />,
-      'SearchClear': <SearchClear />,
-      'row-drag': <RowDrag />,
-      'column-ctrl': <ColumnCtrl />,
-      'column-batch-ctrl': <ColumnBatchCtrl />,
-      'subtotal': <Subtotal />,
-      'eye': <Eye />,
-      'delete': <Deleted />,
-      'refresh': <Refresh />
+      'fixed': Fixed,
+      'clear-search': SearchClear,
+      'row-drag': RowDrag,
+      'column-ctrl': ColumnCtrl,
+      'column-batch-ctrl': ColumnBatchCtrl,
+      'subtotal': Subtotal,
+      'eye': Eye,
+      'delete': Deleted,
+      'refresh': Refresh,
+      'replace': Replace
     }
     if (icons[icon]) {
-      return icons[icon]
+      return h(icons[icon], data)
     }
-    return <i class={'eff-icon-' + (icon === 'like' ? 'search' : icon)} />
+    data.class = 'eff-icon-' + (icon === 'like' ? 'search' : icon)
+    return h('i', data)
   }
 }

@@ -65,8 +65,7 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
-            titleSuffix: { icon: 'info', message: '异步操作，等待回调完成再进行下一步操作' },
-            sortable: true
+            titleSuffix: { icon: 'info', message: '异步操作，等待回调完成再进行下一步操作' }
           },
           {
             show: true,
@@ -80,10 +79,13 @@ export default {
           }
         ],
         data: [
-          { id: 1, name: '桌子', number: '12', email: '168@qq.com' },
-          { id: 2, name: '凳子', number: '33', email: '168@qq.com' },
-          { id: 3, name: '桌子', number: '22', email: '168@qq.com' },
-          { id: 4, name: '椅子', number: '6', email: '168168168168168168168168168168168168168168168168168168' }
+          { id: 1, name: '99', number: '12', email: '168@qq.com' },
+          { id: 2, name: '888', number: '33', email: '168@qq.com' },
+          { id: 5, name: '999999', number: '6', email: '1681681681681' },
+          { id: 3, name: '9999', number: '22', email: '168@qq.com' },
+          { id: 5, name: '999999', number: '8', email: '1681681681681' },
+          { id: 4, name: '888', number: '33', email: '168@qq.com' },
+          { id: 5, name: '777', number: '6', email: '1681681681681' }
         ]
       }
     }
