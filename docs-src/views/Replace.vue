@@ -14,7 +14,7 @@
           ref="table"
           v-model="columns"
           :data="data"
-          :toolbar-config="{showReplace: true}"
+          :toolbar-config="{replace: true}"
           edit
           border
         />

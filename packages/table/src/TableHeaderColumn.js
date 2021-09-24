@@ -20,7 +20,7 @@ export default {
     const { table } = injections
     const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId } = table
     const { column, columnIndex, colid, isChecked } = props
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [] } = column
+    const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
     const renderId = `header-column-${tableId}-${colid}`
@@ -39,6 +39,10 @@ export default {
     const { titleClassName, drag, edit, fixed, prop } = column
 
     let columnClass = `eff-table__column`
+    // 对齐方式
+    if (headerAlign) {
+      columnClass += ` is--align-${headerAlign || 'left'}`
+    }
     titleClassName && (columnClass += ` ${titleClassName}`)
     edit && (columnClass += ` col-edit`)
     const isDrag = tableDrag && drag !== false

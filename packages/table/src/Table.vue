@@ -118,7 +118,7 @@
       <ScrollX v-if="showSummary && overflowX" />
     </div>
     <FooterAction
-      v-if="$slots.footer_action || footerActionConfig && footerActionConfig.showPager"
+      v-if="showFooterToolbar"
       ref="footerAction"
     >
       <slot name="footer_action" />
@@ -134,6 +134,7 @@
       @row-change="dragRowChange"
     />
 
+    <!-- 列批量控制 -->
     <column-batch-control
       v-if="border && drag && (toolbarConfig || {}).columnBatchControl"
       ref="columnBatchControl"
@@ -141,7 +142,8 @@
       @cardClose="handleCardClose"
     />
 
-    <replace v-if="toolbarConfig.showReplace" ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
+    <!-- 批量替换 -->
+    <replace v-if="toolbarConfig.replace" ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
@@ -154,6 +156,7 @@
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
 
+    <!-- expand插槽 -->
     <slot v-if="false" name="expand" />
 
     <Loading :visible="isLoading" />
@@ -360,10 +363,15 @@ export default {
           if (Array.isArray(item) && item.length) show = true
         } else if (key === 'columnControl') {
           if (drag && item) show = true
-        } else if (['refresh', 'seniorQuery', 'fullscreen', 'editHistory', 'showReplace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
+        } else if (['refresh', 'seniorQuery', 'fullscreen', 'editHistory', 'replace', 'columnBatchControl', 'subtotal'].indexOf(key) > -1 && item) show = true
       }
       if ($slots.toolbar || search) show = true
       return show
+    },
+    showFooterToolbar() {
+      const { footerActionConfig = {}, $slots } = this
+      const { buttons = [], showPager } = footerActionConfig
+      return buttons.length || showPager || $slots.footer_action
     },
     tableId() {
       return (~~(Math.random() * (1 << 30))).toString(36)

@@ -4,14 +4,13 @@ import EditHistory from './EditHistory'
 import Query from './Query'
 import Subtotal from './Subtotal'
 import { renderer, getOn } from 'pk/utils/render'
-import SortCtrlBtn from './SortCtrlBtn.vue'
 import ToolbarShrink from 'pk/toolbar-shrink'
 import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, EditHistory, Query, SortCtrlBtn, ToolbarShrink, Subtotal, Icon },
+  components: { Fullscreen, EditHistory, Query, ToolbarShrink, Subtotal, Icon },
   inject: ['table'],
   data() {
     return {
@@ -36,7 +35,7 @@ export default {
   render(h) {
     const { table, load } = this
     const { toolbarConfig, search } = table
-    const { buttons = [], refresh, seniorQuery, columnControl, columnBatchControl, fullscreen, editHistory, showReplace, subtotal } = toolbarConfig || {}
+    const { buttons = [], refresh, seniorQuery, columnControl, columnBatchControl, fullscreen, editHistory, replace, subtotal } = toolbarConfig || {}
     // const { multiple } = sortConfig
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur
@@ -59,10 +58,7 @@ export default {
             editHistory && <EditHistory title='编辑记录' /> || ''
           }
           {
-            // multiple && <SortCtrlBtn /> || ''
-          }
-          {
-            showReplace && <Icon icon='replace' title='批量替换' on-click={replaceClick} /> || ''
+            replace && <Icon icon='replace' title='批量替换' on-click={replaceClick} /> || ''
           }
           {
             seniorQuery && <Query title='高级搜索' /> || ''

@@ -104,7 +104,7 @@ export default {
 | copy       | 是否开启复制功能    | Boolean |       |       |
 | edit-history       | 是否开启前进后退功能    | Boolean |       |       |
 | footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
-| showReplace       | 替换和填充功能    | Boolean |       |       |
+| replace       | 替换和填充功能    | Boolean |       |       |
 | before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
 
 - columns
@@ -219,7 +219,7 @@ value: [
   ], 
   columnControl: false, // 是否启用列控制功能
   columnBatchControl: false, // 是否启用列批量控制功能
-  showReplace: false, // 是否启用列批量替换功能
+  replace: false, // 是否启用列批量替换功能
   editHistory: false, // 是否启用历史操作控制功能
   seniorQuery: false, // 是否启用高级搜索功能
   refresh: false, // 是否启用刷新功能

@@ -9,9 +9,6 @@ export default {
       textArr: []
     }
   },
-  computed: {
-
-  },
   inject: ['table'],
   mounted() {
     this.offListener()

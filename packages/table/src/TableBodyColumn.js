@@ -31,7 +31,7 @@ export default {
     const { props, data, injections } = context
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary, subtotal } = props
-    const { type, prop, className } = column
+    const { type, prop, className, align } = column
     const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
@@ -53,7 +53,11 @@ export default {
       style.backgroundColor = '#FDF6EC'
     }
 
-    let columnClass = `eff-table__column `
+    let columnClass = `eff-table__column`
+    // 对齐方式
+    if (align) {
+      columnClass += ` is--align-${align || 'left'} `
+    }
     // 复制功能
     if (copy && !summary && !subtotal) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore

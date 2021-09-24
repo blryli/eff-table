@@ -220,7 +220,7 @@ export const getTextWidth = function(node) {
  * @param {node} node
  */
 export const textOverflow = function(node) {
-  return getTextWidth(node) - 0.3 > node.clientWidth
+  return getTextWidth(node) - 0.3 > node.getBoundingClientRect().width
 }
 
 /**

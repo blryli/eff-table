@@ -6,10 +6,10 @@ $icon-thin-color: #888;
   width: 14px;
   text-transform: none;
   line-height: 1;
-  vertical-align: baseline;
   display: inline-block;
   font-size: 16px;
   text-align: center;
+  vertical-align: middle;
 }
 
 .eff-icon-edit {
@@ -465,20 +465,17 @@ $icon-thin-color: #888;
 // 刷新
 .eff-icon-refresh{
   position: relative;
-  display: flex;
-  justify-items: center;
-  align-items: center;
   width: 16px;
   height: 16px;
   cursor: pointer;
   &-icon{
     left: -2px;
-    top: -2px;
+    top: -5px;
     position: absolute;
     &.symmetry{
     transform: rotateZ(180deg);
     left: 4px;
-    top: 2px;
+    top: 5px;
     }
   }
   &-round{
@@ -519,7 +516,7 @@ $icon-thin-color: #888;
   &-blank{
     position: absolute;
     left: 2px;
-    top: 7px;
+    top: 11px;
     width: 4px;
     height: 3px;
     background-color: #fff;
@@ -555,6 +552,7 @@ $icon-thin-color: #888;
   }
 }
 
+// 删除
 .eff-icon-delete{
   display: inline-block;
   width: 14px;
@@ -607,7 +605,6 @@ $icon-thin-color: #888;
 // 清空搜索
 .eff-icon-clear-search{
   display: inline-block;
-  vertical-align: middle;
   width: 16px;
   &-container{
     display: flex;
@@ -704,11 +701,10 @@ $icon-thin-color: #888;
 }
 
 // 小计
-.eff-icon--subtotal{
+.eff-icon-subtotal{
   display: inline-block;
   width: 16px;
   height: 16px;
-  vertical-align: middle;
   &-container{
     position: relative;
     width: 16px;
@@ -781,7 +777,7 @@ $icon-thin-color: #888;
     }
   }
   &:hover{
-    .eff-icon--subtotal-equal{
+    .eff-icon-subtotal-equal{
       &::after{
         animation: effRotate 1s infinite;
       }
@@ -797,18 +793,6 @@ $icon-thin-color: #888;
   }
   100%{
     transform: rotate(-360deg);
-  }
-}
-
-
-// 多列排序
-.eff-icon--multi-sort{
-  position: relative;
-  width: 16px;
-  height: 16px;
-  &--arrow{
-    width: 16px;
-    height: 16px;
   }
 }
 
@@ -954,7 +938,6 @@ $icon-thin-color: #888;
   position: relative;
   width: 16px;
   height: 16px;
-  vertical-align: middle;
   box-sizing: border-box;
   &__point {
     width: 26%;
@@ -1059,4 +1042,69 @@ $icon-thin-color: #888;
   100%{
     transform: rotate(-360deg);
   }
+}
+
+// 高级搜索
+.eff-icon-query {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  overflow: hidden;
+
+  &-round {
+    position: relative;
+    left: 2px;
+    border: 2px solid #999;
+    border-radius: 100%;
+    width: 14px;
+    height: 14px;
+    box-sizing: border-box;
+    animation: alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &::before{
+        content: '';
+        border-radius: 50%;
+        display: inline-block;
+        overflow: hidden;
+        width: 3px;
+        height: 3px;
+        background-color: #fff;
+      }
+  }
+  &-line {
+    display: inline-block;
+    position: absolute;
+    background-color: #999;
+    border-radius: 100%;
+    width: 4px;
+    height: 2px;
+    transform: rotate( -45deg );
+    left: 0;
+    top: 12px;
+  }
+  &:hover{
+    .eff-icon-query-round{
+      background-color: #ddd;
+      &::before{
+        animation: effSearchScale 1s infinite;
+      }
+    }
+  }
+}
+
+@keyframes effSearchScale {
+0%{
+  width: 3px;
+  height: 3px;
+}
+50% {
+  width: 10px;
+  height: 10px;
+}
+100%{
+  width: 3px;
+  height: 3px;
+}
 }

@@ -214,10 +214,10 @@ export default {
     },
     search() {
       this.table.validate(null, true).then(res => {
-        const { tableData, treeConfig: { children = 'children' } = {}} = this.table
+        const { tableData } = this.table
         const updateSeniorQuery = data => {
           return data.reduce((acc, cur) => {
-            const child = cur[children] || []
+            const child = cur.children || []
             const { conditionConnector, fieldName, operator, fieldValue } = cur
             return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
           }, [])
@@ -272,8 +272,8 @@ export default {
     },
     isFristRow(rowid) {
       if (!rowid) return false
-      const { tableData, rowId, treeConfig: { children = 'children' } = {}} = this.table
-      const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, children) || {}
+      const { tableData, rowId } = this.table
+      const { path } = XEUtils.findTree(tableData, item => item[rowId] === rowid, 'children') || {}
       return Boolean(!rowid || !path || path.slice(-1)[0] === '0')
     },
     hasChildren(row) {

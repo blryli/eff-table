@@ -12,7 +12,7 @@
           :columns="[
             {title: '列数量',prop: 'columnNum',itemRender:{
               name: 'select',
-              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000}],
+              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000},{label: 5000, value: 5000}],
               on: {change: setColumns}
             }},
             {title: '行数量',prop: 'dataNum',itemRender:{
@@ -158,7 +158,7 @@ export default {
   methods: {
     setColumns(val) {
       let num = 1
-      this.tableOptions.columns = [{ type: 'index' }].concat(mock.mock({
+      this.tableOptions.columns = [{ type: 'index', width: 60 }].concat(mock.mock({
         ['array|' + val]: [
           {
             show: true,

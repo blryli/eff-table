@@ -42,7 +42,7 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table2" v-model="columns" :data="data" :footer-action-config="{ }" :max-height="400">
+        <eff-table ref="table2" v-model="columns" :data="data" :footer-action-config="footerActionConfig" :max-height="400">
           <template #footer_action>
             <el-button>演示按钮1</el-button>
             <el-button>演示按钮2</el-button>
@@ -157,6 +157,14 @@ export default {
       htmlCode,
       htmlCode1,
       jsCode,
+      footerActionConfig: {
+        showPager: true,
+        showBorder: true,
+        buttons: [
+          { name: 'button', children: 'buttons1' },
+          { name: 'button', children: 'buttons2' }
+        ]
+      },
       columns: [
         {
           show: true,

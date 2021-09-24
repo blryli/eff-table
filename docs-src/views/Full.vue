@@ -21,7 +21,7 @@
           :sort-config="{multiple: true}"
           :toolbar-config="{
             refresh: true,
-            showReplace: true,
+            replace: true,
             fullscreen: true,
             columnBatchControl: true,
             editHistory: true,

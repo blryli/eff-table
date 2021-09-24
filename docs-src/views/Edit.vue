@@ -317,7 +317,6 @@ export default {
       tableOptions1: {
         maxHeight: 400,
         edit: true,
-        copy: true,
         border: true,
         toolbarConfig: {
           buttons: [{ name: 'button', code: 'add_focus', children: '新增' }]
@@ -339,7 +338,7 @@ export default {
             show: true,
             prop: 'sex',
             title: '性别',
-            config: { name: 'select', help: { message: '1111' }, options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
+            config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
             edit: true
           },
           {

@@ -53,6 +53,7 @@ export default {
         nodes[insertIndex].push(XEUtils.isString(cRender) ? cRender : '')
       }
     }
+    // console.log(nodes)
     table.$emit('select-range-data', [...nodes])
 
     return <div class='eff-table--copy'>

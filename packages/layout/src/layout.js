@@ -2,29 +2,13 @@
 export default {
   // 页面布局容器组件
   name: 'layout',
+  functional: true,
   props: ['span'],
-  data() {
-    return {}
-  },
-  methods: {
-  },
-  render(h) {
-    const spanCss = this.span ? `span-${this.span}` : ''
+  render(h, context) {
+    const { props: { span }, data, children } = context
+    const spanCss = span ? `span-${span}` : ''
+    data.class = ['layout', span ? ' ' + spanCss : '', data.class, data.staticClass]
 
-    return h(
-      'div',
-      {
-        'class': {
-          'layout': true,
-          [spanCss]: !!this.span
-        },
-        on: {
-          click: (e) => {
-            this.$emit('click', e)
-          }
-        }
-      },
-      this.$slots.default
-    )
+    return h('div', data, children)
   }
 }

@@ -8,10 +8,11 @@ import Eye from './eye'
 import Deleted from './deleted'
 import Refresh from './refresh'
 import Replace from './replace'
+import Query from './query'
 export default {
   name: 'Icon',
   functional: true,
-  components: { Fixed, SearchClear, RowDrag, ColumnCtrl, ColumnBatchCtrl, Subtotal, Eye, Deleted, Refresh, Replace },
+  components: { Fixed, SearchClear, RowDrag, ColumnCtrl, ColumnBatchCtrl, Subtotal, Eye, Deleted, Refresh, Replace, Query },
   props: {
     icon: { type: String, default: 'like' }
   },
@@ -28,12 +29,13 @@ export default {
       'eye': Eye,
       'delete': Deleted,
       'refresh': Refresh,
-      'replace': Replace
+      'replace': Replace,
+      'query': Query
     }
     if (icons[icon]) {
       return h(icons[icon], data)
     }
-    data.class = 'eff-icon-' + (icon === 'like' ? 'search' : icon)
+    data.class = ['eff-icon-' + (icon === 'like' ? 'search' : icon), data.class, data.staticClass]
     return h('i', data)
   }
 }

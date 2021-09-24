@@ -257,6 +257,15 @@
   box-sizing: border-box;
   border-bottom: 1px solid #ddd;
   overflow: hidden;
+  &.is--align-left{
+    justify-content: flex-start;
+  }
+  &.is--align-center{
+    justify-content: center;
+  }
+  &.is--align-right{
+    justify-content: flex-end;
+  }
 }
 .eff-table__header{
   .eff-table__column{

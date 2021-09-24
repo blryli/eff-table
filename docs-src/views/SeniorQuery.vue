@@ -1,16 +1,10 @@
 <template>
   <div class="page-home page">
-    <h2>seniorQuery 自定义搜索</h2>
+    <h2>SeniorQuery 高级搜索</h2>
     <p class="hint">
-      前置条件<br>
-      <span class="primary">toolbarConfig.seniorQuery</span> 属性有内容（请参照底下代码）
-
+      <span class="primary">toolbarConfig.seniorQuery</span> 设置为 <span class="primary">true</span><br>
+      点击 <Icon icon="query" /> 展开搜索框
     </p>
-    <div>
-      点击
-      <div style="display: inline-block" title="搜索" class="eff-table__diy_search"><div /> <div /></div>展开搜索框<span class="primary">，新增条件</span>后，点击<span class="primary">搜索</span>即可执行搜索
-    </div>
-    <br>
     <section class="demo">
       <div class="section-content">
         <eff-table v-bind="tableOptions" />

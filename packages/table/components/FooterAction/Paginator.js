@@ -29,7 +29,7 @@ export default {
     return render(h, {
       props: Object.assign({
         pageSizes: [10, 50, 100, 200, 300, 400],
-        layout: 'sizes,next,pager,prev,jumper,total',
+        layout: 'sizes,prev,pager,next,jumper,total',
         pagerCount: 5
       }, pageConfig, { pageNum, pageSize, total }),
       on: {

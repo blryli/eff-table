@@ -1,5 +1,5 @@
-<template>
-  <div v-if="visible" class="eff-table__loading">
+<template functional>
+  <div v-if="props.visible" class="eff-table__loading">
     <div class="eff-table__loading-icon" />
   </div>
 </template>
