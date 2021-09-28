@@ -14,7 +14,7 @@ export default {
     message: { type: [String, Array], default: '' },
     enterable: Boolean,
     hideDelay: { type: Number, default: 200 },
-    vslot: { type: Object, default: () => {} },
+    vslot: { type: [Object, Array], default: () => {} },
     addToBody: Boolean,
     isFixed: Boolean,
     showAlways: Boolean,
@@ -29,8 +29,8 @@ export default {
   },
   computed: {
     isVisible() {
-      const { showAlways, show, disabled, message, $slots } = this
-      return (showAlways || show) && !disabled && (message || $slots.default)
+      const { showAlways, show, disabled, message, $slots, vslot } = this
+      return (showAlways || show) && !disabled && (vslot || message || $slots.default)
     },
     pClass() {
       const { effect, momentPlacement, popoverClass, isFixed, isVisible } = this
@@ -138,6 +138,7 @@ export default {
       } else {
         this.show = true
       }
+      console.log({ show: this.show })
     },
     doHide() {
       if (this.enterable) {

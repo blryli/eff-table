@@ -15,6 +15,8 @@ export default {
     rowIndex: { type: Number, default: 0 },
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
+    rowspan: { type: Number, default: 0 },
+    colspan: { type: Number, default: 0 },
     message: { type: Object, default: () => {} },
     fixed: { type: String, default: '' },
     rowid: { type: String, default: '' },
@@ -30,20 +32,42 @@ export default {
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { vue, row, rowid, rowIndex, column, columnIndex, disabled, treeIndex, treeFloor, summary, subtotal } = props
+    const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId } = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
-      initField(row, prop, vue)
+      // initField(row, prop, vue)
       column.initField = true
     }
     // 设置style
-    const columnWidth = Math.max(column.width || spaceWidth, 40)
+    let columnWidth = Math.max(column.width || spaceWidth, 40)
+    let columnHeight = 0
+    if (colspan > 1) { // 合并列
+      let widths = 0
+      for (let index = 0; index < colspan; index++) {
+        const col = bodyColumns[columnIndex + index]
+        widths += Math.max(col.width || spaceWidth, 40)
+      }
+      columnWidth = widths
+      table.isSpanMethod = true
+    }
+    if (rowspan > 1) {
+      let heights = 0
+      for (let index = 0; index < rowspan; index++) {
+        heights += rowHeight
+      }
+      columnHeight = heights
+      table.isSpanMethod = true
+    }
     const style = {}
     style.minWidth = columnWidth + 'px'
     style.maxWidth = columnWidth + 'px'
+    if (columnHeight) {
+      style.height = columnHeight + 'px'
+      style.zIndex = 1
+    }
     if (columnIndex === 0) {
       style.borderLeft = 0
     }
@@ -59,7 +83,7 @@ export default {
       columnClass += ` is--align-${align || 'left'} `
     }
     // 复制功能
-    if (copy && !summary && !subtotal) {
+    if (copy && !summary && !subtotal && !isSpanMethod) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
       const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
@@ -137,7 +161,7 @@ export default {
     }
 
     // tree树paddingLeft
-    if (columnIndex === treeIndex) {
+    if (columnIndex === treeIndex && !isSpanMethod) {
       style.paddingLeft = treeFloor * 28 + 'px'
     }
     // row[columnIndex] summary合计列
@@ -267,7 +291,7 @@ export default {
         vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
-    if ((childs.length || row.hasChild) && columnIndex === treeIndex) {
+    if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
       treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
         {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <span class={{ 'eff-icon--arrow': true, 'is--expanded': table.treeIds[_rowId] }} />}
       </span>

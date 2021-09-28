@@ -275,7 +275,8 @@ function renderDialog(h, renderOpts, params) {
   const props = {
     visible: edit.dialogVisible,
     modal: false,
-    title: column.title
+    title: column.title,
+    addendToBody: true
   }
 
   if (edit.dialogVisible) root.setEditStop(true)

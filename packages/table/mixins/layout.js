@@ -19,6 +19,7 @@ export default {
   watch: {
     isScreenfull(val) {
       if (val) {
+        this.tableMaxHeight = window.screen.height
         this.layoutTimer = setTimeout(() => {
           this.resize()
           val && this.$nextTick(() => {
@@ -26,6 +27,7 @@ export default {
           })
         }, 0)
       } else {
+        this.tableMaxHeight = this.maxHeight
         this.layoutTimer = null
       }
     }
@@ -84,15 +86,15 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
-      const { bodyHeight, maxHeight, dataHeight } = this.heights
+      const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return bodyHeight && (maxHeight ? dataHeight > maxHeight : dataHeight > bodyHeight - overflowXHeight)
+      return bodyHeight && (tableMaxHeight ? dataHeight > tableMaxHeight : dataHeight > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     heights() {
-      const { height, maxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, isScreenfull, screenfullHeight, tableData, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? rowHeight + toolbarHeightOffset : 0
@@ -102,12 +104,12 @@ export default {
       const footerActionHeight = footerAction ? rowHeight : 0
       const dataHeight = tableData.length ? (tableData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      const tableHeight = isScreenfull ? screenfullHeight : maxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
+      const tableHeight = isScreenfull ? screenfullHeight : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
-      if (maxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
+      if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
-      if (!height && !maxHeight) {
+      if (!height && !tableMaxHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
       return {

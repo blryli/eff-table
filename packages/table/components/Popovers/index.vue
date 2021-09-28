@@ -33,9 +33,11 @@ export default {
     editTipShow(opts) {
       this.$refs.editPopover.doShow()
       this.editPopoverOpts = opts
+      this.table.setEditStop(true)
     },
     editTipClose() {
       this.$refs.editPopover.doHide()
+      this.table.setEditStop(false)
     },
     validTipShow(opts) {
       this.$refs.validPopover.doShow()

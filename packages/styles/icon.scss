@@ -473,9 +473,9 @@ $icon-thin-color: #888;
     top: -5px;
     position: absolute;
     &.symmetry{
-    transform: rotateZ(180deg);
-    left: 4px;
-    top: 5px;
+      transform: rotateZ(180deg);
+      left: 4px;
+      top: 5px;
     }
   }
   &-round{
@@ -485,7 +485,7 @@ $icon-thin-color: #888;
     font-size: 20px;
     left: 3px;
     top: 3px;
-    border: 2px solid #888;
+    border: 2px solid $icon-thin-color;
     border-left-color: transparent;
     border-bottom-color: transparent;
     border-radius: 50%;
@@ -499,7 +499,7 @@ $icon-thin-color: #888;
       top: -4px;
       width: 1.2px;
       height: 5px;
-      background-color: #888;
+      background-color: $icon-thin-color;
       transform: rotate(20deg);
     }
     &::after{
@@ -509,7 +509,7 @@ $icon-thin-color: #888;
       top: -1px;
       width: 1.2px;
       height: 5px;
-      background-color: #999;
+      background-color: $icon-thin-color;
       transform: rotate(110deg);
     }
   }
@@ -529,6 +529,7 @@ $icon-thin-color: #888;
     animation: effRefresh 2s infinite;
   }
 }
+
 @keyframes effRefresh {
   0%{
     transform: rotate(0);
@@ -557,7 +558,7 @@ $icon-thin-color: #888;
   display: inline-block;
   width: 14px;
   height: 14px;
-  color: #888;
+  color: $icon-thin-color;
   &-top{
     position: relative;
     display: block;
@@ -620,7 +621,7 @@ $icon-thin-color: #888;
   &--top{
     width: 8px;
     height: 6px;
-    border: 2px solid #999;
+    border: 2px solid $icon-thin-color;
     border-radius: 2px;
     box-sizing: border-box;
   }
@@ -628,7 +629,7 @@ $icon-thin-color: #888;
     width: 100%;
     height: 6px;
     margin-top: -2px;
-    border: 2px solid #999;
+    border: 2px solid $icon-thin-color;
     border-radius: 2px;
     box-sizing: border-box;
   }
@@ -636,8 +637,8 @@ $icon-thin-color: #888;
     position: relative;
     margin-top: -1px;
     width: 14px;
-    height: 8px;
-    border: 2px solid #999;
+    height: 9px;
+    border: 2px solid $icon-thin-color;
     box-sizing: border-box;
     &::before{
       content: '';
@@ -646,7 +647,7 @@ $icon-thin-color: #888;
       right: 2px;
       width: 2px;
       height: 2px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
     &::after{
       content: '';
@@ -655,7 +656,7 @@ $icon-thin-color: #888;
       right: 5px;
       width: 2px;
       height: 3px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
   }
   &:hover{
@@ -718,7 +719,7 @@ $icon-thin-color: #888;
   &-plus{
     position: absolute;
     left: 0;
-    top: 0;
+    top: -1px;
     width: 8px;
     height: 8px;
     box-sizing: border-box;
@@ -729,7 +730,7 @@ $icon-thin-color: #888;
       top: 3px;
       width: 8px;
       height: 2px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
     &::after{
       content: '';
@@ -738,22 +739,22 @@ $icon-thin-color: #888;
       top: 0;
       width: 2px;
       height: 8px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
   }
   &-line{
     position: absolute;
-    left: -3px;
-    bottom: 7px;
-    width: 22px;
+    left: -2px;
+    bottom: 9px;
+    width: 20px;
     height: 1px;
-    background-color: #999;
+    background-color: $icon-thin-color;
     transform: rotate(-45deg);
   }
   &-equal{
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 1px;
     width: 6px;
     height: 6px;
     box-sizing: border-box;
@@ -761,10 +762,10 @@ $icon-thin-color: #888;
       content: '';
       position: absolute;
       left: 0;
-      bottom: 0;
+      bottom: 1px;
       width: 6px;
       height: 2px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
     &::after{
       content: '';
@@ -773,7 +774,7 @@ $icon-thin-color: #888;
       bottom: 5px;
       width: 6px;
       height: 2px;
-      background-color: #999;
+      background-color: $icon-thin-color;
     }
   }
   &:hover{
@@ -788,7 +789,7 @@ $icon-thin-color: #888;
   0%{
     transform: rotate(0);
   }
-  30%{
+  10%{
     transform: rotate(0);
   }
   100%{
@@ -872,14 +873,14 @@ $icon-thin-color: #888;
     bottom: 0;
     width: 10px;
     height: 8px;
-    border: 2px solid #888;
+    border: 2px solid $icon-thin-color;
     box-sizing: content-box;
     &::before, &::after{
       content: '';
       position: absolute;
       width: 3px;
       height: 2px;
-      background-color: #888;
+      background-color: $icon-thin-color;
     }
     &::before{
       left: 1px;
@@ -899,7 +900,7 @@ $icon-thin-color: #888;
     bottom: 0;
     width: 6px;
     height: 6px;
-    border: 2px solid #888;
+    border: 2px solid $icon-thin-color;
     background-color: white;
     box-shadow: -1px -1px 1px rgba($color: #fff, $alpha: 1.0);
     box-sizing: content-box;
@@ -910,13 +911,13 @@ $icon-thin-color: #888;
 
     .eff-icon-column-ctrl__front{
       &::before{
-        animation: identifier 1s ease-in-out infinite;
+        animation: effColumnCtrl 1s ease-in-out infinite;
       }
     }
   }
 }
 
-@keyframes identifier {
+@keyframes effColumnCtrl {
   0%{
     left: 1px;
     top: 1px;
@@ -933,41 +934,69 @@ $icon-thin-color: #888;
 
 // 列批量控制
 .eff-icon-batch-control{
-  display: inline-flex;
-  flex-wrap: wrap;
+  display: inline-block;
   position: relative;
   width: 16px;
   height: 16px;
-  box-sizing: border-box;
-  &__point {
-    width: 26%;
-    height: 26%;
-    margin-right: 7%;
-    background-color: #888;
-    border-radius: 10px;
+  transform: scale(.92);
+  span{
+    position: absolute;
+    left: 0;
+    &::before, &::after{
+      position: absolute;
+      top: 0;
+      content: '';
+      width: 8px;
+      height: 8px;
+      border: 2px solid $icon-thin-color;
+      border-radius: 2px;
+      box-sizing: border-box;
+    }
+    &::before{
+      left: 0;
+    }
+    &::after{
+      left: 9px;
+    }
+    &:nth-child(1) {
+      top: 0;
+    }
+    &:nth-child(2) {
+      top: 9px;
+    }
   }
   &:hover{
     cursor: pointer;
+    span:nth-child(1){
+      &::before{
+        animation: effBatchColumnBefore 1s infinite;
+      }
+      &::after{
+        animation: effBatchColumnAfter 1s infinite;
+      }
+    }
   }
 }
-
-@keyframes identifier {
+@keyframes effBatchColumnBefore{
   0%{
-    left: 1px;
-    top: 1px;
-    position: absolute;
+    left: 0;
   }
-  90%{
-    left: 7px;
-    top: 7px;
-    position: absolute;
-
+  10%{
+    left: 0;
   }
   100%{
-    left: 7px;
-    top: 7px;
-    position: absolute;
-
+    left: 9px;
+  }
+}
+@keyframes effBatchColumnAfter{
+  0%{
+    left: 9px;
+  }
+  10%{
+    left: 9px;
+  }
+  100%{
+    left: 0;
   }
 }
 
@@ -983,9 +1012,9 @@ $icon-thin-color: #888;
     top: -4px;
     position: absolute;
     &.symmetry{
-    transform: rotateZ(180deg);
-    left: 5px;
-    top: 5px;
+      transform: rotateZ(180deg);
+      left: 5px;
+      top: 5px;
     }
   }
   &-round{
@@ -994,8 +1023,8 @@ $icon-thin-color: #888;
     height: 10px;
     font-size: 20px;
     left: 3px;
-    top: 3px;
-    border: 2px solid #888;
+    top: 1px;
+    border: 2px solid $icon-thin-color;
     border-left-color: transparent;
     border-bottom-color: transparent;
     border-right-color: transparent;
@@ -1010,7 +1039,7 @@ $icon-thin-color: #888;
       top: -4px;
       width: 1.2px;
       height: 5px;
-      background-color: #888;
+      background-color: $icon-thin-color;
       transform: rotate(20deg);
     }
     &::after{
@@ -1020,7 +1049,7 @@ $icon-thin-color: #888;
       top: -1px;
       width: 1.2px;
       height: 5px;
-      background-color: #999;
+      background-color: $icon-thin-color;
       transform: rotate(110deg);
     }
   }
@@ -1030,19 +1059,45 @@ $icon-thin-color: #888;
     top: 12px;
     width: 7px;
     height: 7px;
-    border: 2px solid #888;
+    border: 2px solid $icon-thin-color;
+    border-radius: 2px;
     z-index: 2;
+    background-color: #aaa;
     box-sizing: border-box;
   }
+  .symmetry{
+    .eff-icon-replace-range{
+      background-color: #fff;
+    }
+  }
+  &:hover{
+    .eff-icon-replace-range{
+      animation: effReplace1 1s infinite;
+    }
+    .symmetry{
+      .eff-icon-replace-range{
+        animation: effReplace2 1s infinite;
+      }
+    }
+  }
 }
-@keyframes effRefresh {
+@keyframes effReplace1 {
   0%{
-    transform: rotate(0);
+    background-color: $icon-thin-color;
   }
   100%{
-    transform: rotate(-360deg);
+    background-color: #fff;
   }
 }
+@keyframes effReplace2 {
+  0%{
+    background-color: #fff;
+  }
+  100%{
+    background-color: $icon-thin-color;
+  }
+}
+
 
 // 高级搜索
 .eff-icon-query {
@@ -1054,7 +1109,7 @@ $icon-thin-color: #888;
   &-round {
     position: relative;
     left: 2px;
-    border: 2px solid #999;
+    border: 2px solid $icon-thin-color;
     border-radius: 100%;
     width: 14px;
     height: 14px;
@@ -1076,7 +1131,7 @@ $icon-thin-color: #888;
   &-line {
     display: inline-block;
     position: absolute;
-    background-color: #999;
+    background-color: $icon-thin-color;
     border-radius: 100%;
     width: 4px;
     height: 2px;
@@ -1086,7 +1141,7 @@ $icon-thin-color: #888;
   }
   &:hover{
     .eff-icon-query-round{
-      background-color: #ddd;
+      background-color: #ccc;
       &::before{
         animation: effSearchScale 1s infinite;
       }

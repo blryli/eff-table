@@ -73,6 +73,7 @@ export default {
   height: 16px;
   cursor: pointer;
   box-sizing: border-box;
+  // transform: scale(.95);
   &-item {
     position: absolute;
     width: 2px;
@@ -80,14 +81,14 @@ export default {
 
     &:nth-child(1) {
       left: 2px;
-      top: 0;
+      top: 1px;
     }
     &:nth-child(2) {
-      right: 2px;
-      top: 0;
+      right: 3px;
+      top: 1px;
     }
     &:nth-child(3) {
-      right: 2px;
+      right: 3px;
       bottom: 0;
     }
     &:nth-child(4) {

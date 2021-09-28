@@ -20,12 +20,14 @@
           copy
           :sort-config="{multiple: true}"
           :toolbar-config="{
+            subtotal: true,
             refresh: true,
             replace: true,
             fullscreen: true,
+            columnControl: true,
             columnBatchControl: true,
             editHistory: true,
-            seniorQuery: seniorQuery
+            seniorQuery: true
           }"
           :footer-action-config="{showPager: true, showBorder: true}"
           @selection-change="selectionChange"
@@ -413,10 +415,6 @@ export default {
       }],
       data: [],
       list: [],
-      seniorQuery: {
-        fields: ['field1', 'field2', 'field3'],
-        op: [{ label: '大于', value: '>' }, { label: '等于', value: '=' }, { label: '大于等于', value: '>=' }]
-      },
       selectionIndexs: [],
       columns: [
         {

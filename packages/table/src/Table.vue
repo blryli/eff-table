@@ -147,8 +147,10 @@
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
+    <!-- 高级查询 -->
+    <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @change="handleSeniorQuery" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>subtotalColumns -  {{ subtotalColumns }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -189,6 +191,7 @@ import SelectRange from '../components/SelectRange/index'
 import Copy from '../components/Copy/index'
 import columnBatchControl from '../components/ColumnBatchControl/index'
 import Replace from '../components/Replace/index'
+import SeniorQuery from 'pk/senior-query'
 // import Sort from '../components/Sort/index'
 import XEUtils from 'xe-utils'
 import { getFieldValue, setFieldValue, getSubfieldColumns, getComColumns } from 'pk/utils'
@@ -210,7 +213,8 @@ export default {
     Copy,
     columnBatchControl,
     FooterAction,
-    Replace
+    Replace,
+    SeniorQuery
     // Sort
   },
   mixins: [
@@ -275,7 +279,8 @@ export default {
     rowId: { type: String, default: '_rowId' }, // 行主键
     footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
-    scopedSlots: { type: Object, default: () => {} } // 插槽
+    scopedSlots: { type: Object, default: () => {} }, // 插槽
+    spanMethod: { type: Function, default: () => {} } // 行列合并
   },
   data() {
     return {
@@ -310,7 +315,10 @@ export default {
       seniorQuery: [], // 高级搜索
       subtotalColumns: [], // 小计列
       subtotalData: [], // 小计数据
-      $message: this.$message
+      seniorQueryList: [], // 高级查询
+      $message: this.$message,
+      isSpanMethod: false, // 合并列,
+      tableMaxHeight: this.maxHeight
     }
   },
   computed: {
@@ -335,13 +343,11 @@ export default {
     },
     style() {
       const style = {}
-      const { isScreenfull, height, maxHeight } = this
-      const screenHeight = window.screen.height
+      const { isScreenfull, height, tableMaxHeight } = this
       style['--rowHeight'] = this.rowHeight + 'px'
       if (!isScreenfull) {
         if (height) style.height = height + 'px'
-        if (maxHeight) style.maxHeight = maxHeight + 'px'
-        if (!height && !maxHeight) style.maxHeight = screenHeight + 'px'
+        if (tableMaxHeight) style.maxHeight = tableMaxHeight + 'px'
       }
 
       return style
@@ -372,6 +378,11 @@ export default {
       const { footerActionConfig = {}, $slots } = this
       const { buttons = [], showPager } = footerActionConfig
       return buttons.length || showPager || $slots.footer_action
+    },
+    isSeniorQuery() {
+      const { toolbarConfig } = this
+      const { seniorQuery } = toolbarConfig || {}
+      return seniorQuery
     },
     tableId() {
       return (~~(Math.random() * (1 << 30))).toString(36)
@@ -436,7 +447,7 @@ export default {
     }
   },
   created() {
-    const { rowDrag, tableColumns } = this
+    const { rowDrag, tableColumns, seniorQueryConfig } = this
     if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
       this.columns.unshift({
         show: true,
@@ -445,6 +456,9 @@ export default {
         width: 40
       })
     }
+    const { fieldList } = seniorQueryConfig
+    this.seniorQueryList = fieldList
+
     this.tableColumns = getComColumns(this.columns)
     Object.assign(this, {
       tableSourceData: Object.freeze([]),
@@ -822,6 +836,74 @@ export default {
         const { show, type, prop, fixed = '', width = 0 } = column
         return { show, type, prop, fixed, width }
       })
+    },
+    // 小计
+    subtotal() {
+      const { headerCheckedColumns, tableColumns } = this
+      if (headerCheckedColumns.length) {
+        const columns = [...tableColumns]
+        columns.map(d => {
+          if (headerCheckedColumns.some(h => h === d)) {
+            d.order = 'asc'
+          }
+        })
+        this.tableColumns = [...columns]
+        this.sortChange(null, true).then(() => {
+          const tableData = XEUtils.clone(this.tableData, true)
+          if (tableData.length) {
+            this.subtotalColumns = headerCheckedColumns.filter(column => {
+              let isNumber = true
+              tableData.slice(0, 2).forEach(d => {
+                const { prop } = column
+                if (prop && !XEUtils.toNumber(d[prop])) isNumber = false
+              })
+              return isNumber
+            })
+            const subtotalData = []
+            this.subtotalColumns.forEach(column => {
+              const { prop } = column
+              let curNum = null
+              let accumulation = 0
+              tableData.forEach((d, i) => {
+                const num = XEUtils.toNumber(d[prop])
+                const prevNum = i > 0 ? accumulation / XEUtils.toNumber(tableData[i - 1][prop]) : 0
+                const last = i === tableData.length - 1
+                if (num) {
+                  if (i === 0) {
+                    accumulation = num
+                    curNum = num
+                  } else if (num !== curNum) {
+                    subtotalData.push({ index: i - 1, len: prevNum, row: { [prop]: accumulation, subtotal: true }})
+                    if (last) {
+                      subtotalData.push({ index: i, len: 1, row: { [prop]: num, subtotal: true }})
+                    }
+                    accumulation = num
+                    curNum = num
+                  } else {
+                    accumulation += num
+                    if (last) {
+                      subtotalData.push({ index: i, len: prevNum + 1, row: { [prop]: accumulation, subtotal: true }})
+                    }
+                  }
+                }
+              })
+            })
+            this.subtotalData = subtotalData
+          }
+          // const data = this.tableData
+        })
+      } else {
+        this.$message.warning('请先选择列！')
+      }
+    },
+    seniorQueryOpen() {
+      const { seniorQuery } = this.$refs
+      seniorQuery && seniorQuery.open()
+    },
+    handleSeniorQuery(seniorQuery) {
+      this.seniorQuery = seniorQuery
+      this.$emit('senior-query', seniorQuery)
+      this.commitProxy('query')
     }
   }
 }

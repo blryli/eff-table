@@ -283,6 +283,7 @@ value: [
 | removeCheckRow | 删除表格已选中数据，返回promise |-|
 | tableEditPause | 暂停表格编辑功能，在触发编辑时如果有使用下拉框或者弹窗需要暂停表格编辑功能 |-|
 | tableEditRegain | 恢复表格编辑功能，下拉框或者弹窗关闭时需要恢复表格编辑功能 |-|
+| seniorQueryOpen | 打开表格高级搜索框 |-|
 | destroy | 置空表格数据，减少内存占用 |-|
 
 
@@ -318,6 +319,7 @@ value: [
 |table-update-data|当表格编辑或复制粘贴数据变更时|{columnIndex, rowIndex, oldData, newData}|
 |field-change|当单元格数据变更时|{columnIndex, rowIndex, oldData, newData}|
 |data-change|当表格发生数据变更时触发|{tableData, editStore}|
+|senior-query|当表格点击高级查询框的搜索按钮时触发|seniorQuery|
 
 ### Slot
 

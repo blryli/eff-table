@@ -105,18 +105,19 @@ export default {
     align-items: center;
     justify-content: center;
      &:hover{
-    .eff-table__history-arrow{
+      .eff-table__history-arrow::before{
+        animation: effHistory .5s infinite;
+      }
     }
   }
-  }
   &-arrow{
-    width: 6px;
-    height: 9px;
+    width: 4px;
+    height: 13px;
     background-color: #888;
     &::before {
       content: "";
       position: absolute;
-      top: 13px;
+      top: 11px;
       left: 2px;
       border: 6px solid transparent;
       border-top-color: #888;
@@ -131,13 +132,13 @@ export default {
   }
 
 }
-@keyframes history_effIdentifier {
+@keyframes effHistory {
   0%{
-    transform: translateY(0);
+    top: 11px;
   }
 
   100%{
-    transform: translateY(1px);
+    top: 13px;
   }
 }
 </style>

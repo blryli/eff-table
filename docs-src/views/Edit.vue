@@ -332,7 +332,27 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
-            edit: true
+            edit: {
+              // render: { name: 'popup', children: {
+              //   name: 'form', props: { titleWidth: '40px', columns: [
+              //     { title: 'aa', span: 24, itemRender: { name: 'input', prop: 'name.aa' }},
+              //     { title: 'bb', span: 24, itemRender: { name: 'input', prop: 'name.bb' }}
+              //   ] }}
+              // }
+              // render: { name: 'popup', children: (h, { row }) => {
+              //   console.log(row)
+              //   return [
+              //     {
+              //       name: 'input',
+              //       prop: 'name.aaa',
+              //       props: { value: row.name.aaa },
+              //       on: { input: val => (row.name.aaa = val) }
+              //     },
+              //     { name: 'input', prop: 'name.bbb' },
+              //     { name: 'input', prop: 'name.ccc' }
+              //   ]
+              // } }
+            }
           },
           {
             show: true,

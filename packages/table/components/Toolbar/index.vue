@@ -1,8 +1,6 @@
 <script>
 import Fullscreen from './Fullscreen'
 import EditHistory from './EditHistory'
-import Query from './Query'
-import Subtotal from './Subtotal'
 import { renderer, getOn } from 'pk/utils/render'
 import ToolbarShrink from 'pk/toolbar-shrink'
 import Icon from 'pk/icon'
@@ -10,7 +8,7 @@ import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, EditHistory, Query, ToolbarShrink, Subtotal, Icon },
+  components: { Fullscreen, EditHistory, ToolbarShrink, Icon },
   inject: ['table'],
   data() {
     return {
@@ -52,16 +50,16 @@ export default {
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
           {
-            subtotal && <Subtotal title='小计' /> || ''
+            editHistory && <EditHistory title='编辑记录' /> || ''
           }
           {
-            editHistory && <EditHistory title='编辑记录' /> || ''
+            subtotal && <Icon icon='subtotal' title='小计' on-click={table.subtotal} /> || ''
           }
           {
             replace && <Icon icon='replace' title='批量替换' on-click={replaceClick} /> || ''
           }
           {
-            seniorQuery && <Query title='高级搜索' /> || ''
+            seniorQuery && <Icon icon='query' title='高级搜索' on-click={table.seniorQueryOpen} /> || ''
           }
           {
             refresh && <Icon icon='refresh' class='table-refresh' title='刷新' on-click={table.refresh} /> || ''
@@ -70,10 +68,10 @@ export default {
             search && <Icon icon='clear-search' title='清空搜索' on-click={table.clearSearch} /> || ''
           }
           {
-            columnBatchControl && <Icon icon='column-batch-ctrl' title='列批量控制' on-click={this.handleColumnBatchControl} /> || ''
+            columnControl && <Icon icon='column-ctrl' title='列控制' on-click={this.handleColumnControl} /> || ''
           }
           {
-            columnControl && <Icon icon='column-ctrl' title='列控制' on-click={this.handleColumnControl} /> || ''
+            columnBatchControl && <Icon icon='column-batch-ctrl' title='列批量控制' on-click={this.handleColumnBatchControl} /> || ''
           }
           {
             fullscreen && <Fullscreen title='全屏' /> || ''
