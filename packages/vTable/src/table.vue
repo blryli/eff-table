@@ -64,7 +64,7 @@
     <div v-if="hasPagination" class="v-table-footer">
       <el-pagination
         class="p-el-pagination"
-        layout="sizes,next,pager,prev,jumper,total"
+        layout="sizes,prev,pager,next,jumper,total"
         :page-sizes="[10, 20, 30, 50, 100]"
         :current-page="pagination.pageNum"
         :page-size="pagination.pageSize"
