@@ -4,22 +4,25 @@ export default {
     content: { type: String, default: '' }
   },
   inject: ['table'],
-  data() {
-    return {
-      visible: false
+  mounted() {
+    const { table } = this
+    if (table.edit) {
+      // console.log(table.$refs.popovers)
+      // this.editPopover = table.$refs.popovers.$refs.editPopover
+      // console.log(this.editPopover)
     }
   },
   methods: {
     focus() {
-      this.visible = true
       this.table.$refs.popovers.editTipShow({ reference: this.$el, vslot: this.$slots.default, placement: 'bottom' })
+      this.$emit('open')
     },
     close() {
-      this.visible = false
       this.table.$refs.popovers.editTipClose()
     },
     blur() {
       this.close()
+      this.$emit('close')
     }
   },
   render(h) {

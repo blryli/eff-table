@@ -12,7 +12,7 @@ export default {
     return {
       formItems: Object.freeze([]),
       curprop: null,
-      direction: null
+      placement: null
     }
   },
   created() {
@@ -98,12 +98,12 @@ export default {
     },
     prevFocus(curprop = this.curprop) {
       const { revformItems, nextNodeFocus } = this
-      this.direction = 'prev'
+      this.placement = 'left'
       nextNodeFocus(curprop, revformItems)
     },
     nextFocus(curprop = this.curprop) {
       const { formItems, nextNodeFocus } = this
-      this.direction = 'next'
+      this.placement = 'right'
       nextNodeFocus(curprop, formItems)
     },
     nextNodeFocus(curprop, formItems) {
@@ -114,12 +114,16 @@ export default {
       const curConponent = getOneChildComponent(formItems[index].slot)
 
       const handleBlur = () => { // 处理失焦
-        if (curConponent) {
-          curConponent.blur && curConponent.blur()
-          curConponent.handleClose && curConponent.handleClose()
-        } else {
-          const slotInput = formItems[index].input
-          slotInput && slotInput.blur && slotInput.blur()
+        try {
+          if (curConponent) {
+            curConponent.blur && curConponent.blur()
+            curConponent.handleClose && curConponent.handleClose()
+          } else {
+            const slotInput = formItems[index].input
+            slotInput && slotInput.blur && slotInput.blur()
+          }
+        } catch (error) {
+          console.error(error)
         }
       }
 
@@ -132,20 +136,22 @@ export default {
       }
 
       // 如果下一个节点是最后一个或是剩下的节点存在，且都为不可操作的节点
+      const { placement, data } = this
       if (index === len - 1 || nextIndex === undefined) {
         if (this.focusCtrl.loop) {
           nextIndex = formItems.findIndex(slot => this._isCanFocus(slot))
+          this.$emit('loop', { prop: this.curprop, placement, data })
         } else {
-          const event = this.direction === 'prev' ? 'first-focused-node-prev' : 'last-focused-node-next'
-          this.$emit(event, this.curprop)
+          const event = placement === 'left' ? 'first-focused-node-prev' : 'last-focused-node-next'
+          this.$emit(event, { prop: this.curprop, placement })
           this._clear()
           handleBlur()
           return
         }
       }
 
-      const ev = this.direction === 'prev' ? 'focus-prev' : 'focus-next'
-      this.$emit(ev, this.curprop)
+      const ev = placement === 'right' ? 'focus-prev' : 'focus-next'
+      this.$emit(ev, { prop: this.curprop, placement })
 
       if (this.focusPause) return
 
@@ -156,7 +162,7 @@ export default {
         const focusNode = this.getFocusNode(nextIndex, formItems)
         focusNode && focusNode.focus && focusNode.focus()
       } catch (error) {
-        console.error(error)
+        console.log(error)
       }
     },
     getFocusNode(index, formItems = this.formItems) {

@@ -69,7 +69,8 @@ export default {
   },
   created() {
     const { data = {}, prop } = this
-    prop && initField(data, prop, this)
+    const value = XEUtils.get(data, prop)
+    !value && prop && initField(data, prop, this)
     // console.log('builder', this.data, JSON.stringify(this.data, null, 2))
   },
   mounted() {

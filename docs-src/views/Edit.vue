@@ -45,7 +45,7 @@
     <h3>高级编辑</h3>
     <section class="demo">
       <div class="section-content">
-        <eff-table v-bind="tableOptions1" />
+        <eff-table ref="table1" v-bind="tableOptions1" />
       </div>
     </section>
     <section class="snippets">
@@ -322,37 +322,17 @@ export default {
           buttons: [{ name: 'button', code: 'add_focus', children: '新增' }]
         },
         data: [
-          { id: 1, name: '张三', want: '1', sex: '1', date: '2021-04-12', address: [], address1: [], address2: '' },
-          { id: 2, name: '李四', want: '2', sex: '2', date: null, address: [], address1: [], address2: '' },
-          { id: 3, name: '王五', want: '3', sex: '1', date: '2021-04-12', address: [], address1: [], address2: '' },
-          { id: 4, name: '赵六', want: '3', sex: '1', date: null, address: [], address1: [], address2: '' }
+          { id: 1, name: '张三', want: '1', sex: '1', heightWeight: { height: '', weight: '' }, date: '2021-04-12', address: [], address1: [], address2: '' },
+          { id: 2, name: '李四', want: '2', sex: '2', heightWeight: { height: '', weight: '' }, date: null, address: [], address1: [], address2: '' },
+          { id: 3, name: '王五', want: '3', sex: '1', heightWeight: { height: '', weight: '' }, date: '2021-04-12', address: [], address1: [], address2: '' },
+          { id: 4, name: '赵六', want: '3', sex: '1', heightWeight: { height: '', weight: '' }, date: null, address: [], address1: [], address2: '' }
         ],
         columns: [
           {
             show: true,
             prop: 'name',
             title: '名字',
-            edit: {
-              // render: { name: 'popup', children: {
-              //   name: 'form', props: { titleWidth: '40px', columns: [
-              //     { title: 'aa', span: 24, itemRender: { name: 'input', prop: 'name.aa' }},
-              //     { title: 'bb', span: 24, itemRender: { name: 'input', prop: 'name.bb' }}
-              //   ] }}
-              // }
-              // render: { name: 'popup', children: (h, { row }) => {
-              //   console.log(row)
-              //   return [
-              //     {
-              //       name: 'input',
-              //       prop: 'name.aaa',
-              //       props: { value: row.name.aaa },
-              //       on: { input: val => (row.name.aaa = val) }
-              //     },
-              //     { name: 'input', prop: 'name.bbb' },
-              //     { name: 'input', prop: 'name.ccc' }
-              //   ]
-              // } }
-            }
+            edit: true
           },
           {
             show: true,
@@ -360,6 +340,39 @@ export default {
             title: '性别',
             config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
             edit: true
+          },
+          {
+            show: true,
+            prop: 'heightWeight',
+            title: '身高体重',
+            config: {
+              format: ({ row }) => this.getHeightWeight(row)
+            },
+            edit: {
+              render: (h, { row, rowIndex }) => {
+                return {
+                  name: 'popup',
+                  props: { content: this.getHeightWeight(row) },
+                  children: {
+                    name: 'form',
+                    props: {
+                      titleWidth: '40px',
+                      data: row,
+                      autofocus: true,
+                      columns: [
+                        { title: '身高', prop: 'heightWeight.height', span: 24, itemRender: { name: 'input', props: { autofocus: true }, on: {
+                          input: (val) => (row.heightWeight.height = val)
+                        }}},
+                        { title: '体重', prop: 'heightWeight.weight', span: 24, itemRender: { name: 'input', on: {
+                          input: (val) => (row.heightWeight.weight = val)
+                        }}}
+                      ]
+                    },
+                    on: { loop: ({ placement }) => this.$refs.table1.toX(placement) }
+                  }
+                }
+              }
+            }
           },
           {
             show: true,
@@ -438,6 +451,12 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    getHeightWeight(row) {
+      const { height, weight } = row.heightWeight
+      return `${height ? height + 'cm' : ''}${weight ? '，' + weight + 'kg' : ''}`
     }
   }
 }

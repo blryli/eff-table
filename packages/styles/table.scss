@@ -635,7 +635,7 @@
   &.is-hide{
     visibility: hidden;
   }
-   div:first-child > *, input, textarea{
+   > *, input, textarea{
     width: 100%;
     height: var(--height)!important;
     line-height: var(--height)!important;

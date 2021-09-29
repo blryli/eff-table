@@ -26,7 +26,8 @@ export default {
     messageType: { type: String, default: '' },
     focusStop: Boolean,
     focusPause: Boolean,
-    readonly: Boolean
+    readonly: Boolean,
+    autofocus: Boolean
   },
   provide() {
     return {
@@ -58,11 +59,21 @@ export default {
       this.editIsStop = val
     }
   },
+  mounted() {
+    this.autofocus && this.$nextTick(() => {
+      this.focus()
+    })
+  },
   methods: {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
-      const { prop, itemRender } = column
+      const { prop, itemRender, format } = column
       if (readonly) return XEUtils.get(data, prop)
+      const params = { root: this, table, row: data, form: this, vue: this, data, column, prop }
+      // 处理format
+      if (XEUtils.isFunction(format)) {
+        return format(params)
+      }
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {
@@ -71,7 +82,7 @@ export default {
         const compConf = renderer.get(name)
         if (compConf) {
           const render = compConf.renderEdit || compConf.renderDefault
-          return render($createElement, renderOpts, { root: this, table, form: this, vue: this, data, column, prop }) || ''
+          return render($createElement, renderOpts, params) || ''
         }
         return ''
       }

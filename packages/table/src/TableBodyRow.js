@@ -48,7 +48,7 @@ export default {
             if (tableEdit && edit) {
               const arrow = cell.querySelector('.eff-table--expand-handle')
               const ciphertext = cell.querySelector('.eff-table--ciphertext')
-              if (!isSpanMethod && !isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target)) && !ciphertext) {
+              if (!isPending && name === (copy ? 'dblclick' : tableEditConfig.trigger) && (!arrow || arrow && !arrow.contains(event.target)) && !ciphertext) {
                 edit.handleEditCell(obj)
               }
             }
@@ -105,10 +105,9 @@ export default {
             let colspan = 1
             if (span_method) {
               const { rowspan: row_span, colspan: col_span } = span_method
-              if (!row_span || !col_span) return acc
+              // if (!row_span || !col_span) return acc
               rowspan = row_span
               colspan = col_span
-              console.log({ rowspan, colspan })
             }
 
             return acc.concat(<TableBodyColumn

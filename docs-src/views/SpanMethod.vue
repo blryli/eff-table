@@ -130,6 +130,7 @@ export default {
         maxHeight: 400,
         border: true,
         edit: true,
+        copy: true,
         data: [],
         columns: [],
         spanMethod: this.colspanMethod
@@ -137,20 +138,21 @@ export default {
     }
   },
   mounted() {
-    this.setColumns(10)
+    this.setColumns(5)
     // this.setColumns(this.form.columnNum)
-    this.setData(10)
+    this.setData(100)
   },
   methods: {
     colspanMethod({ rowIndex, columnIndex }) {
       if (rowIndex % 2 === 0) {
         if (columnIndex === 1) {
           return { rowspan: 2, colspan: 1 }
-        } else if (columnIndex === 2) {
-          return { rowspan: 1, colspan: 2 }
-        } else if (columnIndex === 3) {
-          return { rowspan: 0, colspan: 0 }
         }
+        // else if (columnIndex === 2) {
+        //   return { rowspan: 1, colspan: 2 }
+        // } else if (columnIndex === 3) {
+        //   return { rowspan: 0, colspan: 0 }
+        // }
       } else {
         if (columnIndex === 1) {
           return { rowspan: 0, colspan: 0 }
@@ -163,15 +165,8 @@ export default {
         ['array|' + val]: [
           {
             show: true,
-            prop: 'name',
+            prop: () => 'col' + num,
             title: () => 'name' + num++,
-            width: 200,
-            edit: true
-          },
-          {
-            show: true,
-            prop: 'cname',
-            title: () => 'cname' + num++,
             width: 200,
             edit: true
           }
@@ -182,8 +177,11 @@ export default {
       this.tableOptions.data = mock.mock({
         ['array|' + val]: [
           {
-            'name': '@name',
-            'cname': '@cname'
+            'col1': '@name',
+            'col2': '@cname',
+            'col3': '@name',
+            'col4': '@cname',
+            'col5': '@name'
           }
         ]
       }).array

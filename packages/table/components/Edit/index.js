@@ -216,7 +216,8 @@ export default {
       const types = ['selection', 'index']
       return columnIsEdit(column) && column && column.prop && !this.disabled(column) && types.indexOf(type) === -1 && (!cell || cell && !cell.classList.contains('is-hidden'))
     },
-    toX() {
+    toX(toPlacement) {
+      if (toPlacement) this.placement = toPlacement
       const { placement, columns, cellIndex, table, $el, canFocus, getColumn, editCell } = this
       let toCellIndex = 0
       let toColumns = []

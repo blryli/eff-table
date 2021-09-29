@@ -18,7 +18,7 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod } = table
+    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId } = table
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
@@ -129,7 +129,7 @@ export default {
           isRequired ? <i class='eff-cell--required' /> : ''
         }
         {
-          tableEdit && columnIsEdit(column) && !isSpanMethod ? <i class='eff-icon-edit' title='可编辑列' /> : ''
+          tableEdit && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
         }
         {
           renderHelp(titlePrefix, prefixIcon)

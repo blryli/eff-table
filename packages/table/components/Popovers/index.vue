@@ -38,6 +38,7 @@ export default {
     editTipClose() {
       this.$refs.editPopover.doHide()
       this.table.setEditStop(false)
+      // this.editPopoverOpts = null
     },
     validTipShow(opts) {
       this.$refs.validPopover.doShow()

@@ -743,6 +743,9 @@ export default {
     focus(rowIndex, prop) {
       this.edit && this.$refs.edit.focus(rowIndex, prop)
     },
+    toX(placement) {
+      this.edit && this.$refs.edit.toX(placement)
+    },
     handleDragend(column) {
       const { tableColumns } = this
       const index = tableColumns.some(d => d === column)

@@ -38,7 +38,7 @@ export default {
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
-      // initField(row, prop, vue)
+      initField(row, prop, vue)
       column.initField = true
     }
     // 设置style
@@ -83,7 +83,7 @@ export default {
       columnClass += ` is--align-${align || 'left'} `
     }
     // 复制功能
-    if (copy && !summary && !subtotal && !isSpanMethod) {
+    if (copy && !summary && !subtotal) {
       const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
       const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`

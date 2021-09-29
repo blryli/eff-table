@@ -25,6 +25,7 @@
         <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
         <router-link class="menu-list" to="/Tree">Tree 树</router-link>
+        <router-link class="menu-list" to="/SpanMethod">SpanMethod 合并行或列</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>
         <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
