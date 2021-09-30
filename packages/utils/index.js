@@ -127,7 +127,7 @@ export const setFieldValue = function(root, data, prop, val) {
 export const isVNode = renderFunc => Boolean(renderFunc && renderFunc.tag && renderFunc.tag.indexOf('vue-component') > -1)
 
 // 判断是否是无效值
-export const isNoValue = value => value === null || value === undefined || value === ''
+export const isNoValue = value => XEUtils.isArray(value) ? !value.length : value === null || value === undefined || value === ''
 
 // 列按左右固定分类
 export const getSubfieldColumns = columns => {

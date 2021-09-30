@@ -13,10 +13,23 @@ export default {
         return Promise.resolve({})
         // resolve()
       }
-      const { columns, validators, rowId } = this
-      const value = row[prop]
+      const { columns, validators, rowId, $createElement } = this
+      let value = row[prop]
       const id = row[rowId]
       const column = columns.find(d => d.prop === prop) || {}
+      const { render } = column.edit || {}
+      // 动态编辑器取值
+      let renderOpt = null
+      if (typeof render === 'function') {
+        renderOpt = render($createElement, { row, column })
+      } else {
+        renderOpt = render
+      }
+      if (renderOpt && renderOpt.prop) {
+        value = row[renderOpt.prop]
+      }
+
+      // 校验规则
       if (!rule) {
         const { rules = [] } = column
         if (Array.isArray(rules)) {

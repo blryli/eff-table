@@ -149,7 +149,7 @@ export default {
       const tableData = [...this.table.tableData]
       tableData.forEach((row, rowIndex) => {
         this.leftColumns.forEach((column) => {
-          const { prop, path, title, options } = column
+          const { prop, path, title } = column
           const searchValue = this.data['search' + path]
           const replaceValue = this.data['replace' + path]
           const oldValue = row[path]

@@ -138,7 +138,6 @@ export default {
       } else {
         this.show = true
       }
-      console.log({ show: this.show })
     },
     doHide() {
       if (this.enterable) {

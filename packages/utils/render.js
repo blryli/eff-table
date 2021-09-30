@@ -440,6 +440,11 @@ const renderMap = Object.assign({
     renderEdit: renderVModel,
     renderSearch: renderVModel
   },
+  'input-number': {
+    renderDefault: renderCell,
+    renderEdit: renderVModel,
+    renderSearch: renderVModel
+  },
   textarea: {
     renderDefault: renderCell,
     renderEdit: renderTextareaEdit,

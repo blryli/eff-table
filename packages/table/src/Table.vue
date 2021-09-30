@@ -150,7 +150,8 @@
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @change="handleSeniorQuery" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>columns -  {{ columns }}</p>
+    <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -642,7 +643,7 @@ export default {
       fileds.forEach(filed => {
         const { visibleColumns, updateStatus, tableData } = this
         const { rowIndex, columnIndex } = filed
-        const content = filed.content.trim()
+        const content = XEUtils.isString(filed.content) ? filed.content.trim() : filed.content
         let { row } = filed
         if (!row) row = tableData[rowIndex]
         const column = visibleColumns[columnIndex] || {}
