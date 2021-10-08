@@ -2,14 +2,12 @@
   <div class="page-home page">
     <h2>SpanMethod 行列合并</h2>
     <p class="hint">
-      数据大于 50 行时自动开启<span class="primary"> 行 </span>虚拟滚动<br>
-      展开行与树形数据存在时自动禁用展开行
+      自定义 <span class="primary"> span-method </span> 方法合并合并行或列<br>
+      支持编辑及复制功能，不能用于虚拟滚动、树形结构、展开行、固定列
     </p>
     <section class="demo">
       <div class="section-content">
-        <eff-table
-          v-bind="tableOptions"
-        />
+        <eff-table v-bind="tableOptions" />
       </div>
     </section>
 
@@ -27,92 +25,69 @@
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import mock from 'mockjs'
 
 const jsCode = `
-data() {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        fixed: 'left',
-        type: 'index',
-        title: '序号',
-        width: 80
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列1',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列2',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列3',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列4',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列5',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'height',
-        title: '列6',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列7',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列8',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列9',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列10',
-        width: 200
+export default {
+  data() {
+    return {
+      tableOptions: {
+        maxHeight: 400,
+        border: true,
+        edit: true,
+        copy: true,
+        spanMethod: this.colspanMethod,
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
       }
-    ]
+    }
+  },
+  methods: {
+    colspanMethod({ rowIndex, columnIndex }) {
+      if (rowIndex % 2 === 0) {
+        if (columnIndex === 1) {
+          return { rowspan: 2, colspan: 1 }
+        } else if (columnIndex === 2) {
+          return { rowspan: 1, colspan: 2 }
+        } else if (columnIndex === 3) {
+          return { rowspan: 0, colspan: 0 }
+        }
+      }
+    }
   }
 }
 `
 
 const htmlCode = `
-<eff-table
-  v-model="columns"
-  :data="data"
-  :max-height="400"
-  border
-/>
+<eff-table v-bind="tableOptions" />
 `
 export default {
   name: 'SpanMethod',
@@ -125,66 +100,57 @@ export default {
     return {
       htmlCode,
       jsCode,
-      data: [],
       tableOptions: {
         maxHeight: 400,
         border: true,
         edit: true,
         copy: true,
-        data: [],
-        columns: [],
-        spanMethod: this.colspanMethod
+        spanMethod: this.colspanMethod,
+        columns: [
+          {
+            show: true,
+            prop: 'id',
+            title: 'ID'
+          },
+          {
+            show: true,
+            prop: 'name',
+            title: '名字',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'sex',
+            title: '性别',
+            edit: true
+          },
+          {
+            show: true,
+            prop: 'phone',
+            title: '手机',
+            edit: true
+          }
+        ],
+        data: [
+          { id: 1, name: '张三', sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四', sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五', sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六', sex: '男', phone: '13715201314' }
+        ]
       }
     }
-  },
-  mounted() {
-    this.setColumns(5)
-    // this.setColumns(this.form.columnNum)
-    this.setData(100)
   },
   methods: {
     colspanMethod({ rowIndex, columnIndex }) {
       if (rowIndex % 2 === 0) {
         if (columnIndex === 1) {
           return { rowspan: 2, colspan: 1 }
-        }
-        // else if (columnIndex === 2) {
-        //   return { rowspan: 1, colspan: 2 }
-        // } else if (columnIndex === 3) {
-        //   return { rowspan: 0, colspan: 0 }
-        // }
-      } else {
-        if (columnIndex === 1) {
+        } else if (columnIndex === 2) {
+          return { rowspan: 1, colspan: 2 }
+        } else if (columnIndex === 3) {
           return { rowspan: 0, colspan: 0 }
         }
       }
-    },
-    setColumns(val) {
-      let num = 1
-      this.tableOptions.columns = [{ type: 'index', width: 60 }].concat(mock.mock({
-        ['array|' + val]: [
-          {
-            show: true,
-            prop: () => 'col' + num,
-            title: () => 'name' + num++,
-            width: 200,
-            edit: true
-          }
-        ]
-      }).array)
-    },
-    setData(val) {
-      this.tableOptions.data = mock.mock({
-        ['array|' + val]: [
-          {
-            'col1': '@name',
-            'col2': '@cname',
-            'col3': '@name',
-            'col4': '@cname',
-            'col5': '@name'
-          }
-        ]
-      }).array
     }
   }
 }

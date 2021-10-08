@@ -105,7 +105,7 @@ export default {
             let colspan = 1
             if (span_method) {
               const { rowspan: row_span, colspan: col_span } = span_method
-              // if (!row_span || !col_span) return acc
+              if (!row_span && !col_span) return acc
               rowspan = row_span
               colspan = col_span
             }

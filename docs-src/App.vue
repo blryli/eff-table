@@ -28,7 +28,6 @@
         <router-link class="menu-list" to="/SpanMethod">SpanMethod 合并行或列</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>
-        <router-link class="menu-list" to="/Render">Render 配置模式</router-link>
         <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>

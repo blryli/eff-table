@@ -12,7 +12,7 @@
           :columns="[
             {title: '列数量',prop: 'columnNum',itemRender:{
               name: 'select',
-              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000},{label: 5000, value: 5000}],
+              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000},{label: 2000, value: 2000}],
               on: {change: setColumns}
             }},
             {title: '行数量',prop: 'dataNum',itemRender:{

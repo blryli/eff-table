@@ -274,14 +274,14 @@ $icon-thin-color: #888;
     position: absolute;
     content: "";
     display: block;
-    width: 4px;
+    width: 3px;
     height: 7px;
     border-radius: 61%;
     border-top: 1px solid $icon-thin-color;
     -webkit-transform: rotate(317deg);
     transform: rotate(295deg);
     border-right: 2px solid $icon-thin-color;
-    top: 4px;
+    top: 3px;
     left: 1px;
   }
 
@@ -289,7 +289,7 @@ $icon-thin-color: #888;
     position: absolute;
     content: "";
     display: block;
-    width: 4px;
+    width: 3px;
     height: 7px;
     border-radius: 61%;
     border-top: 1px solid $icon-thin-color;
@@ -297,7 +297,7 @@ $icon-thin-color: #888;
     transform: rotate(104deg);
     border-right: 2px solid $icon-thin-color;
     left: 6px;
-    top: 3px;
+    top: 2px;
   }
 }
 

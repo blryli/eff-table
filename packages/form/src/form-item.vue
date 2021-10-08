@@ -138,7 +138,6 @@ export default {
     position: relative;
     line-height: var(--lineHeight);
     min-height: var(--lineHeight);
-    font-size: 14px;
     white-space: nowrap;
     & :only-child {
       width: 100%;

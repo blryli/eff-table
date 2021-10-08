@@ -53,7 +53,7 @@ export default {
       columnWidth = widths
       table.isSpanMethod = true
     }
-    if (rowspan > 1) {
+    if (rowspan > 1) { // 合并行
       let heights = 0
       for (let index = 0; index < rowspan; index++) {
         heights += rowHeight

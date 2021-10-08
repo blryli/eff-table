@@ -150,8 +150,7 @@
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @change="handleSeniorQuery" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>columns -  {{ columns }}</p>
-    <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>mergerCells -  {{ mergerCells }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -318,8 +317,9 @@ export default {
       subtotalData: [], // 小计数据
       seniorQueryList: [], // 高级查询
       $message: this.$message,
-      isSpanMethod: false, // 合并列,
+      isSpanMethod: false, // 是否存在合并行或列,
       tableMaxHeight: this.maxHeight
+      // mergerCells: [] // 合并行或列
     }
   },
   computed: {

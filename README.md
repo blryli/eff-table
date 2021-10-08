@@ -116,9 +116,11 @@ value: [
 
     type: '', // string selection/radio/index
 
-    width: 80, // number
+    width: 80, // number  列宽
 
-    fixed: '', // string left/right
+    fixed: '', // string left/right 固定列
+
+    align: 'left', // string left/center/right  单元格对齐方式
 
     // 通用配置，会根据name指定的元素对单元格做渲染模式、编辑模式、搜索模式的默认处理，原则上只需要配置config就可以了
     config: {
@@ -183,13 +185,9 @@ value: [
 
     // 搜索
     search: {
-      render: (h, {column, columnIndex, prop}) => {
-        return <your-component vModel={value} on-change={this.change} />
-      },
-      rangeRender: (h, {column, columnIndex, prop}) => {
-        return <your-range-component vModel={value} on-change={this.change} />
-      },
-      operator: false, // boolean 搜索范围
+      render: { name: 'input' }, // object/function(h, { column, columnIndex }) 搜索元素
+      rangeRender: { name: 'input' }, // object/function(h, { column, columnIndex }) 范围搜索元素
+      operator: false, // boolean 范围符号
       operatorDefault: 'like', // string 默认类型
       type: '' // string 扩展字段
     }
