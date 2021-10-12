@@ -227,7 +227,7 @@ export default {
     }
     const expandRender = function() {
       const expand = <span class='eff-table--expand-handle' on-click={e => expandClick(e)}>
-        <span class={{ 'eff-icon--arrow': true, 'is--expanded': rowExpanded.expanded, 'is--disabled': disabled }} />
+        <span class={[rowExpanded.expanded ? 'eff-icon-arrow-bottom' : 'eff-icon-arrow-right', { 'is--disabled': disabled }]} />
       </span>
 
       return expand
@@ -293,7 +293,7 @@ export default {
     }
     if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
       treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
-        {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <span class={{ 'eff-icon--arrow': true, 'is--expanded': table.treeIds[_rowId] }} />}
+        {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <span class={[table.treeIds[_rowId] ? 'eff-icon-arrow-bottom' : 'eff-icon-arrow-right']} />}
       </span>
     }
 

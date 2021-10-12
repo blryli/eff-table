@@ -1163,3 +1163,41 @@ $icon-thin-color: #888;
   height: 3px;
 }
 }
+
+// arrow
+@mixin eff-icon-arrow{
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  text-align: center;
+  vertical-align: middle;
+  &::before{
+    position: absolute;
+    left: 5px;
+    top: 3px;
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border: 1px solid currentColor;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    transform: rotate(45deg);
+  }
+}
+.eff-icon-arrow-left{
+  @include eff-icon-arrow
+}
+.eff-icon-arrow-top{
+  @include eff-icon-arrow;
+  transform: rotate(90deg);
+}
+.eff-icon-arrow-right{
+  @include eff-icon-arrow;
+  transform: rotate(180deg);
+}
+.eff-icon-arrow-bottom{
+  @include eff-icon-arrow;
+  transform: rotate(270deg);
+}

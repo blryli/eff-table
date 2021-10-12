@@ -591,34 +591,6 @@
   box-sizing: border-box;
 }
 
-.eff-icon--arrow{
-  display: inline-block;
-  position: relative;
-  width: 14px;
-  height: 14px;
-  transition: all .2s;
-  &:hover{
-    cursor: pointer;
-  }
-  &::before{
-    content: '';
-    position: absolute;
-    left: 3px;
-    top: 6px;
-    width: 5px;
-    height: 5px;
-    border-right: 1px solid #666;
-    border-bottom: 1px solid #666;
-    transform: rotate(-45deg);
-  }
-  &.is--expanded{
-    transform: rotate(90deg);
-    &::before{
-      top: 3px;
-    }
-  }
-}
-
 .eff-table-edit{
   position: absolute;
   z-index: 10;

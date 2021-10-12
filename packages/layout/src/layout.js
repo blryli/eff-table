@@ -1,7 +1,7 @@
 
 export default {
   // 页面布局容器组件
-  name: 'layout',
+  name: 'Layout',
   functional: true,
   props: ['span'],
   render(h, context) {

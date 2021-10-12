@@ -1,5 +1,6 @@
 <template>
   <div class="page-home page">
+    <h2>Panel 面板</h2>
     <v-render :config="config" />
   </div>
 </template>

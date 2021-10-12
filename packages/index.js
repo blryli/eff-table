@@ -13,6 +13,7 @@ import Icon from './icon'
 import steps from './steps'
 import help from './help'
 import ciphertext from './ciphertext'
+import Transfer from './transfer'
 
 const directives = []
 const components = [
@@ -28,7 +29,8 @@ const components = [
   Styles,
   steps,
   help,
-  ciphertext
+  ciphertext,
+  Transfer
 ]
 
 export {
@@ -45,7 +47,8 @@ export {
   VTable,
   steps,
   help,
-  ciphertext
+  ciphertext,
+  Transfer
 }
 
 const install = function(Vue, opts = {}) {

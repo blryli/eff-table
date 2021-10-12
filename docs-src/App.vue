@@ -11,6 +11,9 @@
     <div class="body">
       <div class="menu">
         <router-link class="menu-list" to="/Start">Start</router-link>
+        <h3 class="menu-title">组件</h3>
+        <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
+        <router-link class="menu-list" to="/Transfer">Transfer 穿梭框</router-link>
         <h3 class="menu-title">表格</h3>
         <router-link class="menu-list" to="/">Base 基础表格</router-link>
         <router-link class="menu-list" to="/Drag">Drag 拖动</router-link>
@@ -28,7 +31,6 @@
         <router-link class="menu-list" to="/SpanMethod">SpanMethod 合并行或列</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>
-        <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
         <h3 class="menu-title">表单</h3>
         <router-link class="menu-list" to="/FormBase">FormBase 基础使用</router-link>
