@@ -8,6 +8,7 @@
     :width="800"
     :min-width="400"
     @close="close"
+    @size-change="cardSizeChange"
   >
     <template slot="header">
       <VRender :config="{name: 'button', props: {type: 'primary', size: 'mini'}, children: '搜 索', on: {click: search}}" />
@@ -52,6 +53,8 @@ import XEUtils from 'xe-utils'
 //   componentType: '', // 组件类型（input，select）
 //   dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
 //   apiSource: { // 接口数据（数据源类型为2时必填）
+//     label: '',
+//     value: '',
 //     fullPath: '', // 接口全路径
 //     requestType: '', // 请求类型
 //   },
@@ -152,11 +155,13 @@ export default {
                 const props = {}
                 const on = {}
                 if (dataSourceType === 2) { // 动态数据源
-                  const { fullPath, requestType } = apiSource
+                  const { label, value, fullPath, requestType } = apiSource
                   // 远程搜索
                   Object.assign(props, {
                     filterable: true,
                     remote: true,
+                    labelKey: label,
+                    valueKey: value,
                     'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType })
                   })
                   // 初始化options
@@ -187,8 +192,8 @@ export default {
       ],
       toolbarConfig: {
         buttons: [
-          { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus' }, on: { click: this.add }},
-          { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete' }, on: { click: this.clear }}
+          { name: 'button', children: '添加条件', props: { icon: 'el-icon-plus', size: 'mini' }, on: { click: this.add }},
+          { name: 'button', children: '清空条件', props: { icon: 'el-icon-delete', size: 'mini' }, on: { click: this.clear }}
           // { name: 'button', props: { icon: 'el-icon-view' }, help: { effect: 'dark', message: () => this.treeGroup }, children: '预览' }
         ]
       },
@@ -204,7 +209,7 @@ export default {
       this.treeGroup = this.getTreeGroup(tableData)
     },
     remoteMethod({ query, field, fullPath, requestType }) {
-      const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? '/' + query : ''}`
+      const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? '?' + query : ''}`
       const params = requestType.toUpperCase() === 'POST' ? query : null
       this.$EFF.request[requestType.toLowerCase()](path, params).then(res => {
         field.staticSourceList = res
@@ -308,6 +313,9 @@ export default {
           return acc
         }
       }, []) || []
+    },
+    cardSizeChange() {
+      this.table.doLayout()
     }
   }
 }

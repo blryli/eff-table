@@ -89,6 +89,7 @@ export default {
         this.endRect.height = startHeight + height
         this.endRect.top = top + y
       }
+      this.$emit('size-change', this.move)
     },
     handleMousedown() {
       this.cursor && onMousemove({
