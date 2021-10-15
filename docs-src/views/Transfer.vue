@@ -13,8 +13,8 @@
           :data="data"
           :titles="['列表1', '列表2']"
           :button-texts="['到右边', '到左边']"
-          :left-default-checked="[2,3]"
-          :right-default-checked="[1,5]"
+          :left-default-checked="[8]"
+          :right-default-checked="[2]"
         >
           <!-- <template #leftFooter>
             <div>
@@ -91,20 +91,25 @@ export default {
     const generateData = _ => {
       const data = []
       let num = 0
-      for (let i = 1; i <= 15; i++) {
+      for (let i = 1; i <= 5; i++) {
         num += 1
-        data.push({
-          key: i,
-          label: `备选项 ${i}`,
+        const children = []
+        const obj = {
+          key: num,
+          label: `备选项 ${num}`,
           disabled: i % 4 === 0,
-          children: [
-            {
-              key: `${num}-${i}`,
-              label: `备选项 ${num}-${i}`,
-              disabled: i % 4 === 0
-            }
-          ]
-        })
+          children
+        }
+        for (let j = 0; j <= 1; j++) {
+          num += 1
+          children.push({
+            key: num,
+            label: `备选项 ${num}`,
+            disabled: i % 2 === 0,
+            children: [{ key: num + 100, label: num + 100 + '' }]
+          })
+        }
+        data.push(obj)
       }
       return data
     }

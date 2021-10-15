@@ -42,7 +42,6 @@
         <slot name="rightFooter" />
       </TransferPanel>
     </div>
-    rightData {{ rightData }}
   </div>
 </template>
 
@@ -62,7 +61,8 @@ export default {
     targetOrder: { type: String, default: 'original' }, // original / push / unshift
     leftDefaultChecked: { type: Array, default: () => ([]) },
     rightDefaultChecked: { type: Array, default: () => ([]) },
-    treeConfig: { type: Object, default: () => ({}) }
+    leftDefaultExpanded: { type: Array, default: () => ([]) },
+    rightDefaultExpanded: { type: Array, default: () => ([]) }
   },
   data() {
     return {
@@ -97,10 +97,9 @@ export default {
   created() {
     const { props, buttonTexts, titles } = this
     Object.assign(this, {
-      transferProps: Object.assign(props, { key: 'key', label: 'label', disabled: 'disabled' }),
+      transferProps: Object.assign(props, { key: 'key', label: 'label', disabled: 'disabled', children: 'children' }),
       transferButtonTexts: [buttonTexts[0] || '', buttonTexts[1] || ''],
-      transferTitles: [titles[0] || 'left', titles[1] || 'right'],
-      transferTreeConfig: Object.assign({ children: 'children' }, this.treeConfig)
+      transferTitles: [titles[0] || 'left', titles[1] || 'right']
     })
     this.init()
   },
@@ -165,8 +164,8 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 200px;
-    height: 300px;
+    width: 240px;
+    height: 360px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
@@ -208,6 +207,14 @@ export default {
       padding: 0 10px;
       border-top: 1px solid #ddd;
       box-sizing: border-box;
+    }
+    &-node{
+      display: flex;
+      align-items: center;
+      color: #666;
+      >i{
+        margin-right: 5px;
+      }
     }
   }
   &__center{

@@ -1,21 +1,3 @@
-<template>
-  <div class="eff-transfer-panel">
-    <div class="eff-transfer-panel__header">
-      <VCheckbox v-model="selectionAll" :label="title" :indeterminate="indeterminate" @change="allselectionChange" />
-      <small>{{ selecteds.length + '/' +data.length }}</small>
-    </div>
-    <div class="eff-transfer-panel__body">
-      <Tree />
-      <div v-for="row in data" :key="'checkbox'+row[props.key]">
-        <VCheckbox :value="isChecked(row)" :label="row.label" :disabled="isDisabled(row)" @change="selected => rowSelectionChange(row, selected)" />
-      </div>
-    </div>
-    <div v-if="$slots.default" class="eff-transfer-panel__footer">
-      <slot />
-    </div>
-  </div>
-</template>
-
 <script>
 import VCheckbox from 'pk/checkbox'
 import Tree from 'pk/tree'
@@ -33,16 +15,19 @@ export default {
   },
   data() {
     return {
-      selecteds: [],
+      dataStore: {},
       selectionAll: false,
       indeterminate: false
     }
   },
   computed: {
+    selecteds() {
+      return Object.values(this.dataStore).reduce((acc, cur) => cur.checked ? acc.concat(cur.id) : acc, [])
+    },
     checkeds() {
-      const { dataMap, selecteds } = this
+      const { dataStore, selecteds } = this
       return selecteds.map(id => {
-        const mapId = dataMap.get(id)
+        const mapId = dataStore[id]
         if (!mapId) {
           console.warn(id + ' 不存在于tableData')
         }
@@ -62,26 +47,53 @@ export default {
       this.$emit('change', val, changeKeys)
     },
     data() {
-      this.setDataMap()
+      this.setDataStore()
     }
   },
   created() {
     Object.assign(this, {
-      dataMap: new Map(),
-      checkedsSet: new Set()
+
     })
-    this.setDataMap()
-    this.init()
+    this.setDataStore()
+    console.log('this.dataStore', JSON.stringify(this.dataStore, null, 2))
+    this.$nextTick(() => {
+      this.init()
+    })
   },
   methods: {
     init() {
       const { defaultCheck } = this
       if (defaultCheck.length) {
-        defaultCheck.forEach(d => {
-          this.checkedsSet.add(d)
+        defaultCheck.forEach(id => {
+          this.setChecked(id, true)
         })
-        this.selectionChange()
       }
+    },
+    setChecked(id, checked) {
+      this.dataStore[id] && this.$set(this.dataStore[id], 'checked', checked)
+    },
+    isChecked(id) {
+      return !!this.dataStore[id]
+    },
+    setAllChecked(checked) {
+      const { dataStore } = this
+      for (const key in dataStore) {
+        const row = dataStore[key]
+        row.checked = checked
+      }
+    },
+    getAllChecked() {
+      const { dataStore } = this
+      const checkeds = []
+      for (const key in dataStore) {
+        const row = dataStore[key]
+        const { id, checked } = row
+        checked && checkeds.push(id)
+      }
+      return checkeds
+    },
+    clearSelection() {
+      this.setAllChecked(false)
     },
     updateSelecteds() {
       const { selecteds, transferData } = this
@@ -90,22 +102,25 @@ export default {
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
     },
-    setDataMap() {
-      this.dataMap.clear()
-      const { key } = this.props
-      this.transferData.forEach(d => {
-        this.dataMap.set(d[key], d)
-      })
-    },
-    clearSelection() {
-      this.checkedsSet.clear()
-      this.selectionChange()
+    setDataStore() {
+      this.dataStore = {}
+      const { key, children } = this.props
+      const setStore = (data, parents = [], childrens = []) => {
+        data.forEach(row => {
+          const id = row[key]
+          const childs = row[children]
+          const siblings = parents.length ? data.reduce((acc, cur) => cur[key] === id ? acc : acc.concat(cur[key]), []) : []
+          if (childs) setStore(childs, parents.concat(id))
+          this.$set(this.dataStore, id, { id, row, parents, siblings, checked: false })
+        })
+      }
+      setStore(this.data)
     },
     toggleRowSelection(row, selected) {
-      const { dataMap, props, toggleSelection, checkedsSet } = this
+      const { dataStore, props, toggleSelection, isChecked } = this
       const id = row[props.key]
-      if (dataMap.has(id)) {
-        toggleSelection(row, checkedsSet.has(id), selected)
+      if (dataStore[id]) {
+        toggleSelection(row, isChecked[id], selected)
       } else {
         console.error('methods toggleRowSelection (row) is not find')
       }
@@ -114,51 +129,85 @@ export default {
       this.selectionAll = !this.selectionAll
       this.allselectionChange(this.selectionAll)
     },
-    rowSelectionChange(row, selected, isRadio = false) {
-      const { checkeds, dataMap, props, toggleSelection, selectionChange } = this
+    rowSelectionChange(row, selected) {
+      const { checkeds, dataStore, props, toggleSelection } = this
       const id = row[props.key]
-      if (isRadio) {
-        this.checkedsSet.clear()
-      }
       toggleSelection(row, !selected)
-      this.$emit('select', checkeds, dataMap.get(id))
-      selectionChange()
+      this.$emit('select', checkeds, dataStore[id])
     },
     allselectionChange(selected) {
-      const { dataMap, selectionChange } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? this.checkedsSet = new Set(...Array(dataMap.keys())) : this.checkedsSet.clear()
-      selectionChange()
+      this.setAllChecked(selected)
       this.$emit('select-all', this.checkeds)
     },
     toggleSelection(row, has, selected) {
-      const id = row[this.props.key]
-      selected ? this.checkedsSet.add(id) : has ? this.checkedsSet.delete(id) : this.checkedsSet.add(id)
-
-      this.selectionChange()
+      const { setChecked, props, dataStore } = this
+      const { key } = props
+      const id = row[key]
+      const store = dataStore[id]
+      const isCheck = Boolean(selected || !has)
+      setChecked(id, isCheck)
+      const { parents, siblings } = store
+      if (parents.length) {
+        // 处理直接父级
+        parents.forEach(parentId => {
+          !isCheck && setChecked(parentId, isCheck)
+        })
+      }
+      // 处理子节点
+      for (const key in dataStore) {
+        const store = dataStore[key]
+        const { id: childid, parents = [] } = store
+        // console.log({ childid, id, parents })
+        if (parents.includes(id)) {
+          setChecked(childid, isCheck)
+        }
+      }
     },
     setCurrentRow(row) {
-      const { dataMap, selectionChange } = this
+      const { dataStore } = this
       const id = row[this.props.key]
-      this.checkedsSet.clear()
-      if (dataMap.has(id)) {
-        this.checkedsSet.add(id)
+      this.setAllChecked(false)
+      if (dataStore[id]) {
+        this.setChecked(id, true)
       }
-
-      selectionChange()
-    },
-    selectionChange() {
-      this.selecteds = [...this.checkedsSet]
-      this.$forceUpdate()
-    },
-    isChecked(row) {
-      const { selecteds } = this
-      return selecteds.includes(row[this.props.key])
     },
     isDisabled(row) {
-      return XEUtils.isFunction(row.disabled) ? row.disabled({ row }) : Boolean(row.disabled)
+      const disabled = row[this.props.disabled]
+      return XEUtils.isFunction(disabled) ? disabled({ row }) : Boolean(disabled)
     }
+  },
+  render(h) {
+    const { data, props, title, indeterminate, selecteds, $slots, rowSelectionChange, allselectionChange, isDisabled } = this
+    const { key, children } = props
+    const open = false
+    const renderNode = (data, tier = -1) => {
+      tier++
+      return data.map(row => {
+        const id = row[key]
+        const childs = row[children] || []
+        return [
+          h('div', { class: 'eff-transfer-panel-node', style: { marginLeft: 12 * tier + 'px' }}, [
+            h('icon', { props: { icon: open ? 'caret-bottom' : 'caret-right' }}),
+            h('v-checkbox', {
+              props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row) },
+              on: { change: selected => rowSelectionChange(row, selected) }
+            })
+          ]),
+          childs.length ? renderNode(childs, tier) : ''
+        ]
+      })
+    }
+    return h('div', { class: 'eff-transfer-panel' }, [
+      h('div', { class: 'eff-transfer-panel__header' }, [
+        h('v-checkbox', { props: { label: title, indeterminate }, on: { change: allselectionChange }}),
+        h('small', {}, selecteds.length + '/' + data.length)
+      ]),
+      h('div', { class: 'eff-transfer-panel__body' }, [renderNode(data)]),
+      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }) : $slots.default,
+      [selecteds.map(d => d + '，')]
+    ])
   }
 }
 </script>
