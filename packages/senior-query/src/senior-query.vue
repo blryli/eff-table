@@ -3,10 +3,10 @@
     class="eff-senior-query"
     :show="show"
     title="高级搜索"
-    :min-height="300"
-    :height="500"
-    :width="800"
-    :min-width="400"
+    :width="width"
+    :height="height"
+    :min-width="minWidth"
+    :min-height="minHeight"
     @close="close"
     @size-change="cardSizeChange"
   >
@@ -91,10 +91,15 @@ export default {
       }
     }
   },
-  props: { fieldList: { type: Array, default: () => ([]) }},
+  props: {
+    fieldList: { type: Array, default: () => ([]) },
+    width: { type: Number, default: 800 },
+    height: { type: Number, default: 500 },
+    minWidth: { type: Number, default: 600 },
+    minHeight: { type: Number, default: 300 }
+  },
   data() {
     return {
-      table: null,
       treeConfig: { expandAll: true },
       columns: [
         {
@@ -233,7 +238,7 @@ export default {
           }, [])
         }
         this.close()
-        this.$emit('change', updateSeniorQuery(tableData))
+        this.$emit('search', updateSeniorQuery(tableData))
       }).catch(res => {
         console.log(res)
       })

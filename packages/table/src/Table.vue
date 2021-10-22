@@ -148,7 +148,7 @@
     <!-- 编辑 -->
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
-    <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @change="handleSeniorQuery" />
+    <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @search="handleSeniorQuery" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
     <!-- <p>mergerCells -  {{ mergerCells }}</p> -->
 

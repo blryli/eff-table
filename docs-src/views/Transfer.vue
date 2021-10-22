@@ -2,9 +2,10 @@
   <div class="page-home page">
     <h2>Transfer 穿梭框</h2>
     <p class="hint">
-      基础属性<br>
-      <span class="primary">value</span> 表格列数组<br>
-      <span class="primary">data</span> 表格数据
+      支持<span class="primary"> 树形 </span>结构的穿梭框组件<br>
+      使用了<span class="primary"> 虚拟滚动 </span>优化组件性能
+      <!-- <span class="primary">value</span> 表格列数组<br>
+      <span class="primary">data</span> 表格数据 -->
     </p>
     <section class="demo">
       <div class="section-content">
@@ -13,8 +14,9 @@
           :data="data"
           :titles="['from', 'to']"
           :button-texts="['', '']"
-          :default-checked-keys="[1, 2, 7]"
-          :default-expanded-keys="[1, 2, 7]"
+          :default-checked-keys="[2, 8]"
+          :default-expanded-keys="[ 1,2, 7,8]"
+          width="600px"
         >
           <!-- <template #leftFooter>
             <div>
@@ -33,14 +35,15 @@
         </div>
       </Collapse>
     </section>
-    <tree-transfer :from_data="fromData" :to_data="toData" :default-props="{label:'label'}" height="540px" filter open-all />
+    <h2>Attributes</h2>
+    <Document :form="documentForm" />
   </div>
 </template>
 
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import treeTransfer from 'el-tree-transfer'
+import Document from '../components/Document.vue'
 
 const htmlCode = `
   <eff-table v-model="value" :data="data" /> 
@@ -87,14 +90,14 @@ export default {
   components: {
     CodeSnippet,
     Collapse,
-    treeTransfer
+    Document
   },
 
   data() {
     const generateData = _ => {
       const data = []
       let num = 0
-      for (let i = 1; i <= 500; i++) {
+      for (let i = 1; i <= 20; i++) {
         num += 1
         const children = []
         const obj = {
@@ -175,7 +178,76 @@ export default {
           ]
         }
       ],
-      toData: []
+      toData: [],
+      documentForm: {
+        props: [
+          {
+            attribute: 'value / v-model',
+            explain: '绑定值',
+            type: 'array',
+            choosable: '',
+            default: ''
+          },
+          {
+            attribute: 'data',
+            explain: 'Transfer 的数据源',
+            type: 'array[{ key, label, disabled }]',
+            choosable: '',
+            default: '[]'
+          },
+          {
+            attribute: 'titles',
+            explain: '自定义列表标题',
+            type: 'array',
+            choosable: '',
+            default: "['from', 'to']"
+          },
+          {
+            attribute: 'button-texts',
+            explain: '自定义按钮文案',
+            type: 'array',
+            choosable: '',
+            default: '[]'
+          },
+          {
+            attribute: 'props',
+            explain: '数据源的字段别名',
+            type: 'object',
+            choosable: '',
+            default: '{key, label, disabled, children}'
+          },
+          {
+            attribute: 'default-checked-keys',
+            explain: '默认勾选的 key 数组',
+            type: 'array',
+            choosable: '',
+            default: '[]'
+          },
+          {
+            attribute: 'default-expanded-keys',
+            explain: '默认展开的 key 数组',
+            type: 'array',
+            choosable: '',
+            default: '[]'
+          }
+        ],
+        slots: [
+          {
+            attribute: 'leftFooter',
+            explain: '左侧列表底部的内容',
+            type: '',
+            choosable: '',
+            default: ''
+          },
+          {
+            attribute: 'rightFooter',
+            explain: '右侧列表底部的内容',
+            type: '',
+            choosable: '',
+            default: ''
+          }
+        ]
+      }
     }
   }
 }

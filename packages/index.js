@@ -14,6 +14,7 @@ import steps from './steps'
 import help from './help'
 import ciphertext from './ciphertext'
 import Transfer from './transfer'
+import SeniorQuery from './senior-query'
 
 const directives = []
 const components = [
@@ -30,7 +31,8 @@ const components = [
   steps,
   help,
   ciphertext,
-  Transfer
+  Transfer,
+  SeniorQuery
 ]
 
 export {
@@ -48,7 +50,8 @@ export {
   steps,
   help,
   ciphertext,
-  Transfer
+  Transfer,
+  SeniorQuery
 }
 
 const install = function(Vue, opts = {}) {

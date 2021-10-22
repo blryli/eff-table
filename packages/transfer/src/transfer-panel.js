@@ -1,4 +1,3 @@
-<script>
 import VCheckbox from 'pk/checkbox'
 import Tree from 'pk/tree'
 import XEUtils from 'xe-utils'
@@ -54,6 +53,45 @@ export default {
         }, [])
       }
       return getData(XEUtils.clone(data, true))
+    },
+    renderNode() {
+      const { renderData, props, transferDataStore, selecteds, isIndeterminate, rowSelectionChange, isDisabled, handleExpand } = this
+      const { key, children } = props
+      const h = this.$createElement
+      const node = []
+      const renderNode = (renderData, tier = -1) => {
+        tier++
+        return renderData.forEach(row => {
+          const id = row[key]
+          const childs = row[children] || []
+          const store = transferDataStore[id]
+          node.push(h('div', { key: id, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
+            h('icon', {
+              props: { icon: store.expanded ? 'caret-bottom' : 'caret-right' },
+              on: { click: () => handleExpand(store) }
+            }),
+            h('v-checkbox', {
+              props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
+              on: { change: selected => rowSelectionChange(row, selected) }
+            })
+          ]))
+          store.expanded && childs.length ? renderNode(childs, tier) : ''
+        })
+      }
+      renderNode(renderData)
+      return node
+    },
+    isVirtual() {
+      const { renderNode, bodyHeight } = this
+      return (renderNode.length - 4) * 30 > bodyHeight
+    },
+    endIndex() {
+      const { isVirtual, startIndex, renderNode, bodyHeight } = this
+      return isVirtual ? Math.floor(bodyHeight / 30) + 2 + startIndex : renderNode.length
+    },
+    renderNodes() {
+      const { renderNode, startIndex, endIndex } = this
+      return renderNode.slice(startIndex, endIndex)
     }
   },
   watch: {
@@ -267,50 +305,17 @@ export default {
     }
   },
   render(h) {
-    const { renderData, props, title, selectionAll, startIndex, bodyHeight, indeterminate, transferDataStore, dataStore, selecteds, $slots, isIndeterminate, rowSelectionChange, allselectionChange, isDisabled, handleExpand } = this
-    const { key, children } = props
-
-    let node = []
-    const renderNode = (renderData, tier = -1) => {
-      tier++
-      return renderData.forEach(row => {
-        const id = row[key]
-        const childs = row[children] || []
-        const store = transferDataStore[id]
-        node.push([h('div', { key: id, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
-          h('icon', {
-            props: { icon: store.expanded ? 'caret-bottom' : 'caret-right' },
-            on: { click: () => handleExpand(store) }
-          }),
-          h('v-checkbox', {
-            props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
-            on: { change: selected => rowSelectionChange(row, selected) }
-          })
-        ])])
-        store.expanded && childs.length ? node.push(renderNode(childs, tier)) : ''
-      })
-    }
-    renderNode(renderData)
-    node = node.filter(d => d)
-    const nodeLen = node.length
-    const isVirtual = (nodeLen - 2) * 30 > bodyHeight
-    if (isVirtual) {
-      const endIndex = Math.floor(this.bodyHeight / 30) + 2 + startIndex
-      node = node.slice(startIndex, endIndex)
-    }
-
+    const { renderNode, title, selectionAll, startIndex, renderNodes, indeterminate, dataStore, selecteds, $slots, allselectionChange } = this
     return h('div', { ref: 'panel', class: 'eff-transfer-panel' }, [
       h('div', { ref: 'header', class: 'eff-transfer-panel__header' }, [
         h('v-checkbox', { props: { value: selectionAll, label: title, indeterminate }, on: { change: allselectionChange }}),
         h('small', {}, selecteds.length + '/' + Object.keys(dataStore).length)
       ]),
       h('div', { ref: 'body', class: 'eff-transfer-panel__body' }, [
-        h('div', { class: 'eff-transfer-panel__body--y-space', style: { height: nodeLen * 30 + 'px' }}),
-        h('div', { class: 'eff-transfer-panel__body-wrapper', style: { marginTop: startIndex * 30 + 'px' }}, node)
+        h('div', { class: 'eff-transfer-panel__body--y-space', style: { height: renderNode.length * 30 + 'px' }}),
+        h('div', { class: 'eff-transfer-panel__body-wrapper', style: { marginTop: startIndex * 30 + 'px' }}, renderNodes)
       ]),
-      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }) : $slots.default
-      // JSON.stringify(selecteds)
+      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }, $slots.default) : ''
     ])
   }
 }
-</script>

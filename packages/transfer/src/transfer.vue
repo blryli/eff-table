@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="eff-transfer">
+    <div class="eff-transfer" :style="{width, height}">
       <TransferPanel
         ref="leftPanel"
         v-model="leftValue"
@@ -65,8 +65,8 @@ export default {
     defaultCheckedKeys: { type: Array, default: () => ([]) },
     defaultExpandedKeys: { type: Array, default: () => ([]) },
     expandedAll: Boolean,
-    panelWidth: { type: Number, default: 240 },
-    panelHeight: { type: Number, default: 360 }
+    width: { type: String, default: '100%' },
+    height: { type: String, default: '360px' }
   },
   provide() {
     return { transfer: this }
@@ -184,12 +184,12 @@ export default {
 <style lang="scss">
 .eff-transfer{
   display: flex;
+  width: 100%;
   &-panel{
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 240px;
-    height: 360px;
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
@@ -222,11 +222,13 @@ export default {
       }
     }
     &__body{
+      display: flex;
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
       &-wrapper{
         padding: 10px;
+        flex: 1;
       }
       &--y-space{
         width: 0;
@@ -253,7 +255,8 @@ export default {
     }
   }
   &__center{
-    width: 100px;
+    width: 16%;
+    min-width: 100px;
     display: flex;
     align-items: center;
     flex-direction: column;
