@@ -15,7 +15,6 @@ export default {
   },
   watch: {
     value(val) {
-      if (this.disabled) return
       this.isChecked = val
     }
   },

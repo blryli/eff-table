@@ -2,6 +2,7 @@
 import VCheckbox from 'pk/checkbox'
 import Tree from 'pk/tree'
 import XEUtils from 'xe-utils'
+import { on, off } from 'pk/utils/dom'
 
 export default {
   name: 'EffTransferPanel',
@@ -9,15 +10,19 @@ export default {
   props: {
     value: { type: Array, default: () => ([]) },
     data: { type: Array, default: () => ([]) },
-    defaultCheck: { type: Array, default: () => ([]) },
+    ids: { type: Array, default: () => ([]) },
+    defaultCheckedKeys: { type: Array, default: () => ([]) },
     title: { type: String, default: '列表' },
-    props: { type: Object, default: () => ({}) }
+    props: { type: Object, default: () => ({}) },
+    transferDataStore: { type: Object, default: () => ({}) }
   },
   data() {
     return {
       dataStore: {},
       selectionAll: false,
-      indeterminate: false
+      indeterminate: false,
+      bodyHeight: 0,
+      startIndex: 0
     }
   },
   computed: {
@@ -34,38 +39,80 @@ export default {
         return mapId
       }).filter(d => d)
     },
-    transferData() {
-      const { data, props } = this
-      return data.reduce((acc, cur) => cur[props.disabled] ? acc : acc.concat([cur]), [])
+    renderData() {
+      const { data, props, ids } = this
+      const { key, children } = props
+      const getData = data => {
+        return data.reduce((acc, cur) => {
+          const id = cur[key]
+          const childs = cur[children] || []
+          if (ids.includes(id)) {
+            if (childs.length) cur[children] = getData(childs)
+            return acc.concat(cur)
+          }
+          return acc
+        }, [])
+      }
+      return getData(XEUtils.clone(data, true))
     }
   },
   watch: {
     selecteds(val, oldVal) {
-      this.updateSelecteds()
+      this.updateSelectionAll()
       const changeKeys = val.length > oldVal.length ? val.filter(d => oldVal.indexOf(d) === -1) : oldVal.filter(d => val.indexOf(d) === -1)
+      // console.log(this.checkeds)
       this.$emit('input', this.checkeds)
       this.$emit('change', val, changeKeys)
     },
-    data() {
+    renderData() {
       this.setDataStore()
+
+      if (!this.loadData) {
+        this.setDefaultCheck()
+        this.loadData = true
+      } else {
+        this.clearSelection()
+      }
     }
   },
+  inject: ['transfer'],
   created() {
     Object.assign(this, {
-
+      loadData: false
     })
-    this.setDataStore()
+    if (this.data.length) {
+      this.loadData = true
+      this.setDataStore()
+      this.setDefaultCheck()
+    }
     // console.log('this.dataStore', JSON.stringify(this.dataStore, null, 2))
+  },
+  mounted() {
     this.$nextTick(() => {
-      this.init()
+      const { transfer, $refs } = this
+      const { header, body } = $refs
+      this.body = body
+      this.bodyHeight = transfer.panelHeight - header.clientHeight
+      on(this.body, 'scroll', this.handleScroll)
     })
   },
+  beforeDestroy() {
+    off(this.body, 'scroll', this.handleScroll)
+  },
   methods: {
-    init() {
-      const { defaultCheck } = this
-      if (defaultCheck.length) {
-        defaultCheck.forEach(id => {
-          this.setChecked(id, true)
+    handleScroll(e) {
+      const { scrollTop } = e.target
+      if (scrollTop < 30) {
+        this.startIndex = 0
+      }
+      this.startIndex = Math.floor(scrollTop / 30)
+    },
+    setDefaultCheck() {
+      const { defaultCheckedKeys, dataStore } = this
+      if (defaultCheckedKeys.length) {
+        defaultCheckedKeys.forEach(id => {
+          const store = dataStore[id]
+          store && this.toggleSelection(store.row, null, true)
         })
       }
     },
@@ -95,26 +142,34 @@ export default {
     clearSelection() {
       this.setAllChecked(false)
     },
-    updateSelecteds() {
-      const { selecteds, transferData } = this
+    updateSelectionAll() {
+      const { selecteds, dataStore } = this
+      const data = []
+      for (const key in dataStore) {
+        const row = dataStore[key]
+        const { id } = row
+        data.push(id)
+      }
       const selectedsLength = selecteds.length
-      const dataLength = transferData.length
-      this.selectionAll = Boolean(selectedsLength) && selectedsLength === dataLength
+      const dataLength = data.length
+      this.selectionAll = Boolean(selectedsLength && selectedsLength === dataLength)
       this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
     },
     setDataStore() {
       this.dataStore = {}
-      const { key, children } = this.props
-      const setStore = (data, parents = [], childrens = []) => {
-        data.forEach(row => {
+      const { props } = this
+      const { key, children } = props
+      const setStore = (renderData, parents = []) => {
+        renderData.forEach(row => {
           const id = row[key]
           const childs = row[children]
-          const siblings = parents.length ? data.reduce((acc, cur) => cur[key] === id ? acc : acc.concat(cur[key]), []) : []
+          const siblings = parents.length ? renderData.reduce((acc, cur) => cur[key] === id ? acc : acc.concat(cur[key]), []) : []
           if (childs) setStore(childs, parents.concat(id))
+
           this.$set(this.dataStore, id, { id, row, parents, siblings, checked: false })
         })
       }
-      setStore(this.data)
+      setStore(this.renderData)
       for (const key in this.dataStore) {
         const row = this.dataStore[key]
         const childs = []
@@ -124,6 +179,7 @@ export default {
         }
         row.childs = childs
       }
+      return this.$nextTick()
     },
     toggleRowSelection(row, selected) {
       const { dataStore, props, toggleSelection, isChecked } = this
@@ -151,7 +207,7 @@ export default {
       this.$emit('select-all', this.checkeds)
     },
     toggleSelection(row, has, selected) {
-      const { setChecked, props, dataStore } = this
+      const { props, dataStore, setChecked } = this
       const { key } = props
       const id = row[key]
 
@@ -177,8 +233,9 @@ export default {
           const { checked, siblings } = dataStore[currentId]
           if (siblings.length) {
             const sibChecked = siblings.filter(sibid => dataStore[sibid].checked)
-            setChecked(parentId, sibChecked.length === siblings.length)
-          } else { // 只有一直直接确定
+            // console.log({ currentId, siblings, sibChecked, parentId })
+            setChecked(parentId, checked && sibChecked.length === siblings.length)
+          } else { // 只有一级时直接确定
             setChecked(parentId, checked)
           }
           currentId = parentId
@@ -204,37 +261,55 @@ export default {
       const indeterminate = !!(hasChecked && childs.find(c => !this.selecteds.includes(c)))
       if (indeterminate) this.setChecked(id, false)
       return indeterminate
+    },
+    handleExpand(store) {
+      store.expanded = !store.expanded
     }
   },
   render(h) {
-    const { data, props, title, indeterminate, selecteds, $slots, isIndeterminate, rowSelectionChange, allselectionChange, isDisabled } = this
+    const { renderData, props, title, selectionAll, startIndex, bodyHeight, indeterminate, transferDataStore, dataStore, selecteds, $slots, isIndeterminate, rowSelectionChange, allselectionChange, isDisabled, handleExpand } = this
     const { key, children } = props
-    const open = false
-    const renderNode = (data, tier = -1) => {
+
+    let node = []
+    const renderNode = (renderData, tier = -1) => {
       tier++
-      return data.map(row => {
+      return renderData.forEach(row => {
         const id = row[key]
         const childs = row[children] || []
-        return [
-          h('div', { class: 'eff-transfer-panel-node', style: { marginLeft: 12 * tier + 'px' }}, [
-            h('icon', { props: { icon: open ? 'caret-bottom' : 'caret-right' }}),
-            h('v-checkbox', {
-              props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
-              on: { change: selected => rowSelectionChange(row, selected) }
-            })
-          ]),
-          childs.length ? renderNode(childs, tier) : ''
-        ]
+        const store = transferDataStore[id]
+        node.push([h('div', { key: id, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
+          h('icon', {
+            props: { icon: store.expanded ? 'caret-bottom' : 'caret-right' },
+            on: { click: () => handleExpand(store) }
+          }),
+          h('v-checkbox', {
+            props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
+            on: { change: selected => rowSelectionChange(row, selected) }
+          })
+        ])])
+        store.expanded && childs.length ? node.push(renderNode(childs, tier)) : ''
       })
     }
-    return h('div', { class: 'eff-transfer-panel' }, [
-      h('div', { class: 'eff-transfer-panel__header' }, [
-        h('v-checkbox', { props: { label: title, indeterminate }, on: { change: allselectionChange }}),
-        h('small', {}, selecteds.length + '/' + data.length)
+    renderNode(renderData)
+    node = node.filter(d => d)
+    const nodeLen = node.length
+    const isVirtual = (nodeLen - 2) * 30 > bodyHeight
+    if (isVirtual) {
+      const endIndex = Math.floor(this.bodyHeight / 30) + 2 + startIndex
+      node = node.slice(startIndex, endIndex)
+    }
+
+    return h('div', { ref: 'panel', class: 'eff-transfer-panel' }, [
+      h('div', { ref: 'header', class: 'eff-transfer-panel__header' }, [
+        h('v-checkbox', { props: { value: selectionAll, label: title, indeterminate }, on: { change: allselectionChange }}),
+        h('small', {}, selecteds.length + '/' + Object.keys(dataStore).length)
       ]),
-      h('div', { class: 'eff-transfer-panel__body' }, [renderNode(data)]),
-      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }) : $slots.default,
-      [selecteds.map(d => d + '，')]
+      h('div', { ref: 'body', class: 'eff-transfer-panel__body' }, [
+        h('div', { class: 'eff-transfer-panel__body--y-space', style: { height: nodeLen * 30 + 'px' }}),
+        h('div', { class: 'eff-transfer-panel__body-wrapper', style: { marginTop: startIndex * 30 + 'px' }}, node)
+      ]),
+      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }) : $slots.default
+      // JSON.stringify(selecteds)
     ])
   }
 }

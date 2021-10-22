@@ -11,10 +11,10 @@
         <eff-transfer
           v-model="value"
           :data="data"
-          :titles="['列表1', '列表2']"
-          :button-texts="['到右边', '到左边']"
-          :left-default-checked="[8]"
-          :right-default-checked="[2]"
+          :titles="['from', 'to']"
+          :button-texts="['', '']"
+          :default-checked-keys="[1, 2, 7]"
+          :default-expanded-keys="[1, 2, 7]"
         >
           <!-- <template #leftFooter>
             <div>
@@ -22,7 +22,7 @@
             </div>
           </template> -->
         </eff-transfer>
-        {{ data }}
+        <!-- {{ data }} -->
       </div>
     </section>
     <section class="snippets">
@@ -33,12 +33,14 @@
         </div>
       </Collapse>
     </section>
+    <tree-transfer :from_data="fromData" :to_data="toData" :default-props="{label:'label'}" height="540px" filter open-all />
   </div>
 </template>
 
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
+import treeTransfer from 'el-tree-transfer'
 
 const htmlCode = `
   <eff-table v-model="value" :data="data" /> 
@@ -84,14 +86,15 @@ export default {
   name: 'Transfer',
   components: {
     CodeSnippet,
-    Collapse
+    Collapse,
+    treeTransfer
   },
 
   data() {
     const generateData = _ => {
       const data = []
       let num = 0
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 500; i++) {
         num += 1
         const children = []
         const obj = {
@@ -106,7 +109,7 @@ export default {
             key: num,
             label: `备选项 ${num}`,
             disabled: i % 2 === 0,
-            children: [{ key: num + 100, label: num + 100 + '' }]
+            children: [{ key: num + 10000, label: num + 100 + '' }]
           })
         }
         data.push(obj)
@@ -116,8 +119,63 @@ export default {
     return {
       htmlCode,
       jsCode,
-      value: [],
-      data: generateData()
+      value: [1],
+      data: generateData(),
+      fromData: [
+        {
+          id: '1',
+          pid: 0,
+          label: '一级 1',
+          children: [
+            {
+              id: '1-1',
+              pid: '1',
+              label: '二级 1-1',
+              // disabled: true,
+              children: []
+            },
+            {
+              id: '1-2',
+              pid: '1',
+              label: '二级 1-2',
+              children: [
+                {
+                  id: '1-2-1',
+                  pid: '1-2',
+                  children: [],
+                  label: '二级 1-2-1'
+                },
+                {
+                  id: '1-2-2',
+                  pid: '1-2',
+                  children: [],
+                  label: '二级 1-2-2'
+                }
+              ]
+            },
+            {
+              id: '1-3',
+              pid: '1',
+              label: '二级 1-3',
+              children: [
+                {
+                  id: '1-3-1',
+                  pid: '1-3',
+                  children: [],
+                  label: '二级 1-3-1'
+                },
+                {
+                  id: '1-3-2',
+                  pid: '1-3',
+                  children: [],
+                  label: '二级 1-3-2'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      toData: []
     }
   }
 }

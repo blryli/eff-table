@@ -4,10 +4,12 @@
       <TransferPanel
         ref="leftPanel"
         v-model="leftValue"
-        :data="leftData"
+        :data="data"
+        :ids="leftIds"
         :title="transferTitles[0]"
         :props="transferProps"
-        :default-check="leftDefaultChecked"
+        :default-checked-keys="defaultCheckedKeys"
+        :transfer-data-store="dataStore"
         @change="leftChange"
       >
         <slot name="leftFooter" />
@@ -17,7 +19,7 @@
           class="eff-transfer__center-btn-top"
           :class="{'is-disabled': !leftValue.length}"
           :disabled="!leftValue.length"
-          @click="toRight"
+          @click="() => toRight()"
         >
           {{ transferButtonTexts[0] }}<i class="eff-icon-arrow-right" />
         </button>
@@ -25,7 +27,7 @@
           class="eff-transfer__center-btn-bottom"
           :class="{'is-disabled': !rightValue.length}"
           :disabled="!rightValue.length"
-          @click="toLeft"
+          @click="() => toLeft()"
         >
           <i class="eff-icon-arrow-left" />{{ transferButtonTexts[1] }}
         </button>
@@ -33,21 +35,23 @@
       <TransferPanel
         ref="rightPanel"
         v-model="rightValue"
-        :data="rightData"
+        :data="data"
+        :ids="rightIds"
         :title="transferTitles[1]"
         :props="transferProps"
-        :default-check="rightDefaultChecked"
+        :default-checked-keys="defaultCheckedKeys"
+        :transfer-data-store="dataStore"
         @change="rightChange"
       >
         <slot name="rightFooter" />
       </TransferPanel>
     </div>
+    <!-- <p>{{ dataStore }}</p> -->
   </div>
 </template>
 
 <script>
 import TransferPanel from './transfer-panel'
-import XEUtils from 'xe-utils'
 
 export default {
   name: 'EffTransfer',
@@ -58,18 +62,25 @@ export default {
     titles: { type: Array, default: () => ([]) },
     buttonTexts: { type: Array, default: () => ([]) },
     props: { type: Object, default: () => ({}) },
-    targetOrder: { type: String, default: 'original' }, // original / push / unshift
-    leftDefaultChecked: { type: Array, default: () => ([]) },
-    rightDefaultChecked: { type: Array, default: () => ([]) },
-    leftDefaultExpanded: { type: Array, default: () => ([]) },
-    rightDefaultExpanded: { type: Array, default: () => ([]) }
+    defaultCheckedKeys: { type: Array, default: () => ([]) },
+    defaultExpandedKeys: { type: Array, default: () => ([]) },
+    expandedAll: Boolean,
+    panelWidth: { type: Number, default: 240 },
+    panelHeight: { type: Number, default: 360 }
+  },
+  provide() {
+    return { transfer: this }
   },
   data() {
     return {
+      list: Object.freeze(this.data),
+      dataStore: {},
       leftValue: [],
+      leftIds: [],
       leftData: [],
       rightValue: [],
-      rightData: []
+      rightData: [],
+      rightIds: []
     }
   },
   computed: {
@@ -79,6 +90,7 @@ export default {
   },
   watch: {
     data() {
+      this.list = Object.freeze(this.data)
       this.init()
     },
     rightKeys(val, oldVal) {
@@ -109,43 +121,55 @@ export default {
   },
   methods: {
     init() {
-      const { data, rightDefaultChecked, transferProps: { key }} = this
-      this.leftData = XEUtils.clone(data, true)
-      this.sourceData = XEUtils.clone(data, true)
-      if (rightDefaultChecked.length) {
-        const leftRemove = rightDefaultChecked.reduce((acc, cur) => {
-          const index = this.leftData.findIndex(d => d[key] === cur)
-          return index > -1 ? acc.concat(this.leftData.splice(index, 1)) : acc
+      this.setDataStore()
+      const { value, list, dataStore, props } = this
+      if (list.length) {
+        const { key } = props
+        const isNumber = typeof list[0][key] === 'number'
+        this.leftIds = Object.keys(dataStore).reduce((acc, cur) => {
+          const id = isNumber ? +cur : cur
+          const { parents } = dataStore[cur]
+          return parents.find(d => value.includes(d)) || value.includes(id) ? acc : acc.concat(id)
         }, [])
-        this.rightData.push(...leftRemove)
+        this.rightIds = [...new Set(value.reduce((acc, cur) => {
+          const { childs } = dataStore[cur]
+          return acc.concat(dataStore[cur].parents.concat(cur).concat(childs))
+        }, []))]
       }
     },
-    toRight() {
-      const { targetOrder } = this
-      const addFunc = targetOrder === 'unshift' ? targetOrder : 'push'
-      this.rightData[addFunc](...this.leftValue)
-      this.remove(this.leftValue, this.leftData)
-      if (targetOrder === 'original') {
-        this.rightData = this.sourceData.filter(s => this.rightData.find(d => d.key === s.key))
+    setDataStore() {
+      this.dataStore = {}
+      const { expandedAll, defaultExpandedKeys, props } = this
+      const { key, children } = props
+      const setStore = (data, parents = []) => {
+        data.forEach(row => {
+          const id = row[key]
+          const childs = row[children]
+          if (childs) setStore(childs, parents.concat(id))
+          this.$set(this.dataStore, id, { id, row, parents, expanded: expandedAll || defaultExpandedKeys.includes(id) })
+        })
       }
-      this.leftPanel.clearSelection()
-    },
-    toLeft() {
-      const { targetOrder } = this
-      const addFunc = targetOrder === 'unshift' ? targetOrder : 'push'
-      this.leftData[addFunc](...this.rightValue)
-      this.remove(this.rightValue, this.rightData)
-      if (targetOrder === 'original') {
-        this.leftData = this.sourceData.filter(s => this.leftData.find(d => d.key === s.key))
+      setStore(this.list)
+      for (const key in this.dataStore) {
+        const row = this.dataStore[key]
+        const childs = []
+        for (const k in this.dataStore) {
+          const r = this.dataStore[k]
+          r.parents.includes(row.id) && childs.push(r.id)
+        }
+        row.childs = childs
       }
-      this.rightPanel.clearSelection()
+      return this.$nextTick()
     },
-    remove(value, data) {
-      const { transferProps: { key }} = this
-      value.forEach(v => {
-        const index = data.findIndex(da => da[key] === v[key])
-        if (index > -1) data.splice(index, 1)
-      })
+    toRight(ids = this.leftValue.map(d => d.id)) {
+      this.leftIds = this.leftIds.filter(id => !ids.includes(id))
+      const id = ids[0]
+      this.rightIds = [...new Set(this.rightIds.concat(ids).concat(this.dataStore[id].parents))]
+    },
+    toLeft(ids = this.rightValue.map(d => d.id)) {
+      this.rightIds = this.rightIds.filter(id => !ids.includes(id))
+      const id = ids[0]
+      this.leftIds = [...new Set(this.leftIds.concat(ids).concat(this.dataStore[id].parents))]
     },
     leftChange(checkedKeys, changeKeys) {
       this.$emit('left-check-change', { checkedKeys, changeKeys })
@@ -168,6 +192,7 @@ export default {
     height: 360px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    overflow: hidden;
     box-sizing: border-box;
     &__header{
       display: flex;
@@ -186,6 +211,7 @@ export default {
       .eff-table__checkbox{
         .eff-table__checkbox-label{
           font-size: 16px;
+          font-weight: bold;
           color: #333;
         }
         &:hover{
@@ -197,9 +223,15 @@ export default {
     }
     &__body{
       flex: 1;
-      padding: 10px;
       overflow-y: auto;
       overflow-x: hidden;
+      &-wrapper{
+        padding: 10px;
+      }
+      &--y-space{
+        width: 0;
+        float: left;
+      }
     }
     &__footer{
       height: 40px;
@@ -212,6 +244,9 @@ export default {
       display: flex;
       align-items: center;
       color: #666;
+      height: 30px;
+      line-height: 30px;
+      overflow: hidden;
       >i{
         margin-right: 5px;
       }

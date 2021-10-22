@@ -138,12 +138,13 @@ export default {
     handleValidate() {
       const { column } = this
       const { prop, rules = [] } = column || {}
-      if (!rules.length || !this.row) return this.$nextTick()
+      if (!rules.length || !this.row) return this.$nextTick().then(() => false)
       return this.table.validateField(prop, rules, this.row)
     },
     validateShowpopover() {
       const { table, cell } = this
       this.handleValidate().then(res => {
+        if (!res) return
         this.message = res.message
         setTimeout(() => {
           res.message && table.$refs.popovers.validingTipShow({ reference: cell, showAllways: true, effect: 'error', message: res.message })

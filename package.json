@@ -1,6 +1,6 @@
 {
   "name": "eff-table",
-  "version": "1.1.95",
+  "version": "1.1.97",
   "description": "is a efficient table",
   "keywords": [
     "vue",
@@ -64,6 +64,7 @@
     "core-js": "^3.4.3",
     "cross-env": "^6.0.3",
     "eff-table": "^1.1.31",
+    "el-tree-transfer": "^2.4.7",
     "element-ui": "^2.13.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",

@@ -212,9 +212,14 @@ export default {
       const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? '?' + query : ''}`
       const params = requestType.toUpperCase() === 'POST' ? query : null
       this.$EFF.request[requestType.toLowerCase()](path, params).then(res => {
-        field.staticSourceList = res
+        const { success, data, message } = res
+        if (success) {
+          field.staticSourceList = data
+        } else {
+          console.error(message)
+        }
       }).catch(res => {
-        console.log(res)
+        console.error(res)
       })
     },
     search() {

@@ -39,7 +39,7 @@ export default {
 .eff-icon-arrow-left{
   @include eff-icon-arrow;
   &:before{
-    left: 3px;
+    left: 6px;
     top: 1px;
     border-color: currentColor transparent transparent currentColor;
   }
@@ -47,7 +47,7 @@ export default {
 .eff-icon-arrow-right{
   @include eff-icon-arrow;
   &:before{
-    left: 0;
+    left: 1px;
     top: 1px;
     border-color: transparent currentColor currentColor transparent;
   }
@@ -82,8 +82,8 @@ export default {
     position: absolute;
     content: "";
     display: inline-block;
-    border: 5px solid #333;
-    opacity: .8;
+    border: 5px solid #999;
+    opacity: .6;
   }
   &:hover{
     &::before{
