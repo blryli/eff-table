@@ -75,29 +75,25 @@ export default {
 | value   | columns数组       | array        |              | []      |
 | data   | table 数据       | array        |              | []     |
 | form   | 搜索数据       | Object        |              | {}      |
-| rowId   | 行主键       | String        |              | id      |
-| height    | Table 的高度    | number      |            | 400      |
+| rowId   | 行主键       | String        |              | _rowId      |
+| height    | Table 的高度    | number      |            | -      |
 | max-height    | Table 最大高度    | number      |            | -      |
-| row-height    | 列高度    | number      |            | 36      |
+| row-height    | 行高度    | number      |            | 36      |
 | border    | 是否带有纵向边框    | boolean      |            | false      |
 | show-header   | 是否显示表头   | Boolean    |            | true      |
 | header-contextmenu   | 是否开启表头右键扩展菜单   | Boolean    |            | false      |
-| toolbar-config   | 工具栏配置   | String    |            |       |
-| empty-text   | 空数据时显示的文本内容   | String    |            |       |
-| fullscreen| 是否显示全屏按钮 | boolean      |        | false      |
+| toolbar-config   | 工具栏配置   | object    |            |   {}    |
+| empty-text   | 空数据时显示的文本内容   | String    |            |   暂无数据    |
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
-| row-class-name| 行的 className     | Function({row, rowIndex})/String      |            | false      |
+| row-class-name| 行的 className     | Function({row, rowIndex})/String      |            |       |
 | cell-class-name| 单元格的 className | Function({row, column, rowIndex, columnIndex})/String  |  |   |
 | drag                   | 是否启用列拖动             | Boolean      |             | false      |
 | row-drag         | 是否启用行拖动             | Boolean      |            | false      |
-| column-control         | 是否启用列控制             | Boolean      |            | false      |
-| column-control-text| 列控制文字，如果存在则只展示文字   | String      |            |      |
 | search      | 是否启用搜索      | Boolean      |            | false      |
-| searchClearText | search为true时有效，如果有值，替换清空搜索按钮   | string |     | -    |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
 | edit-config             | 编辑配置               | object      |            | {}      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
-| show-summary  | 是否在表尾显示合计行     | Boolean      |         | 暂无数据  |
+| show-summary  | 是否在表尾显示合计行     | Boolean      |         | false  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
 | summary-method       | 自定义的合计计算方法    | Function({ columns, data }) |       |       |
 | selectRange       | 是否开启选择区域功能    | Boolean |       |       |

@@ -150,7 +150,8 @@
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :field-list="seniorQueryList" @search="handleSeniorQuery" />
     <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>mergerCells -  {{ mergerCells }}</p> -->
+    <!-- <p>expands -  {{ expands }}</p>
+    <p>expandsHeight -  {{ expandsHeight }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -274,6 +275,7 @@ export default {
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
+    expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
     rowId: { type: String, default: '_rowId' }, // 行主键
@@ -462,11 +464,13 @@ export default {
 
     this.tableColumns = getComColumns(this.columns)
     Object.assign(this, {
+      loadData: false,
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: Object.assign({ children: 'children' }, this.treeConfig)
+      tableTreeConfig: Object.assign({ children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [] }, this.expandConfig)
     })
     if ((this.data || []).length) {
       this.loadTableData(this.data)
@@ -493,10 +497,10 @@ export default {
       }
     },
     loadTableData(data = this.data, opts = { clearScroll: true }) {
-      const { editStore, rowId } = this
+      const { editStore, rowId, loadData } = this
       this.tableData =
         Object.freeze(data.map((d, i) => {
-          !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId('_rowId'))
+          !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
           return d
         }) || [])
       this.tableSourceData = Object.freeze(XEUtils.clone(data, true))
@@ -508,6 +512,10 @@ export default {
       this.updateCache()
       opts.clearScroll && this.clearScroll()
       this.resize()
+      if (!loadData) {
+        this.initExpand()
+        this.loadData = true
+      }
       return this.$nextTick()
     },
     reloadData(data = null) {
@@ -519,6 +527,22 @@ export default {
         data = this.data
       }
       this.loadTableData(data)
+    },
+    initExpand() {
+      const { tableExpandConfig, rowId } = this
+      const { expandAll, defaultExpandeds } = tableExpandConfig
+      setTimeout(() => {
+        if (expandAll) {
+          this.tableData.forEach(row => {
+            const id = row[rowId]
+            this.expandChange({ rowId: id, height: 0 })
+          })
+        } else {
+          defaultExpandeds.forEach(rowId => {
+            this.expandChange({ rowId, height: 0 })
+          })
+        }
+      }, 300)
     },
     clearStatus() {
       this.editStore = Object.assign(

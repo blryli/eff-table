@@ -35,15 +35,12 @@
         </div>
       </Collapse>
     </section>
-    <h2>Attributes</h2>
-    <Document :form="documentForm" />
   </div>
 </template>
 
 <script>
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
-import Document from '../components/Document.vue'
 
 const htmlCode = `
   <eff-table v-model="value" :data="data" /> 
@@ -89,8 +86,7 @@ export default {
   name: 'Transfer',
   components: {
     CodeSnippet,
-    Collapse,
-    Document
+    Collapse
   },
 
   data() {
@@ -178,76 +174,7 @@ export default {
           ]
         }
       ],
-      toData: [],
-      documentForm: {
-        props: [
-          {
-            attribute: 'value / v-model',
-            explain: '绑定值',
-            type: 'array',
-            choosable: '',
-            default: ''
-          },
-          {
-            attribute: 'data',
-            explain: 'Transfer 的数据源',
-            type: 'array[{ key, label, disabled }]',
-            choosable: '',
-            default: '[]'
-          },
-          {
-            attribute: 'titles',
-            explain: '自定义列表标题',
-            type: 'array',
-            choosable: '',
-            default: "['from', 'to']"
-          },
-          {
-            attribute: 'button-texts',
-            explain: '自定义按钮文案',
-            type: 'array',
-            choosable: '',
-            default: '[]'
-          },
-          {
-            attribute: 'props',
-            explain: '数据源的字段别名',
-            type: 'object',
-            choosable: '',
-            default: '{key, label, disabled, children}'
-          },
-          {
-            attribute: 'default-checked-keys',
-            explain: '默认勾选的 key 数组',
-            type: 'array',
-            choosable: '',
-            default: '[]'
-          },
-          {
-            attribute: 'default-expanded-keys',
-            explain: '默认展开的 key 数组',
-            type: 'array',
-            choosable: '',
-            default: '[]'
-          }
-        ],
-        slots: [
-          {
-            attribute: 'leftFooter',
-            explain: '左侧列表底部的内容',
-            type: '',
-            choosable: '',
-            default: ''
-          },
-          {
-            attribute: 'rightFooter',
-            explain: '右侧列表底部的内容',
-            type: '',
-            choosable: '',
-            default: ''
-          }
-        ]
-      }
+      toData: []
     }
   }
 }

@@ -37,6 +37,9 @@
         <router-link class="menu-list" to="/FormValidate">FormValidate 表单校验</router-link>
         <router-link class="menu-list" to="/Form">Form 高级表单</router-link>
         <router-link class="menu-list" to="/FormEdit">FormEdit 快捷编辑</router-link>
+        <h3 class="menu-title">API</h3>
+        <router-link class="menu-list" to="/TransferApi">Transfer 穿梭框</router-link>
+        <router-link class="menu-list" to="/TableApi">Table 表格</router-link>
       </div>
       <div class="container">
         <router-view />
