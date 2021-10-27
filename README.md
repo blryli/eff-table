@@ -82,7 +82,6 @@ export default {
 | border    | 是否带有纵向边框    | boolean      |            | false      |
 | show-header   | 是否显示表头   | Boolean    |            | true      |
 | header-contextmenu   | 是否开启表头右键扩展菜单   | Boolean    |            | false      |
-| toolbar-config   | 工具栏配置   | object    |            |   {}    |
 | empty-text   | 空数据时显示的文本内容   | String    |            |   暂无数据    |
 | highlight-current-row| 是否要高亮当前行 | boolean      |        | false      |
 | row-class-name| 行的 className     | Function({row, rowIndex})/String      |            |       |
@@ -91,7 +90,6 @@ export default {
 | row-drag         | 是否启用行拖动             | Boolean      |            | false      |
 | search      | 是否启用搜索      | Boolean      |            | false      |
 | edit                   | 是否启用编辑               | Boolean      |            | false      |
-| edit-config             | 编辑配置               | object      |            | {}      |
 | messages    | 提示消息，跟校验结果并存  | [{ prop, message, rowIndex }] |         | array      |
 | show-summary  | 是否在表尾显示合计行     | Boolean      |         | false  |
 | sum-text      | 合计行第一列的文本       | String      |            | 总计      |
@@ -99,9 +97,14 @@ export default {
 | selectRange       | 是否开启选择区域功能    | Boolean |       |       |
 | copy       | 是否开启复制功能    | Boolean |       |       |
 | edit-history       | 是否开启前进后退功能    | Boolean |       |       |
-| footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
 | replace       | 替换和填充功能    | Boolean |       |       |
 | before-insert       | 增加插入数据前的钩子函数    | function(records) |       |       |
+| column-config             | 列配置               | object      |            | {}      |
+| edit-config             | 编辑配置               | object      |            | {}      |
+| footerActionConfig       | 页面底部配置    | {pageConfig: 分页配置，参考eleui、showPager：是否显示分页、showBorder：是否显示边框、pageInLeft：分页是否在左边} |       |       |
+| toolbar-config   | 工具栏配置   | object    |            |   {}    |
+| tree-config   | 表格树配置   | object    |            |   {}    |
+| expand-config   | 展开行配置   | object    |            |   {}    |
 
 - columns
 
@@ -122,28 +125,24 @@ value: [
     config: {
       name: 'input', // 指定ui元素
       options: [], // select组件需要
-      format: 'yyy-MM-dd', // 日期组件需要，如果没设置，则会取props里面的format
+      format: ({row, rowIndex, column, columnIndex, prop}) => {}, // 格式化单元格内容
       defaultValue: '', // 新增行指定默认值，非必须
     }, 
 
     // table标题 (优先级 titleRender > type > title)
     title: '', // string
-    titleRender: (h, {title, column, columnIndex}) => {
-      return // jsx
-    }
+    titleRender: {}, // object/function(h, {title, column, columnIndex})
+    titlePrefix: {message: '', icon: ''} //表头标题前缀
+    titleSuffix: {message: '', icon: ''} //表头标题后缀
 
     // table单元格 (优先级 cellRender > type > prop)
     prop: '', // string
-    cellRender: (h, {row, rowIndex, column, columnIndex, prop}) => {
-      return // jsx
-    }
+    cellRender: {}, // object/function(h, {row, rowIndex, column, columnIndex, prop})
 
     // 编辑
     editable: true, // boolean 控制是否开启编辑
     edit: { // object
-      render: (h, {row, rowIndex, column, columnIndex, prop}) => {
-        return <your-component vModel={value} on-change={this.change} />
-      },
+      render: {}, // object/function(h, {row, rowIndex, column, columnIndex, prop}) 编辑元素render
       disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
     }
 
@@ -188,12 +187,11 @@ value: [
       type: '' // string 扩展字段
     }
 
-    drag: true,// boolean 单列拖动控制，如果设置为 false ，则该列不可做拖动操作
+    drag: true,// boolean 列是否可拖动
 
-    // 排序
-    sortable: false, // 对应列是否可以排序
+    sortable: false, // 列是否可排序
 
-    selectable: false, // 仅对 type=selection 的列有效，类型为 Function，Function 的返回值用来决定这一行的 CheckBox 是否可以勾选
+    selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
   }
 ]
 ```
@@ -246,19 +244,16 @@ value: [
 | ------------- | ------------------------- | ----------------------------- |
 | loadTableData | 加载数据，在没有设置主键的情况下会清空数据状态，返回promise |data|
 | reloadData | 重载数据，会清空数据状态，返回promise |data|
-| reloadData | 重载数据，会清空数据状态，返回promise |data|
 | getFullData      | 不传参数时获取当前表格数据，数据具有响应性，如果有参数source则返回不带rowId的数据，数据不具有响应性 |     source          |
 | getTableData      | 获取当前表格数据，数据具有响应性 |     ---          |
 | getEditStore      | 获取当前表格数据状态对象 { editRow, insertList, updateList, pendingList } |     ---          |
 | validate      | 对整个表单进行校验的方法 | 默认只校验临时变动的数据，第一个参数为 true 时全量校验 |
-| validateRow | 对行进行校验的方法 | rowIndex |
 | validateField | 对单元格进行校验的方法 | prop, rules, row  |
 | clearValidate | 移除表单项的校验结果 | props:array | prop:string |
 | sort       | 对 Table 进行排序 | prop: string, order: string|
 | clearSort       | 清空排序 | -|
 | clearSearch       | 清空搜索条件 | -|
 | focus         | 聚焦的方法                 | index(列索引), prop(字段) |
-| editTo      | 自动聚焦到下个可聚焦元素的方法 |     left|top|right|bottom          |
 | getCheckRows   | 用于多选表格，获取当前选中的行数据 | -|
 | getCheckColumns   | 获取当前选中的列数据 | -|
 | clearSelection   | 用于多选表格，清空用户的选择 | -|

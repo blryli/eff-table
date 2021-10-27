@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod } = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod, tableExpandConfig } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -169,7 +169,7 @@ export default {
     const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) : false
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) === false : false
 
     const renderSelection = function() {
       if (subtotal) return ''
@@ -299,7 +299,9 @@ export default {
 
     let slot
     if (type === 'expand') {
-      slot = expandRender(h)
+      const { onlyField } = tableExpandConfig
+      const hasExpand = row => !onlyField || onlyField && row[onlyField]
+      slot = hasExpand(row) ? expandRender(h) : ''
     } else if (type === 'row-drag') {
       slot = h(RowDrag)
     } else if (row[columnIndex] !== undefined) {

@@ -18,12 +18,12 @@ export default {
         { code: 'add_focus', fn: () => add().then(rowIndex => focus(rowIndex)) },
         { code: 'insert', fn: () => insert() },
         { code: 'insert_focus', fn: () => insert().then(rowIndex => focus(rowIndex)) },
-        { code: 'mark_cancel', fn: () => triggerPending() },
-        { code: 'checkout_select_type', fn: () => checkoutSelectType() },
         { code: 'delete', fn: () => this.delete(deleted) },
+        { code: 'mark_cancel', fn: () => triggerPending() },
         { code: 'remove_check_row', fn: () => this.removeCheckRow() },
         { code: 'query', fn: () => query && typeof query === 'function' ? this.query(query) : this.loadTableData() },
         { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
+        { code: 'checkout_select_type', fn: () => checkoutSelectType() },
         { code: 'refresh', fn: () => this.refresh() }
       ]
       const ccode = codes.find(d => d.code === code)

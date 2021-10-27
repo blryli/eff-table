@@ -163,7 +163,7 @@ export default {
             renderData.map((row, rowIndex) => {
               const currentIndex = rowIndex + renderIndex
               const rowid = `${currentIndex + 1}`
-              const { expanded } = expands.find(d => d.rowId === row[rowId]) || {}
+              const { expanded } = expand && expands.find(d => d.rowId === row[rowId]) || {}
               const classes = `eff-table__expanded expandid-${row[rowId]}`
               const expandNode = expanded ? <div class={classes}>{expand({ row, rowIndex })}</div> : ''
 

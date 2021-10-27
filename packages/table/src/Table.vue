@@ -241,36 +241,37 @@ export default {
   },
   props: {
     columns: { type: Array, default: () => ([]) },
-    data: { type: Array, default: () => ([]) },
-    form: { type: Object, default: () => ({}) },
-    border: Boolean,
-    stripe: Boolean,
-    drag: Boolean,
-    search: Boolean,
-    edit: Boolean,
-    editConfig: { type: Object, default: () => {} },
-    loading: Boolean,
-    columnControlText: { type: String, default: '' },
-    columnBatchControlText: { type: String, default: '' },
-    rowDrag: Boolean,
-    showSummary: Boolean, // 合计
-    searchClearText: { type: String, default: '' },
-    sortConfig: { type: Object, default: () => ({}) }, // 排序配置
-    summaryMethod: { type: Function, default: null },
-    sumText: { type: String, default: '合计' },
-    rowHeight: { type: Number, default: 36 },
-    height: { type: Number, default: 0 },
-    maxHeight: { type: Number, default: 0 },
-    highlightCurrentRow: Boolean,
-    emptyText: { type: String, default: '暂无数据' },
-    showHeader: { type: Boolean, default: true },
+    data: { type: Array, default: () => ([]) }, // table 数据源
+    form: { type: Object, default: () => ({}) }, // 搜索行数据
+    rowId: { type: String, default: '_rowId' }, // 行主键
+    height: { type: Number, default: 0 }, // 表格高度
+    maxHeight: { type: Number, default: 0 }, // 表格最大高度
+    rowHeight: { type: Number, default: 36 }, // 行高度
+    border: Boolean, // 是否带有纵向边框
+    stripe: Boolean, // 是否带有斑马线
+    highlightCurrentRow: Boolean, // 是否高亮显示行
+    showOverflowTooltip: Boolean, // 是否单元格文本不换行，溢出文本用提示框展示
+    loading: Boolean, // 是否显示表格loading效果
     headerContextmenu: { type: Boolean, default: true }, // 表头右键扩展菜单
-    showOverflowTooltip: Boolean,
-    cellClassName: { type: [String, Function], default: '' },
-    rowClassName: { type: [String, Function], default: '' },
-    messages: { type: Array, default: () => [] },
-    selectRange: Boolean, // 表格区域选择
-    copy: Boolean, // 复制功能
+    rowClassName: { type: [String, Function], default: '' }, // 行的 className
+    cellClassName: { type: [String, Function], default: '' }, // 单元格的 className
+    emptyText: { type: String, default: '暂无数据' }, // 空数据时显示的文本内容
+    showHeader: { type: Boolean, default: true }, // 是否显示表头
+    showSummary: Boolean, // 合计
+    sumText: { type: String, default: '合计' }, // 合计行第一列的文本
+    summaryMethod: { type: Function, default: null }, // 合计方法
+    messages: { type: Array, default: () => [] }, // 单元格提示信息集合
+    beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
+    scopedSlots: { type: Object, default: () => {} }, // 插槽
+    spanMethod: { type: Function, default: () => {} }, // 行列合并方法
+    drag: Boolean, // 是否开启列拖动功能
+    rowDrag: Boolean, // 是否开启行拖动功能
+    search: Boolean, // 是否开启搜索行功能
+    edit: Boolean, // 是否开启编辑功能
+    copy: Boolean, // 是否开启复制功能
+    selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
+    editConfig: { type: Object, default: () => {} }, // 编辑配置
+    sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
@@ -278,11 +279,7 @@ export default {
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
-    rowId: { type: String, default: '_rowId' }, // 行主键
-    footerActionConfig: { type: Object, default: () => {} }, // 脚步配置pageConfig、showPager、showBorder、pageInLeft
-    beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
-    scopedSlots: { type: Object, default: () => {} }, // 插槽
-    spanMethod: { type: Function, default: () => {} } // 行列合并
+    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },
   data() {
     return {
@@ -356,8 +353,8 @@ export default {
       return style
     },
     useExpand() {
-      const { visibleColumns } = this
-      return Boolean(visibleColumns.find(d => d.type === 'expand'))
+      const { visibleColumns, $slots } = this
+      return Boolean(visibleColumns.find(d => d.type === 'expand')) && $slots.expand
     },
     useGroupColumn() {
       const { tableData } = this
@@ -470,7 +467,7 @@ export default {
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
       tableTreeConfig: Object.assign({ children: 'children', defaultExpandeds: [] }, this.treeConfig),
-      tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [] }, this.expandConfig)
+      tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig)
     })
     if ((this.data || []).length) {
       this.loadTableData(this.data)
@@ -497,7 +494,7 @@ export default {
       }
     },
     loadTableData(data = this.data, opts = { clearScroll: true }) {
-      const { editStore, rowId, loadData } = this
+      const { editStore, rowId, loadData, useExpand } = this
       this.tableData =
         Object.freeze(data.map((d, i) => {
           !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
@@ -513,7 +510,7 @@ export default {
       opts.clearScroll && this.clearScroll()
       this.resize()
       if (!loadData) {
-        this.initExpand()
+        useExpand && this.initExpand()
         this.loadData = true
       }
       return this.$nextTick()
@@ -530,16 +527,19 @@ export default {
     },
     initExpand() {
       const { tableExpandConfig, rowId } = this
-      const { expandAll, defaultExpandeds } = tableExpandConfig
+      if (!tableExpandConfig) return
+      const { expandAll, defaultExpandeds, onlyField } = tableExpandConfig
+      const hasExpand = row => !onlyField || onlyField && row[onlyField]
       setTimeout(() => {
         if (expandAll) {
           this.tableData.forEach(row => {
             const id = row[rowId]
-            this.expandChange({ rowId: id, height: 0 })
+            hasExpand(row) && this.expandChange({ rowId: id, height: 0 })
           })
         } else {
           defaultExpandeds.forEach(rowId => {
-            this.expandChange({ rowId, height: 0 })
+            const row = this.tableDataMap.get(rowId)
+            hasExpand(row) && this.expandChange({ rowId, height: 0 })
           })
         }
       }, 300)

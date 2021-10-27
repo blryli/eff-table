@@ -203,6 +203,44 @@ a {
   margin-left: 20px;
 }
 
+code, kbd, pre, samp {
+  font-size: 1em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  color: #D4D4C9;
+  line-height: 20px;
+  background: #1E1E1E;
+}
+.hljs-deletion, .hljs-name, .hljs-section, .hljs-selector-tag, .hljs-subst {
+  color: #569CD6;
+}
+.hljs-attr, .hljs-params, .hljs-selector-attr, .hljs-selector-class, .hljs-selector-pseudo, .hljs-template-variable, .hljs-type, .hljs-variable {
+  color: #9CDCFE;
+}
+.hljs-string{
+  color: #CE9178;
+}
+.hljs-keyword{
+  color: #C586C0;
+}
+.hljs-title, .hljs-number{
+  color: #DCDCAA;
+}
+.hljs-literal{
+  color: #569CD6;
+}
+.hljs-comment, .hljs-quote {
+    color: #6A9955;
+    font-style: normal;
+}
+code + code {
+  margin-top: 20px;
+}
+
 @media (max-width: 1200px) {
   .container{
     padding-left: 190px;
