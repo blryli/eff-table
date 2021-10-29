@@ -160,7 +160,7 @@ export default {
               fieldName: 'name', // 字段名
               fieldType: 'string', // 字段类型
               fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
-              operateTypeList: ['=', 'not in'], // 操作类型
+              operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }], // 操作类型
               componentType: 'input', // 组件类型（input，select）
               dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
               apiSource: { // 接口数据（数据源类型为2时必填）
@@ -173,7 +173,7 @@ export default {
               fieldName: 'sex',
               fieldType: 'string',
               fieldChildType: '',
-              operateTypeList: ['=', 'not in'],
+              operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
               componentType: 'select',
               dataSourceType: 2,
               apiSource: {
@@ -186,7 +186,14 @@ export default {
               fieldName: 'age',
               fieldType: 'number',
               fieldChildType: '',
-              operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
+              operateTypeList: [
+                { label: '大于', value: '>' },
+                { label: '小于', value: '<' },
+                { label: '等于', value: '=' },
+                { label: '大于等于', value: '>=' },
+                { label: '小于等于', value: '<=' },
+                { label: '不包含', value: 'not in' }
+              ],
               componentType: 'input',
               dataSourceType: 1,
               apiSource: {
@@ -199,12 +206,13 @@ export default {
               fieldName: 'hobby',
               fieldType: 'array',
               fieldChildType: '',
-              operateTypeList: ['=', 'not in'],
+              operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
               componentType: 'select',
               dataSourceType: 2,
               apiSource: {
                 fullPath: '/path',
-                requestType: 'get'
+                requestType: 'get',
+                requestParam: 'aaa'
               },
               staticSourceList: []
             }

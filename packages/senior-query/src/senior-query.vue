@@ -53,8 +53,8 @@ import XEUtils from 'xe-utils'
 //   componentType: '', // 组件类型（input，select）
 //   dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
 //   apiSource: { // 接口数据（数据源类型为2时必填）
-//     label: '',
-//     value: '',
+//     label: 'label', // 下拉框label别名
+//     value: 'value', // 下拉框value别名
 //     fullPath: '', // 接口全路径
 //     requestType: '', // 请求类型
 //   },
@@ -109,7 +109,7 @@ export default {
         {
           title: '条件连接符',
           prop: 'conditionConnector',
-          config: { name: 'select', options: [{ label: '&', value: '&' }, { label: '||', value: '||' }] },
+          config: { name: 'select', options: [{ label: '与', value: '&' }, { label: '或', value: '||' }] },
           edit: { disabled: ({ row, rowid }) => {
             return this.isFristRow(rowid)
           } },
@@ -135,7 +135,7 @@ export default {
           prop: 'operator',
           config: { name: 'select', options: ({ row }) => {
             const { operateTypeList = [] } = this.fieldList.find(d => d.fieldName === row.fieldName) || {}
-            return operateTypeList.map(d => ({ label: d, value: d }))
+            return operateTypeList
           } },
           edit: { disabled: ({ row }) => {
             return this.hasChildren(row) || !row.fieldName
@@ -160,17 +160,17 @@ export default {
                 const props = {}
                 const on = {}
                 if (dataSourceType === 2) { // 动态数据源
-                  const { label, value, fullPath, requestType } = apiSource
+                  const { label, value, fullPath, requestType, requestParam } = apiSource
                   // 远程搜索
                   Object.assign(props, {
                     filterable: true,
                     remote: true,
                     labelKey: label,
                     valueKey: value,
-                    'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType })
+                    'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType, requestParam })
                   })
                   // 初始化options
-                  Object.assign(on, { focus: () => this.remoteMethod({ query: '', field, fullPath, requestType }) })
+                  Object.assign(on, { focus: () => this.remoteMethod({ query: '', field, fullPath, requestType, requestParam }) })
                 }
                 // 如果是数组
                 if (fieldType === 'array') {
@@ -213,10 +213,11 @@ export default {
     dataChange({ tableData }) {
       this.treeGroup = this.getTreeGroup(tableData)
     },
-    remoteMethod({ query, field, fullPath, requestType }) {
-      const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? '?' + query : ''}`
-      const params = requestType.toUpperCase() === 'POST' ? query : null
-      this.$EFF.request[requestType.toLowerCase()](path, params).then(res => {
+    remoteMethod({ query, field, fullPath, requestType, requestParam }) {
+      const paramGet = requestParam ? `?${requestParam}=${query}` : `?${query}`
+      const path = `${fullPath}${requestType.toUpperCase() === 'GET' && query ? paramGet : ''}`
+      const paramPost = requestType.toUpperCase() === 'POST' ? (requestParam ? { [requestParam]: query } : query) : null
+      this.$EFF.request[requestType.toLowerCase()](path, paramPost).then(res => {
         const { success, data, message } = res.data
         if (success) {
           field.staticSourceList = data

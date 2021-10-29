@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
+import CodeSnippet from '../../components/CodeSnippet.vue'
+import Collapse from '../../components/Collapse.vue'
 
 const htmlCode = `
   <eff-transfer

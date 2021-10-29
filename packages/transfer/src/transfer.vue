@@ -59,7 +59,7 @@ export default {
   props: {
     value: { type: Array, default: () => ([]) },
     data: { type: Array, default: () => ([]) },
-    titles: { type: Array, default: () => ([]) },
+    titles: { type: Array, default: () => (['from', 'to']) },
     buttonTexts: { type: Array, default: () => ([]) },
     props: { type: Object, default: () => ({}) },
     defaultCheckedKeys: { type: Array, default: () => ([]) },
@@ -111,7 +111,7 @@ export default {
     Object.assign(this, {
       transferProps: Object.assign(props, { key: 'key', label: 'label', disabled: 'disabled', children: 'children' }),
       transferButtonTexts: [buttonTexts[0] || '', buttonTexts[1] || ''],
-      transferTitles: [titles[0] || 'left', titles[1] || 'right']
+      transferTitles: [titles[0] || 'from', titles[1] || 'to']
     })
     this.init()
   },
