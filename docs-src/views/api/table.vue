@@ -162,7 +162,7 @@ export default {
             default: 'false'
           },
           {
-            attribute: 'rowDrag',
+            attribute: 'row-drag',
             explain: '是否开启行拖动功能',
             type: 'boolean',
             choosable: '',
@@ -190,7 +190,7 @@ export default {
             default: 'false'
           },
           {
-            attribute: 'selectRange',
+            attribute: 'select-range',
             explain: '表格区域选择功能，（复制功能打开时默认开启）',
             type: 'boolean',
             choosable: '',
@@ -262,16 +262,16 @@ export default {
           {
             attribute: 'row-class-name',
             explain: '行的 className',
-            type: 'function/String',
+            type: 'function({row, rowIndex})/string',
             choosable: '',
-            default: 'fn({row, rowIndex})'
+            default: 'fn'
           },
           {
             attribute: 'cell-class-name',
             explain: '单元格的 className',
-            type: 'function/String',
+            type: 'function({row, column, rowIndex, columnIndex})/string',
             choosable: '',
-            default: 'fn({row, column, rowIndex, columnIndex})'
+            default: ''
           },
           {
             attribute: 'show-summary',
@@ -290,16 +290,16 @@ export default {
           {
             attribute: 'summary-method',
             explain: '自定义的合计计算方法',
-            type: 'function',
+            type: 'function({ columns, data })',
             choosable: '',
-            default: 'fn({ columns, data })'
+            default: ''
           },
           {
-            attribute: 'spanMethod',
+            attribute: 'span-method',
             explain: '行列合并方法',
-            type: 'function',
+            type: 'function({row, column, rowIndex, columnIndex})',
             choosable: '',
-            default: 'fn({row, column, rowIndex, columnIndex})'
+            default: ''
           },
           {
             attribute: 'messages',
@@ -703,10 +703,9 @@ export default {
           {
             attribute: 'validate',
             explain: '任一表单项被校验后触发',
-            default: `messages`,
+            default: `[]`,
             code:
 `
-  // 默认
   [
     {
       id: '', // 行主键

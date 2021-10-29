@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Form 快捷编辑</h2>
+    <h2>Form 快捷编辑 <router-link class="page-router" to="/FormApi">查看api</router-link></h2>
     <p class="hint">
       快捷编辑，旨在尽量让用户脱离鼠标进行编辑，快捷键
       <el-tag class="ml-10">enter</el-tag> 右
@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
+import CodeSnippet from '../../components/CodeSnippet.vue'
+import Collapse from '../../components/Collapse.vue'
 // import mock from 'mockjs'
 
 const jsCode = `

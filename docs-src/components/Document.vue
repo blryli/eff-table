@@ -5,12 +5,12 @@
       <eff-table
         :row-height="50"
         :columns="[
-          {type: 'expand', width: 40,titleSuffix: { message: '查看详细配置', icon: 'question' }},
+          {show: !!form.props.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看详细配置', icon: 'question' }},
           {title: '属性',prop: 'attribute', width: 160},
           {title: '说明', prop: 'explain'},
           {title: '类型', prop: 'type', width: 120},
           {title: '可选值', prop: 'choosable', width: 120},
-          {title: '默认值', prop: 'default'}
+          {title: '默认值', prop: 'default', width: 120}
         ]"
         :data="form.props"
         :expand-config="{onlyField: 'code'}"
@@ -44,7 +44,7 @@
       <h3>Methods</h3>
       <eff-table
         :columns="[
-          {type: 'expand', width: 40,titleSuffix: { message: '查看使用示例', icon: 'question' }},
+          {show: !!form.methods.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看使用示例', icon: 'question' }},
           {title: '方法名',prop: 'attribute', width: 160},
           {title: '说明', prop: 'explain'},
           {title: '参数', prop: 'default', width: 160}
@@ -61,7 +61,7 @@
       <h3>Events</h3>
       <eff-table
         :columns="[
-          {type: 'expand', width: 40,titleSuffix: { message: '查看回调参数说明', icon: 'question' }},
+          {show: !!form.events.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看回调参数说明', icon: 'question' }},
           {title: '事件名',prop: 'attribute', width: 160},
           {title: '说明', prop: 'explain'},
           {title: '回调参数', prop: 'default'}

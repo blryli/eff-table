@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Form 高级表单</h2>
+    <h2>Form 高级表单 <router-link class="page-router" to="/FormApi">查看api</router-link></h2>
     <p class="hint">
       <span class="primary">formOptions</span> 配置整个表单<br>
     </p>
@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
+import CodeSnippet from '../../components/CodeSnippet.vue'
+import Collapse from '../../components/Collapse.vue'
 // import mock from 'mockjs'
 const objCode = `
   // column对象

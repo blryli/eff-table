@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>FormBase 表单基础使用</h2>
+    <h2>FormBase 表单基础使用 <router-link class="page-router" to="/FormApi">查看api</router-link></h2>
 
     <p class="hint">
       使用的是<span class="primary"> flex </span>布局，默认是行内排列子元素，竖直排列设置 span 属性为 24 即可<br>
@@ -130,8 +130,8 @@
 </template>
 
 <script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
+import CodeSnippet from '../../components/CodeSnippet.vue'
+import Collapse from '../../components/Collapse.vue'
 
 const jsCode = `
 export default {

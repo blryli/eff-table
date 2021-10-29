@@ -120,14 +120,14 @@ export default {
 
 | 参数                    | 说明                               | 类型         | 可选值         | 默认值 |
 | ----------------------- | ---------------------------------- | ------------ | -------------- | ------ |
-| data                    | 数据对象，用于校验时获取字段的值   | object/array | -              | -      |
+| columns                    | 表单字段集合  | array | -              | -      |
+| data                    | 数据对象，用于校验时获取字段的值   | object | -              | -      |
 | title-width             | 表单域标签的宽度                   | string       | -              | -      |
 | title-align           | title 的位置                       | string       | left/right/top | right  |
 | line-height             | form-item 内 title 及 content 行高 | string       | -              | '32px' |
 | rowledge                | form-item 行距                     | string       | -              | '24px' |
 | item-gutter             | form-item 之间的间隔               | number       | -              | 0      |
 | response                | 表单响应式，只在手机端生效         | boolean      | -              | true   |
-| focus-open                   | 是否开启聚焦模式                   | boolean      | -              | false  |
 | focus-stop            | 停止聚焦处理                       | boolean       | -              | false |
 | focus-pause            | 暂停聚焦处理，会抛出focus-prev/focus-next事件 | boolean       | -              | false |
 | focus-options            | 聚焦模式参数                       | object       | -              | 看下面 |
@@ -154,6 +154,7 @@ focusOptions: { // object
 ### v-form Methods
 
 | 方法名        | 说明                                                                     |      参数           |
+| ---        | ------                                                                     |      --           |
 | validate| 对整个表单进行重算的方法，参数是一个回调函数(第一个参数是校验是否通过，第二个参数是所有校验结果集合数组) | Function(boolean, array)    |
 | validateField | 对单个字段进行重算的方法，参数是字段，规则， 数据对象    | prop: string, rule: function, data：object/array |
 | clearValidate | 移除表单校验结果。参数是要移除校验结果的字段数组，如不传则移除整个表单的重算结果)  | props: array   |
@@ -170,12 +171,12 @@ focusOptions: { // object
 | 事件名称 | 说明                   | 回调参数                    |
 | -------- | ---------------------- | --------------------------- |
 | validate | 任一表单项被校验后触发 | {path,success,message,stop} |
-| focus-prev | 聚焦上一个节点   |        path            |
-| focus-next | 聚焦下一个节点   |        path            |
-| last-focused-node-next | 开启聚焦模式（focus-open 为 true），并且为非循环模式（loop 不为 true）下，在最后一个可聚焦的节点（最后一个节点，或是在它之后的所有节点均不可被聚焦的节点），执行下一个节点聚焦操作时触发 | path |
-| first-focused-node-prev | 开启聚焦模式（focus-open 为 true），并且为非循环模式（loop 不为 true）下，在第一个可聚焦的节点（第一个节点，或是在它之前的所有节点均不可被聚焦的节点），执行上一个节点聚焦操作时触发 | path |
 | focus     | 节点聚焦时触发         | path                        |
 | blur     | 节点失焦时触发         | path                        |
+| focus-prev | 聚焦上一个节点时触发   |        path            |
+| focus-next | 聚焦下一个节点时触发   |        path            |
+| last-focused-node-next | 非循环模式（loop 不为 true）下，在最后一个可聚焦的节点（最后一个节点，或是在它之后的所有节点均不可被聚焦的节点），执行下一个节点聚焦操作时触发 | path |
+| first-focused-node-prev | 非循环模式（loop 不为 true）下，在第一个可聚焦的节点（第一个节点，或是在它之前的所有节点均不可被聚焦的节点），执行上一个节点聚焦操作时触发 | path |
 
 ### v-form-item Attributes
 

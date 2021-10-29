@@ -38,8 +38,9 @@
         <router-link class="menu-list" to="/Form">Form 高级表单</router-link>
         <router-link class="menu-list" to="/FormEdit">FormEdit 快捷编辑</router-link>
         <h3 class="menu-title">API</h3>
-        <router-link class="menu-list" to="/TransferApi">Transfer 穿梭框</router-link>
         <router-link class="menu-list" to="/TableApi">Table 表格</router-link>
+        <router-link class="menu-list" to="/FormApi">form 表单</router-link>
+        <router-link class="menu-list" to="/TransferApi">Transfer 穿梭框</router-link>
       </div>
       <div class="container">
         <router-view />
@@ -145,6 +146,10 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  &-router{
+    font-size: 14px;
+    color: #40b883;
+  }
 }
 
 .collapse {
@@ -207,6 +212,9 @@ code, kbd, pre, samp {
   font-size: 1em;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
 }
+code.hljs {
+    padding: 3px 5px;
+}
 .hljs {
   display: block;
   overflow-x: auto;
@@ -221,13 +229,13 @@ code, kbd, pre, samp {
 .hljs-attr, .hljs-params, .hljs-selector-attr, .hljs-selector-class, .hljs-selector-pseudo, .hljs-template-variable, .hljs-type, .hljs-variable {
   color: #9CDCFE;
 }
-.hljs-string{
+.hljs-addition, .hljs-attribute, .hljs-meta .hljs-string, .hljs-regexp, .hljs-string{
   color: #CE9178;
 }
-.hljs-keyword{
+.hljs-doctag, .hljs-formula, .hljs-keyword{
   color: #C586C0;
 }
-.hljs-title, .hljs-number{
+.hljs-bullet, .hljs-link, .hljs-meta, .hljs-selector-id, .hljs-symbol, .hljs-title, .hljs-number{
   color: #DCDCAA;
 }
 .hljs-literal{

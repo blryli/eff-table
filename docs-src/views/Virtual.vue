@@ -45,78 +45,80 @@ import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
 const jsCode = `
-data() {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        fixed: 'left',
-        type: 'index',
-        title: '序号',
-        width: 80
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列1',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列2',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列3',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列4',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列5',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'height',
-        title: '列6',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列7',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列8',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'name',
-        title: '列9',
-        width: 200
-      },
-      {
-        show: true,
-        prop: 'age',
-        title: '列10',
-        width: 200
-      }
-    ]
+export default {
+  data() {
+    return {
+      data: [],
+      columns: [
+        {
+          show: true,
+          fixed: 'left',
+          type: 'index',
+          title: '序号',
+          width: 80
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '列1',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'age',
+          title: '列2',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '列3',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'age',
+          title: '列4',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '列5',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'height',
+          title: '列6',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '列7',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'age',
+          title: '列8',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'name',
+          title: '列9',
+          width: 200
+        },
+        {
+          show: true,
+          prop: 'age',
+          title: '列10',
+          width: 200
+        }
+      ]
+    }
   }
 }
 `

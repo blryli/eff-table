@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>FormValidate 表单校验</h2>
+    <h2>FormValidate 表单校验 <router-link class="page-router" to="/FormApi">查看api</router-link></h2>
 
     <p class="hint">
       form-item 组件<span class="primary"> rules </span>属性指定校验规则，按rules数组顺序依次校验<br>
@@ -70,8 +70,8 @@
 </template>
 
 <script>
-import CodeSnippet from '../components/CodeSnippet.vue'
-import Collapse from '../components/Collapse.vue'
+import CodeSnippet from '../../components/CodeSnippet.vue'
+import Collapse from '../../components/Collapse.vue'
 
 const jsCode = `
 export default {

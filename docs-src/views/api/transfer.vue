@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>Transfer 穿梭框</h2>
+    <h2>Transfer 穿梭框 <router-link class="page-router" to="/Transfer">查看示例</router-link></h2>
     <Document :form="documentForm" />
   </div>
 </template>
@@ -28,9 +28,21 @@ export default {
           {
             attribute: 'data',
             explain: 'Transfer 的数据源',
-            type: 'array[{ key, label, disabled }]',
+            type: 'array',
             choosable: '',
-            default: '[]'
+            default: '[]',
+            code:
+`
+  // 字段名默认如下，可以用字段别名修改默认字段名
+  [
+    {
+      key: '',
+      label: '',
+      disabled: false,
+      children: []
+    }
+  ]
+`
           },
           {
             attribute: 'titles',
@@ -51,7 +63,16 @@ export default {
             explain: '数据源的字段别名',
             type: 'object',
             choosable: '',
-            default: '{key, label, disabled, children}'
+            default: '{}',
+            code:
+`
+  {
+    key: 'key',
+    label: 'label',
+    disabled: 'disabled', // 禁用字段名
+    children: 'children' // 子集字段名
+  }
+`
           },
           {
             attribute: 'default-checked-keys',
