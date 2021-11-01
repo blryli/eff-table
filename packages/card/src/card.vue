@@ -10,7 +10,13 @@
     @mouseleave="handleMouseleave"
   >
     <div class="eff-card__header">
-      <span class="eff-card__header-title">{{ title }}</span>
+      <PrefixSuffix
+        :prefix="titlePrefix"
+        :suffix="titleSuffix"
+        class="eff-card__header-title"
+      >
+        <span>{{ title }}</span>
+      </PrefixSuffix>
       <slot name="header" />
       <i class="eff-card__header-close" type="text" @click="$emit('close')" />
     </div>
@@ -22,9 +28,11 @@
 
 <script>
 import { onMousemove, hasClass } from 'pk/utils/dom'
+import PrefixSuffix from 'pk/prefix-suffix'
 
 export default {
   name: 'Card',
+  components: { PrefixSuffix },
   props: {
     title: { type: String, required: true },
     width: { type: Number, default: 250 },
@@ -35,12 +43,14 @@ export default {
     show: Boolean,
     inline: Boolean,
     addToBody: Boolean,
-    limit: { type: Number, default: 15 }
+    limit: { type: Number, default: 15 },
+    titlePrefix: { type: Object, default: () => {} },
+    titleSuffix: { type: Object, default: () => {} }
   },
   data() {
     return {
       isAddToBody: false,
-      startRect: { left: 0, top: 0, width: 0, height: 0 },
+      startRect: { left: 0, top: 0, width: this.width, height: this.height },
       endRect: { left: 0, top: 0, width: this.width, height: this.height },
       move: { x: 0, y: 0, width: 0, height: 0 },
       cursor: null,
@@ -91,7 +101,9 @@ export default {
       }
       this.$emit('size-change', this.move)
     },
-    handleMousedown() {
+    handleMousedown(e) {
+      const { button } = e
+      if (button !== 0) return
       this.cursor && onMousemove({
         start: this.start,
         moveing: this.moveing,
@@ -99,7 +111,8 @@ export default {
       })
     },
     handleMousemove(e) {
-      if (this.isDraging) return
+      const { button } = e
+      if (this.isDraging || button !== 0) return
       const { target, x, y } = e
 
       // header 操作
@@ -139,8 +152,9 @@ export default {
         this.cursor = ''
       }
     },
-    handleMouseleave() {
-      if (this.isDraging) return
+    handleMouseleave(e) {
+      const { button } = e
+      if (this.isDraging || button !== 0) return
       document.body.style.cursor = ''
     },
     start() {
@@ -173,8 +187,10 @@ export default {
         this.move = { x, y, width: 0, height: 0 }
       }
     },
-    end(x, y) {
+    end() {
       this.isDraging = false
+      const { x, y } = this.move
+      if (x === 0 && y === 0) return
       const { innerHeight } = window
       const { clientWidth } = document.body
       const { left, top, width, height } = this.endRect

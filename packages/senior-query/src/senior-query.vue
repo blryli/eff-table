@@ -1,7 +1,7 @@
 <template>
   <card
     class="eff-senior-query"
-    :show="show"
+    :show="visible"
     title="高级搜索"
     :width="width"
     :height="height"
@@ -92,6 +92,7 @@ export default {
     }
   },
   props: {
+    show: Boolean,
     fieldList: { type: Array, default: () => ([]) },
     width: { type: Number, default: 800 },
     height: { type: Number, default: 500 },
@@ -202,8 +203,16 @@ export default {
           // { name: 'button', props: { icon: 'el-icon-view' }, help: { effect: 'dark', message: () => this.treeGroup }, children: '预览' }
         ]
       },
-      show: false,
+      visible: this.show,
       treeGroup: []
+    }
+  },
+  watch: {
+    show(show) {
+      this.visible = show
+    },
+    visible(visible) {
+      this.$emit('update:show', visible)
     }
   },
   mounted() {
@@ -277,11 +286,11 @@ export default {
       this.table.removeTreeExpand(row)
     },
     open() {
-      this.show = true
+      this.visible = true
       this.table.doLayout()
     },
     close() {
-      this.show = false
+      this.visible = false
     },
     clear() {
       this.table.reloadData([])

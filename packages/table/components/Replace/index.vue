@@ -7,10 +7,11 @@
     :height="500"
     :width="800"
     :min-width="400"
+    :title-suffix="{message: '把要替换的字段从右侧拖到左侧'}"
     @close="close"
   >
     <template slot="header">
-      <el-button type="default" size="mini" @click="confirm"> 确定 </el-button>
+      <el-button type="primary" size="mini" @click="confirm"> 确定 </el-button>
     </template>
     <div class="eff-replace-container">
       <div class="eff-replace-left">

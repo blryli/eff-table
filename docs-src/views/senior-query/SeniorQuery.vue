@@ -2,21 +2,21 @@
   <div class="page-home page">
     <h2>SeniorQuery 高级搜索</h2>
     <p class="hint">
-      <span class="primary">toolbarConfig.seniorQuery</span> 设置为 <span class="primary">true</span><br>
-      点击 <Icon icon="query" /> 展开搜索框
+      <span class="primary">show </span>属性设置为 <span class="primary"> true / false </span>或调用组件<span class="primary"> open / close </span>方法控制高级搜索弹窗打开与关闭<br>
     </p>
     <section class="demo">
       <div class="section-content">
-        <SeniorQuery ref="seniorQuery" :field-list="seniorQueryList" @search="handleSeniorQuery" />
+        <el-button type="primary" size="mini" @click="show = !show">打开高级搜索</el-button>
+        <p />
+        <SeniorQuery :show.sync="show" :field-list="seniorQueryList" @search="handleSeniorQuery" />
       </div>
     </section>
 
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -28,7 +28,9 @@ import CodeSnippet from '../../components/CodeSnippet.vue'
 import Collapse from '../../components/Collapse.vue'
 
 const htmlCode = `
-  <eff-table v-bind="tableOptions" />
+  <el-button type="primary" size="mini" @click="show = !show">打开高级搜索</el-button>
+  <p />
+  <SeniorQuery :show.sync="show" :field-list="seniorQueryList" @search="handleSeniorQuery" />
   `
 const jsCode = `
   export default {
@@ -39,7 +41,7 @@ const jsCode = `
             fieldName: 'name', // 字段名
             fieldType: 'string', // 字段类型
             fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
-            operateTypeList: ['=', 'not in'], // 操作类型
+            operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }], // 操作类型
             componentType: 'input', // 组件类型（input，select）
             dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
             apiSource: { // 接口数据（数据源类型为2时必填）
@@ -52,11 +54,11 @@ const jsCode = `
             fieldName: 'sex',
             fieldType: 'string',
             fieldChildType: '',
-            operateTypeList: ['=', 'not in'],
+            operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
             componentType: 'select',
             dataSourceType: 2,
             apiSource: {
-              fullPath: '/path',
+              fullPath: 'http://10.10.46.92:6521/api/person/senior/query',
               requestType: 'get'
             },
             staticSourceList: []
@@ -65,7 +67,14 @@ const jsCode = `
             fieldName: 'age',
             fieldType: 'number',
             fieldChildType: '',
-            operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
+            operateTypeList: [
+              { label: '大于', value: '>' },
+              { label: '小于', value: '<' },
+              { label: '等于', value: '=' },
+              { label: '大于等于', value: '>=' },
+              { label: '小于等于', value: '<=' },
+              { label: '不包含', value: 'not in' }
+            ],
             componentType: 'input',
             dataSourceType: 1,
             apiSource: {
@@ -78,12 +87,13 @@ const jsCode = `
             fieldName: 'hobby',
             fieldType: 'array',
             fieldChildType: '',
-            operateTypeList: ['=', 'not in'],
+            operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
             componentType: 'select',
             dataSourceType: 2,
             apiSource: {
               fullPath: '/path',
-              requestType: 'get'
+              requestType: 'get',
+              requestParam: ''
             },
             staticSourceList: []
           }
@@ -93,7 +103,7 @@ const jsCode = `
   }
   `
 export default {
-  name: 'SeniorQuery',
+  name: 'SeniorQueryDemo',
   components: {
     CodeSnippet,
     Collapse
@@ -103,12 +113,13 @@ export default {
     return {
       htmlCode,
       jsCode,
+      show: false,
       seniorQueryList: [
         {
           fieldName: 'name', // 字段名
           fieldType: 'string', // 字段类型
           fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
-          operateTypeList: ['=', 'not in'], // 操作类型
+          operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }], // 操作类型
           componentType: 'input', // 组件类型（input，select）
           dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
           apiSource: { // 接口数据（数据源类型为2时必填）
@@ -121,7 +132,7 @@ export default {
           fieldName: 'sex',
           fieldType: 'string',
           fieldChildType: '',
-          operateTypeList: ['=', 'not in'],
+          operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
           componentType: 'select',
           dataSourceType: 2,
           apiSource: {
@@ -134,7 +145,14 @@ export default {
           fieldName: 'age',
           fieldType: 'number',
           fieldChildType: '',
-          operateTypeList: ['>', '<', '=', '>=', '<=', 'not in'],
+          operateTypeList: [
+            { label: '大于', value: '>' },
+            { label: '小于', value: '<' },
+            { label: '等于', value: '=' },
+            { label: '大于等于', value: '>=' },
+            { label: '小于等于', value: '<=' },
+            { label: '不包含', value: 'not in' }
+          ],
           componentType: 'input',
           dataSourceType: 1,
           apiSource: {
@@ -147,16 +165,22 @@ export default {
           fieldName: 'hobby',
           fieldType: 'array',
           fieldChildType: '',
-          operateTypeList: ['=', 'not in'],
+          operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }],
           componentType: 'select',
           dataSourceType: 2,
           apiSource: {
             fullPath: '/path',
-            requestType: 'get'
+            requestType: 'get',
+            requestParam: ''
           },
           staticSourceList: []
         }
       ]
+    }
+  },
+  methods: {
+    handleSeniorQuery(seniorQuery) {
+      console.log('seniorQuery', JSON.stringify(seniorQuery, null, 2))
     }
   }
 }

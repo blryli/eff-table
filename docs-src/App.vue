@@ -14,6 +14,7 @@
         <h3 class="menu-title">组件</h3>
         <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
         <router-link class="menu-list" to="/Transfer">Transfer 穿梭框</router-link>
+        <router-link class="menu-list" to="/SeniorQueryDemo">SeniorQuery 高级搜索</router-link>
         <h3 class="menu-title">表格</h3>
         <router-link class="menu-list" to="/">Base 基础表格</router-link>
         <router-link class="menu-list" to="/Drag">Drag 拖动</router-link>

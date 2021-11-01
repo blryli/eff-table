@@ -6,12 +6,13 @@
     :height="300"
     :width="800"
     :min-width="400"
+    :title-suffix="{message: '单击切换列显示/隐藏，拖动调整列顺序'}"
     @close="close"
   >
     <template slot="header">
       <div>
         <el-button size="mini" @click="resetColumns">还原</el-button>
-        <el-button size="mini" @click="save">保存</el-button>
+        <el-button type="primary" size="mini" @click="save">保存</el-button>
       </div>
     </template>
     <div class="eff-column__batch-control">
