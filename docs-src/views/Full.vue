@@ -165,14 +165,14 @@ const mainSnippet = `
       }
     }
   }
-`
+  `
 
 const componentSnippet = `
   <eff-table
     ref="table"
     v-bind="tableOptions"
   />
-`
+  `
 export default {
   name: 'Full',
   components: {

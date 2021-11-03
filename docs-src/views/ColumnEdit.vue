@@ -22,9 +22,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -36,7 +35,7 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 import mock from 'mockjs'
 
-const mainSnippet = `
+const jsCode = `
 data() {
   return {
     data: [],
@@ -99,7 +98,7 @@ data() {
 }
 `
 
-const componentSnippet = `
+const htmlCode = `
 <eff-table
   v-model="columns"
   :data="data"
@@ -120,8 +119,8 @@ export default {
 
   data() {
     return {
-      mainSnippet,
-      componentSnippet,
+      jsCode,
+      htmlCode,
       loading: false,
       data: [],
       columns: [

@@ -23,9 +23,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -50,9 +49,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="componentSnippet" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="mainSnippet" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -63,50 +61,52 @@
 import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
-const mainSnippet = `
-data () {
-  return {
-    data: [],
-    columns: [
-      {
-        show: true,
-        type: 'selection',
-        width: 80,
-        fixed: 'left'
-      },
-      {
-        show: true,
-        prop: 'index',
-        title: '序号',
-        width: 80,
-        fixed: 'left',
-        sortable: true
-      },
-      {
-        show: true,
-        prop: 'city',
-        title: '城市',
-        sortable: true
-      },
-      {
-        show: true,
-        prop: 'message',
-        title: '消息',
-        sortable: true
+const jsCode = `
+  export default {
+    data () {
+      return {
+        data: [],
+        columns: [
+          {
+            show: true,
+            type: 'selection',
+            width: 80,
+            fixed: 'left'
+          },
+          {
+            show: true,
+            prop: 'index',
+            title: '序号',
+            width: 80,
+            fixed: 'left',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'city',
+            title: '城市',
+            sortable: true
+          },
+          {
+            show: true,
+            prop: 'message',
+            title: '消息',
+            sortable: true
+          }
+        ]
       }
-    ]
+    }
   }
-}
-`
+  `
 
-const componentSnippet = `
-<eff-table
-  ref="table"
-  v-model="columns"
-  :data="data"
-  multiple-sort
-/>
-`
+const htmlCode = `
+  <eff-table
+    ref="table"
+    v-model="columns"
+    :data="data"
+    multiple-sort
+  />
+  `
 export default {
   name: 'Sort',
   components: {
@@ -117,8 +117,8 @@ export default {
   data() {
     return {
       value: 2,
-      mainSnippet,
-      componentSnippet,
+      jsCode,
+      htmlCode,
       tableOptions: {
         maxHeight: 400,
         border: true,

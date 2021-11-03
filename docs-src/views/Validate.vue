@@ -185,6 +185,7 @@ const jsCode = `
     }
   }
   `
+
 export default {
   name: 'Validate',
   components: {

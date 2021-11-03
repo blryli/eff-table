@@ -29,7 +29,7 @@ export default {
     {
       show: true,// boolean 列是否显示
 
-      type: '', // string selection/radio/index
+      type: '', // string selection/radio/index/expand
 
       width: 80, // number  列宽
 

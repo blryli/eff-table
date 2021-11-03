@@ -61,27 +61,27 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
 const htmlCode = `
-<eff-table
-  v-model="columns"
-  :data="data"
-  border
->
-  <template #expand="{row}">
-    <v-form
-      :data="row"
-      :columns="[
-        {title: '名字', prop: 'name'},
-        {title: '性别', prop: 'sex'},
-        {title: '手机', prop: 'phone'},
-        {title: '邮箱', prop: 'email'},
-      ]"
-    />
-  </template>
-</eff-table>
-`
+  <eff-table
+    v-model="columns"
+    :data="data"
+    border
+  >
+    <template #expand="{row}">
+      <v-form
+        :data="row"
+        :columns="[
+          {title: '名字', prop: 'name'},
+          {title: '性别', prop: 'sex'},
+          {title: '手机', prop: 'phone'},
+          {title: '邮箱', prop: 'email'},
+        ]"
+      />
+    </template>
+  </eff-table>
+  `
 const htmlCode1 = `
-<eff-table v-bind="tableOptions" />
-`
+  <eff-table v-bind="tableOptions" />
+  `
 const jsCode = `
   export default {
     data() {

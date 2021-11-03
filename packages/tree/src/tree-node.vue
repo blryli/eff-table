@@ -10,7 +10,6 @@ export default {
     const { row, showCheckbox, checked, disabled, tier } = props
     const open = false
     data.class = ['eff-tree-node', data.class, data.staticClass]
-    console.log(data)
     if (!data.style) data.style = {}
     data.style.marginLeft = 12 * tier + 'px'
     return h('div', data, [

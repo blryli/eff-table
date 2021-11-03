@@ -48,7 +48,6 @@ export default {
       tier++
       return data.map(row => {
         const childs = row[children] || []
-        console.log(tier)
         return [
           h('tree-node', { key: row[props.key], props: { row, showCheckbox, tier }, on: { change: selected => handleCheckChange(row, selected) }}), childs.length ? renderNode(childs, tier) : ''
         ]

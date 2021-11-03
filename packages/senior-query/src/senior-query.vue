@@ -21,7 +21,7 @@
       ref="table"
       :columns="columns"
       :toolbar-config="toolbarConfig"
-      :tree-config="treeConfig"
+      :tree-config="tableTreeConfig"
       :max-height="400"
       edit
       border
@@ -52,6 +52,8 @@ import XEUtils from 'xe-utils'
 //   operateTypeList: [], // 操作类型
 //   componentType: '', // 组件类型（input，select）
 //   dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
+//   requestParam: '', // 请求要携带的参数名
+//   sourceType: 'query', // static为静态数据，query是模糊查询
 //   apiSource: { // 接口数据（数据源类型为2时必填）
 //     label: 'label', // 下拉框label别名
 //     value: 'value', // 下拉框value别名
@@ -93,15 +95,15 @@ export default {
   },
   props: {
     show: Boolean,
-    fieldList: { type: Array, default: () => ([]) },
+    data: { type: Array, default: () => ([]) },
     width: { type: Number, default: 800 },
     height: { type: Number, default: 500 },
     minWidth: { type: Number, default: 600 },
-    minHeight: { type: Number, default: 300 }
+    minHeight: { type: Number, default: 300 },
+    treeConfig: { type: Object, default: () => {} }
   },
   data() {
     return {
-      treeConfig: { expandAll: true },
       columns: [
         {
           type: 'index',
@@ -121,7 +123,7 @@ export default {
         {
           title: '字段名',
           prop: 'fieldName',
-          config: { name: 'select', options: () => this.fieldList.map(d => ({ label: d.fieldName, value: d.fieldName })) },
+          config: { name: 'select', options: () => this.data.map(d => ({ label: d.fieldName, value: d.fieldName })) },
           width: 100,
           edit: { disabled: ({ row }) => {
             return this.hasChildren(row)
@@ -135,7 +137,7 @@ export default {
           title: '操作符',
           prop: 'operator',
           config: { name: 'select', options: ({ row }) => {
-            const { operateTypeList = [] } = this.fieldList.find(d => d.fieldName === row.fieldName) || {}
+            const { operateTypeList = [] } = this.data.find(d => d.fieldName === row.fieldName) || {}
             return operateTypeList
           } },
           edit: { disabled: ({ row }) => {
@@ -154,26 +156,31 @@ export default {
               return this.hasChildren(row) || !row.fieldName
             },
             render: (h, { row, prop }) => {
-              const field = this.fieldList.find(d => d.fieldName === row.fieldName) || {}
+              const field = this.data.find(d => d.fieldName === row.fieldName) || {}
               const { fieldType, componentType, dataSourceType, apiSource } = field
               // 下拉框
               if (componentType === 'select') {
                 const props = {}
                 const on = {}
                 if (dataSourceType === 2) { // 动态数据源
-                  const { label, value, fullPath, requestType, requestParam } = apiSource
-                  // 远程搜索
+                  const { label, value, fullPath, requestType, requestParam, sourceType } = apiSource
+                  // 支持远程搜索
                   Object.assign(props, {
                     filterable: true,
-                    remote: true,
                     labelKey: label,
-                    valueKey: value,
-                    'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType, requestParam })
+                    valueKey: value
                   })
-                  // 初始化options
+                  // 模糊查询
+                  if (sourceType === 'query') {
+                    Object.assign(props, {
+                      remote: true,
+                      'remote-method': query => this.remoteMethod({ query, field, fullPath, requestType, requestParam })
+                    })
+                  }
+                  // 初始化options/静态数据
                   Object.assign(on, { focus: () => this.remoteMethod({ query: '', field, fullPath, requestType, requestParam }) })
                 }
-                // 如果是数组
+                // 字段类型是数组为多选
                 if (fieldType === 'array') {
                   Object.assign(props, { multiple: true, 'collapse-tags': true })
                 }
@@ -214,6 +221,11 @@ export default {
     visible(visible) {
       this.$emit('update:show', visible)
     }
+  },
+  created() {
+    Object.assign(this, {
+      tableTreeConfig: Object.assign({ expandAll: false, children: 'children', defaultExpandeds: [] }, this.treeConfig)
+    })
   },
   mounted() {
     this.table = this.$refs.table

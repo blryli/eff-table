@@ -26,10 +26,10 @@
         <router-link class="menu-list" to="/SeniorQuery">SeniorQuery 高级搜索</router-link>
         <router-link class="menu-list" to="/Replace">Replace 批量替换</router-link>
         <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
-        <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
         <router-link class="menu-list" to="/Tree">Tree 树</router-link>
         <router-link class="menu-list" to="/SpanMethod">SpanMethod 合并行或列</router-link>
+        <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>
         <router-link class="menu-list" to="/Full">Full 完整功能</router-link>
@@ -42,6 +42,7 @@
         <router-link class="menu-list" to="/TableApi">Table 表格</router-link>
         <router-link class="menu-list" to="/FormApi">form 表单</router-link>
         <router-link class="menu-list" to="/TransferApi">Transfer 穿梭框</router-link>
+        <router-link class="menu-list" to="/SeniorQueryApi">SeniorQuery 高级搜索</router-link>
       </div>
       <div class="container">
         <router-view />

@@ -92,9 +92,11 @@ const htmlCode = `
     search
     border
   />
+
   `
 const htmlCode1 = `
   <eff-table v-bind="tableOptions" />
+
   `
 const htmlCode2 = `
   <eff-table
@@ -104,6 +106,7 @@ const htmlCode2 = `
     search
     border
   />
+
   `
 const objCode = `
   // column对象
@@ -337,6 +340,7 @@ const jsCode2 = `
       }
     }
   }
+
   `
 
 export default {

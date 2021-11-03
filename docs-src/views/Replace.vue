@@ -24,9 +24,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>

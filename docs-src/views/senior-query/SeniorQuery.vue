@@ -1,6 +1,6 @@
 <template>
   <div class="page-home page">
-    <h2>SeniorQuery 高级搜索</h2>
+    <h2>SeniorQuery 高级搜索 <router-link class="page-router" to="/SeniorQueryApi">查看api</router-link></h2>
     <p class="hint">
       <span class="primary">show </span>属性设置为 <span class="primary"> true / false </span>或调用组件<span class="primary"> open / close </span>方法控制高级搜索弹窗打开与关闭<br>
     </p>
@@ -8,7 +8,7 @@
       <div class="section-content">
         <el-button type="primary" size="mini" @click="show = !show">打开高级搜索</el-button>
         <p />
-        <SeniorQuery :show.sync="show" :field-list="seniorQueryList" @search="handleSeniorQuery" />
+        <SeniorQuery :show.sync="show" :data="seniorQueryList" @search="handleSeniorQuery" />
       </div>
     </section>
 
@@ -30,7 +30,7 @@ import Collapse from '../../components/Collapse.vue'
 const htmlCode = `
   <el-button type="primary" size="mini" @click="show = !show">打开高级搜索</el-button>
   <p />
-  <SeniorQuery :show.sync="show" :field-list="seniorQueryList" @search="handleSeniorQuery" />
+  <SeniorQuery :show.sync="show" :data="seniorQueryList" @search="handleSeniorQuery" />
   `
 const jsCode = `
   export default {

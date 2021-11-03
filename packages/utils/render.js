@@ -22,7 +22,7 @@ export function getOptions(renderOpts, params) {
   const { options, props = {}} = renderOpts
   const ot = options || props.options || []
   const opts = typeof ot === 'function' ? ot(params) : ot
-  return (Array.isArray(opts) ? opts : [opts]).filter(d => d)
+  return (Array.isArray(opts) ? opts : [opts]).filter(d => d).slice(0, 1000)
 }
 
 // 带标签的 children

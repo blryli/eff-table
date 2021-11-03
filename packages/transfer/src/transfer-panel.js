@@ -33,7 +33,7 @@ export default {
       return selecteds.map(id => {
         const mapId = dataStore[id]
         if (!mapId) {
-          console.warn(id + ' 不存在于tableData')
+          console.warn(id + ' 不存在于transfer')
         }
         return mapId
       }).filter(d => d)
@@ -82,12 +82,12 @@ export default {
       return node
     },
     isVirtual() {
-      const { renderNode, bodyHeight } = this
-      return (renderNode.length - 4) * 30 > bodyHeight
+      const { renderNode: { length }, bodyHeight } = this
+      return (length - 4) * 30 > bodyHeight
     },
     endIndex() {
-      const { isVirtual, startIndex, renderNode, bodyHeight } = this
-      return isVirtual ? Math.floor(bodyHeight / 30) + 2 + startIndex : renderNode.length
+      const { isVirtual, startIndex, renderNode: { length }, bodyHeight } = this
+      return isVirtual ? Math.floor(bodyHeight / 30) + 2 + startIndex : length
     },
     renderNodes() {
       const { renderNode, startIndex, endIndex } = this
@@ -266,7 +266,8 @@ export default {
       const { parents } = dataStore[id]
       if (parents.length) {
         let currentId = id
-        parents.reverse().forEach(parentId => {
+        const parantList = XEUtils.clone(parents, true)
+        parantList.reverse().forEach(parentId => {
           // 用当前层级的同级确定上级的勾选状态
           const { checked, siblings } = dataStore[currentId]
           if (siblings.length) {

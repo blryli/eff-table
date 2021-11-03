@@ -7,7 +7,6 @@
 
     <h3>分页</h3>
     <p>
-      前置条件<br>
       <span class="primary">footerActionConfig.showPager = true</span><br>
       分页的当前页，每页大小，总大小由接口控制，接口的格式需要为<span class="primary">{pageNum pageSize total list}</span>
     </p>
@@ -27,16 +26,14 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="htmlCode" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
 
     <h3>左侧自定义render</h3>
     <p>
-      前置条件<br>
       <span class="primary">slot</span>名为<span class="primary">footer_action</span>的里面有内容<br>
     </p>
 
@@ -56,9 +53,8 @@
     <section class="snippets">
       <Collapse>
         <div class="section-content">
-          <CodeSnippet class="snippet" :code="htmlCode1" lang="html" />
-          <div class="plus">+</div>
-          <CodeSnippet class="snippet" :code="jsCode" lang="js" />
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode" />
         </div>
       </Collapse>
     </section>
@@ -71,12 +67,12 @@ import CodeSnippet from '../components/CodeSnippet.vue'
 import Collapse from '../components/Collapse.vue'
 
 const htmlCode = `
-    <eff-table
-      ref="table"
-      v-model="columns"
-      :data="data"
-      :footer-action-config="{ showPager: true, showBorder: true }"
-    />
+  <eff-table
+    ref="table"
+    v-model="columns"
+    :data="data"
+    :footer-action-config="{ showPager: true, showBorder: true }"
+  />
   `
 const htmlCode1 = `
   <eff-table ref="table" v-model="columns" :data="data" :footer-action-config="{ }" :max-height="400" >

@@ -151,7 +151,7 @@ const htmlCode = `
   />
   `
 const htmlCode1 = `
- <eff-table
+  <eff-table
     ref="table"
     v-model="columns"
     :data="data"
@@ -171,7 +171,7 @@ const htmlCode2 = `
   />
   `
 const htmlCode3 = `
- <eff-table
+  <eff-table
     ref="table"
     v-model="columns"
     :data="data"
@@ -179,7 +179,7 @@ const htmlCode3 = `
   />
   `
 const htmlCode4 = `
- <eff-table
+  <eff-table
     ref="table"
     v-model="columns1"
     :data="data1"

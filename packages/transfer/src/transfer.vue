@@ -163,13 +163,13 @@ export default {
     },
     toRight(ids = this.leftValue.map(d => d.id)) {
       this.leftIds = this.leftIds.filter(id => !ids.includes(id))
-      const id = ids[0]
-      this.rightIds = [...new Set(this.rightIds.concat(ids).concat(this.dataStore[id].parents))]
+      const parents = ids.reduce((acc, cur) => acc.concat(this.dataStore[cur].parents), [])
+      this.rightIds = [...new Set(this.rightIds.concat(ids).concat(parents))]
     },
     toLeft(ids = this.rightValue.map(d => d.id)) {
       this.rightIds = this.rightIds.filter(id => !ids.includes(id))
-      const id = ids[0]
-      this.leftIds = [...new Set(this.leftIds.concat(ids).concat(this.dataStore[id].parents))]
+      const parents = ids.reduce((acc, cur) => acc.concat(this.dataStore[cur].parents), [])
+      this.leftIds = [...new Set(this.leftIds.concat(ids).concat(parents))]
     },
     leftChange(checkedKeys, changeKeys) {
       this.$emit('left-check-change', { checkedKeys, changeKeys })
