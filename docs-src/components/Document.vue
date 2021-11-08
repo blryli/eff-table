@@ -23,6 +23,7 @@
     <div v-if="form.slots">
       <h3>Slot</h3>
       <eff-table
+        :row-height="50"
         :columns="[
           {title: 'name',prop: 'attribute', width: 160},
           {title: '说明', prop: 'explain'},
@@ -33,6 +34,7 @@
     <div v-if="form.scopedSlot">
       <h3>Scoped Slot</h3>
       <eff-table
+        :row-height="50"
         :columns="[
           {title: 'name',prop: 'attribute', width: 160},
           {title: '说明', prop: 'explain'},
@@ -43,6 +45,7 @@
     <div v-if="form.methods">
       <h3>Methods</h3>
       <eff-table
+        :row-height="50"
         :columns="[
           {show: !!form.methods.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看使用示例', icon: 'question' }},
           {title: '方法名',prop: 'attribute', width: 160},
@@ -60,6 +63,7 @@
     <div v-if="form.events">
       <h3>Events</h3>
       <eff-table
+        :row-height="50"
         :columns="[
           {show: !!form.events.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看回调参数说明', icon: 'question' }},
           {title: '事件名',prop: 'attribute', width: 160},

@@ -34,7 +34,7 @@ export default {
         const { prop } = column
         const values = data.map(item => Number(item[prop]))
         const value = values.reduce((acc, cur) => !isNaN(Number(cur)) ? acc + cur : acc, 0)
-        acc[index] = value
+        acc[index] = value || ''
         return acc
       }, {})
     }

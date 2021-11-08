@@ -42,6 +42,7 @@ export default {
       column.initField = true
     }
     // 设置style
+    const style = {}
     let columnWidth = Math.max(column.width || spaceWidth, 40)
     let columnHeight = 0
     if (colspan > 1) { // 合并列
@@ -61,7 +62,6 @@ export default {
       columnHeight = heights
       table.isSpanMethod = true
     }
-    const style = {}
     style.minWidth = columnWidth + 'px'
     style.maxWidth = columnWidth + 'px'
     if (columnHeight) {
@@ -83,11 +83,12 @@ export default {
       columnClass += ` is--align-${align || 'left'} `
     }
     // 复制功能
-    if (copy && !summary && !subtotal) {
-      const { startRow, endRow, startColumn, endColumn, borderStyle } = table.$refs.selectRange.selectRengeStore
+    const { selectRange } = table.$refs
+    if (copy && !summary && !subtotal && selectRange) {
+      const { startRow, endRow, startColumn, endColumn, borderStyle } = selectRange.selectRengeStore || {}
       const border = `2px ${borderStyle} #409eff`
       const id = `${table.tableId}_${rowIndex + 1}-${columnIndex + 1}`
-      const commitRange = () => table.$refs.selectRange.setRowMap({ id, row, rowIndex, column, columnIndex, prop })
+      const commitRange = () => selectRange.setRowMap({ id, row, rowIndex, column, columnIndex, prop })
       let isCommit = false
       if (columnIndex === startColumn && rowIndex >= startRow && rowIndex <= endRow) {
         commitRange()

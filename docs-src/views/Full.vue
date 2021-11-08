@@ -191,6 +191,7 @@ export default {
         search: true,
         drag: true,
         edit: true,
+        showSummary: true,
         border: true,
         rowId: '_rowId',
         toolbarConfig: {

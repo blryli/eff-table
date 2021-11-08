@@ -12,7 +12,7 @@
       <div class="menu">
         <router-link class="menu-list" to="/Start">Start</router-link>
         <h3 class="menu-title">组件</h3>
-        <router-link class="menu-list" to="/Panel">Panel 面板</router-link>
+        <!-- <router-link class="menu-list" to="/Panel">Panel 面板</router-link> -->
         <router-link class="menu-list" to="/Transfer">Transfer 穿梭框</router-link>
         <router-link class="menu-list" to="/SeniorQueryDemo">SeniorQuery 高级搜索</router-link>
         <h3 class="menu-title">表格</h3>
@@ -28,7 +28,9 @@
         <router-link class="menu-list" to="/Sort">Sort 排序</router-link>
         <router-link class="menu-list" to="/Expand">Expand 展开行</router-link>
         <router-link class="menu-list" to="/Tree">Tree 树</router-link>
+        <router-link class="menu-list" to="/MutilpleHeader">MutilpleHeader 多级表头</router-link>
         <router-link class="menu-list" to="/SpanMethod">SpanMethod 合并行或列</router-link>
+        <router-link class="menu-list" to="/Summary">Summary 合计</router-link>
         <router-link class="menu-list" to="/Subtotal">Subtotal 小计</router-link>
         <router-link class="menu-list" to="/FooterAction">FooterAction 底部扩展</router-link>
         <router-link class="menu-list" to="/History">History 记录</router-link>

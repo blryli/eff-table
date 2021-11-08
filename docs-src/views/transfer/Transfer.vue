@@ -91,7 +91,7 @@ export default {
     const generateData = _ => {
       const data = []
       let num = 0
-      for (let i = 1; i <= 200; i++) {
+      for (let i = 1; i <= 20; i++) {
         num += 1
         const children = []
         const obj = {

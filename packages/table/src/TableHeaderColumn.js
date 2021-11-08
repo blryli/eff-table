@@ -18,7 +18,7 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId } = table
+    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod } = table
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
@@ -52,7 +52,7 @@ export default {
         columnClass += ' fixed-hidden'
       }
     }
-    if (isDrag && !fixed) {
+    if (isDrag && !fixed && !isSpanMethod) {
       columnClass += ' col-drag'
     }
     if (type) {

@@ -54,7 +54,7 @@ export default {
     })
 
     this.$nextTick(() => {
-      const { drag, $el } = this.table
+      const { drag, $el, isSpanMethod } = this.table
       const {
         handleDragend,
         handleDragenter,
@@ -63,7 +63,7 @@ export default {
         $el: cardEl
       } = this
       const id = Math.floor(Math.random() * 100000)
-      if (drag) {
+      if (drag && !isSpanMethod) {
         this.columnSortable = new Sortable({
           el: $el.querySelector('.eff-table__header'),
           group: id,
@@ -85,7 +85,7 @@ export default {
           }, 500)
         }
       }
-      this.setRowDrag(false)
+      !isSpanMethod && this.setRowDrag(false)
     })
   },
   beforeDestroy() {

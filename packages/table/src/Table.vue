@@ -149,9 +149,7 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>treeIds -  {{ treeIds }}</p> -->
-    <!-- <p>expands -  {{ expands }}</p>
-    <p>expandsHeight -  {{ expandsHeight }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -323,7 +321,9 @@ export default {
   },
   computed: {
     bodyColumns() {
-      const { width } = this.tableColumnConfig
+      const { tableColumnConfig, rowDrag, tableColumns, isSpanMethod } = this
+
+      const { width } = tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur
@@ -335,11 +335,19 @@ export default {
           return acc.concat(cur)
         }, [])
       }
-      const columns = this.visibleColumns
+      // 行拖动列
+      if (!isSpanMethod && rowDrag && !tableColumns.find(d => d.type === 'row-drag')) {
+        tableColumns.unshift({
+          show: true,
+          type: 'row-drag',
+          titleSuffix: { icon: 'question', message: '上下拖动排序' },
+          width: 40
+        })
+      }
       // if (sort.length) {
       //   columns = columns.sort((a, b) => sort.indexOf(a.prop))
       // }
-      return plat(columns)
+      return plat(this.visibleColumns)
     },
     style() {
       const style = {}
@@ -447,15 +455,7 @@ export default {
     }
   },
   created() {
-    const { rowDrag, tableColumns, seniorQueryConfig } = this
-    if (rowDrag && !tableColumns.some(d => d.type === 'row-drag')) {
-      this.columns.unshift({
-        show: true,
-        type: 'row-drag',
-        titleSuffix: { icon: 'question', message: '上下拖动排序' },
-        width: 40
-      })
-    }
+    const { seniorQueryConfig } = this
     const { fieldList } = seniorQueryConfig
     this.seniorQueryList = fieldList
 

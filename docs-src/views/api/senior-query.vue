@@ -41,6 +41,8 @@ export default {
       operateTypeList: [], // 操作类型
       componentType: '', // 组件类型（input，select）
       dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
+      requestParam: '', // 请求要携带的参数名
+      sourceType: 'query', // static为静态数据，query是模糊查询
       apiSource: { // 接口数据（数据源类型为2时必填）
         label: 'label', // 下拉框label别名
         value: 'value', // 下拉框value别名

@@ -110,7 +110,7 @@ export default {
       selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
     }
   ]
-`
+  `
           },
           {
             attribute: 'data',
@@ -314,7 +314,7 @@ export default {
     prop: '', // 字段名
     message: '', // 提示信息
   }
-`
+  `
           },
           {
             attribute: 'edit-config',
@@ -329,7 +329,7 @@ export default {
     editStop: false, // 是否暂停编辑，当编辑元素是下拉框、日期、弹框等具有浮层的元素时，需要设置为true暂停表格编辑，当浮层关闭时设置为false恢复编辑
     editLoop: true // 快捷编辑时，在首尾单元格自动换行轮询编辑
   }
-`
+  `
           },
           {
             attribute: 'column-config',
@@ -343,7 +343,7 @@ export default {
     width: null, // number 列默认宽度，当所有列都设置了宽度时，列为固定宽度，宽度之和小于表格宽度时不会自动撑满表格
     sort: [] // 列默认排序
   }
-`
+  `
           },
           {
             attribute: 'tree-config',
@@ -357,7 +357,7 @@ export default {
     children: 'children', // string tree子节点
     defaultExpandeds: [] // 默认展开行的主键
   }
-`
+  `
           },
           {
             attribute: 'expand-config',
@@ -371,7 +371,7 @@ export default {
     children: 'children', // string tree子节点
     defaultExpandeds: [] // 默认展开行的主键
   }
-`
+  `
           },
           {
             attribute: 'sort-config',
@@ -386,7 +386,7 @@ export default {
     remote: false, // boolean 是否统一使用远程排序
     sortMethod: null // function({ data, column, prop, order, $table }) 服务端排序，需要监听 sort-change 事件
   }
-`
+  `
           },
           {
             attribute: 'proxy-config',
@@ -399,7 +399,7 @@ export default {
   {
     request: null // function({ data, column, prop, order, $table }) 远程排序方法
   }
-`
+  `
           },
           {
             attribute: 'toolbar-config',
@@ -433,7 +433,7 @@ export default {
       { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
     ],
   }
-`
+  `
           },
           {
             attribute: 'senior-query-config',
@@ -460,7 +460,7 @@ export default {
       }
     ],
   }
-`
+  `
           },
           {
             attribute: 'footer-action-config',
@@ -481,14 +481,20 @@ export default {
       ... // 其余参数参照项目所使用ui库分页组件的配置
     }
   }
-`
+  `
           }
         ],
         methods: [
           {
             attribute: 'loadTableData',
             explain: '加载数据，在没有设置主键的情况下会清空数据状态，返回promise',
-            default: `data`
+            default: `data, opts`,
+            code:
+`
+  opts: { 
+    clearScroll: true // 重新加载数据时是否重置滚动条位置
+  }
+  `
           },
           {
             attribute: 'reloadData',
@@ -522,7 +528,7 @@ export default {
   }).catch(data => {
     this.$message.error('校验不通过!')
   })
-`
+  `
           },
           {
             attribute: 'validateField',
@@ -626,7 +632,7 @@ export default {
     rowIndex: -1 // number 为空插入到顶部，为-1插入到底部，为有效索引插入到索引对应行
     insertCheckRow: true // boolean 存在勾选行时，插入最后一个勾选行的下一行，默认为true
   }
-`
+  `
           },
           {
             attribute: 'triggerPending',
@@ -715,7 +721,7 @@ export default {
       column: '', // 当前列数据
     }
   ]
-`
+  `
           },
           {
             attribute: 'field-change',

@@ -4,7 +4,8 @@
     <p class="hint">
       toolbarConfig 配置中 <span class="primary"> subtotal </span> 属性设置 <span class="primary"> true </span>，显示小计功能图标
       <icon icon="subtotal" /><br>
-      row数据中有 <span class="primary"> subtotal </span> 对象，则会标记为小计行
+      row数据中有 <span class="primary"> subtotal </span> 对象，则会标记为小计行<br>
+      按住<span class="primary"> ctrl + 单击行 </span>选择列，支持多选
     </p>
     <section class="demo">
       <div class="section-content">
@@ -56,11 +57,6 @@ export default {
         border: true,
         toolbarConfig: { subtotal: true },
         columns: [
-          {
-            show: true,
-            type: 'selection',
-            width: 60
-          },
           {
             show: true,
             prop: 'name',

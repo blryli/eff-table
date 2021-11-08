@@ -2,7 +2,7 @@
   <div class="page-home page">
     <h2>Tree 树</h2>
     <p class="hint">
-      tree-config对象的<span class="primary">children</span>属性指定子集， 通过<span class="primary">rowId</span>指定主键
+      tree-config对象的<span class="primary"> children </span>属性指定子集， 通过<span class="primary"> rowId </span>指定主键
       <br>
     </p>
 

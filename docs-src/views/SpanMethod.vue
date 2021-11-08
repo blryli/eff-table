@@ -3,7 +3,7 @@
     <h2>SpanMethod 行列合并</h2>
     <p class="hint">
       自定义 <span class="primary"> span-method </span> 方法合并合并行或列<br>
-      支持编辑及复制功能，不能用于虚拟滚动、树形结构、展开行、固定列
+      支持编辑及复制功能，不能用于虚拟滚动、树形结构、展开行、固定列、行列拖动
     </p>
     <section class="demo">
       <div class="section-content">

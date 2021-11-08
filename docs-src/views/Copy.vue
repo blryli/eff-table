@@ -94,7 +94,7 @@ export default {
           {
             show: true,
             prop: 'sex',
-            title: '性别',
+            title: '性别(下拉框)',
             config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
             edit: true
           },
@@ -122,14 +122,14 @@ export default {
           {
             show: true,
             prop: 'hobby',
-            title: '爱好',
+            title: '爱好(多选框)',
             config: { name: 'select', props: { mutiple: true }, options: [{ label: '游泳', value: '1' }, { label: 'K歌', value: '2' }] },
             edit: true
           },
           {
             show: true,
             prop: 'address',
-            title: '住址',
+            title: '住址(级联选择器)',
             width: 200,
             config: { name: 'cascader',
               props: {
