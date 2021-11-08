@@ -16,14 +16,12 @@ export default {
   inject: ['table'],
   computed: {
     bodyStyle() {
-      const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth, columnIsVirtual } = this.table
+      const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth } = this.table
       const style = {}
       style.marginTop = bodyMarginTop
       if (!this.fixed) {
         style.marginLeft = bodyMarginLeft
-        if (columnIsVirtual) {
-          style.width = bodyRenderWidth + 'px'
-        }
+        style.width = bodyRenderWidth + 'px'
       }
       return style
     },
@@ -147,7 +145,7 @@ export default {
   },
   render(h) {
     const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, bodyRenderWidth } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
 
@@ -163,9 +161,9 @@ export default {
             renderData.map((row, rowIndex) => {
               const currentIndex = rowIndex + renderIndex
               const rowid = `${currentIndex + 1}`
-              const { expanded } = expand && expands.find(d => d.rowId === row[rowId]) || {}
-              const classes = `eff-table__expanded expandid-${row[rowId]}`
-              const expandNode = expanded ? <div class={classes}>{expand({ row, rowIndex })}</div> : ''
+              const { expanded, height } = expand && expands.find(d => d.rowId === row[rowId]) || {}
+              const classes = ['eff-table__expanded', `expandid-${row[rowId]}`]
+              const expandNode = expanded ? fixed ? h('div', { class: classes, style: { width: bodyRenderWidth + 'px', height: height + 'px' }}, [expand({ row, rowIndex })]) : <div class={classes}>{expand({ row, rowIndex })}</div> : ''
 
               const rowFun = (row, key = '') => {
                 const uniqueId = XEUtils.uniqueId()

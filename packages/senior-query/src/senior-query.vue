@@ -303,6 +303,7 @@ export default {
     },
     close() {
       this.visible = false
+      this.$emit('close')
     },
     clear() {
       this.table.reloadData([])
@@ -324,7 +325,7 @@ export default {
         if (this.hasChildren(row)) { // 有树节点
           const { conditionConnector = '' } = row
           const children = this.getTreeGroup(row.children)
-          if (rowid === table.tableData[0][rowId]) {
+          if (rowid === table.tableData[0][rowId]) { // 处理第一行数据
             return children ? acc.concat([{ row, rowid, children }]) : acc
           }
           if (conditionConnector) {

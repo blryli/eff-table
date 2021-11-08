@@ -226,6 +226,7 @@ export default {
         { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: 'aaa@qq.com' }
       ],
       tableOptions: {
+        border: true,
         columns: [
           {
             show: true,

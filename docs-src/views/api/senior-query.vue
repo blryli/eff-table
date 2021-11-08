@@ -120,6 +120,11 @@ export default {
   ]
 
 `
+          },
+          {
+            attribute: 'close',
+            explain: '搜索框关闭时触发',
+            default: ``
           }
         ]
       }

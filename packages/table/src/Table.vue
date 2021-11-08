@@ -149,7 +149,7 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>expands -  {{ expands }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -361,8 +361,8 @@ export default {
       return style
     },
     useExpand() {
-      const { visibleColumns, $slots } = this
-      return Boolean(visibleColumns.find(d => d.type === 'expand')) && $slots.expand
+      const { visibleColumns, $slots, expands } = this
+      return Boolean(visibleColumns.find(d => d.type === 'expand') && $slots.expand || expands.length)
     },
     useGroupColumn() {
       const { tableData } = this
