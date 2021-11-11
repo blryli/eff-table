@@ -91,6 +91,9 @@ export default {
     }
   }
 }
+.m-r-5{
+  margin-right: 2px;
+}
 .eff-icon-caret-left{
   @include eff-icon-caret;
   &:before{

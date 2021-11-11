@@ -1,16 +1,21 @@
 <template>
   <div>
-    <div class="eff-transfer" :style="{width, height}">
+    <div class="eff-transfer" :style="{width, height: height + 'px'}">
       <TransferPanel
         ref="leftPanel"
         v-model="leftValue"
+        panel="left"
         :data="data"
         :ids="leftIds"
         :title="transferTitles[0]"
         :props="transferProps"
+        :expanded-all="expandedAll"
         :default-checked-keys="defaultCheckedKeys"
+        :default-expanded-keys="defaultExpandedKeys"
         :transfer-data-store="dataStore"
+        :tree-config="transferTreeConfig"
         @change="leftChange"
+        @lazy-data="lazyData"
       >
         <slot name="leftFooter" />
       </TransferPanel>
@@ -35,18 +40,23 @@
       <TransferPanel
         ref="rightPanel"
         v-model="rightValue"
+        panel="right"
         :data="data"
         :ids="rightIds"
         :title="transferTitles[1]"
         :props="transferProps"
+        :expanded-all="expandedAll"
         :default-checked-keys="defaultCheckedKeys"
+        :default-expanded-keys="defaultExpandedKeys"
         :transfer-data-store="dataStore"
+        :tree-config="transferTreeConfig"
         @change="rightChange"
+        @lazy-data="lazyData"
       >
         <slot name="rightFooter" />
       </TransferPanel>
     </div>
-    <!-- <p>{{ dataStore }}</p> -->
+    <!-- <p>data {{ data }}</p> -->
   </div>
 </template>
 
@@ -66,34 +76,33 @@ export default {
     defaultExpandedKeys: { type: Array, default: () => ([]) },
     expandedAll: Boolean,
     width: { type: String, default: '100%' },
-    height: { type: String, default: '360px' }
+    height: { type: Number, default: 360 },
+    treeConfig: { type: Object, default: () => ({}) } // 树配置
   },
   provide() {
     return { transfer: this }
   },
   data() {
     return {
-      list: Object.freeze(this.data),
       dataStore: {},
       leftValue: [],
       leftIds: [],
-      leftData: [],
       rightValue: [],
-      rightData: [],
       rightIds: []
     }
   },
-  computed: {
-    rightKeys() {
-      return this.rightData.map(d => d[this.transferProps.key])
-    }
-  },
   watch: {
-    data() {
-      this.list = Object.freeze(this.data)
-      this.init()
+    data: {
+      handler() {
+        this.init()
+        this.$nextTick(() => {
+          this.leftPanel.setDataStore()
+          this.rightPanel.setDataStore()
+        })
+      },
+      deep: true
     },
-    rightKeys(val, oldVal) {
+    rightIds(val, oldVal) {
       let dir, changeKeys
       if (val.length > oldVal.length) {
         dir = 'right'
@@ -111,7 +120,8 @@ export default {
     Object.assign(this, {
       transferProps: Object.assign(props, { key: 'key', label: 'label', disabled: 'disabled', children: 'children' }),
       transferButtonTexts: [buttonTexts[0] || '', buttonTexts[1] || ''],
-      transferTitles: [titles[0] || 'from', titles[1] || 'to']
+      transferTitles: [titles[0] || 'from', titles[1] || 'to'],
+      transferTreeConfig: Object.assign({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig)
     })
     this.init()
   },
@@ -122,10 +132,10 @@ export default {
   methods: {
     init() {
       this.setDataStore()
-      const { value, list, dataStore, props } = this
-      if (list.length) {
+      const { value, data, dataStore, props } = this
+      if (!this.loadData && data.length) {
         const { key } = props
-        const isNumber = typeof list[0][key] === 'number'
+        const isNumber = typeof data[0][key] === 'number'
         this.leftIds = Object.keys(dataStore).reduce((acc, cur) => {
           const id = isNumber ? +cur : cur
           const { parents } = dataStore[cur]
@@ -135,21 +145,23 @@ export default {
           const { childs } = dataStore[cur]
           return acc.concat(dataStore[cur].parents.concat(cur).concat(childs))
         }, []))]
+        this.loadData = true
       }
     },
     setDataStore() {
       this.dataStore = {}
-      const { expandedAll, defaultExpandedKeys, props } = this
+      const { props } = this
       const { key, children } = props
       const setStore = (data, parents = []) => {
         data.forEach(row => {
           const id = row[key]
           const childs = row[children]
+          const siblings = parents.length ? data.reduce((acc, cur) => cur[key] === id ? acc : acc.concat(cur[key]), []) : []
           if (childs) setStore(childs, parents.concat(id))
-          this.$set(this.dataStore, id, { id, row, parents, expanded: expandedAll || defaultExpandedKeys.includes(id) })
+          this.$set(this.dataStore, id, { id, row, parents, siblings })
         })
       }
-      setStore(this.list)
+      setStore(this.data)
       for (const key in this.dataStore) {
         const row = this.dataStore[key]
         const childs = []
@@ -165,11 +177,17 @@ export default {
       this.leftIds = this.leftIds.filter(id => !ids.includes(id))
       const parents = ids.reduce((acc, cur) => acc.concat(this.dataStore[cur].parents), [])
       this.rightIds = [...new Set(this.rightIds.concat(ids).concat(parents))]
+      this.leftPanel.clearSelection()
     },
     toLeft(ids = this.rightValue.map(d => d.id)) {
       this.rightIds = this.rightIds.filter(id => !ids.includes(id))
       const parents = ids.reduce((acc, cur) => acc.concat(this.dataStore[cur].parents), [])
       this.leftIds = [...new Set(this.leftIds.concat(ids).concat(parents))]
+      this.rightPanel.clearSelection()
+    },
+    lazyData({ panel, id, data }) {
+      this[panel + 'Ids'].push(...data)
+      this.$emit('lazy-data', { panel, id, data })
     },
     leftChange(checkedKeys, changeKeys) {
       this.$emit('left-check-change', { checkedKeys, changeKeys })
@@ -252,6 +270,9 @@ export default {
       >i{
         margin-right: 5px;
       }
+      .tree-loading{
+        margin-right: 2px;
+      }
     }
   }
   &__center{
@@ -294,6 +315,10 @@ export default {
     &-btn-bottom{
       margin-top: 10px;
     }
+  }
+  &-blank{
+    display: inline-block;
+    width: 18px;
   }
   .eff-table__checkbox{
     width: 100%;

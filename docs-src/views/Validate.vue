@@ -238,7 +238,7 @@ export default {
             show: true,
             prop: 'phone',
             title: '手机',
-            edit: true,
+            edit: false,
             rules: [{ type: 'phone' }]
           },
           {

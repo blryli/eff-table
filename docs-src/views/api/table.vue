@@ -354,6 +354,8 @@ export default {
             code:
 `
   {
+    lazy: false, // 是否使用懒加载
+    loadMethod: ({ row }) => {}, // 懒加载方法，使用懒加载时必须传入该函数
     children: 'children', // string tree子节点
     defaultExpandeds: [] // 默认展开行的主键
   }

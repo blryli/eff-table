@@ -69,16 +69,8 @@ const jsCode = `
         columns: [
           {
             show: true,
-            type: 'selection',
-            width: 80,
-            fixed: 'left'
-          },
-          {
-            show: true,
             prop: 'index',
             title: '序号',
-            width: 80,
-            fixed: 'left',
             sortable: true
           },
           {
@@ -133,24 +125,9 @@ export default {
         columns: [
           {
             show: true,
-            type: 'selection',
-            width: 80,
-            fixed: 'left'
-          },
-          {
-            show: true,
             prop: 'name',
             title: '名字',
-            width: 80,
-            fixed: 'left',
             sortable: true
-            // children: [
-            //   { prop: 'xing', title: '姓', sortable: true, children: [
-            //     { prop: 'zhong', title: '中文', sortable: true },
-            //     { prop: 'ying', title: '英文', sortable: true }
-            //   ] },
-            //   { prop: 'ming', title: '名', sortable: true }
-            // ]
           },
           {
             show: true,
@@ -183,22 +160,9 @@ export default {
         columns: [
           {
             show: true,
-            type: 'selection',
-            width: 40,
-            fixed: 'left'
-          },
-          {
-            show: true,
             prop: 'name',
             title: '名字',
             sortable: true
-            // children: [
-            //   { prop: 'xing', title: '姓', sortable: true, children: [
-            //     { prop: 'zhong', title: '中文', sortable: true },
-            //     { prop: 'ying', title: '英文', sortable: true }
-            //   ] },
-            //   { prop: 'ming', title: '名', sortable: true }
-            // ]
           },
           {
             show: true,

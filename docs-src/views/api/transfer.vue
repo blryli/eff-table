@@ -75,15 +75,29 @@ export default {
 `
           },
           {
+            attribute: 'tree-config',
+            explain: '树配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    lazy: false, // 是否使用懒加载
+    loadMethod: ({ row }) => {}, // 懒加载方法，使用懒加载时必须传入该函数
+  }
+  `
+          },
+          {
             attribute: 'default-checked-keys',
-            explain: '默认勾选的 key 数组',
+            explain: '默认勾选的 key 集合',
             type: 'array',
             choosable: '',
             default: '[]'
           },
           {
             attribute: 'default-expanded-keys',
-            explain: '默认展开的 key 数组',
+            explain: '默认展开的 key 集合',
             type: 'array',
             choosable: '',
             default: '[]'
@@ -103,17 +117,52 @@ export default {
           {
             attribute: 'change',
             explain: '右侧列表元素变化时触发',
-            default: `{ rightKeys, dir, changeKeys }`
+            default: `{ rightKeys, dir, changeKeys }`,
+            code:
+`
+  {
+    rightKeys: '', // array 右侧面板存在的节点key集合
+    dir: '', // string 穿梭的方向 left/right
+    changeKeys: '' // array 变化节点的key集合
+  }
+  `
           },
           {
             attribute: 'left-check-change',
             explain: '左侧列表元素选中 / 取消选中时触发',
-            default: `{ checkedKeys, changeKeys }`
+            default: `{ checkedKeys, changeKeys }`,
+            code:
+`
+  {
+    checkedKeys: '', // array 左侧列表选中的节点key集合
+    changeKeys: '' // array 变化节点的key集合
+  }
+  `
           },
           {
             attribute: 'right-check-change',
             explain: '右侧列表元素选中 / 取消选中时触发',
-            default: `{ checkedKeys, changeKeys }`
+            default: `{ checkedKeys, changeKeys }`,
+            code:
+`
+  {
+    checkedKeys: '', // array 右侧列表选中的节点key集合
+    changeKeys: '' // array 变化节点的key集合
+  }
+  `
+          },
+          {
+            attribute: 'lazy-data',
+            explain: '懒加载元素加载完成后触发',
+            default: `{ panel, id, data }`,
+            code:
+`
+  {
+    panel: '', // left/right 加载节点的面板
+    id: '', // 加载节点的id
+    data: '' // 加载的数据
+  }
+  `
           }
         ]
       }

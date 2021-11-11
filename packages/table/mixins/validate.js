@@ -13,10 +13,11 @@ export default {
         return Promise.resolve({})
         // resolve()
       }
-      const { columns, validators, rowId, $createElement } = this
+      const { edit, columns, validators, rowId, $createElement } = this
       let value = row[prop]
       const id = row[rowId]
       const column = columns.find(d => d.prop === prop) || {}
+      const { edit: columnEdit, editable } = column
       const { render } = column.edit || {}
       // 动态编辑器取值
       let renderOpt = null
@@ -37,6 +38,9 @@ export default {
         } else {
           // resolve()
         }
+      }
+      if (!edit || editable === false || columnEdit === false) {
+        rule = []
       }
 
       // 校验处理函数

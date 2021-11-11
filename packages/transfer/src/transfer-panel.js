@@ -11,9 +11,13 @@ export default {
     data: { type: Array, default: () => ([]) },
     ids: { type: Array, default: () => ([]) },
     defaultCheckedKeys: { type: Array, default: () => ([]) },
+    defaultExpandedKeys: { type: Array, default: () => ([]) },
     title: { type: String, default: '列表' },
+    panel: { type: String, default: '' },
     props: { type: Object, default: () => ({}) },
-    transferDataStore: { type: Object, default: () => ({}) }
+    transferDataStore: { type: Object, default: () => ({}) },
+    treeConfig: { type: Object, default: () => ({}) },
+    expandedAll: Boolean
   },
   data() {
     return {
@@ -21,7 +25,8 @@ export default {
       selectionAll: false,
       indeterminate: false,
       bodyHeight: 0,
-      startIndex: 0
+      startIndex: 0,
+      expandeds: {}
     }
   },
   computed: {
@@ -38,47 +43,31 @@ export default {
         return mapId
       }).filter(d => d)
     },
-    renderData() {
-      const { data, props, ids } = this
-      const { key, children } = props
-      const getData = data => {
-        return data.reduce((acc, cur) => {
-          const id = cur[key]
-          const childs = cur[children] || []
-          if (ids.includes(id)) {
-            if (childs.length) cur[children] = getData(childs)
-            return acc.concat(cur)
-          }
-          return acc
-        }, [])
-      }
-      return getData(XEUtils.clone(data, true))
-    },
     renderNode() {
-      const { renderData, props, transferDataStore, selecteds, isIndeterminate, rowSelectionChange, isDisabled, handleExpand } = this
+      const { data, ids, props, treeConfig, selecteds, panelId, isIndeterminate, rowSelectionChange, isDisabled, handleExpand } = this
       const { key, children } = props
+      const { lazy } = treeConfig
       const h = this.$createElement
       const node = []
-      const renderNode = (renderData, tier = -1) => {
+      const renderNode = (data, tier = -1) => {
         tier++
-        return renderData.forEach(row => {
+        return data.forEach((row, index) => {
           const id = row[key]
           const childs = row[children] || []
-          const store = transferDataStore[id]
-          node.push(h('div', { key: id, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
-            h('icon', {
-              props: { icon: store.expanded ? 'caret-bottom' : 'caret-right' },
-              on: { click: () => handleExpand(store) }
-            }),
-            h('v-checkbox', {
-              props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
-              on: { change: selected => rowSelectionChange(row, selected) }
-            })
-          ]))
-          store.expanded && childs.length ? renderNode(childs, tier) : ''
+          const expanded = this.expandeds[id]
+          if (ids.includes(id)) {
+            node.push(h('div', { key: panelId + id + index, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
+              lazy || childs.length ? (lazy && expanded === 'loading' && !childs.length ? h('icon', { class: 'tree-loading', props: { icon: 'refresh' }}) : h('icon', { props: { icon: expanded ? 'caret-bottom' : 'caret-right' }, on: { click: () => handleExpand(row) }})) : h('span', { class: 'eff-transfer-blank' }),
+              h('v-checkbox', {
+                props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
+                on: { change: selected => rowSelectionChange(row, selected) }
+              })
+            ]))
+            expanded ? renderNode(childs, tier) : ''
+          }
         })
       }
-      renderNode(renderData)
+      renderNode(data)
       return node
     },
     isVirtual() {
@@ -92,21 +81,28 @@ export default {
     renderNodes() {
       const { renderNode, startIndex, endIndex } = this
       return renderNode.slice(startIndex, endIndex)
+    },
+    panelId() {
+      return (~~(Math.random() * (1 << 30))).toString(36)
+    },
+    isLazy() {
+      const { lazy, loadMethod } = this.treeConfig
+      return lazy && XEUtils.isFunction(loadMethod)
     }
   },
   watch: {
     selecteds(val, oldVal) {
       this.updateSelectionAll()
       const changeKeys = val.length > oldVal.length ? val.filter(d => oldVal.indexOf(d) === -1) : oldVal.filter(d => val.indexOf(d) === -1)
-      // console.log(this.checkeds)
       this.$emit('input', this.checkeds)
       this.$emit('change', val, changeKeys)
     },
-    renderData() {
+    ids() {
       this.setDataStore()
 
       if (!this.loadData) {
-        this.setDefaultCheck()
+        this.setDefaultChecked()
+        this.setDefaultExpanded()
         this.loadData = true
       } else {
         this.clearSelection()
@@ -121,7 +117,8 @@ export default {
     if (this.data.length) {
       this.loadData = true
       this.setDataStore()
-      this.setDefaultCheck()
+      this.setDefaultChecked()
+      this.setDefaultExpanded()
     }
     // console.log('this.dataStore', JSON.stringify(this.dataStore, null, 2))
   },
@@ -130,7 +127,7 @@ export default {
       const { transfer, $refs } = this
       const { header, body } = $refs
       this.body = body
-      this.bodyHeight = transfer.panelHeight - header.clientHeight
+      this.bodyHeight = transfer.height - header.clientHeight
       on(this.body, 'scroll', this.handleScroll)
     })
   },
@@ -145,12 +142,24 @@ export default {
       }
       this.startIndex = Math.floor(scrollTop / 30)
     },
-    setDefaultCheck() {
+    setDefaultChecked() {
       const { defaultCheckedKeys, dataStore } = this
       if (defaultCheckedKeys.length) {
         defaultCheckedKeys.forEach(id => {
           const store = dataStore[id]
           store && this.toggleSelection(store.row, null, true)
+        })
+      }
+    },
+    setDefaultExpanded() {
+      const { ids, expandeds, expandedAll, defaultExpandedKeys } = this
+      if (expandedAll) {
+        ids.forEach(id => {
+          this.$set(expandeds, id, true)
+        })
+      } else {
+        defaultExpandedKeys.forEach(id => {
+          if (ids.includes(id)) this.$set(expandeds, id, true)
         })
       }
     },
@@ -194,29 +203,24 @@ export default {
       this.indeterminate = Boolean(selectedsLength && selectedsLength < dataLength)
     },
     setDataStore() {
-      this.dataStore = {}
-      const { props } = this
-      const { key, children } = props
-      const setStore = (renderData, parents = []) => {
-        renderData.forEach(row => {
-          const id = row[key]
-          const childs = row[children]
-          const siblings = parents.length ? renderData.reduce((acc, cur) => cur[key] === id ? acc : acc.concat(cur[key]), []) : []
-          if (childs) setStore(childs, parents.concat(id))
-
-          this.$set(this.dataStore, id, { id, row, parents, siblings, checked: false })
-        })
-      }
-      setStore(this.renderData)
-      for (const key in this.dataStore) {
-        const row = this.dataStore[key]
-        const childs = []
-        for (const k in this.dataStore) {
-          const r = this.dataStore[k]
-          r.parents.includes(row.id) && childs.push(r.id)
+      const { transferDataStore, ids, selecteds, isLazy, expandedAll } = this
+      for (const key in transferDataStore) {
+        const store = transferDataStore[key]
+        const { id, parents = [], childs = [], siblings = [] } = store
+        const checked = selecteds.includes(id)
+        if (ids.includes(id)) {
+          this.$set(this.dataStore, id, Object.assign({}, store, {
+            siblings: siblings.filter(d => ids.includes(d)),
+            parents: parents.filter(d => ids.includes(d)),
+            childs: childs.filter(d => ids.includes(d)),
+            checked
+          }))
         }
-        row.childs = childs
       }
+      if (isLazy && expandedAll) {
+        this.expandeds = [...ids]
+      }
+      // console.log('this.dataStore', JSON.stringify(this.dataStore, null, 2))
       return this.$nextTick()
     },
     toggleRowSelection(row, selected) {
@@ -245,6 +249,7 @@ export default {
       this.$emit('select-all', this.checkeds)
     },
     toggleSelection(row, has, selected) {
+      // console.log({ row, has, selected })
       const { props, dataStore, setChecked } = this
       const { key } = props
       const id = row[key]
@@ -256,7 +261,7 @@ export default {
       // 处理子节点
       for (const key in dataStore) {
         const { id: childid, parents = [] } = dataStore[key] || {}
-        // console.log({ childid, id, parents })
+        // console.log({ childid, id, parents, isCheck })
         if (parents.includes(id)) {
           setChecked(childid, isCheck)
         }
@@ -294,15 +299,34 @@ export default {
       return XEUtils.isFunction(disabled) ? disabled({ row }) : Boolean(disabled)
     },
     isIndeterminate(id) {
-      const { childs } = this.dataStore[id]
+      const { childs = [] } = this.dataStore[id] || {}
       if (!childs.length) return false
       const hasChecked = childs.find(c => this.selecteds.includes(c))
       const indeterminate = !!(hasChecked && childs.find(c => !this.selecteds.includes(c)))
       if (indeterminate) this.setChecked(id, false)
       return indeterminate
     },
-    handleExpand(store) {
-      store.expanded = !store.expanded
+    handleExpand(row) {
+      const { dataStore, treeConfig, panel, isLazy } = this
+      const { loadMethod, children } = treeConfig
+      const childs = row[children] || []
+      const { key } = this.props
+      const id = row[key]
+      // 异步加载
+      if (isLazy && !childs.length) {
+        this.$set(this.expandeds, id, 'loading')
+        loadMethod({ row }).then(res => {
+          this.$set(this.expandeds, id, true)
+          this.$set(row, children, res)
+          setTimeout(() => {
+            this.$emit('lazy-data', { panel, id, data: res.map(d => d[key]) })
+            dataStore[id].checked && this.toggleSelection(row, null, dataStore[id].checked)
+          }, 100)
+          // 如果父节点是选中的，加载的节点也变成选中
+        })
+      } else {
+        this.$set(this.expandeds, id, !this.expandeds[id])
+      }
     }
   },
   render(h) {

@@ -26,6 +26,30 @@
         </div>
       </Collapse>
     </section>
+    <h3>懒加载</h3>
+    <p>
+      配置 <span class="primary">tree-config={ lazy, loadMethod }</span>  加载方法来开启树形懒加载
+    </p>
+    <section class="demo">
+      <div class="section-content">
+        <eff-transfer
+          v-model="value1"
+          :data="data1"
+          :tree-config="{ lazy: true, loadMethod }"
+          :titles="['源列表', '目标列表']"
+          :button-texts="['到目标列表', '到源列表']"
+          width="100%"
+        />
+      </div>
+    </section>
+    <section class="snippets">
+      <Collapse>
+        <div class="section-content">
+          <CodeSnippet class="html" :code="htmlCode1" />
+          <CodeSnippet class="javascript" :code="jsCode1" />
+        </div>
+      </Collapse>
+    </section>
   </div>
 </template>
 
@@ -42,6 +66,16 @@ const htmlCode = `
     width="600px"
   />
   `
+const htmlCode1 = `
+  <eff-transfer
+    v-model="value1"
+    :data="data1"
+    :tree-config="{ lazy: true, loadMethod }"
+    :titles="['源列表', '目标列表']"
+    :button-texts="['到目标列表', '到源列表']"
+    width="100%"
+  />
+  `
 
 const jsCode = `
   export default {
@@ -54,7 +88,7 @@ const jsCode = `
           const children = []
           const obj = {
             key: num,
-            label: '备选项' + num,
+            label: '选项' + num,
             disabled: i % 4 === 0,
             children
           }
@@ -62,7 +96,7 @@ const jsCode = `
             num += 1
             children.push({
               key: num,
-              label: '备选项' + num,
+              label: '选项' + num,
               disabled: i % 2 === 0,
               children: [{ key: num + 10000, label: num + 100 + '' }]
             })
@@ -72,10 +106,44 @@ const jsCode = `
         return data
       }
       return {
-        htmlCode,
-        jsCode,
         value: [1],
         data: generateData()
+      }
+    }
+  }
+  `
+const jsCode1 = `
+  export default {
+    data() {
+      const generateData1 = _ => {
+        const data = []
+        let num = 0
+        for (let i = 1; i <= 20; i++) {
+          num += 1
+          const obj = {
+            key: num,
+            label: '选项' + num
+          }
+          data.push(obj)
+        }
+        return data
+      }
+      return {
+        value: [1],
+        data1: generateData1()
+      }
+    },
+    methods: {
+      loadMethod({ row, rowIndex }) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            const childs = [
+              { key: row.key + 1000, label: row.label + 'Test1' },
+              { key: row.key + 1500, label: row.label + 'Test2' }
+            ]
+            resolve(childs)
+          }, 1000)
+        })
       }
     }
   }
@@ -96,7 +164,7 @@ export default {
         const children = []
         const obj = {
           key: num,
-          label: `备选项 ${num}`,
+          label: `选项 ${num}`,
           disabled: i % 4 === 0,
           children
         }
@@ -104,7 +172,7 @@ export default {
           num += 1
           children.push({
             key: num,
-            label: `备选项 ${num}`,
+            label: `选项 ${num}`,
             disabled: i % 2 === 0,
             children: [{ key: num + 10000, label: num + 100 + '' }]
           })
@@ -113,11 +181,42 @@ export default {
       }
       return data
     }
+    const generateData1 = _ => {
+      const data = []
+      let num = 0
+      for (let i = 1; i <= 20; i++) {
+        num += 1
+        const obj = {
+          key: num,
+          label: `选项 ${num}`
+        }
+        data.push(obj)
+      }
+      return data
+    }
     return {
       htmlCode,
+      htmlCode1,
       jsCode,
+      jsCode1,
       value: [1],
-      data: generateData()
+      value1: [1],
+      data: generateData(),
+      data1: generateData1()
+    }
+  },
+  methods: {
+    loadMethod({ row }) {
+      const id = (~~(Math.random() * (1 << 30))).toString(36)
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const childs = [
+            { key: row.key + id + 'a', label: row.label + id + 'a' },
+            { key: row.key + id + 'b', label: row.label + id + 'b' }
+          ]
+          resolve(childs)
+        }, 1000)
+      })
     }
   }
 }

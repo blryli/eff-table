@@ -466,7 +466,7 @@ export default {
       tableDataMap: new Map(),
       tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: Object.assign({ children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableTreeConfig: Object.assign({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
       tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig)
     })
     if ((this.data || []).length) {

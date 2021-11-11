@@ -289,6 +289,14 @@ export default {
         columnConfig: { sort: [{ show: true, prop: 'id', fixed: '', width: 0 }, { show: true, prop: 'name', fixed: '', width: 0 }, { show: true, prop: 'phone', fixed: '', width: 0 }, { show: true, prop: 'sex', fixed: '', width: 0 }] },
         columns: [
           {
+            type: 'selection',
+            width: 40
+          },
+          {
+            type: 'index',
+            width: 40
+          },
+          {
             show: true,
             prop: 'name',
             title: '名字',
