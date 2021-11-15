@@ -1,11 +1,11 @@
 import VCheckbox from 'pk/checkbox'
-import Tree from 'pk/tree'
 import XEUtils from 'xe-utils'
 import { on, off } from 'pk/utils/dom'
+import Popover from 'pk/popover'
 
 export default {
   name: 'EffTransferPanel',
-  components: { VCheckbox, Tree },
+  components: { VCheckbox, Popover },
   props: {
     value: { type: Array, default: () => ([]) },
     data: { type: Array, default: () => ([]) },
@@ -15,9 +15,13 @@ export default {
     title: { type: String, default: '列表' },
     panel: { type: String, default: '' },
     props: { type: Object, default: () => ({}) },
+    lazy: Boolean,
+    loadMethod: { type: Function, default: () => {} },
     transferDataStore: { type: Object, default: () => ({}) },
-    treeConfig: { type: Object, default: () => ({}) },
     expandedAll: Boolean
+  },
+  provide() {
+    return { transferPanel: this }
   },
   data() {
     return {
@@ -26,7 +30,9 @@ export default {
       indeterminate: false,
       bodyHeight: 0,
       startIndex: 0,
-      expandeds: {}
+      expandeds: {},
+      popoverOpts: {},
+      panelWidth: 0
     }
   },
   computed: {
@@ -44,9 +50,8 @@ export default {
       }).filter(d => d)
     },
     renderNode() {
-      const { data, ids, props, treeConfig, selecteds, panelId, isIndeterminate, rowSelectionChange, isDisabled, handleExpand } = this
+      const { data, ids, props, lazy, selecteds, panelId, panelWidth, isIndeterminate, rowSelectionChange, isDisabled, handleExpand } = this
       const { key, children } = props
-      const { lazy } = treeConfig
       const h = this.$createElement
       const node = []
       const renderNode = (data, tier = -1) => {
@@ -56,10 +61,12 @@ export default {
           const childs = row[children] || []
           const expanded = this.expandeds[id]
           if (ids.includes(id)) {
-            node.push(h('div', { key: panelId + id + index, class: 'eff-transfer-panel-node', style: { marginLeft: 18 * tier + 'px' }}, [
+            const offset = 18 * tier
+            console.log(panelWidth, offset)
+            node.push(h('div', { key: panelId + id + index, class: 'eff-transfer-panel-node', style: { marginLeft: offset + 'px' }}, [
               lazy || childs.length ? (lazy && expanded === 'loading' && !childs.length ? h('icon', { class: 'tree-loading', props: { icon: 'refresh' }}) : h('icon', { props: { icon: expanded ? 'caret-bottom' : 'caret-right' }, on: { click: () => handleExpand(row) }})) : h('span', { class: 'eff-transfer-blank' }),
               h('v-checkbox', {
-                props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id) },
+                props: { value: selecteds.includes(id), label: row.label, disabled: isDisabled(row), indeterminate: isIndeterminate(id), labelWidth: panelWidth - offset - 50 },
                 on: { change: selected => rowSelectionChange(row, selected) }
               })
             ]))
@@ -86,7 +93,7 @@ export default {
       return (~~(Math.random() * (1 << 30))).toString(36)
     },
     isLazy() {
-      const { lazy, loadMethod } = this.treeConfig
+      const { lazy, loadMethod } = this
       return lazy && XEUtils.isFunction(loadMethod)
     }
   },
@@ -129,12 +136,29 @@ export default {
       this.body = body
       this.bodyHeight = transfer.height - header.clientHeight
       on(this.body, 'scroll', this.handleScroll)
+      on(window, 'resize', this.handleResize)
+      setTimeout(() => {
+        this.handleResize()
+      }, 100)
     })
   },
   beforeDestroy() {
     off(this.body, 'scroll', this.handleScroll)
+    off(window, 'resize', this.handleResize)
   },
   methods: {
+    tipShow(opts) {
+      this.$refs.popover.doShow()
+      this.popoverOpts = opts
+    },
+    tipClose() {
+      this.$refs.popover.doHide()
+    },
+    handleResize() {
+      if (this.body) {
+        this.panelWidth = this.body.clientWidth
+      }
+    },
     handleScroll(e) {
       const { scrollTop } = e.target
       if (scrollTop < 30) {
@@ -307,8 +331,8 @@ export default {
       return indeterminate
     },
     handleExpand(row) {
-      const { dataStore, treeConfig, panel, isLazy } = this
-      const { loadMethod, children } = treeConfig
+      const { dataStore, props, panel, isLazy, loadMethod } = this
+      const { children } = props
       const childs = row[children] || []
       const { key } = this.props
       const id = row[key]
@@ -330,7 +354,7 @@ export default {
     }
   },
   render(h) {
-    const { renderNode, title, selectionAll, startIndex, renderNodes, indeterminate, dataStore, selecteds, $slots, allselectionChange } = this
+    const { renderNode, title, selectionAll, startIndex, renderNodes, indeterminate, dataStore, selecteds, $slots, popoverOpts, allselectionChange } = this
     return h('div', { ref: 'panel', class: 'eff-transfer-panel' }, [
       h('div', { ref: 'header', class: 'eff-transfer-panel__header' }, [
         h('v-checkbox', { props: { value: selectionAll, label: title, indeterminate }, on: { change: allselectionChange }}),
@@ -340,7 +364,8 @@ export default {
         h('div', { class: 'eff-transfer-panel__body--y-space', style: { height: renderNode.length * 30 + 'px' }}),
         h('div', { class: 'eff-transfer-panel__body-wrapper', style: { marginTop: startIndex * 30 + 'px' }}, renderNodes)
       ]),
-      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }, $slots.default) : ''
+      $slots.default ? h('div', { class: 'eff-transfer-panel__footer' }, $slots.default) : '',
+      h('Popover', { ref: 'popover', props: popoverOpts })
     ])
   }
 }

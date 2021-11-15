@@ -559,7 +559,7 @@ export default {
           },
           {
             attribute: 'focus',
-            explain: '对可编辑表格进行聚焦的方法',
+            explain: '对可编辑表格进行聚焦的方法，如果元素不可见，会滚动到元素位置并聚焦',
             default: `rowIndex,prop`
           },
           {

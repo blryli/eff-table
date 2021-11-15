@@ -36,64 +36,66 @@ import Collapse from '../../components/Collapse.vue'
 // import mock from 'mockjs'
 
 const jsCode = `
-data () {
-  return {
-    formOptions: {
-      columns: [
-        {
-          title: '名字',
-          prop: 'name',
-          span: 8
-        },
-        {
-          title: '年龄',
-          prop: 'age',
-          span: 8,
-          itemRender: { name: 'input' }
-        },
+  export default {
+    data () {
+      return {
+        formOptions: {
+          columns: [
+            {
+              title: '名字',
+              prop: 'name',
+              span: 8
+            },
+            {
+              title: '年龄',
+              prop: 'age',
+              span: 8,
+              itemRender: { name: 'input' }
+            },
 
-        {
-          title: '身高',
-          prop: 'height',
-          span: 8,
-          itemRender: { name: 'input' },
-          titlePrefix: { message: '帮助信息', icon: 'question' }
-        },
-        {
-          title: '体重',
-          prop: 'weight.0.bbb',
-          span: 8,
-          itemRender: { name: 'input' },
-          rules: [
-            { required: true }
+            {
+              title: '身高',
+              prop: 'height',
+              span: 8,
+              itemRender: { name: 'input' },
+              titlePrefix: { message: '帮助信息', icon: 'question' }
+            },
+            {
+              title: '体重',
+              prop: 'weight.0.bbb',
+              span: 8,
+              itemRender: { name: 'input' },
+              rules: [
+                { required: true }
+              ]
+            },
+
+            {
+              title: '爱好',
+              prop: 'hobby1',
+              span: 6,
+              itemRender: { name: 'input' }
+            },
+            {
+              prop: 'hobby2',
+              span: 5,
+              itemRender: { name: 'input' }
+            },
+            {
+              prop: 'hobby3',
+              span: 5,
+              itemRender: { name: 'input' }
+            }
           ]
-        },
-
-        {
-          title: '爱好',
-          prop: 'hobby1',
-          span: 6,
-          itemRender: { name: 'input' }
-        },
-        {
-          prop: 'hobby2',
-          span: 5,
-          itemRender: { name: 'input' }
-        },
-        {
-          prop: 'hobby3',
-          span: 5,
-          itemRender: { name: 'input' }
         }
-      ]
+      }
     }
   }
-}
-`
+  `
 
 const htmlCode = `
-<v-form ref="form" v-bind="formOptions" />
-`
+  <v-form ref="form" v-bind="formOptions" />
+  `
 export default {
   name: 'FormEdit',
   components: {

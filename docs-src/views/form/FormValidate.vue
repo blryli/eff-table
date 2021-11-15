@@ -74,73 +74,73 @@ import CodeSnippet from '../../components/CodeSnippet.vue'
 import Collapse from '../../components/Collapse.vue'
 
 const jsCode = `
-export default {
-  data() {
-    return {
-      data: {
-        name: '',
-        sex: '',
-        age: ''
+  export default {
+    data() {
+      return {
+        data: {
+          name: '',
+          sex: '',
+          age: ''
+        }
+      }
+    },
+    methods: {
+      validate() {
+        this.$refs.form.validate().catch(e => console.log(e))
+      },
+      validateField() {
+        this.$refs.form.validateField('name').catch(e => console.log(e))
+      },
+      clearValidate() {
+        this.$refs.form.clearValidate()
       }
     }
-  },
-  methods: {
-    validate() {
-      this.$refs.form.validate().catch(e => console.log(e))
-    },
-    validateField() {
-      this.$refs.form.validateField('name').catch(e => console.log(e))
-    },
-    clearValidate() {
-      this.$refs.form.clearValidate()
-    }
   }
-}
 `
 
 const htmlCode = `
-<p>
-  <el-button type="primary" @click="validate">校 验</el-button>
-  <el-button type="primary" @click="validateField">校验名字字段</el-button>
-  <el-button type="primary" @click="clearValidate">清除校验</el-button>
-</p>
-<v-form ref="form" :data="data">
-  <v-form-item
-    title="名字"
-    prop="name"
-    :span="8"
-    :rules=" [
-      { required: true },
-      { min: 3 }
-    ]"
-  >
-    <el-input v-model="data.name" />
-  </v-form-item>
-  <v-form-item
-    title="性别"
-    prop="sex"
-    :span="8"
-    :rules=" [
-      { required: true, trigger: 'change' }
-    ]"
-  >
-    <el-select v-model="data.sex" clearable>
-      <el-option label="11" value="11" />
-      <el-option label="22" value="22" />
-    </el-select>
-  </v-form-item>
-  <v-form-item
-    title="年龄"
-    prop="age"
-    :span="8"
-    :rules=" [
-      { min: 1, max: 3 }
-    ]"
-  >
-    <el-input v-model="data.name" />
-  </v-form-item>
-</v-form>
-`
+  <p>
+    <el-button type="primary" @click="validate">校 验</el-button>
+    <el-button type="primary" @click="validateField">校验名字字段</el-button>
+    <el-button type="primary" @click="clearValidate">清除校验</el-button>
+  </p>
+  <v-form ref="form" :data="data">
+    <v-form-item
+      title="名字"
+      prop="name"
+      :span="8"
+      :rules=" [
+        { required: true },
+        { min: 3 }
+      ]"
+    >
+      <el-input v-model="data.name" />
+    </v-form-item>
+    <v-form-item
+      title="性别"
+      prop="sex"
+      :span="8"
+      :rules=" [
+        { required: true, trigger: 'change' }
+      ]"
+    >
+      <el-select v-model="data.sex" clearable>
+        <el-option label="11" value="11" />
+        <el-option label="22" value="22" />
+      </el-select>
+    </v-form-item>
+    <v-form-item
+      title="年龄"
+      prop="age"
+      :span="8"
+      :rules=" [
+        { min: 1, max: 3 }
+      ]"
+    >
+      <el-input v-model="data.name" />
+    </v-form-item>
+  </v-form>
+  `
 const rules = `
   rules: [
     {

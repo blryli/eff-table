@@ -28,14 +28,15 @@
     </section>
     <h3>懒加载</h3>
     <p>
-      配置 <span class="primary">tree-config={ lazy, loadMethod }</span>  加载方法来开启树形懒加载
+      配置 <span class="primary"> lazy </span>为<span class="primary"> true </span>及<span class="primary"> loadMethod </span>  加载方法来开启树形懒加载
     </p>
     <section class="demo">
       <div class="section-content">
         <eff-transfer
           v-model="value1"
           :data="data1"
-          :tree-config="{ lazy: true, loadMethod }"
+          lazy
+          :load-method="loadMethod"
           :titles="['源列表', '目标列表']"
           :button-texts="['到目标列表', '到源列表']"
           width="100%"
@@ -70,7 +71,8 @@ const htmlCode1 = `
   <eff-transfer
     v-model="value1"
     :data="data1"
-    :tree-config="{ lazy: true, loadMethod }"
+    lazy
+    :load-method="loadMethod"
     :titles="['源列表', '目标列表']"
     :button-texts="['到目标列表', '到源列表']"
     width="100%"

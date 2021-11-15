@@ -10,10 +10,11 @@
         :title="transferTitles[0]"
         :props="transferProps"
         :expanded-all="expandedAll"
+        :lazy="lazy"
+        :load-method="loadMethod"
         :default-checked-keys="defaultCheckedKeys"
         :default-expanded-keys="defaultExpandedKeys"
         :transfer-data-store="dataStore"
-        :tree-config="transferTreeConfig"
         @change="leftChange"
         @lazy-data="lazyData"
       >
@@ -46,10 +47,11 @@
         :title="transferTitles[1]"
         :props="transferProps"
         :expanded-all="expandedAll"
+        :lazy="lazy"
+        :load-method="loadMethod"
         :default-checked-keys="defaultCheckedKeys"
         :default-expanded-keys="defaultExpandedKeys"
         :transfer-data-store="dataStore"
-        :tree-config="transferTreeConfig"
         @change="rightChange"
         @lazy-data="lazyData"
       >
@@ -75,6 +77,8 @@ export default {
     defaultCheckedKeys: { type: Array, default: () => ([]) },
     defaultExpandedKeys: { type: Array, default: () => ([]) },
     expandedAll: Boolean,
+    lazy: Boolean,
+    loadMethod: { type: Function, default: () => {} },
     width: { type: String, default: '100%' },
     height: { type: Number, default: 360 },
     treeConfig: { type: Object, default: () => ({}) } // 树配置
@@ -120,8 +124,7 @@ export default {
     Object.assign(this, {
       transferProps: Object.assign(props, { key: 'key', label: 'label', disabled: 'disabled', children: 'children' }),
       transferButtonTexts: [buttonTexts[0] || '', buttonTexts[1] || ''],
-      transferTitles: [titles[0] || 'from', titles[1] || 'to'],
-      transferTreeConfig: Object.assign({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig)
+      transferTitles: [titles[0] || 'from', titles[1] || 'to']
     })
     this.init()
   },

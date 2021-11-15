@@ -134,102 +134,102 @@ import CodeSnippet from '../../components/CodeSnippet.vue'
 import Collapse from '../../components/Collapse.vue'
 
 const jsCode = `
-export default {
-  data() {
-    return {
-      data: {
-        name: '',
-        sex: '',
-        age: ''
+  export default {
+    data() {
+      return {
+        data: {
+          name: '',
+          sex: '',
+          age: ''
+        }
       }
     }
   }
-}
-`
+  `
 
 const htmlCode = `
-<v-form>
-  <v-form-item
-    title="名字"
-    prop="name"
-  >
-    <el-input v-model="data.name" />
-  </v-form-item>
-  <v-form-item
-    title="性别"
-    prop="sex"
-  >
-    <el-select v-model="data.sex" clearable>
-      <el-option label="11" value="11" />
-      <el-option label="22" value="22" />
-    </el-select>
-  </v-form-item>
-  <v-form-item
-    title="年龄"
-    prop="age"
-  >
-    <el-input v-model="data.age" />
-  </v-form-item>
-</v-form>
-`
+  <v-form>
+    <v-form-item
+      title="名字"
+      prop="name"
+    >
+      <el-input v-model="data.name" />
+    </v-form-item>
+    <v-form-item
+      title="性别"
+      prop="sex"
+    >
+      <el-select v-model="data.sex" clearable>
+        <el-option label="11" value="11" />
+        <el-option label="22" value="22" />
+      </el-select>
+    </v-form-item>
+    <v-form-item
+      title="年龄"
+      prop="age"
+    >
+      <el-input v-model="data.age" />
+    </v-form-item>
+  </v-form>
+  `
 const htmlCode1 = `
-<v-form :width="12>
-  <v-form-item
-    title="名字"
-    prop="name"
-    :span="24"
-  >
-    <el-input v-model="data.name" />
-  </v-form-item>
-  <v-form-item
-    title="性别"
-    prop="sex"
-    :span="24"
-  >
-    <el-select v-model="data.sex" clearable>
-      <el-option label="11" value="11" />
-      <el-option label="22" value="22" />
-    </el-select>
-  </v-form-item>
-  <v-form-item
-    title="年龄"
-    prop="age"
-    :span="24"
-  >
-    <el-input v-model="data.age" />
-  </v-form-item>
-</v-form>
-`
+  <v-form :width="12>
+    <v-form-item
+      title="名字"
+      prop="name"
+      :span="24"
+    >
+      <el-input v-model="data.name" />
+    </v-form-item>
+    <v-form-item
+      title="性别"
+      prop="sex"
+      :span="24"
+    >
+      <el-select v-model="data.sex" clearable>
+        <el-option label="11" value="11" />
+        <el-option label="22" value="22" />
+      </el-select>
+    </v-form-item>
+    <v-form-item
+      title="年龄"
+      prop="age"
+      :span="24"
+    >
+      <el-input v-model="data.age" />
+    </v-form-item>
+  </v-form>
+  `
 const htmlCode2 = `
-<v-form width="50%">
-  <v-form-item
-    title="名字"
-    prop="name"
-    :span="24"
-    :title-prefix=" { message: '必须是中文', icon: 'question' }"
-  >
-    <el-input v-model="data.name" />
-  </v-form-item>
-  <v-form-item
-    title="性别"
-    prop="sex"
-    :span="24"
-  >
-    <el-select v-model="data.sex" clearable>
-      <el-option label="11" value="11" />
-      <el-option label="22" value="22" />
-    </el-select>
-  </v-form-item>
-  <v-form-item
-    title="年龄"
-    prop="age"
-    :span="24"
-    :title-suffix=" { message: '不能小于18', icon: 'info' }"
-  >
-    <el-input v-model="data.age" />
-  </v-form-item>
-</v-form>
-`
+  <v-form width="50%">
+    <v-form-item
+      title="名字"
+      prop="name"
+      :span="24"
+      :title-prefix=" { message: '必须是中文', icon: 'question' }"
+    >
+      <el-input v-model="data.name" />
+    </v-form-item>
+    <v-form-item
+      title="性别"
+      prop="sex"
+      :span="24"
+    >
+      <el-select v-model="data.sex" clearable>
+        <el-option label="11" value="11" />
+        <el-option label="22" value="22" />
+      </el-select>
+    </v-form-item>
+    <v-form-item
+      title="年龄"
+      prop="age"
+      :span="24"
+      :title-suffix=" { message: '不能小于18', icon: 'info' }"
+    >
+      <el-input v-model="data.age" />
+    </v-form-item>
+  </v-form>
+  `
 export default {
   name: 'FormBase',
   components: {

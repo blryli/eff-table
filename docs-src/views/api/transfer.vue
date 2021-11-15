@@ -75,18 +75,18 @@ export default {
 `
           },
           {
-            attribute: 'tree-config',
-            explain: '树配置',
-            type: 'object',
+            attribute: 'lazy',
+            explain: '是否使用懒加载',
+            type: 'boolean',
             choosable: '',
-            default: '{}',
-            code:
-`
-  {
-    lazy: false, // 是否使用懒加载
-    loadMethod: ({ row }) => {}, // 懒加载方法，使用懒加载时必须传入该函数
-  }
-  `
+            default: 'false'
+          },
+          {
+            attribute: 'load-method',
+            explain: '懒加载方法，使用懒加载时必须传入该函数',
+            type: 'function',
+            choosable: '',
+            default: ''
           },
           {
             attribute: 'default-checked-keys',

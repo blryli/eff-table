@@ -1,4 +1,5 @@
 <script>
+import { getTextWidth } from 'pk/utils/dom'
 export default {
   name: 'Checkbox',
   props: {
@@ -6,7 +7,11 @@ export default {
     indeterminate: Boolean,
     disabled: Boolean,
     checked: Boolean,
-    label: { type: String, default: '' }
+    label: { type: String, default: '' },
+    labelWidth: { type: Number, default: 80 }
+  },
+  inject: {
+    transferPanel: { default: null }
   },
   data() {
     return {
@@ -24,10 +29,27 @@ export default {
       this.isChecked = !this.isChecked
       this.$emit('input', this.isChecked)
       this.$emit('change', this.isChecked)
+    },
+    handleMouseenter(e) {
+      const { transferPanel, label: message, labelWidth } = this
+      const { target } = e
+      if (target && getTextWidth(target) > labelWidth) {
+        transferPanel.tipShow({ reference: target, effect: 'dark', message, isFixed: true })
+      }
+    },
+    handleMouseleave() {
+      this.transferPanel.tipClose()
     }
   },
   render(h) {
-    const { disabled, isChecked, indeterminate, label, handleChange } = this
+    const { disabled, isChecked, indeterminate, label, labelWidth, handleChange, handleMouseenter, handleMouseleave } = this
+    let on = {}
+    if (labelWidth) {
+      on = {
+        mouseenter: handleMouseenter,
+        mouseleave: handleMouseleave
+      }
+    }
     return h('div', {
       class: {
         'eff-table__checkbox': true,
@@ -38,7 +60,7 @@ export default {
       on: { click: handleChange }
     }, [
       h('span', { class: 'eff-table__checkbox-icon' }),
-      label ? h('span', { class: 'eff-table__checkbox-label' }, label) : ''
+      label ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: { width: labelWidth + 'px' }, on }, label) : ''
     ])
   }
 }

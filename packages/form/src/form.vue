@@ -130,7 +130,7 @@ export default {
         return h('v-form-item', { props }, [itemRender(column)])
       }),
       $slots.default,
-      h('Popover', { ref: 'popover', attrs: popoverOpts })
+      h('Popover', { ref: 'popover', props: popoverOpts })
     ])
   }
 }

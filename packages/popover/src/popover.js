@@ -114,7 +114,8 @@ export default {
   },
   inject: {
     table: { default: null },
-    form: { default: null }
+    form: { default: null },
+    transferPanel: { default: null }
   },
   mounted() {
   },
@@ -160,7 +161,7 @@ export default {
       }
     },
     calculateCoordinate() {
-      const { addedBody, $el, reference, isFixed, table, form, popoverAddedBody, changeDirection } = this
+      const { addedBody, $el, reference, isFixed, table, form, transferPanel, popoverAddedBody, changeDirection } = this
       !addedBody && popoverAddedBody()
       const popover = $el
       const referenceRect = getDomClientRect(reference)
@@ -182,7 +183,7 @@ export default {
           console.error('Wrong placement must top/bottom')
           break
       }
-      const { left: tLeft, top: tTop } = getDomClientRect((form || table).$el)
+      const { left: tLeft, top: tTop } = getDomClientRect((transferPanel || form || table).$el)
       popover.style.left = left - (isFixed ? 0 : tLeft) + 'px'
       popover.style.top = top - (isFixed ? 0 : tTop) + 'px'
     },
