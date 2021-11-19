@@ -85,7 +85,7 @@ export default {
     },
     rowIndex(rowIndex) {
       if (!this.hasTree) {
-        this.row = this.table.tableData[rowIndex]
+        this.row = this.table.afterData[rowIndex]
       }
       this.table.editStore.editRow = rowIndex === null ? {} : this.row
       this.dialogVisible = true
@@ -246,8 +246,8 @@ export default {
     // 跳过pending状态的行
     getSkipPendingNum(startIndex, endIndex) {
       const { table } = this
-      const { editStore: { pendingList }, rowId, tableData } = table
-      const byData = tableData.slice(startIndex, endIndex)
+      const { editStore: { pendingList }, rowId, afterData } = table
+      const byData = afterData.slice(startIndex, endIndex)
       if (startIndex === 0) byData.reverse()
       const pendingIds = pendingList.map(d => d[rowId])
       if (pendingList.length) {
@@ -260,7 +260,7 @@ export default {
       const { table, placement, rowIndex, $el } = this
       if (['right', 'bottom'].includes(placement)) {
         const skipNum = this.getSkipPendingNum(rowIndex + 1, rowIndex + 10)
-        skipNum > -1 && rowIndex + skipNum < table.tableData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
+        skipNum > -1 && rowIndex + skipNum < table.afterData.length ? this.focus(rowIndex + skipNum, prop) : shake($el, 'y')
       } else {
         const skipNum = this.getSkipPendingNum(0, rowIndex)
         skipNum > -1 && rowIndex - skipNum >= 0 ? this.focus(rowIndex - skipNum, prop) : shake($el, 'y')
@@ -341,8 +341,8 @@ export default {
       let isOver = false
       for (const key in overflow) {
         if (overflow[key]) {
-          const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
           if ((key === 'left' && table.scrollLeft > 1) || (key === 'right' && !isScrollRightEnd)) {
+            const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
             this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
             this.table.scrollTop = rowIndex * rowHeight - wrapperHeight / 2
@@ -427,11 +427,11 @@ export default {
     },
     blurEvent() {
       const { component, table, row, rowIndex, columnIndex, column, editRender, fieldChange } = this
-      const { tableData } = this.table
+      const { afterData } = this.table
       if (component) {
         column && column.prop && table.$emit('field.change', column.prop, rowIndex)
-        if (column && column.prop && rowIndex !== null && tableData[rowIndex]) {
-          const data = { rowIndex, columnIndex, newData: tableData[rowIndex][column.prop], oldData: globalBaseText }
+        if (column && column.prop && rowIndex !== null && afterData[rowIndex]) {
+          const data = { rowIndex, columnIndex, newData: afterData[rowIndex][column.prop], oldData: globalBaseText }
           if (data.oldData !== null && data.oldData !== data.newData) {
             this.table.$emit('table-update-data', data)
           }
@@ -461,7 +461,7 @@ export default {
       this.blurEvent().then(() => {
         const { table, getColumn, editCell, fixOverflowX } = this
         rowIndex = Number(rowIndex)
-        const lastIndex = table.tableData.length - 1
+        const lastIndex = table.afterData.length - 1
         this.rowIndex = rowIndex < 0 ? 0 : rowIndex > lastIndex ? lastIndex : rowIndex
         const { column, cell, columnIndex } = getColumn(prop, rowIndex)
         this.column = column

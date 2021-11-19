@@ -17,113 +17,33 @@ export default {
   color: #888;
   cursor: pointer;
 }
-// arrow
-@mixin eff-icon-arrow{
+.eff-icon-filter{
   position: relative;
-  display: inline-block;
-  width: 15px;
-  height: 12px;
-  text-align: center;
-  vertical-align: middle;
-  box-sizing: border-box;
-  &::before{
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    content: "";
-    display: inline-block;
-    border: 1px solid currentColor;
-    transform: rotate(-45deg);
-  }
-}
-.eff-icon-arrow-left{
-  @include eff-icon-arrow;
-  &:before{
-    left: 6px;
-    top: 1px;
-    border-color: currentColor transparent transparent currentColor;
-  }
-}
-.eff-icon-arrow-right{
-  @include eff-icon-arrow;
-  &:before{
-    left: 1px;
-    top: 1px;
-    border-color: transparent currentColor currentColor transparent;
-  }
-}
-.eff-icon-arrow-top{
-  @include eff-icon-arrow;
-  &:before{
-    left: 1px;
-    top: 3px;
-    border-color: currentColor currentColor transparent transparent;
-  }
-}
-.eff-icon-arrow-bottom{
-  @include eff-icon-arrow;
-  &:before{
-    left: 1px;
-    top: 0;
-    border-color: transparent transparent currentColor currentColor;
-  }
-}
-
-// caret
-@mixin eff-icon-caret{
-  position: relative;
-  display: inline-block;
-  width: 13px;
-  height: 12px;
-  text-align: center;
-  vertical-align: middle;
-  box-sizing: border-box;
-  &::before{
-    position: absolute;
-    content: "";
-    display: inline-block;
-    border: 5px solid #999;
-    opacity: .6;
-  }
+  width: 14px;
+  height: 14px;
+  color: #bcbdbe;
   &:hover{
-    &::before{
-      opacity: 1;
-    }
+    cursor: pointer;
+    color: #666;
   }
-}
-.m-r-5{
-  margin-right: 2px;
-}
-.eff-icon-caret-left{
-  @include eff-icon-caret;
-  &:before{
-    left: -3px;
-    top: 1px;
-    border-color: transparent currentColor transparent transparent;
-  }
-}
-.eff-icon-caret-right{
-  @include eff-icon-caret;
-  &:before{
-    left: 3px;
-    top: 1px;
-    border-color: transparent transparent transparent currentColor;
-  }
-}
-.eff-icon-caret-top{
-  @include eff-icon-caret;
-  &:before{
+  &::before{
+    content: '';
+    position: absolute;
     left: 0;
-    top: -3px;
-    border-color: transparent transparent currentColor transparent;
-  }
-}
-.eff-icon-caret-bottom{
-  @include eff-icon-caret;
-  &:before{
-    left: 0;
-    top: 3px;
+    top: 2px;
+    display: inline-block;
+    border: 7px solid currentColor;
     border-color: currentColor transparent transparent transparent;
+  }
+  &::after{
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    left: 6px;
+    display: inline-block;
+    width: 2px;
+    height: 8px;
+    background-color: currentColor;
   }
 }
 </style>

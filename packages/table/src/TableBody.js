@@ -144,8 +144,8 @@ export default {
     }
   },
   render(h) {
-    const { table, data, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, bodyRenderWidth } = table
+    const { table, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, bodyRenderWidth, edit, editStore } = table
     const { $scopedSlots, $slots, scopedSlots } = table
     const { expand } = scopedSlots || $scopedSlots || $slots
 
@@ -163,7 +163,9 @@ export default {
               const rowid = `${currentIndex + 1}`
               const { expanded, height } = expand && expands.find(d => d.rowId === row[rowId]) || {}
               const classes = ['eff-table__expanded', `expandid-${row[rowId]}`]
-              const expandNode = expanded ? fixed ? h('div', { class: classes, style: { width: bodyRenderWidth + 'px', height: height + 'px' }}, [expand({ row, rowIndex })]) : <div class={classes}>{expand({ row, rowIndex })}</div> : ''
+              const style = fixed ? { width: bodyRenderWidth + 'px', height: height + 'px' } : {}
+              const on = edit ? { mouseenter: () => (editStore.editRow = row) } : {}
+              const expandNode = expanded ? h('div', { class: classes, style, on }, [expand({ row, rowIndex })]) : ''
 
               const rowFun = (row, key = '') => {
                 const uniqueId = XEUtils.uniqueId()
@@ -197,8 +199,9 @@ export default {
             })
           }
           {
-            !data.length ? <div class='eff-empty-text' style={emptyStyle}>{ emptyText }</div> : ''
+            !renderData.length ? <div class='eff-empty-text' style={emptyStyle}>{ emptyText }</div> : ''
           }
+          {editStore.editRow ? '' : ''}
         </div>
       </div>
     )

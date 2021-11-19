@@ -9,14 +9,18 @@ export const isOverflow = function({ cell, wrapper, leftWidth, rightWidth, overf
   const { left, top, right, bottom } = wrapperRect
   const cellRect = cell.getBoundingClientRect()
   const { left: nodeLeft, top: nodeTop, right: nodeRight, bottom: nodeBottom } = cellRect
+  const ovrflow = {}
+  if (overflowX) {
+    ovrflow.left = left + leftWidth - nodeLeft > 2
+    ovrflow.right = right - nodeRight - rightWidth <= overflowX ? 17 : 0
+  }
+  if (overflowY) {
+    ovrflow.top = nodeTop - top < -2
+    ovrflow.bottom = bottom - nodeBottom <= overflowY ? 17 : 0
+  }
   // console.log({ left, top, right, bottom })
   // console.log({ nodeLeft, nodeTop, nodeRight, nodeBottom })
-  return {
-    left: left + leftWidth - nodeLeft > 2,
-    top: nodeTop - top < -2,
-    right: right - nodeRight - rightWidth <= overflowX ? 17 : 0,
-    bottom: bottom - nodeBottom <= overflowY ? 17 : 0
-  }
+  return ovrflow
 }
 
 /**

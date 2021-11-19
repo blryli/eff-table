@@ -9,6 +9,7 @@ export default {
   render(h, context) {
     const { props } = context
     const { table, tableData, tableColumns = [], selectRengeStore = {}, vue } = props.contextual
+    const { rowId, tableSourceData } = table
     const { startRow = -1, endRow = -1, startColumn = -1, endColumn = -1 } = selectRengeStore
     // console.log({ tableData, tableColumns, selectRengeStore })
     if (!tableData.length || !tableColumns.length || startRow === -1) return ''
@@ -26,7 +27,7 @@ export default {
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
-        const sourceRow = table.tableSourceData[rowIndex]
+        const sourceRow = tableSourceData.find(d => d[rowId] === row[rowId]) || {}
         const params = { root: table, table, vue, data: row, row, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {

@@ -149,10 +149,13 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>expands -  {{ expands }}</p> -->
+    <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
+
+    <!-- 过滤 -->
+    <EffFilter v-if="useFilter" ref="filter" />
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
@@ -186,12 +189,13 @@ import FooterAction from '../components/FooterAction'
 import Edit from '../components/Edit'
 import ScrollX from '../components/ScrollX'
 import Loading from 'pk/loading'
-import SelectRange from '../components/SelectRange/index'
-import Copy from '../components/Copy/index'
-import columnBatchControl from '../components/ColumnBatchControl/index'
-import Replace from '../components/Replace/index'
+import SelectRange from '../components/SelectRange'
+import Copy from '../components/Copy'
+import columnBatchControl from '../components/ColumnBatchControl'
+import Replace from '../components/Replace'
+import EffFilter from '../components/Filter'
 import SeniorQuery from 'pk/senior-query'
-// import Sort from '../components/Sort/index'
+// import Sort from '../components/Sort'
 import XEUtils from 'xe-utils'
 import { getFieldValue, setFieldValue, getSubfieldColumns, getComColumns } from 'pk/utils'
 import { getOptions } from 'pk/utils/render'
@@ -213,7 +217,8 @@ export default {
     columnBatchControl,
     FooterAction,
     Replace,
-    SeniorQuery
+    SeniorQuery,
+    EffFilter
     // Sort
   },
   mixins: [
@@ -315,7 +320,9 @@ export default {
       seniorQueryList: [], // 高级查询
       $message: this.$message,
       isSpanMethod: false, // 是否存在合并行或列,
-      tableMaxHeight: this.maxHeight
+      tableMaxHeight: this.maxHeight,
+      useFilter: false, // 是否使用过滤功能
+      filters: [] // 过滤集合
       // mergerCells: [] // 合并行或列
     }
   },
@@ -328,6 +335,7 @@ export default {
         return arr.reduce((acc, cur) => {
           const { children = [] } = cur
           if (!cur.width && width) cur.width = width
+          cur.width = Number(cur.width) // 兼容非数字格式
           if (children.length) {
             children.forEach(d => cur.fixed && (d.fixed = cur.fixed))
             return acc.concat(plat(children))
@@ -359,6 +367,27 @@ export default {
       }
 
       return style
+    },
+    // 筛选后的数据
+    afterData() {
+      const { tableData, filters, tableId, rowId } = this
+      const data = tableData.slice(0)
+      return data.filter(row => {
+        return filters.every(filter => {
+          const { column, values } = filter
+          const { filterMethod, columnId, prop } = column
+          const value = XEUtils.get(row, prop)
+          if (values.length) {
+            if (filterMethod) {
+              const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
+              const cellValue = cell ? cell.innerText : value
+              return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
+            }
+            return values.indexOf(value) > -1
+          }
+          return true
+        })
+      })
     },
     useExpand() {
       const { visibleColumns, $slots, expands } = this
@@ -512,6 +541,7 @@ export default {
       if (!loadData) {
         useExpand && this.initExpand()
         this.loadData = true
+        this.updateRow(this.tableData[0])
       }
       return this.$nextTick()
     },

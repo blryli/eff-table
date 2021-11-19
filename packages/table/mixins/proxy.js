@@ -1,4 +1,5 @@
 import XEUtils from 'xe-utils'
+import { getType } from 'pk/utils'
 let row_id = 100
 export default {
   created() {
@@ -74,7 +75,8 @@ export default {
         return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式 seniorQuery
-        return query({ page, sorts, filters, form: searchForm, seniorQuery })
+        const q = query({ page, sorts, filters, form: searchForm, seniorQuery })
+        return getType(q) === 'Promise' ? q : new Promise(resolve => resolve(q))
       }
     },
     /**

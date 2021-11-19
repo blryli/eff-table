@@ -62,7 +62,6 @@ export default {
           const expanded = this.expandeds[id]
           if (ids.includes(id)) {
             const offset = 18 * tier
-            console.log(panelWidth, offset)
             node.push(h('div', { key: panelId + id + index, class: 'eff-transfer-panel-node', style: { marginLeft: offset + 'px' }}, [
               lazy || childs.length ? (lazy && expanded === 'loading' && !childs.length ? h('icon', { class: 'tree-loading', props: { icon: 'refresh' }}) : h('icon', { props: { icon: expanded ? 'caret-bottom' : 'caret-right' }, on: { click: () => handleExpand(row) }})) : h('span', { class: 'eff-transfer-blank' }),
               h('v-checkbox', {

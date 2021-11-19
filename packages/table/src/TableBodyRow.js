@@ -100,6 +100,7 @@ export default {
             columnIndex = fixed ? columnIndex : columnRenderIndex + columnIndex
             const colid = `${rowIndex + 1}-${columnIndex + 1}`
             const message = messages.find(d => d.prop === column.prop) || {}
+            // 合并行与列
             const span_method = XEUtils.isFunction(spanMethod) ? spanMethod({ row, rowIndex, column, columnIndex }) : null
             let rowspan = 1
             let colspan = 1

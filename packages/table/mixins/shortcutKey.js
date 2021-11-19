@@ -1,4 +1,4 @@
-import { on, off } from 'pk/utils/dom'
+import { on, off, hasClass } from 'pk/utils/dom'
 import { getKeysStr } from 'pk/utils'
 export default {
   data() {
@@ -66,8 +66,8 @@ export default {
     handleWindowClick(e) {
       const { target } = e
       if (this.edit) {
-        const { edit, popovers } = this.$refs
-        if (!this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && !edit.$el.contains(target) && !popovers.$refs.editPopover.$el.contains(target)) {
+        const { edit, popovers, body, leftBody, rightBody } = this.$refs
+        if (![body, leftBody, rightBody].find(d => d && d.$el.querySelector('.eff-table__body').contains(target)) && !edit.$el.contains(target) && !popovers.$refs.editPopover.$el.contains(target)) {
           if (edit.show) {
             this.closeEdit()
           }
@@ -78,6 +78,11 @@ export default {
         if (document.contains(target) && !this.$refs.body.$el.querySelector('.eff-table__body').contains(target) && (!this.$refs.header.$el.querySelector('.eff-table__header').contains(target) || this.$refs.header.$el.querySelector('.eff-table__header').contains(target) && !this.headerCheckedColumns.length)) {
           this.closeSelectRange()
         }
+      }
+      // 过滤
+      const filter = document.getElementById(this.tableId + 'filter')
+      if (this.useFilter && !filter.contains(target) && !hasClass(target, 'eff-icon-filter')) {
+        this.$refs.filter.filterTipClose()
       }
     }
   }

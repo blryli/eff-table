@@ -19,8 +19,8 @@ export default {
       return !isSpanMethod && !useExpand && !useGroupColumn && length > 50 && length > renderSize
     },
     renderData() {
-      const { isVirtual, tableData, renderIndex, renderSize } = this
-      return isVirtual ? tableData.slice(renderIndex, renderSize + renderIndex) : tableData
+      const { isVirtual, afterData, renderIndex, renderSize } = this
+      return isVirtual ? afterData.slice(renderIndex, renderSize + renderIndex) : afterData
     },
     renderSize() {
       const { heights: { bodyHeight }, rowHeight } = this

@@ -7,7 +7,7 @@ export default {
     indeterminate: Boolean,
     disabled: Boolean,
     checked: Boolean,
-    label: { type: String, default: '' },
+    label: { type: [String, Number], default: '' },
     labelWidth: { type: Number, default: 80 }
   },
   inject: {
@@ -42,9 +42,9 @@ export default {
     }
   },
   render(h) {
-    const { disabled, isChecked, indeterminate, label, labelWidth, handleChange, handleMouseenter, handleMouseleave } = this
+    const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave } = this
     let on = {}
-    if (labelWidth) {
+    if (labelWidth && transferPanel) {
       on = {
         mouseenter: handleMouseenter,
         mouseleave: handleMouseleave

@@ -1,5 +1,5 @@
 import VCheckbox from 'pk/checkbox'
-import { columnIsEdit } from 'pk/utils'
+import { columnIsEdit, getFieldValue } from 'pk/utils'
 import { textOverflow } from 'pk/utils/dom'
 import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
@@ -18,7 +18,7 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod } = table
+    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData } = table
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
@@ -36,7 +36,7 @@ export default {
       columnStyle.borderLeft = 0
     }
 
-    const { titleClassName, drag, edit, fixed, prop } = column
+    const { titleClassName, drag, edit, fixed, prop, filter, filters } = column
 
     let columnClass = `eff-table__column`
     // 对齐方式
@@ -103,6 +103,30 @@ export default {
       column.order = column.order && column.order === order ? '' : order
       sortChange(column)
     }
+    // filter
+    if (filter) {
+      table.useFilter = true
+    }
+    const filterId = table.tableId + colid + 'filter'
+    const filterClick = () => {
+      const reference = document.getElementById(filterId)
+      let message = []
+      if (filters) {
+        message = filters.map(d => {
+          const { label, value } = d
+          if (!value || !label) return null
+          return d
+        })
+      } else {
+        message = [...new Set(tableData.map(d => getFieldValue(d, prop)))].map(value => {
+          if (!value) return null
+          return { label: value, value, checked: false }
+        })
+        column.filters = message.filter(d => d)
+        table.tableColumns = [...table.tableColumns]
+      }
+      table.$refs.filter.toggleTipShow({ reference, showAllways: true, placement: 'bottom', column })
+    }
 
     const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
 
@@ -149,6 +173,9 @@ export default {
               on-click={() => sortClick('desc')}
             ></i>
           </span> : ''
+        }
+        {
+          filter ? <icon id={filterId} icon='filter' style={{ color: filter && (column.filters || []).find(d => d.checked) ? '#409eff' : '' }} on-click={filterClick} /> : ''
         }
       </div>
     ]

@@ -22,37 +22,49 @@ export default {
       validPopoverOpts: {}
     }
   },
+  mounted() {
+    Object.assign(this, {
+      popover: this.$refs.popover,
+      editPopover: this.$refs.editPopover,
+      validPopover: this.$refs.validPopover,
+      validingPopover: this.$refs.validingPopover
+    })
+  },
   methods: {
     tipShow(opts) {
-      this.$refs.popover.doShow()
+      if (!this.popover) this.popover = this.$refs.popover
+      this.popover.doShow()
       this.popoverOpts = opts
     },
     tipClose() {
-      this.$refs.popover.doHide()
+      this.popover.doHide()
     },
     editTipShow(opts) {
-      this.$refs.editPopover.doShow()
+      if (!this.editPopover) this.editPopover = this.$refs.editPopover
+      this.editPopover.doShow()
       this.editPopoverOpts = opts
       this.table.setEditStop(true)
     },
     editTipClose() {
-      this.$refs.editPopover.doHide()
+      this.editPopover.doHide()
       this.table.setEditStop(false)
       // this.editPopoverOpts = null
     },
     validTipShow(opts) {
-      this.$refs.validPopover.doShow()
+      if (!this.validPopover) this.validPopover = this.$refs.validPopover
+      this.validPopover.doShow()
       this.validPopoverOpts = opts
     },
     validTipClose() {
-      this.$refs.validPopover.doHide()
+      this.validPopover.doHide()
     },
     validingTipShow(opts) {
-      this.$refs.validingPopover.doShow()
+      if (!this.validingPopover) this.validingPopover = this.$refs.validingPopover
+      this.validingPopover.doShow()
       this.validingPopoverOpts = opts
     },
     validingTipClose() {
-      this.$refs.validingPopover.doHide()
+      this.validingPopover.doHide()
     }
   }
 }

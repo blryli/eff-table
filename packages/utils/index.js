@@ -72,7 +72,7 @@ export function deepClone(obj) {
 
 // 判断列是否可编辑
 export const columnIsEdit = function(column) {
-  const { editable, edit, type, config: { name } = {}} = column
+  const { editable, edit, type, config: { name } = {}} = column || {}
   return !type && (editable === true || edit && editable !== false) && name !== 'ciphertext'
 }
 
