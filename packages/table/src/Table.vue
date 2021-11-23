@@ -262,6 +262,7 @@ export default {
     showHeader: { type: Boolean, default: true }, // 是否显示表头
     showSummary: Boolean, // 合计
     sumText: { type: String, default: '合计' }, // 合计行第一列的文本
+    keyword: { type: String, default: '' }, // 合计行第一列的文本
     summaryMethod: { type: Function, default: null }, // 合计方法
     messages: { type: Array, default: () => [] }, // 单元格提示信息集合
     beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
@@ -368,26 +369,38 @@ export default {
 
       return style
     },
-    // 筛选后的数据
     afterData() {
-      const { tableData, filters, tableId, rowId } = this
-      const data = tableData.slice(0)
-      return data.filter(row => {
-        return filters.every(filter => {
-          const { column, values } = filter
-          const { filterMethod, columnId, prop } = column
-          const value = XEUtils.get(row, prop)
-          if (values.length) {
-            if (filterMethod) {
-              const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
-              const cellValue = cell ? cell.innerText : value
-              return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
+      const { tableData, filters, sorts, sortConfig = {}, tableId, rowId } = this
+      let data = tableData.slice(0)
+      // 筛选数据
+      if (filters && filters.length) {
+        data = data.filter(row => {
+          return filters.every(filter => {
+            const { column, values } = filter
+            const { filterMethod, columnId, prop } = column
+            const value = XEUtils.get(row, prop)
+            if (values.length) {
+              if (filterMethod) {
+                const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
+                const cellValue = cell ? cell.innerText : value
+                return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
+              }
+              return values.indexOf(value) > -1
             }
-            return values.indexOf(value) > -1
-          }
-          return true
+            return true
+          })
         })
-      })
+      }
+      // 数据排序
+      if (sorts && sorts.length) {
+        const { sortMethod, remote } = sortConfig
+        const sort = sorts.reduce((acc, column) => {
+          const { prop, order } = column
+          return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data, column, prop, order, $table: this })] : [prop, order]])
+        }, [])
+        !remote && sort.length && (data = XEUtils.sortBy(data, sort))
+      }
+      return data
     },
     useExpand() {
       const { visibleColumns, $slots, expands } = this
@@ -541,7 +554,7 @@ export default {
       if (!loadData) {
         useExpand && this.initExpand()
         this.loadData = true
-        this.updateRow(this.tableData[0])
+        // this.updateRow(this.tableData[0])
       }
       return this.$nextTick()
     },

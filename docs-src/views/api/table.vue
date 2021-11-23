@@ -1,7 +1,8 @@
 <template>
   <div class="page-home page">
-    <h2>Table 表格</h2>
-    <Document :form="documentForm" />
+    <Document title="table" :form="documentForm">
+      <h2>Table 表格 <router-link class="page-router" to="/Full">查看示例</router-link></h2>
+    </Document>
   </div>
 </template>
 
@@ -108,6 +109,10 @@ export default {
       sortable: false, // 列是否可排序
 
       selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
+
+      filter: false,  // boolean  是否开启筛选功能
+      filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
+      filterMethod: ({ value, option, cellValue, row, column, $table }) => {}  // function  筛选方法
     }
   ]
   `
@@ -793,7 +798,7 @@ export default {
           {
             attribute: 'sort-change',
             explain: '表格排序条件发生变化的时候会触发',
-            default: `sortConfig, data`
+            default: `{column, prop, order, sorts}`
           },
           {
             attribute: 'search-clear-filed',

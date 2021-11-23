@@ -1,7 +1,8 @@
 <template>
   <div class="page-home page">
-    <h2>SeniorQuery 高级搜索 <router-link class="page-router" to="/SeniorQueryDemo">查看示例</router-link></h2>
-    <Document :form="documentForm" />
+    <Document title="senior-query" :form="documentForm">
+      <h2>SeniorQuery 高级搜索 <router-link class="page-router" to="/SeniorQueryDemo">查看示例</router-link></h2>
+    </Document>
   </div>
 </template>
 

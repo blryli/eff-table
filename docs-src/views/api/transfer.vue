@@ -1,7 +1,8 @@
 <template>
   <div class="page-home page">
-    <h2>Transfer 穿梭框 <router-link class="page-router" to="/Transfer">查看示例</router-link></h2>
-    <Document :form="documentForm" />
+    <Document title="transfer" :form="documentForm">
+      <h2>Transfer 穿梭框 <router-link class="page-router" to="/Transfer">查看示例</router-link></h2>
+    </Document>
   </div>
 </template>
 

@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod, tableExpandConfig } = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -213,7 +213,20 @@ export default {
         if (props && typeof props === 'function') {
           renderOpts.props = props(params)
         }
-        return compConf ? compConf.renderDefault(h, renderOpts, params) : type === 'index' ? rowid : prop ? getFieldValue(row, prop) : ''
+
+        if (compConf) {
+          return compConf.renderDefault(h, renderOpts, params)
+        } else if (type === 'index') {
+          return rowid || prop
+        } else {
+          let filedValue = getFieldValue(row, prop)
+          // 关键字处理
+          if (keyword && filedValue && filedValue.indexOf(keyword) > -1) {
+            filedValue = filedValue.split(keyword)
+            filedValue.splice(1, 0, h('span', { class: 'keyword-lighten' }, keyword))
+          }
+          return filedValue || ''
+        }
       }
       if (XEUtils.isFunction(cellRender)) {
         const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })

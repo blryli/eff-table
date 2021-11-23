@@ -94,9 +94,9 @@ export default {
       })
       return filterList
     },
-    handleFilter(evnt) {
+    handleFilter(evnt, reset) {
       const { filterPopoverOpts, isDisabled } = this
-      if (isDisabled) return
+      if (isDisabled && !reset) return
       const { column } = filterPopoverOpts
       const { prop } = column
       const values = []
@@ -121,7 +121,7 @@ export default {
         d.checked = false
       })
       this.updateColumns()
-      this.handleFilter(evnt)
+      this.handleFilter(evnt, true)
     },
     checkboxChange(val, item) {
       const { filterPopoverOpts } = this
@@ -146,7 +146,8 @@ export default {
   &__content{
     min-width: 100px;
     max-height: 200px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   &__bottom{
     display: flex;

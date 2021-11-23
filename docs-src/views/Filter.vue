@@ -59,7 +59,7 @@ const jsCode = `
               filter: true,
               filters: [{ label: '大于20岁', value: '20' }],
               filterMethod: ({ cellValue }) => {
-                return cellValue > 20
+                return Number(cellValue) > 20
               }
             },
             {
@@ -128,7 +128,7 @@ export default {
             edit: true,
             filters: [{ label: '大于20岁', value: '20' }],
             filterMethod: ({ cellValue }) => {
-              return cellValue > 20
+              return Number(cellValue) > 20
             }
           },
           {
@@ -138,10 +138,10 @@ export default {
           }
         ],
         data: [
-          { id: 1, name: '张三', age: 42, sex: '男', phone: '13715201314' },
-          { id: 2, name: '李四', age: 24, sex: '女', phone: '13715201314' },
-          { id: 3, name: '王五', age: 36, sex: '男', phone: '13715201314' },
-          { id: 4, name: '赵六', age: 18, sex: '男', phone: '13715201314' }
+          { id: 1, name: '张三张三张三', age: 42, sex: '男', phone: '13715201314' },
+          { id: 2, name: '李四张三张三', age: 24, sex: '女', phone: '13715201314' },
+          { id: 3, name: '王五张三张三张三张三张三', age: 36, sex: '男', phone: '13715201314' },
+          { id: 4, name: '赵六张三张三', age: 18, sex: '男', phone: '13715201314' }
         ]
       }
     }

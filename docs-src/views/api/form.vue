@@ -1,7 +1,8 @@
 <template>
   <div class="page-home page">
-    <h2>From 表单 <router-link class="page-router" to="/FormBase">查看示例</router-link></h2>
-    <Document :form="documentForm" />
+    <Document title="form" :form="documentForm">
+      <h2>From 表单 <router-link class="page-router" to="/FormBase">查看示例</router-link></h2>
+    </Document>
   </div>
 </template>
 

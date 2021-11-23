@@ -8,7 +8,7 @@ export default {
     disabled: Boolean,
     checked: Boolean,
     label: { type: [String, Number], default: '' },
-    labelWidth: { type: Number, default: 80 }
+    labelWidth: { type: Number, default: 0 }
   },
   inject: {
     transferPanel: { default: null }
@@ -43,11 +43,15 @@ export default {
   },
   render(h) {
     const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave } = this
-    let on = {}
-    if (labelWidth && transferPanel) {
-      on = {
-        mouseenter: handleMouseenter,
-        mouseleave: handleMouseleave
+    const labelStyle = {}
+    let labelOn = {}
+    if (labelWidth) {
+      labelStyle.width = labelWidth + 'px'
+      if (transferPanel) {
+        labelOn = {
+          mouseenter: handleMouseenter,
+          mouseleave: handleMouseleave
+        }
       }
     }
     return h('div', {
@@ -60,7 +64,7 @@ export default {
       on: { click: handleChange }
     }, [
       h('span', { class: 'eff-table__checkbox-icon' }),
-      label ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: { width: labelWidth + 'px' }, on }, label) : ''
+      label ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: labelStyle, on: labelOn }, label) : ''
     ])
   }
 }
