@@ -61,10 +61,11 @@
       </el-popover>
     </div>
     <slot />
-    <div v-if="hasPagination" class="v-table-footer">
+    <div v-if="hasPagination" class="flex-row v-table-footer">
+      <slot v-if="showPaginationSlot" name="pagination" />
       <el-pagination
         class="p-el-pagination"
-        layout="sizes,prev,pager,next,jumper,total"
+        :layout="layout"
         :page-sizes="[10, 20, 30, 50, 100]"
         :current-page="pagination.pageNum"
         :page-size="pagination.pageSize"
@@ -114,11 +115,24 @@ export default {
       default() {
         return { pageNum: 1, pageSize: 10, total: 0 }
       }
-    }
+    },
+    // 是否显示分页插槽
+    showPaginationSlot: { type: Boolean, default: false },
+    pageLayout:{
+      type: Array,
+      default() {
+        return ['sizes','->','total','jumper','prev','pager','next']
+      },
+    },
   },
   data() {
     return {
       cols: []
+    }
+  },
+  computed: {
+    layout() {
+      return this.pageLayout.join(',');
     }
   },
   created() {
