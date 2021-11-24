@@ -149,7 +149,7 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>tableData -  {{ tableData }}</p> -->
+    <!-- <p>expands -  {{ expands }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -178,6 +178,7 @@ import sort from '../mixins/sort'
 import proxy from '../mixins/proxy'
 import tree from '../mixins/tree'
 import virtual from '../mixins/virtual'
+import expand from '../mixins/expand'
 import shortcutKey from '../mixins/shortcutKey'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
@@ -228,6 +229,7 @@ export default {
     validate,
     sort,
     virtual,
+    expand,
     shortcutKey,
     proxy,
     tree
@@ -298,8 +300,6 @@ export default {
       isScreenfull: false,
       tableBodyEl: null,
       hoverRowid: null,
-      expands: [],
-      expand: null,
       isLoading: false,
       editStore: {
         editRow: {},
@@ -401,10 +401,6 @@ export default {
         !remote && sort.length && (data = XEUtils.sortBy(data, sort))
       }
       return data
-    },
-    useExpand() {
-      const { visibleColumns, $slots, expands } = this
-      return Boolean(visibleColumns.find(d => d.type === 'expand') && $slots.expand || expands.length)
     },
     useGroupColumn() {
       const { tableData } = this
@@ -516,11 +512,6 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      const { $scopedSlots, $slots } = this
-      const { expand } = $scopedSlots || $slots
-      this.expand = expand
-    })
     this.$on('edit-fields', this.editField)
   },
   beforeDestroy() {
@@ -551,6 +542,7 @@ export default {
       this.updateCache()
       opts.clearScroll && this.clearScroll()
       this.resize()
+      this.clearRowExpand()
       if (!loadData) {
         useExpand && this.initExpand()
         this.loadData = true
@@ -562,27 +554,25 @@ export default {
       this.clearStatus()
       this.clearValidate()
       this.clearSelection()
-      this.expands = []
       if (!data) {
         data = this.data
       }
       this.loadTableData(data)
     },
     initExpand() {
-      const { tableExpandConfig, rowId } = this
+      const { tableExpandConfig } = this
       if (!tableExpandConfig) return
       const { expandAll, defaultExpandeds, onlyField } = tableExpandConfig
       const hasExpand = row => !onlyField || onlyField && row[onlyField]
       setTimeout(() => {
         if (expandAll) {
           this.tableData.forEach(row => {
-            const id = row[rowId]
-            hasExpand(row) && this.expandChange({ rowId: id, height: 0 })
+            hasExpand(row) && this.toggleRowExpand(row)
           })
         } else {
           defaultExpandeds.forEach(rowId => {
             const row = this.tableDataMap.get(rowId)
-            hasExpand(row) && this.expandChange({ rowId, height: 0 })
+            hasExpand(row) && this.toggleRowExpand(row)
           })
         }
       }, 300)
@@ -839,24 +829,6 @@ export default {
     },
     handleCardClose() {
       this.$emit('drag-card-close')
-    },
-    expandChange(obj) {
-      const { rowId } = obj
-      const expand = this.expands.find(d => d.rowId === rowId)
-      if (expand) {
-        this.$set(expand, 'expanded', !expand['expanded'])
-      } else {
-        obj.expanded = true
-        this.expands.push(obj)
-      }
-      this.$nextTick(() => {
-        // 设置 expand 高度
-        const expand = this.expands.find(d => d.rowId === rowId)
-        if (expand.expanded) {
-          expand.height = document.querySelector('.expandid-' + rowId).offsetHeight
-        }
-        this.$emit('expand-change', this.expands)
-      })
     },
     searchChange(val) {
       // console.log('search change', JSON.stringify(val, null, 2))

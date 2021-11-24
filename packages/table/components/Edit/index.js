@@ -80,14 +80,22 @@ export default {
     }
   },
   watch: {
+    'table.tableData.length'() {
+      this.rowIndex = null
+    },
     component() {
       this.dialogVisible = true
     },
     rowIndex(rowIndex) {
-      if (!this.hasTree) {
-        this.row = this.table.afterData[rowIndex]
+      if (rowIndex === null) {
+        this.row = null
+        this.table.editStore.editRow = {}
+      } else {
+        this.table.editStore.editRow = this.row
+        if (!this.hasTree) {
+          this.row = this.table.afterData[rowIndex]
+        }
       }
-      this.table.editStore.editRow = rowIndex === null ? {} : this.row
       this.dialogVisible = true
     },
     message() {

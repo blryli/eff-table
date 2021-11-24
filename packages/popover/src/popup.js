@@ -15,6 +15,19 @@ export default {
   methods: {
     focus() {
       this.table.$refs.popovers.editTipShow({ reference: this.$el, vslot: this.$slots.default, placement: 'bottom' })
+      setTimeout(() => {
+        console.log(this.$children)
+      }, 100)
+      this.$nextTick(() => {
+        const { componentInstance } = this.$slots.default[0]
+        if (componentInstance) {
+          componentInstance.editIsStop = true
+          setTimeout(() => {
+            componentInstance.focus()
+            componentInstance.editIsStop = false
+          }, 100)
+        }
+      })
       this.$emit('open')
     },
     close() {
@@ -26,6 +39,6 @@ export default {
     }
   },
   render(h) {
-    return <div class='eff-table__popup'>{this.content}</div>
+    return <div class='eff-table__popup'></div>
   }
 }

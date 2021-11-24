@@ -670,6 +670,36 @@ export default {
             attribute: 'seniorQueryOpen',
             explain: '打开表格高级搜索框',
             default: ``
+          },
+          {
+            attribute: 'toggleRowExpand',
+            explain: '切换展开行的状态',
+            default: `row`
+          },
+          {
+            attribute: 'getRowExpandRecords',
+            explain: '获取已展开行的数据',
+            default: ``
+          },
+          {
+            attribute: 'isRowExpand',
+            explain: '判断行是否为展开状态',
+            default: `row`
+          },
+          {
+            attribute: 'setRowExpand',
+            explain: '设置展开行，二个参数设置这一行展开与否',
+            default: `rows, checked`
+          },
+          {
+            attribute: 'setAllRowExpand',
+            explain: '设置所有行的展开状态',
+            default: `checked`
+          },
+          {
+            attribute: 'clearRowExpand',
+            explain: '清空展开行状态',
+            default: ``
           }
         ],
         slots: [

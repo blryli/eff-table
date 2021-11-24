@@ -357,9 +357,10 @@ export default {
               format: ({ row }) => this.getHeightWeight(row)
             },
             edit: {
-              render: (h, { row, rowIndex }) => {
+              render: (h, { row, rowIndex, columnIndex }) => {
                 return {
                   name: 'popup',
+                  key: rowIndex + columnIndex,
                   props: { content: this.getHeightWeight(row) },
                   children: {
                     name: 'form',

@@ -237,7 +237,7 @@ export default {
     }
     const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
     const expandClick = function(e) {
-      !disabled && table.expandChange({ rowId: row[rowId], height: 0 })
+      !disabled && table.toggleRowExpand(row)
     }
     const expandRender = function() {
       const expand = <span class='eff-table--expand-handle' on-click={e => expandClick(e)}>

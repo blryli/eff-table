@@ -5,6 +5,7 @@
       当行内容过多并且不想显示横向滚动条时，可以使用 Table 展开行功能。<br>
       通过设置 <span class="primary">{ type: 'expand' }</span> 列和 <span class="primary">scope slot</span> 可以开启展开行功能（展开行不能用于虚拟滚动）
     </p>
+
     <section class="demo">
       <div class="section-content">
         <eff-table
@@ -14,6 +15,12 @@
           :max-height="400"
           border
         >
+          <template #toolbar>
+            <el-button @click="$refs.table.toggleRowExpand(data[1])">切换第二行展开</el-button>
+            <el-button @click="$refs.table.setRowExpand(data.slice(2), true)">展开第三、四行</el-button>
+            <el-button @click="$refs.table.setAllRowExpand(true)">展开所有行</el-button>
+            <el-button @click="$refs.table.clearRowExpand()">关闭所有行</el-button>
+          </template>
           <template #expand="{row}">
             <v-form
               :data="row"
