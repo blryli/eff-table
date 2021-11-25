@@ -149,7 +149,8 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>expands -  {{ expands }}</p> -->
+    <!-- <p>checkeds -  {{ checkeds }}</p>
+    <p>expands -  {{ expands }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />

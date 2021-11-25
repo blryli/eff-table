@@ -20,18 +20,18 @@ export default {
   },
   methods: {
     toggleRowExpand(row, checked) {
-      const { rowId } = this
+      const { rowId, expands } = this
       const id = row[rowId]
-      const expand = this.expands.find(d => d.rowId === id)
+      const expand = expands.find(d => d.rowId === id)
       if (expand) {
         this.$set(expand, 'expanded', checked !== undefined ? checked : !expand['expanded'])
       } else {
-        this.expands.push({ rowId: id, height: 0, expanded: true })
+        expands.push({ rowId: id, height: 0, expanded: true })
       }
       this.$nextTick(() => {
         // 设置 expand 高度
-        const expand = this.expands.find(d => d.rowId === id)
-        if (expand.expanded) {
+        const expand = expands.find(d => d.rowId === id)
+        if (expand && expand.expanded) {
           expand.height = document.querySelector('.expandid-' + id).offsetHeight
         }
         this.$emit('expand-change', this.expands)

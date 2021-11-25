@@ -185,6 +185,10 @@ export default {
         treeConfig: { children: 'children' },
         columns: [
           {
+            type: 'selection',
+            width: 40
+          },
+          {
             show: true,
             prop: 'id',
             title: 'ID'
@@ -230,6 +234,10 @@ export default {
         rowId: 'id',
         treeConfig: { children: 'children', lazy: true, loadMethod: this.loadMethod },
         columns: [
+          {
+            type: 'selection',
+            width: 40
+          },
           {
             show: true,
             prop: 'id',

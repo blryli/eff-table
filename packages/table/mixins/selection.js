@@ -14,13 +14,16 @@ export default {
   },
   computed: {
     checkeds() {
-      const { tableDataMap, selecteds } = this
+      const { tableData, tableDataMap, selecteds, treeNum, rowId, tableTreeConfig: { children } = {}} = this
       return selecteds.map(id => {
-        const mapId = tableDataMap.get(id)
-        if (!mapId) {
+        let selected = tableDataMap.get(id)
+        if (treeNum) {
+          selected = XEUtils.findTree(tableData, item => item[rowId] === id, children).item
+        }
+        if (!selected) {
           console.warn(id + ' 不存在于tableData')
         }
-        return mapId
+        return selected
       }).filter(d => d)
     }
   },
