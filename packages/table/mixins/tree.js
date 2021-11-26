@@ -38,8 +38,8 @@ export default {
       const { tableTreeConfig: { children }, treeIds, rowId } = this
       data.forEach(d => {
         const child = d[children]
+        this.$set(treeIds, d[rowId], expand)
         if (child && child.length) {
-          this.$set(treeIds, d[rowId], expand)
           this.setTreeExpandAll(child, expand)
         }
       })

@@ -227,23 +227,10 @@ export default {
         }
       ],
       data: [
-        { id: 1, name: '张三', sex: '男', phone: '13715201314', children: [
-          { id: 100, name: '小张三', sex: '男', phone: '13715201314', children: [
-            { id: 1000, name: '小张三', sex: '男', phone: '13715201314' },
-            { id: 1001, name: '张三小', sex: '男', phone: '13715201314' }
-          ] },
-          { id: 101, name: '张三小', sex: '男', phone: '13715201314' }
-        ] },
-        { id: 2, name: '李四', sex: '女', phone: '13715201314' },
-        { id: 3, name: '王五', sex: '男', phone: '13715201314', children: [
-          { id: 200, name: '小张三', sex: '男', phone: '13715201314', children: [
-            { id: 2000, name: '小张三', sex: '男', phone: '13715201314' },
-            { id: 2001, name: '张三小', sex: '男', phone: '13715201314' }
-          ] },
-          { id: 201, name: '张三小', sex: '男', phone: '13715201314' }
-        ] },
-        { id: 4, name: '赵六', sex: '男', phone: '13715201314' },
-        { id: 5, name: '赵六', sex: '女', phone: '13715201314' }
+        { id: 1, name: '张三', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 2, name: '李四', sex: '女', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 3, name: '王五', sex: '男', phone: '13715201314', email: 'aaa@qq.com' },
+        { id: 4, name: '赵六', sex: '男', phone: '13715201314', email: 'aaa@qq.com' }
       ],
       tableOptions: {
         border: true,

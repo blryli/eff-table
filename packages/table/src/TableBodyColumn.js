@@ -202,7 +202,7 @@ export default {
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
-        const sourceRow = table.tableSourceData.find(d => d[rowId] === row[rowId]) || {}
+        const sourceRow = table.tableDataMap.get(row[rowId]) || {}
         const params = { root: table, table, vue, data: row, row, rowid: _rowId, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {

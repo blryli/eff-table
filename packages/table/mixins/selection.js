@@ -14,17 +14,8 @@ export default {
   },
   computed: {
     checkeds() {
-      const { tableData, tableDataMap, selecteds, treeNum, rowId, tableTreeConfig: { children } = {}} = this
-      return selecteds.map(id => {
-        let selected = tableDataMap.get(id)
-        if (treeNum) {
-          selected = XEUtils.findTree(tableData, item => item[rowId] === id, children).item
-        }
-        if (!selected) {
-          console.warn(id + ' 不存在于tableData')
-        }
-        return selected
-      }).filter(d => d)
+      const { tableDataMap, selecteds } = this
+      return selecteds.reduce((acc, id) => tableDataMap.get(id) ? acc.concat([id]) : acc, [])
     }
   },
   watch: {
@@ -40,9 +31,9 @@ export default {
   },
   methods: {
     updateSelecteds() {
-      const { selecteds, tableData } = this
+      const { selecteds, tableSourceData } = this
       const selectedsLength = selecteds.length
-      const tableDataLength = tableData.length
+      const tableDataLength = tableSourceData.length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     },
