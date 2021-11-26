@@ -299,20 +299,21 @@ export default {
     let treeIcon = ''
 
     const childs = row[children] || []
-    const groupClick = function(e) {
+    const treeClick = function(e) {
       // 异步加载
       if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
         vue.$set(table.treeIds, _rowId, false)
         loadMethod({ row, rowIndex }).then(res => {
           vue.$set(table.treeIds, _rowId, true)
           vue.$set(row, children, res)
+          table.loadTableData(table.tableData)
         })
       } else {
         vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
     if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
-      treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
+      treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
         {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
       </span>
     }

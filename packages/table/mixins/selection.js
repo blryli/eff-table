@@ -15,7 +15,10 @@ export default {
   computed: {
     checkeds() {
       const { tableDataMap, selecteds } = this
-      return selecteds.reduce((acc, id) => tableDataMap.get(id) ? acc.concat([id]) : acc, [])
+      return selecteds.reduce((acc, id) => {
+        const row = tableDataMap.get(id)
+        return row ? acc.concat([row]) : acc
+      }, [])
     }
   },
   watch: {
