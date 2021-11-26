@@ -61,8 +61,7 @@
       </el-popover>
     </div>
     <slot />
-    <div v-if="hasPagination" class="flex-row v-table-footer">
-      <slot v-if="showPaginationSlot" name="pagination" />
+    <div v-if="hasPagination" class="v-table-footer">
       <el-pagination
         class="p-el-pagination"
         :layout="layout"
@@ -74,7 +73,9 @@
         @current-change="pageChange"
         @prev-click="pageChange"
         @next-click="pageChange"
-      />
+      >
+        <slot v-if="showPaginationSlot" name="pagination"></slot>
+      </el-pagination>
     </div>
   </div>
 </template>
