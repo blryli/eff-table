@@ -180,7 +180,6 @@ export default {
     },
     reset() {
       this.$slots.search[0].componentInstance.resetFields();
-      this.$emit('update:pagination', { pageNum: 1, pageSize: 10, total: 0 })
       this.search()
     },
     search() {
