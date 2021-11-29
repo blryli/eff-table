@@ -3,7 +3,7 @@ import VRadio from 'pk/radio'
 import { textOverflow, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
-import { getFieldValue, initField, isVNode } from 'pk/utils'
+import { getFieldValue, initField, isVNode, isNoValue } from 'pk/utils'
 import XEUtils from 'xe-utils'
 import Icon from 'pk/icon'
 
@@ -202,7 +202,7 @@ export default {
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
-        const sourceRow = table.tableSourceData.find(d => d[rowId] === row[rowId]) || {}
+        const sourceRow = table.tableDataMap.get(row[rowId]) || {}
         const params = { root: table, table, vue, data: row, row, rowid: _rowId, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {
@@ -221,11 +221,17 @@ export default {
         } else {
           let filedValue = getFieldValue(row, prop)
           // 关键字处理
-          if (keyword && filedValue && filedValue.indexOf(keyword) > -1) {
-            filedValue = filedValue.split(keyword)
-            filedValue.splice(1, 0, h('span', { class: 'keyword-lighten' }, keyword))
+          const lowerValue = (filedValue + '').toLowerCase()
+          const lowerKeyword = (keyword + '').toLowerCase()
+          if (!isNoValue(keyword) && !isNoValue(filedValue)) {
+            const index = lowerValue.indexOf(lowerKeyword)
+            if (index > -1) {
+              const str = filedValue.substr(index, keyword.length)
+              filedValue = filedValue.split(str)
+              filedValue.splice(1, 0, h('span', { class: 'keyword-lighten' }, str))
+            }
           }
-          return filedValue || ''
+          return filedValue
         }
       }
       if (XEUtils.isFunction(cellRender)) {
@@ -293,20 +299,21 @@ export default {
     let treeIcon = ''
 
     const childs = row[children] || []
-    const groupClick = function(e) {
+    const treeClick = function(e) {
       // 异步加载
       if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
         vue.$set(table.treeIds, _rowId, false)
         loadMethod({ row, rowIndex }).then(res => {
           vue.$set(table.treeIds, _rowId, true)
           vue.$set(row, children, res)
+          table.loadTableData(table.tableData)
         })
       } else {
         vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
     if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
-      treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
+      treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
         {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
       </span>
     }

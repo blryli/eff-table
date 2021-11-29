@@ -149,7 +149,7 @@
     <edit v-if="edit" ref="edit" :columns="bodyColumns" />
     <!-- 高级查询 -->
     <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
-    <!-- <p>expands -  {{ expands }}</p> -->
+    <!-- <p>checkeds -  {{ checkeds }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
@@ -528,12 +528,11 @@ export default {
     },
     loadTableData(data = this.data, opts = { clearScroll: true }) {
       const { editStore, rowId, loadData, useExpand } = this
-      this.tableData =
-        Object.freeze(data.map((d, i) => {
-          !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
-          return d
-        }) || [])
-      this.tableSourceData = Object.freeze(XEUtils.clone(data, true))
+      this.tableData = Object.freeze(XEUtils.mapTree(data, d => {
+        !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
+        return d
+      }))
+      this.tableSourceData = Object.freeze(XEUtils.toTreeArray(XEUtils.clone(data, true)))
       editStore.insertList = []
       if (rowId === '_rowId') {
         this.clearStatus()
@@ -542,7 +541,6 @@ export default {
       this.updateCache()
       opts.clearScroll && this.clearScroll()
       this.resize()
-      this.clearRowExpand()
       if (!loadData) {
         useExpand && this.initExpand()
         this.loadData = true
@@ -554,6 +552,8 @@ export default {
       this.clearStatus()
       this.clearValidate()
       this.clearSelection()
+      this.clearRowExpand()
+      this.clearTreeExpand()
       if (!data) {
         data = this.data
       }
@@ -738,21 +738,22 @@ export default {
     },
     updateStatus(row, prop) {
       if (!prop) return
+      const rowid = row[this.rowId]
 
       const sourceRow = this.tableSourceData.find(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       if (!sourceRow) return
 
       const isInsert = this.editStore.insertList.find(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       if (isInsert) return
 
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
       const index = this.editStore.updateList.findIndex(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       let isSome = true
       for (const key in sourceRow) {
@@ -772,16 +773,23 @@ export default {
     },
     // 更新数据行map
     updateCache() {
-      const { tableData, rowId } = this
+      const { tableData, rowId, tableTreeConfig: { children }} = this
       if (!this.tableDataMap) {
         Object.assign(this, {
           tableDataMap: new Map()
         })
       }
       this.tableDataMap.clear()
-      tableData.forEach(d => {
-        this.tableDataMap.set(d[rowId], d)
-      })
+      const setMap = data => {
+        data.forEach(d => {
+          this.tableDataMap.set(d[rowId], d)
+          const childs = d[children]
+          if (childs && childs.length) {
+            setMap(childs)
+          }
+        })
+      }
+      setMap(tableData)
     },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })

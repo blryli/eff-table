@@ -105,7 +105,7 @@ export default {
       table.scrollTop = scrollTop
     },
     getTrees(row, rowIndex) {
-      const { table, fixed, bodyColumns, formatValidators, treeIndex } = this
+      const { table, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
       const { renderColumn, rowId, treeIds, tableTreeConfig: { children }} = table
       if (!(row[children] && row[children].length && treeIds[row[rowId]])) {
         return []
@@ -118,7 +118,7 @@ export default {
         arr.forEach((d, i) => {
           const row_id = `${rowid ? rowid + '.' : ''}${i + 1}`
 
-          const dom = <TableBodyRow
+          const dom = [<TableBodyRow
             key={'tree-' + treeFloor + rowIndex + i}
             row={d}
             rowid={`${rowIndex + 1}.${row_id}`}
@@ -129,7 +129,7 @@ export default {
             fixed={fixed}
             vue={this}
             messages={formatValidators[d[rowId]]}
-          />
+          />, renderExpand ? renderExpand(d, rowIndex) : '']
 
           trees.push(dom)
           if (d[children] && d[children].length && treeIds[d[rowId]]) {
@@ -141,14 +141,21 @@ export default {
       func(row[children], treeFloor)
 
       return trees
+    },
+    renderExpand(row, rowIndex) {
+      const { table, fixed, $createElement } = this
+      const { bodyRenderWidth, edit, rowId, editStore, expands, expandSlot } = table
+      const { expanded, height } = expandSlot && expands.find(d => d.rowId === row[rowId]) || {}
+      const classes = ['eff-table__expanded', `expandid-${row[rowId]}`]
+      const style = fixed ? { width: bodyRenderWidth + 'px', height: height + 'px' } : {}
+      const on = edit ? { mouseenter: () => (editStore.editRow = row) } : {}
+
+      return expanded ? $createElement('div', { class: classes, style, on }, [expandSlot({ row, rowIndex })]) : ''
     }
   },
   render(h) {
-    const { table, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, bodyRenderWidth, edit, editStore } = table
-    const { $scopedSlots, $slots, scopedSlots } = table
-    const { expand } = scopedSlots || $scopedSlots || $slots
-
+    const { table, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot } = table
     return (
       <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
@@ -161,11 +168,7 @@ export default {
             renderData.map((row, rowIndex) => {
               const currentIndex = rowIndex + renderIndex
               const rowid = `${currentIndex + 1}`
-              const { expanded, height } = expand && expands.find(d => d.rowId === row[rowId]) || {}
-              const classes = ['eff-table__expanded', `expandid-${row[rowId]}`]
-              const style = fixed ? { width: bodyRenderWidth + 'px', height: height + 'px' } : {}
-              const on = edit ? { mouseenter: () => (editStore.editRow = row) } : {}
-              const expandNode = expanded ? h('div', { class: classes, style, on }, [expand({ row, rowIndex })]) : ''
+              const { expanded } = expandSlot && expands.find(d => d.rowId === row[rowId]) || {}
 
               const rowFun = (row, key = '') => {
                 const uniqueId = XEUtils.uniqueId()
@@ -189,7 +192,7 @@ export default {
                   fixed={fixed}
                   vue={this}
                   messages={formatValidators[row[rowId]]}
-                />, expandNode]
+                />, expanded ? renderExpand(row, rowIndex) : '']
               }
 
               const trees = this.getTrees(row, currentIndex)

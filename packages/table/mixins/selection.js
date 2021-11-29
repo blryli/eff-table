@@ -15,13 +15,10 @@ export default {
   computed: {
     checkeds() {
       const { tableDataMap, selecteds } = this
-      return selecteds.map(id => {
-        const mapId = tableDataMap.get(id)
-        if (!mapId) {
-          console.warn(id + ' 不存在于tableData')
-        }
-        return mapId
-      }).filter(d => d)
+      return selecteds.reduce((acc, id) => {
+        const row = tableDataMap.get(id)
+        return row ? acc.concat([row]) : acc
+      }, [])
     }
   },
   watch: {
@@ -37,9 +34,9 @@ export default {
   },
   methods: {
     updateSelecteds() {
-      const { selecteds, tableData } = this
+      const { selecteds, tableSourceData } = this
       const selectedsLength = selecteds.length
-      const tableDataLength = tableData.length
+      const tableDataLength = tableSourceData.length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     },
