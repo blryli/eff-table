@@ -179,7 +179,7 @@ export default {
       localStorage.setItem(this.id, '')
     },
     reset() {
-      this.$slots.search[0].componentInstance.resetFields()
+      this.$slots.search[0].componentInstance.resetFields();
       this.search()
     },
     search() {
