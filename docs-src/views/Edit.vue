@@ -464,7 +464,7 @@ export default {
   },
   methods: {
     getHeightWeight(row) {
-      const { height, weight } = row.heightWeight
+      const { height, weight } = row.heightWeight || {}
       return `${height ? height + 'cm' : ''}${weight ? '，' + weight + 'kg' : ''}`
     }
   }
