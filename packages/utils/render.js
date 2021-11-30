@@ -178,7 +178,9 @@ function renderSelectEdit(h, renderOpts, params) {
 
 // 日期 datepick
 function renderDateCell(h, renderOpts = {}, params = {}) {
-  const { props: { format = 'yyyy-MM-dd' } = {}} = renderOpts
+  const { props = {}} = renderOpts
+  const { type } = props
+  const format = props.format || type === 'datetime' ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
