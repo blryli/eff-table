@@ -99,6 +99,20 @@ export default {
             type: 'number',
             choosable: '',
             default: '300'
+          },
+          {
+            attribute: 'preview',
+            explain: '是否展示条件预览行',
+            type: 'boolean',
+            choosable: '',
+            default: 'true'
+          },
+          {
+            attribute: 'previewUseOperator',
+            explain: '预览时是否使用条件符，默认使用文本展示',
+            type: 'boolean',
+            choosable: '',
+            default: 'false'
           }
         ],
         events: [

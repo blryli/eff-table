@@ -180,7 +180,7 @@ function renderSelectEdit(h, renderOpts, params) {
 function renderDateCell(h, renderOpts = {}, params = {}) {
   const { props = {}} = renderOpts
   const { type } = props
-  const format = props.format || type === 'datetime' ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd'
+  const format = props.format || (type === 'datetime' ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd')
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {

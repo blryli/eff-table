@@ -102,6 +102,11 @@ const jsCode = `
           }
         ]
       }
+    },
+    methods: {
+      handleSeniorQuery(seniorQuery) {
+        console.log('seniorQuery', JSON.stringify(seniorQuery, null, 2))
+      }
     }
   }
   `
