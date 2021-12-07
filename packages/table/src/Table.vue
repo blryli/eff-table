@@ -773,7 +773,7 @@ export default {
     },
     // 更新数据行map
     updateCache() {
-      const { tableData, rowId, tableTreeConfig: { children }} = this
+      const { tableData, rowId, tableTreeConfig: { children = 'children' } = {}} = this
       if (!this.tableDataMap) {
         Object.assign(this, {
           tableDataMap: new Map()

@@ -173,11 +173,15 @@ export default {
             disabled: ({ row }) => {
               return this.hasChildren(row) || !row.fieldName
             },
-            render: (h, { row, prop }) => {
+            render: (h, { row, prop, rowIndex, columnIndex }) => {
               const field = this.data.find(d => d.fieldName === row.fieldName) || {}
-              const { fieldType, componentType, componentProps, dataSourceType, apiSource } = field
-              // 下拉框
-              if (componentType === 'select') {
+              const { fieldType, componentType, componentProps, componentRender, dataSourceType, apiSource, usePopup } = field
+              // 自定义
+              let opts = {}
+              if (componentRender) {
+                if (XEUtils.isFunction(componentRender)) return componentRender(h, { row })
+                opts = Object.assign(componentRender, { name: 'input' })
+              } else if (componentType === 'select') { // 下拉框
                 const props = {}
                 const on = {}
                 if (dataSourceType === 2) { // 动态数据源
@@ -202,12 +206,34 @@ export default {
                 if (fieldType === 'array') {
                   Object.assign(props, { multiple: true, 'collapse-tags': true })
                 }
-                return { name: 'select', options: () => field.staticSourceList, props, on }
+                opts = { name: 'select', options: () => field.staticSourceList, props, on }
               } else if (componentType === 'date') {
-                return { name: 'date-picker', props: componentProps }
+                opts = { name: 'date-picker', props: componentProps }
               } else {
-                return { name: 'input', componentProps }
+                opts = { name: 'input', props: componentProps }
               }
+              if (usePopup) {
+                opts = {
+                  name: 'popup',
+                  props: { content: row[prop] },
+                  key: rowIndex + columnIndex,
+                  children: {
+                    name: 'form',
+                    props: {
+                      titleWidth: '40px',
+                      data: row,
+                      autofocus: true,
+                      columns: [
+                        { prop, span: 24, itemRender: { name: componentType, props: componentProps, on: {
+                          input: (val) => this.$set(row, prop, val)
+                        }}}
+                      ]
+                    },
+                    on: { loop: ({ placement }) => this.$refs.table1 && this.$refs.table1.toX(placement) }
+                  }
+                }
+              }
+              return opts
             }
           },
           rules: [
@@ -276,7 +302,9 @@ export default {
           return data.reduce((acc, cur) => {
             const child = cur.children || []
             const { conditionConnector, fieldName, operator, fieldValue } = cur
-            return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
+            // 统一把带回车符的字符串转换成数组
+            const value = XEUtils.isString(fieldValue) && /\n/.test(fieldValue) ? fieldValue.split('\n') : fieldValue
+            return acc.concat([{ conditionConnector, fieldName, operator, fieldValue: value, fieldValueList: value, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
           }, [])
         }
         this.close()

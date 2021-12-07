@@ -39,6 +39,6 @@ export default {
     }
   },
   render(h) {
-    return <div class='eff-table__popup'></div>
+    return <div class='eff-table__popup'>{this.content}</div>
   }
 }
