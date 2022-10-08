@@ -249,6 +249,7 @@ export default {
     rowId: { type: String, default: '_rowId' }, // 行主键
     height: { type: Number, default: 0 }, // 表格高度
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
+    baseRowHeight: { type: Number, default: 36 }, // body以外的行高度
     rowHeight: { type: Number, default: 36 }, // 行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
@@ -436,6 +437,9 @@ export default {
     },
     tableId() {
       return (~~(Math.random() * (1 << 30))).toString(36)
+    },
+    baseHeight() {
+      return Math.max(30, this.baseRowHeight)
     }
   },
   watch: {

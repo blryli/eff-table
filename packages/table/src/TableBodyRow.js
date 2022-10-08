@@ -15,6 +15,7 @@ export default {
     summary: Boolean,
     subtotal: Boolean,
     treeFloor: { type: Number, default: 0 },
+    rowHeight: { type: Number, default: 0 },
     treeIndex: { type: Number, default: 0 },
     vue: { type: Object, default: null }
   },
@@ -23,7 +24,7 @@ export default {
   render(h, context) {
     const { props, injections } = context
     const { table } = injections
-    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, subtotal, treeFloor, treeIndex, vue } = props
+    const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, subtotal, treeFloor, treeIndex, vue, rowHeight } = props
     const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig, spanMethod, isSpanMethod } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
@@ -78,8 +79,8 @@ export default {
     ]
 
     const rowStyle = {}
-    const { overflowX, bodyRenderWidth, rowHeight } = table
-    rowStyle.height = rowHeight + 'px'
+    const { overflowX, bodyRenderWidth } = table
+    rowStyle.height = rowHeight || table.rowHeight + 'px'
     if (overflowX && !fixed) {
       rowStyle.width = bodyRenderWidth + 'px'
     }

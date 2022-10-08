@@ -37,7 +37,7 @@ export default {
     const list = buttonsRender.concat($slots.default || []) || []
     const paginator = showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
 
-    return <div class='eff-table__action eff-table__toobar' style={{ border: showBorder ? '' : 'unset', height: table.rowHeight + 'px' }}>
+    return <div class='eff-table__action eff-table__toobar' style={{ border: showBorder ? '' : 'unset', height: table.baseHeight + 'px' }}>
       {
         changeOver ? [
           <div class='eff-table__toobar-left'>

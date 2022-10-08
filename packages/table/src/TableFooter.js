@@ -15,10 +15,10 @@ export default {
   inject: ['table'],
   computed: {
     style() {
-      const { rowHeight } = this.table
+      const { baseHeight } = this.table
       return {
-        minHeight: rowHeight + 'px',
-        lineHeight: rowHeight + 'px'
+        minHeight: baseHeight + 'px',
+        lineHeight: baseHeight + 'px'
       }
     },
     row() {
@@ -55,6 +55,7 @@ export default {
           style={ { marginLeft: fixed ? '' : table.bodyMarginLeft } }
         >
           <TableBodyRow
+            row-height={table.baseHeight}
             row={row}
             row-index={1}
             body-columns={fixed ? columns : table.renderColumn}

@@ -32,7 +32,7 @@ export default {
   },
   render(h) {
     const { table, load } = this
-    const { toolbarConfig, search } = table
+    const { toolbarConfig, search, heights } = table
     const { buttons = [], refresh, seniorQuery, columnControl, columnBatchControl, fullscreen, editHistory, replace, subtotal } = toolbarConfig || {}
     // const { multiple } = sortConfig
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
@@ -46,7 +46,7 @@ export default {
     const list = buttonsRender.concat(this.$slots.default || []) || []
     const replaceClick = () => (table.$refs.replace.show = !table.$refs.replace.show)
     return (
-      <div class='eff-table__toobar' style={{ height: table.heights.toolbarHeight + 'px' }}>
+      <div class='eff-table__toobar' style={{ height: heights.toolbarHeight + 'px' }}>
         <ToolbarShrink list={list} class='eff-table__toobar-left' />
         <div class='eff-table__toobar-right'>
           {
