@@ -1,11 +1,10 @@
 <template>
   <div
     :class="{'v-form-filed': true, 'is--dirty': isDirty}"
-    @mouseenter="handlerNodeMouseenter"
-    @mouseleave="handlerNodeMouseleave"
+    @mouseenter="$emit('mouseenter')"
+    @mouseleave="$emit('mouseleave')"
   >
     <slot v-bind="$attrs" />
-    <div v-if="msgType === 'text' && message" class="v-form-filed--message">{{ message }}</div>
   </div>
 </template>
 
@@ -42,20 +41,16 @@ export default {
     data() {
       return this.form && this.form.data
     },
-    msgType() {
-      const { form, table } = this
-      return form && (form.messageType || 'text') || table && 'popover' || 'text'
-    },
     root() {
       const { form, table } = this
       return form || table
     },
+    trigger() {
+      return (this.rules.find(d => d.trigger) || {}).trigger || 'blur'
+    },
     message() {
       const { root, prop } = this
       return (root.validators.find(d => d.prop === prop) || {}).message
-    },
-    trigger() {
-      return (this.rules.find(d => d.trigger) || {}).trigger || 'blur'
     }
   },
   watch: {
@@ -111,6 +106,9 @@ export default {
         }
         component.$on('focus', () => onFocus(component))
         component.$on('blur', onBlur)
+        component.$on('visible-change', val => {
+          this.root.editIsStop = val
+        })
         if (rules.length) {
           component.$on(trigger, handleValidate)
         }
@@ -150,17 +148,6 @@ export default {
         this.updateStatus()
       })
     },
-    handlerNodeMouseenter(e) {
-      const { msgType, handlerNode, root, message } = this
-      if (msgType === 'popover') {
-        message && root && this.root.tipShow({ reference: handlerNode, effect: 'error', message })
-      }
-    },
-    handlerNodeMouseleave(e) {
-      if (this.msgType === 'popover') {
-        this.root && this.root.tipClose()
-      }
-    },
     setNodeStyle() {
       const { handlerNode, message, validatorStyle } = this
       for (const key in validatorStyle) {
@@ -191,7 +178,12 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  line-height: var(--lineHeight);
+  min-height: var(--lineHeight);
+  white-space: nowrap;
+  & :only-child {
+    width: 100%;
+  }
   &--message {
     position: absolute;
     top: 100%;

@@ -251,6 +251,7 @@ export default {
     rowId: { type: String, default: '_rowId' }, // 行主键
     height: { type: Number, default: 0 }, // 表格高度
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
+    baseRowHeight: { type: Number, default: 36 }, // 行以外的默认高度
     rowHeight: { type: Number, default: 36 }, // 行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
@@ -357,6 +358,9 @@ export default {
       //   columns = columns.sort((a, b) => sort.indexOf(a.prop))
       // }
       return plat(this.visibleColumns)
+    },
+    baseHeight() {
+      return Math.max(this.baseRowHeight, 30)
     },
     style() {
       const style = {}

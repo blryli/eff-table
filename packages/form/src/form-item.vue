@@ -26,13 +26,18 @@
           @mouseleave="mouseleave"
         >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</div>
       </PrefixSuffix>
-      <FormField
-        class="v-form-item__content"
-        :prop="prop"
-        :rules="rules"
-      >
-        <slot />
-      </FormField>
+      <div class="v-form-item__content">
+        <FormField
+          ref="formField"
+          :prop="prop"
+          :rules="rules"
+          @mouseenter="handlerNodeMouseenter"
+          @mouseleave="handlerNodeMouseleave"
+        >
+          <slot />
+        </FormField>
+        <div v-if="msgType === 'text' && message" class="v-form-filed--message">{{ message }}</div>
+      </div>
     </div>
   </layout>
 </template>
@@ -78,6 +83,14 @@ export default {
       if (titlePrefix) width -= 16
       if (titleSuffix) width -= 16
       return width - 12
+    },
+    msgType() {
+      const { form, table } = this
+      return form && (form.messageType || 'text') || table && 'popover' || 'text'
+    },
+    message() {
+      const { root, prop } = this
+      return (root.validators.find(d => d.prop === prop) || {}).message
     }
   },
   methods: {
@@ -90,6 +103,17 @@ export default {
     },
     mouseleave() {
       this.form.tipClose()
+    },
+    handlerNodeMouseenter(e) {
+      const { msgType, root, message, $refs } = this
+      if (msgType === 'popover') {
+        message && root && this.root.tipShow({ reference: $refs.formField.handlerNode, effect: 'error', message })
+      }
+    },
+    handlerNodeMouseleave(e) {
+      if (this.msgType === 'popover') {
+        this.root && this.root.tipClose()
+      }
     }
   }
 }
@@ -136,12 +160,6 @@ export default {
   &__content {
     width: 100%;
     position: relative;
-    line-height: var(--lineHeight);
-    min-height: var(--lineHeight);
-    white-space: nowrap;
-    & :only-child {
-      width: 100%;
-    }
   }
 }
 

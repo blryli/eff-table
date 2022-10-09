@@ -92,7 +92,8 @@ export default {
   },
   render(h) {
     const { table, columns, searchData, operators, change, showSpace } = this
-    return <div class='eff-table__search' style={{ height: table.rowHeight + 'px' }}>
+    const height = table.baseHeight + 'px'
+    return <div class='eff-table__search' style={{ height, '--rowHeight': height }}>
       {
         columns.map((column, columnIndex) => {
           return <SearchColumn
