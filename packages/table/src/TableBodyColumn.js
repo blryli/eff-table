@@ -166,7 +166,6 @@ export default {
       style.paddingLeft = treeFloor * 28 + 'px'
     }
     // row[columnIndex] summary合计列
-
     const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
 
     const { selectable } = column

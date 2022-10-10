@@ -3,6 +3,7 @@ import { on, off } from 'pk/utils/dom'
 export default {
   data() {
     return {
+      tableRect: null,
       bodyWidth: 0,
       bodyWrapperWidth: 0,
       screenfullHeight: 0,
@@ -93,8 +94,12 @@ export default {
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
+    autoHieght() {
+      const { tableRect, height } = this
+      return tableRect ? window.innerHeight - tableRect.top - 20 : height
+    },
     heights() {
-      const { height, tableMaxHeight, isScreenfull, screenfullHeight, afterData, rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, autoHieght, isScreenfull, screenfullHeight, afterData, rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? baseHeight + toolbarHeightOffset : 0
@@ -104,7 +109,7 @@ export default {
       const footerActionHeight = footerAction ? baseHeight : 0
       const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      const tableHeight = isScreenfull ? screenfullHeight : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
+      const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHieght : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
       if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
@@ -178,6 +183,10 @@ export default {
   },
   mounted() {
     this.resize()
+    this.$nextTick(() => {
+      const tableWrapper = this.$refs.tableWrapper
+      this.tableRect = tableWrapper.getBoundingClientRect()
+    })
     this.timer = setTimeout(() => {
       this.resize()
       clearTimeout(this.timer)

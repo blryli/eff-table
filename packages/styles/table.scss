@@ -381,6 +381,7 @@
   .eff-table__body-row{
     .eff-table__column{
       background-color: #f6f7f8;
+      border-bottom: 0;
     }
     &:hover .eff-table__column{
       background-color: #f6f7f8;

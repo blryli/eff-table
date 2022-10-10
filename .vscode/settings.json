@@ -28,7 +28,6 @@
   "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}",
   "editor.codeLens": true,
     "editor.snippetSuggestions": "top",
-    "editor.renderIndentGuides": false,
     "git.enableSmartCommit": true,
     "editor.wordWrap": "on",
     "workbench.activityBar.visible": true,
@@ -40,5 +39,6 @@
     "explorer.confirmDelete": false,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
-    }
+    },
+    "editor.guides.indentation": false
 }
