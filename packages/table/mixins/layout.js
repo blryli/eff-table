@@ -94,12 +94,12 @@ export default {
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
-    autoHieght() {
+    autoHeight() {
       const { tableRect, height } = this
-      return tableRect ? window.innerHeight - tableRect.top - 20 : height
+      return tableRect ? window.innerHeight - tableRect.top - 40 : height
     },
     heights() {
-      const { height, tableMaxHeight, autoHieght, isScreenfull, screenfullHeight, afterData, rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? baseHeight + toolbarHeightOffset : 0
@@ -109,7 +109,7 @@ export default {
       const footerActionHeight = footerAction ? baseHeight : 0
       const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHieght : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
+      const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHeight : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
       if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight

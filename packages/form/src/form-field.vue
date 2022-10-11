@@ -180,10 +180,6 @@ export default {
   align-items: center;
   line-height: var(--lineHeight);
   min-height: var(--lineHeight);
-  white-space: nowrap;
-  & :only-child {
-    width: 100%;
-  }
   &--message {
     position: absolute;
     top: 100%;

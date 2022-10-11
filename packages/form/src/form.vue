@@ -13,6 +13,7 @@ export default {
   props: {
     data: { type: Object, default: () => ({}) },
     columns: { type: Array, default: () => ([]) },
+    direction: { type: String, default: 'row' },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     titleAlign: { type: String, default: 'right' },
@@ -115,9 +116,9 @@ export default {
     }
   },
   render(h) {
-    const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts } = this
+    const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts, direction } = this
     return h('layout', {
-      class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : ''],
+      class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : '', direction === 'column' ? 'is--column' : ''],
       style: {
         width: width,
         'margin-left': itemGutter ? `-${itemGutter / 2}px` : '',
@@ -142,6 +143,9 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  &.is--column{
+    flex-direction: column;
+  }
   &::before, &::after{
     display: table;
     content: "";
