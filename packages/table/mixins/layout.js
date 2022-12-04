@@ -125,7 +125,7 @@ export default {
         searchHeight,
         footerHeight,
         footerActionHeight,
-        bodyHeight: Math.max(bodyHeight, rowHeight)
+        bodyHeight: Math.max(bodyHeight - 2, rowHeight)
       }
     },
     bodyRect() {
