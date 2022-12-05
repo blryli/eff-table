@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
+    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -57,7 +57,7 @@ export default {
     if (rowspan > 1) { // 合并行
       let heights = 0
       for (let index = 0; index < rowspan; index++) {
-        heights += rowHeight
+        heights += _rowHeight
       }
       columnHeight = heights
       table.isSpanMethod = true
@@ -333,6 +333,10 @@ export default {
     } else {
       slot = cellRender(h)
     }
+    const labelStyle = {}
+    if (rowHeight === 'auto') {
+      labelStyle['white-space'] = 'pre-wrap'
+    }
 
     return h('div', Object.assign(data, {
       key: treeFloor + '-' + rowIndex + '-' + columnIndex,
@@ -348,7 +352,7 @@ export default {
     }), [
       treeIcon,
       <div id={cellId} class='eff-cell'>
-        <span class='eff-cell--label'>{slot}</span>
+        <span class='eff-cell--label' style={labelStyle}>{slot}</span>
         {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
       </div>
     ])

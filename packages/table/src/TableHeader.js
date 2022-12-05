@@ -115,7 +115,7 @@ export default {
     },
     renderColumns() {
       const { table } = this
-      const { rowHeight } = table
+      const { baseHeight } = table
       const { columns = [], startIndex } = this.getColumnsStore
       let index = startIndex
       const render = (columns, colid = '', parentProp = []) => {
@@ -129,7 +129,7 @@ export default {
           column.columnId = parent
           if (children.length) {
             acc.push(<div class={['eff-table__header-group', table.headerCheckedColumns.some(d => d === column) ? 'is--checked' : '']} data-colid={parent}>
-              <div class='eff-table__header-group-title' style={{ maxHeight: rowHeight + 'px', borderLeft: !column.parent && renderColumnIndex === 0 ? 0 : '' }}>
+              <div class='eff-table__header-group-title' style={{ maxHeight: baseHeight + 'px', borderLeft: !column.parent && renderColumnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='eff-table__header-group-children'>

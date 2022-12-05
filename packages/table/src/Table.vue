@@ -58,15 +58,15 @@
         <TableHeader
           v-if="showHeader"
           ref="leftHeader"
-          :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
-          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
+          :visible-columns="rowHeight === 'auto' ? visibleColumns : visibleColumns.filter(d => d.fixed === 'left')"
+          :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
           fixed="left"
           @dragend="handleDragend"
           @sort-change="sortChange"
         />
         <TableBody
           ref="leftBody"
-          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
+          :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
           :data="tableData"
           fixed="left"
           :validators="validators"
@@ -75,7 +75,7 @@
         <TableFooter
           v-if="showSummary"
           :data="tableData"
-          :columns="bodyColumns.filter(d => d.fixed === 'left')"
+          :columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
           :sum-text="sumText"
           :summary-method="summaryMethod"
           fixed="left"
@@ -253,7 +253,7 @@ export default {
     height: { type: [Number, String], default: 0 }, // 表格高度
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
     baseRowHeight: { type: Number, default: 36 }, // 行以外的默认高度
-    rowHeight: { type: Number, default: 36 }, // 行高度
+    rowHeight: { type: [Number, String], default: 36 }, // 行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
     highlightCurrentRow: Boolean, // 是否高亮显示行
@@ -363,10 +363,14 @@ export default {
     baseHeight() {
       return Math.max(this.baseRowHeight, 30)
     },
+    _rowHeight() {
+      const { rowHeight } = this
+      return Math.max(Number(rowHeight !== 'auto' ? rowHeight : 0), 30)
+    },
     style() {
       const style = {}
       const { isScreenfull, height, tableMaxHeight } = this
-      style['--rowHeight'] = this.rowHeight + 'px'
+      style['--rowHeight'] = this._rowHeight + 'px'
       if (!isScreenfull) {
         if (height) style.height = height + 'px'
         if (tableMaxHeight) style.maxHeight = tableMaxHeight + 'px'

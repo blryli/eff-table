@@ -341,7 +341,7 @@ export default {
     },
     fixOverflow(cell, cellIndex) {
       const { wrapper, table } = this
-      const { bodyWrapperWidth, rowHeight, leftWidth, rightWidth, overflowX, overflowY, isScrollRightEnd } = table
+      const { bodyWrapperWidth, _rowHeight, leftWidth, rightWidth, overflowX, overflowY, isScrollRightEnd } = table
       const overflow = isOverflow({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY })
       const { height: wrapperHeight } = wrapper.getBoundingClientRect()
       const colid = cell.getAttribute('data-colid')
@@ -353,7 +353,7 @@ export default {
             const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
             this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
-            this.table.scrollTop = rowIndex * rowHeight - wrapperHeight / 2
+            this.table.scrollTop = rowIndex * _rowHeight - wrapperHeight / 2
           }
           isOver = true
         }
@@ -514,7 +514,7 @@ export default {
   render(h) {
     const { show, table, editRender } = this
     const classes = `eff-table-edit${show ? ' is-show' : ' is-hide'}`
-    const style = { '--height': table.rowHeight - 2 + 'px' }
+    const style = { '--height': table._rowHeight - 2 + 'px' }
     const input = h('input', { class: 'eff-table-edit-input', ref: 'editInput' })
     return <div class={classes} style={style}>{[editRender, input]}</div>
   }

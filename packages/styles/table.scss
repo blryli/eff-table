@@ -37,7 +37,7 @@
     align-items: center;
     box-sizing: border-box;
     overflow: hidden;
-    padding: 0 5px;
+    padding: 5px;
     &--title, &--label{
       display: inline-block;
       overflow: hidden;
@@ -248,7 +248,6 @@
 }
 
 .eff-table__column{
-  height: 100%;
   position: relative;
   display: flex;
   align-items: center;

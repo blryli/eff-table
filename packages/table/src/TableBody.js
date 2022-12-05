@@ -35,13 +35,13 @@ export default {
     },
     totalHeight() {
       const { data, table } = this
-      return data.length * table.rowHeight
+      return data.length * table._rowHeight
     },
     emptyStyle() {
-      const { bodyWidth, rowHeight } = this.table
+      const { bodyWidth, _rowHeight } = this.table
       return {
         width: bodyWidth + 'px',
-        height: rowHeight + 'px'
+        height: _rowHeight + 'px'
       }
     },
     xSpaceWidth() {

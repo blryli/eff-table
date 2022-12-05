@@ -1,4 +1,5 @@
 import { on, off } from 'pk/utils/dom'
+import XEUtils from 'xe-utils'
 
 export default {
   data() {
@@ -87,19 +88,20 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
+      const { rowHeight } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return bodyHeight && (tableMaxHeight ? dataHeight > tableMaxHeight : dataHeight > bodyHeight - overflowXHeight)
+      return rowHeight === 'auto' ? true : bodyHeight && (tableMaxHeight ? dataHeight > tableMaxHeight : dataHeight > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     autoHeight() {
       const { tableRect, height } = this
-      return tableRect ? window.innerHeight - tableRect.top - 40 : height
+      return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 40 : height, 2)
     },
     heights() {
-      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
       const toolbarHeight = toolbar ? baseHeight + toolbarHeightOffset : 0
@@ -107,7 +109,7 @@ export default {
       const searchHeight = search ? baseHeight : 0
       const footerHeight = footer ? baseHeight : 0
       const footerActionHeight = footerAction ? baseHeight : 0
-      const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
+      const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHeight : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
@@ -125,7 +127,7 @@ export default {
         searchHeight,
         footerHeight,
         footerActionHeight,
-        bodyHeight: Math.max(bodyHeight, rowHeight)
+        bodyHeight: Math.max(bodyHeight, _rowHeight)
       }
     },
     bodyRect() {
@@ -146,13 +148,13 @@ export default {
     },
     // 工具栏高度自适应
     setToolbarHeightOffset() {
-      const { $refs, rowHeight } = this
+      const { $refs, _rowHeight } = this
       if (!$refs.toolbar) return
       const toolbar = $refs.toolbar.$el
       const toolbarLefts = [...toolbar.querySelector('.eff-table__toobar-left').childNodes]
       const toolbarRights = [...toolbar.querySelector('.eff-table__toobar-right').childNodes]
       const toolbarChildsHeight = toolbarLefts.concat(toolbarRights).map(d => d.offsetHeight || 0)
-      const offsetHeight = rowHeight - Math.max(...toolbarChildsHeight)
+      const offsetHeight = _rowHeight - Math.max(...toolbarChildsHeight)
       this.toolbarHeightOffset = offsetHeight < 12 ? 12 - offsetHeight : 0
     },
     resize() {
@@ -164,6 +166,7 @@ export default {
         scrollLeftEvent()
         this.tableBodyEl = $el.querySelector('.eff-table__body')
         this.setToolbarHeightOffset()
+        this.setTableRect()
       })
     },
     setOverflowX() {
@@ -173,6 +176,10 @@ export default {
     },
     doLayout() {
       this.resize()
+    },
+    setTableRect() {
+      const tableWrapper = this.$refs.tableWrapper
+      this.tableRect = tableWrapper.getBoundingClientRect()
     }
   },
   activated() {
@@ -183,14 +190,10 @@ export default {
   },
   mounted() {
     this.resize()
-    this.$nextTick(() => {
-      const tableWrapper = this.$refs.tableWrapper
-      this.tableRect = tableWrapper.getBoundingClientRect()
-    })
     this.timer = setTimeout(() => {
       this.resize()
       clearTimeout(this.timer)
-    }, 300)
+    }, 500)
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })
