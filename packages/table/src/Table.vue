@@ -369,11 +369,10 @@ export default {
     },
     style() {
       const style = {}
-      const { isScreenfull, height, tableMaxHeight } = this
-      style['--rowHeight'] = this._rowHeight + 'px'
+      const { isScreenfull, height } = this
+      style['--rowHeight'] = this.rowHeight + 'px'
       if (!isScreenfull) {
         if (height) style.height = height + 'px'
-        if (tableMaxHeight) style.maxHeight = tableMaxHeight + 'px'
       }
 
       return style

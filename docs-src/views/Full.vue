@@ -195,6 +195,7 @@ export default {
         border: true,
         rowId: '_rowId',
         toolbarConfig: {
+          height: 400,
           columnControl: true,
           fullscreen: true,
           subtotal: true,

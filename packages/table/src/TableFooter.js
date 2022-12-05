@@ -17,8 +17,7 @@ export default {
     style() {
       const { baseHeight } = this.table
       return {
-        minHeight: baseHeight + 'px',
-        lineHeight: baseHeight + 'px'
+        minHeight: baseHeight + 'px'
       }
     },
     row() {
