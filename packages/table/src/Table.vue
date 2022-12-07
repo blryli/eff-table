@@ -337,10 +337,20 @@ export default {
       const { width } = tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
-          const { children = [], minWidth = 80 } = cur
+          const { children = [], minWidth = 30 } = cur
           if (!cur.width && width) cur.width = width
-          cur.minWidth = minWidth
-          cur.width = Number(cur.width) // 兼容非数字格式
+          // 设置最小宽度
+          const { edit, sortable, titlePrefix = {}, titleSuffix = {}} = cur
+          const widths = [
+            { el: edit, width: 16 },
+            { el: sortable, width: 20 },
+            { el: titlePrefix.message, width: 18 },
+            { el: titleSuffix.message, width: 18 },
+            { el: cur.rules && Boolean(cur.rules.find(d => d.required)), width: 12 }
+          ]
+          const min_width = widths.reduce((acc, cur) => cur.el ? acc + cur.width : acc, this.isTypeColumn(cur) ? 30 : 72)
+          cur.minWidth = Math.max(min_width, minWidth)
+          cur.width = this.isTypeColumn(cur) ? 30 : Number(cur.width || 0) // 兼容非数字格式
           if (children.length) {
             children.forEach(d => cur.fixed && (d.fixed = cur.fixed))
             return acc.concat(plat(children))

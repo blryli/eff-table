@@ -202,8 +202,7 @@ export default {
       }
     },
     handleMousemove(e) {
-      const { table, $refs, dragingTarget, isDraging } = this
-      if (!table.border) return
+      const { $refs, dragingTarget, isDraging } = this
       let target = e.target
       while (target && !hasClass(target, 'eff-table__column')) {
         target = target.parentNode
@@ -214,6 +213,12 @@ export default {
       if (target.contains(header) || target === dragMove || dragingTarget === target || isDraging) return
 
       this.dragingTarget = hasClass(target, 'is--space') ? null : target
+      this.$nextTick(() => {
+        const { table, visibleColumns, dragingTarget } = this
+        const columnIndex = dragingTarget && dragingTarget.dataset.colidx
+        const column = visibleColumns[columnIndex]
+        if (column && table.isTypeColumn(column)) this.dragingTarget = null
+      })
     },
     handleMouseleave() {
       !this.isDraging && setTimeout(() => {
@@ -225,9 +230,13 @@ export default {
       onMousemove({ start, moveing, end })
     },
     start(e) {
-      if (!this.dragingTarget) return
-      this.table.lineShow = true
-      const { right: columnRight } = this.dragingTarget.getBoundingClientRect()
+      const { table, dragingTarget, visibleColumns } = this
+      const columnIndex = dragingTarget.dataset.colidx
+      const column = visibleColumns[columnIndex]
+      if (table.isTypeColumn(column)) return
+      if (!dragingTarget) return
+      table.lineShow = true
+      const { right: columnRight } = dragingTarget.getBoundingClientRect()
       this.startX = columnRight + 2
       this.moveing()
     },
@@ -239,21 +248,12 @@ export default {
       const column = this.visibleColumns[columnIndex]
 
       const { table } = this
-      const line = table.$refs.line
 
+      const line = table.$refs.line
       const tableEl = table.$refs.table
       const { left: tableLeft, height: tableHeight, top: tableTop } = tableEl.getBoundingClientRect()
       const { left: columnLeft } = this.dragingTarget.getBoundingClientRect()
-      const { edit, sortable, titlePrefix = {}, titleSuffix = {}} = column
-      const lefts = [
-        { el: true, width: columnLeft + 50 },
-        { el: edit, width: 16 },
-        { el: sortable, width: 20 },
-        { el: titlePrefix.message, width: 18 },
-        { el: titleSuffix.message, width: 18 },
-        { el: column.rules && Boolean(column.rules.find(d => d.required)), width: 12 }
-      ]
-      const minLeft = lefts.reduce((acc, cur) => cur.el ? acc + cur.width : acc, 0)
+      const minLeft = columnLeft + column.minWidth
 
       if (minLeft <= this.startX + moveX) {
         this.moveX = moveX

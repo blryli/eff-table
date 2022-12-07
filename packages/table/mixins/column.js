@@ -34,13 +34,17 @@ export default {
     },
     showSpace() {
       const { allMinWidth, bodyWrapperWidth, scrollYwidth } = this
-      return allMinWidth < bodyWrapperWidth - 2 - scrollYwidth
+      console.log('allMinWidth < bodyWrapperWidth - 2 - scrollYwidth', allMinWidth + 11 < bodyWrapperWidth - 2 - scrollYwidth)
+      return allMinWidth + 11 < bodyWrapperWidth - 2 - scrollYwidth
     }
   },
   methods: {
+    isTypeColumn(column) {
+      return ['selection', 'expand', 'row-drag', 'radio'].includes(column.type)
+    },
     getColumnWidth(column) {
-      const minWidth = ['selection', 'expand', 'row-drag', 'radio'].includes(column.type) ? 40 : 80
-      return Math.max(column.width || Math.max(column.minWidth * this.spaceWidth, column.minWidth), minWidth)
+      if (this.isTypeColumn(column)) return 30
+      return Math.max(column.width || Math.max(column.minWidth * this.spaceWidth, column.minWidth))
     }
   }
 }

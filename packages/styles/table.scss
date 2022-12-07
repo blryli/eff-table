@@ -274,6 +274,16 @@
     &.is--checked{
       background-color: #d5d5d5;
     }
+    &:not(.is--type-column,.is--space,.is--last-column)::after{
+      content: '';
+      position: absolute;
+      right: 1px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 14px;
+      background-color: #ddd;
+    }
   }
   &-group, &-checked, .eff-table__column{
     &.is-draging{
@@ -397,6 +407,13 @@
   .is-first-right-fixed {
     .eff-table__search-empty{
       border-left-color: transparent;
+    }
+  }
+  .eff-table__header{
+    .eff-table__column{
+      &::after{
+        display: none;
+      }
     }
   }
 }

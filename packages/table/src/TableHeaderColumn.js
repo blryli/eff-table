@@ -60,6 +60,12 @@ export default {
     if (isChecked) {
       columnClass += ' is--checked'
     }
+    if (table.isTypeColumn(column)) {
+      columnClass += ' is--type-column'
+    }
+    if (columnIndex === table.tableColumns.length - 1) {
+      columnClass += ' is--last-column'
+    }
 
     const sortActive = (order) => {
       const findColumn = table.sorts.find(d => [d].some(s => s === column))
