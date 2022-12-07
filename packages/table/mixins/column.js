@@ -34,7 +34,6 @@ export default {
     },
     showSpace() {
       const { allMinWidth, bodyWrapperWidth, scrollYwidth } = this
-      console.log('allMinWidth < bodyWrapperWidth - 2 - scrollYwidth', allMinWidth + 11 < bodyWrapperWidth - 2 - scrollYwidth)
       return allMinWidth + 11 < bodyWrapperWidth - 2 - scrollYwidth
     }
   },
