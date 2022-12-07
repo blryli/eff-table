@@ -254,6 +254,8 @@ export default {
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
     baseRowHeight: { type: Number, default: 36 }, // 行以外的默认高度
     rowHeight: { type: [Number, String], default: 36 }, // 行高度
+    toolbarHeight: { type: [Number, String], default: 36 }, // 工具栏高度
+    headerRowHeight: { type: [Number, String], default: 36 }, // header行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
     highlightCurrentRow: Boolean, // 是否高亮显示行
@@ -370,7 +372,6 @@ export default {
     style() {
       const style = {}
       const { isScreenfull, height } = this
-      style['--rowHeight'] = this.rowHeight + 'px'
       if (!isScreenfull) {
         if (height) style.height = height + 'px'
       }

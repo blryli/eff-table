@@ -11,8 +11,7 @@ export default {
       offset: 0,
       overflowX: false,
       headerLoad: false,
-      bodyLoad: false,
-      toolbarHeightOffset: 0
+      bodyLoad: false
     }
   },
   created() {
@@ -91,7 +90,7 @@ export default {
       const { rowHeight } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return rowHeight === 'auto' ? true : bodyHeight && (tableMaxHeight ? dataHeight > tableMaxHeight : dataHeight > bodyHeight - overflowXHeight)
+      return rowHeight === 'auto' ? true : bodyHeight && (tableMaxHeight ? dataHeight - 2 > tableMaxHeight : dataHeight - 2 > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
@@ -101,11 +100,11 @@ export default {
       return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 40 : height, 2)
     },
     heights() {
-      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, toolbarHeight: tHeight, $EFF: { toolbarHeight: EFFToolbarHeight, HeaderRowHeight: EFFHeaderRowHeight }} = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
-      const toolbarHeight = toolbar ? baseHeight + toolbarHeightOffset : 0
-      const headerHeight = headerLoad && header ? baseHeight * headerRanked : 0
+      const toolbarHeight = toolbar ? (tHeight === 36 ? EFFToolbarHeight || tHeight : tHeight) || baseHeight : 0
+      const headerHeight = headerLoad && header ? ((headerRowHeight === 36 ? EFFHeaderRowHeight || headerRowHeight : headerRowHeight) || baseHeight) * headerRanked : 0
       const searchHeight = search ? baseHeight : 0
       const footerHeight = footer ? baseHeight : 0
       const footerActionHeight = footerAction ? baseHeight : 0
@@ -146,17 +145,6 @@ export default {
       }
       return node.getBoundingClientRect().width
     },
-    // 工具栏高度自适应
-    setToolbarHeightOffset() {
-      const { $refs, _rowHeight } = this
-      if (!$refs.toolbar) return
-      const toolbar = $refs.toolbar.$el
-      const toolbarLefts = [...toolbar.querySelector('.eff-table__toobar-left').childNodes]
-      const toolbarRights = [...toolbar.querySelector('.eff-table__toobar-right').childNodes]
-      const toolbarChildsHeight = toolbarLefts.concat(toolbarRights).map(d => d.offsetHeight || 0)
-      const offsetHeight = _rowHeight - Math.max(...toolbarChildsHeight)
-      this.toolbarHeightOffset = offsetHeight < 12 ? 12 - offsetHeight : 0
-    },
     resize() {
       this.$nextTick(() => {
         const { $el, setOverflowX, scrollLeftEvent } = this
@@ -165,7 +153,6 @@ export default {
         setOverflowX()
         scrollLeftEvent()
         this.tableBodyEl = $el.querySelector('.eff-table__body')
-        this.setToolbarHeightOffset()
         this.setTableRect()
       })
     },

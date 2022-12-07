@@ -43,13 +43,13 @@ export default {
     }
     // 设置style
     const style = {}
-    let columnWidth = Math.max(column.width || spaceWidth, 40)
+    let columnWidth = Math.max(column.width || Math.max(spaceWidth, column.minWidth || 40), 40)
     let columnHeight = 0
     if (colspan > 1) { // 合并列
       let widths = 0
       for (let index = 0; index < colspan; index++) {
         const col = bodyColumns[columnIndex + index]
-        widths += Math.max(col.width || spaceWidth, 40)
+        widths += Math.max(col.width || 40, Math.max(spaceWidth, col.minWidth || 40), 40)
       }
       columnWidth = widths
       table.isSpanMethod = true

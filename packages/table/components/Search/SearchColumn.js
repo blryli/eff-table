@@ -38,9 +38,8 @@ export default {
     columnStyle() {
       const { table, column, columnIndex } = this
       const style = {}
-      const { width = 0 } = column
       const { spaceWidth } = table
-      const columnWidth = Math.max(width || spaceWidth, 40)
+      const columnWidth = Math.max(column.width || Math.max(spaceWidth, column.minWidth || 40), 40)
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
       if (columnIndex === 0) {

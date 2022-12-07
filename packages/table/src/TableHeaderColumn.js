@@ -28,8 +28,7 @@ export default {
     const isRequired = Boolean(rules.find(d => d.required))
 
     const columnStyle = {}
-    const { width = 0 } = column
-    const columnWidth = Math.max(width || spaceWidth, 40)
+    const columnWidth = Math.max(column.width || Math.max(spaceWidth, column.minWidth || 40), 40)
     columnStyle.minWidth = columnWidth + 'px'
     columnStyle.maxWidth = columnWidth + 'px'
     if (!column.parent && columnIndex === 0) {

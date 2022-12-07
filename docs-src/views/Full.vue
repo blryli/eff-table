@@ -251,6 +251,7 @@ export default {
           },
           {
             show: true,
+            minWidth: 300,
             prop: 'input',
             title: '输入框',
             config: { name: 'input' },

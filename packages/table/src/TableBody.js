@@ -155,9 +155,9 @@ export default {
   },
   render(h) {
     const { table, bodyStyle, xSpaceWidth, totalHeight, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot, _rowHeight } = table
     return (
-      <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px' }}>
+      <div class='eff-table__body-wrapper' style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: totalHeight + 'px' }} />
         <div

@@ -32,7 +32,9 @@ export default {
 
       type: '', // string selection/radio/index/expand
 
-      width: 80, // number  列宽
+      width: 80, // number  列宽度
+
+      minWidth: null, // number  列最小宽度
 
       fixed: '', // string left/right 固定列
 
@@ -155,6 +157,27 @@ export default {
           {
             attribute: 'row-height',
             explain: 'Table 行高度',
+            type: 'number',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'base-row-height',
+            explain: '行以外的默认高度',
+            type: 'number',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'toolbar-height',
+            explain: '工具栏高度',
+            type: 'number',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'header-row-height',
+            explain: 'header行高度',
             type: 'number',
             choosable: '',
             default: '36'

@@ -64,7 +64,9 @@ const install = function(Vue, opts = {}) {
 
   Vue.prototype.$EFF = {
     request: opts.request,
-    renderMap: opts.renderMap
+    renderMap: opts.renderMap,
+    toolbarHeight: opts.toolbarHeight,
+    headerRowHeight: opts.headerRowHeight
   }
 }
 
