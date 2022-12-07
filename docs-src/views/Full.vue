@@ -251,7 +251,7 @@ export default {
           },
           {
             show: true,
-            minWidth: 300,
+            minWidth: 200,
             prop: 'input',
             title: '输入框',
             config: { name: 'input' },
@@ -267,6 +267,7 @@ export default {
           },
           {
             show: true,
+            minWidth: 100,
             prop: 'async',
             title: '异步校验',
             search: true,
@@ -326,7 +327,6 @@ export default {
           {
             show: true,
             title: '按钮',
-            fixed: 'right',
             config: { name: 'button', children: '操作' }
           }
         ]

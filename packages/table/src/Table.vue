@@ -14,7 +14,6 @@
     @mousemove="rootMousemove($event)"
   >
     <!-- <VForm v-bind="formConfig" /> -->
-
     <Toolbar
       v-if="showToolbar"
       ref="toolbar"
@@ -338,8 +337,9 @@ export default {
       const { width } = tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
-          const { children = [] } = cur
+          const { children = [], minWidth = 80 } = cur
           if (!cur.width && width) cur.width = width
+          cur.minWidth = minWidth
           cur.width = Number(cur.width) // 兼容非数字格式
           if (children.length) {
             children.forEach(d => cur.fixed && (d.fixed = cur.fixed))

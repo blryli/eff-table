@@ -18,7 +18,7 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData } = table
+    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData } = table
     const { column, columnIndex, colid, isChecked } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
@@ -28,7 +28,7 @@ export default {
     const isRequired = Boolean(rules.find(d => d.required))
 
     const columnStyle = {}
-    const columnWidth = Math.max(column.width || Math.max(spaceWidth, column.minWidth || 40), 40)
+    const columnWidth = table.getColumnWidth(column)
     columnStyle.minWidth = columnWidth + 'px'
     columnStyle.maxWidth = columnWidth + 'px'
     if (!column.parent && columnIndex === 0) {

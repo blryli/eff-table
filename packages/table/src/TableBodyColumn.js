@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
+    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -43,13 +43,13 @@ export default {
     }
     // 设置style
     const style = {}
-    let columnWidth = Math.max(column.width || Math.max(spaceWidth, column.minWidth || 40), 40)
+    let columnWidth = table.getColumnWidth(column)
     let columnHeight = 0
     if (colspan > 1) { // 合并列
       let widths = 0
       for (let index = 0; index < colspan; index++) {
         const col = bodyColumns[columnIndex + index]
-        widths += Math.max(col.width || 40, Math.max(spaceWidth, col.minWidth || 40), 40)
+        widths += table.getColumnWidth(col)
       }
       columnWidth = widths
       table.isSpanMethod = true
