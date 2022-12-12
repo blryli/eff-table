@@ -1,19 +1,19 @@
 <script>
 import Help from 'pk/help'
 import Icon from 'pk/icon'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'PrefixSuffix',
   props: {
     tag: { type: String, default: 'div' },
-    prefix: { type: Object, default: () => ({}) },
+    prefix: { type: [Object, Function], default: () => ({}) },
     suffix: { type: Object, default: () => ({}) }
   },
   render(h) {
     const { tag, prefix, suffix } = this
-    if (!prefix.message && !suffix.message) return h(tag, {}, this.$slots.default)
     return h(tag, { class: 'eff-prefix-suffix' }, [
-      prefix.message ? <Help
+      XEUtils.isFunction(prefix) ? prefix() : prefix.message ? <Help
         class='eff-prefix'
         effect='dark'
         message={prefix.message}
@@ -21,7 +21,7 @@ export default {
         <Icon icon={prefix.icon || 'question'} />
       </Help> : '',
       this.$slots.default,
-      suffix.message ? <Help
+      XEUtils.isFunction(suffix) ? suffix() : suffix.message ? <Help
         class='eff-suffix'
         effect='dark'
         message={suffix.message}

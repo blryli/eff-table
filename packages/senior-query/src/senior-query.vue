@@ -23,6 +23,7 @@
       :toolbar-config="toolbarConfig"
       :tree-config="tableTreeConfig"
       :max-height="400"
+      row-drag
       edit
       border
       @data-change="dataChange"
