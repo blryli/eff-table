@@ -8,7 +8,7 @@ export default {
   props: {
     tag: { type: String, default: 'div' },
     prefix: { type: [Object, Function], default: () => ({}) },
-    suffix: { type: Object, default: () => ({}) }
+    suffix: { type: [Object, Function], default: () => ({}) }
   },
   render(h) {
     const { tag, prefix, suffix } = this

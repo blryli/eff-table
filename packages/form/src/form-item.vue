@@ -58,8 +58,8 @@ export default {
     span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' },
-    titlePrefix: { type: Object, default: () => {} },
-    titleSuffix: { type: Object, default: () => {} }
+    titlePrefix: { type: [Object, Function], default: () => {} },
+    titleSuffix: { type: [Object, Function], default: () => {} }
   },
   inject: {
     form: { default: null },
