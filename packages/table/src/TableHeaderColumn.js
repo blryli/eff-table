@@ -11,6 +11,7 @@ export default {
     columnIndex: { type: Number, default: 0 },
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' },
+    isLastColumn: Boolean,
     isChecked: Boolean
   },
   inject: ['table'],
@@ -18,8 +19,8 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData } = table
-    const { column, columnIndex, colid, isChecked } = props
+    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig } = table
+    const { column, columnIndex, colid, isChecked, isLastColumn } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
@@ -63,7 +64,7 @@ export default {
     if (table.isTypeColumn(column)) {
       columnClass += ' is--type-column'
     }
-    if (columnIndex === table.tableColumns.length - 1) {
+    if (isLastColumn) {
       columnClass += ' is--last-column'
     }
 
@@ -72,8 +73,8 @@ export default {
       return findColumn && findColumn.order === order
     }
     const renderSelection = (h) => {
-      return h(VCheckbox, {
-        props: { value: table.selectionAll, indeterminate: table.indeterminate },
+      return (checkboxConfig || {}).showHeader === false ? '' : h(VCheckbox, {
+        props: { value: table.selectionAll, indeterminate: table.indeterminate, disabled: !table.tableData.length },
         key: columnIndex,
         on: { change: table.allselectionChange }
       })

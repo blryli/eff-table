@@ -26,7 +26,6 @@
   right: 0;
   box-shadow: -4px 3px 4px rgba(0, 0, 0, 0.12);
   &.is-scroll--end{
-    border-left: 1px solid #ddd;
     box-shadow: none;
   }
 }
@@ -245,6 +244,7 @@
   bottom: 36px;
   overflow-x: auto;
   overflow-y: scroll;
+  z-index: 6;
 }
 
 .eff-table__column{
@@ -414,6 +414,11 @@
       &::after{
         display: none;
       }
+    }
+  }
+  .eff-table__fixed-right {
+    &.is-scroll--end{
+      border-left: 1px solid #ddd;
     }
   }
 }

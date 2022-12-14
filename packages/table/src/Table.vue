@@ -125,7 +125,7 @@
     </FooterAction>
     <!-- 拖动 -->
     <drag
-      v-if="drag && border || rowDrag"
+      v-if="drag || rowDrag"
       ref="drag"
       v-model="tableColumns"
       :column-control="toolbarConfig.columnControl"
@@ -280,6 +280,7 @@ export default {
     copy: Boolean, // 是否开启复制功能
     selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
     editConfig: { type: Object, default: () => {} }, // 编辑配置
+    checkboxConfig: { type: Object, default: () => ({}) }, // 编辑配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置

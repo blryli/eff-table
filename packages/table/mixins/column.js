@@ -15,8 +15,8 @@ export default {
       return bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + getColumnWidth(cur) : acc, 0)
     },
     rightWidth() {
-      const { bodyColumns, getColumnWidth } = this
-      return bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + getColumnWidth(cur) : acc, 0)
+      const { bodyColumns, getColumnWidth, scrollYwidth } = this
+      return bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + getColumnWidth(cur) : acc, 0) - scrollYwidth
     },
     // 设置了固定宽度的列总宽度
     minWidth() {

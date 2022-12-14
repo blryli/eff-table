@@ -114,7 +114,7 @@ export default {
       this.$emit('sort-change', sort)
     },
     renderColumns() {
-      const { table } = this
+      const { table, bodyColumns } = this
       const { baseHeight } = table
       const { columns = [], startIndex } = this.getColumnsStore
       let index = startIndex
@@ -145,6 +145,7 @@ export default {
                 column,
                 columnIndex: renderColumnIndex,
                 bodyColumnIndex: index,
+                isLastColumn: renderColumnIndex === bodyColumns.length - 1,
                 isChecked: table.headerCheckedColumns.some(d => d === column)
               }
             }}
