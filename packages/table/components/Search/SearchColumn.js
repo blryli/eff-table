@@ -16,13 +16,14 @@ export default {
   },
   props: {
     value: { type: Object, default: () => {} },
+    prop: { type: String, default: '' },
     column: { type: Object, default: () => {} },
     columnIndex: { type: Number, default: 0 },
     operators: { type: Array, default: () => [] }
   },
   data() {
     return {
-      form: { [this.column.prop]: '', type: '' },
+      form: { [this.prop]: '', type: '' },
       show: false,
       reference: null
     }
@@ -54,7 +55,7 @@ export default {
 
     const { operator } = this.column.search || {}
     this.$nextTick(() => {
-      this.unwatch = this.$watch(`table.tableForm.${this.column.prop}`, this.formChange)
+      this.unwatch = this.$watch(`table.tableForm.${this.prop}`, this.formChange)
       operator && (this.reference = this.$refs.dropdown)
     })
   },
@@ -63,23 +64,24 @@ export default {
   },
   methods: {
     formChange(val) {
-      this.form[this.column.prop] = val
+      const { prop } = this
+      this.$set(this.form, prop, val)
       this.change()
     },
     searchChange(val) {
-      this.form[this.column.prop] = val
+      const { prop } = this
+      this.$set(this.form, prop, val)
       this.updateForm()
     },
     updateForm() {
-      const { table, form, column: { prop }} = this
+      const { table, form, prop } = this
       const { tableForm } = table
       this.$set(table.tableForm, prop, form[prop])
       table.$emit('update:form', tableForm)
     },
     change() {
-      const { form, column } = this
+      const { form, prop } = this
       const operator = form.type
-      const { prop } = column
       let content = this.form[prop]
       if (Array.isArray(content) && isDate(content[0])) {
         content = content.map(d => new Date(d).getTime())
@@ -90,10 +92,11 @@ export default {
       this.$emit('change', { field: prop, operator, content, type })
     },
     init() {
-      if (!this.column.prop) return
-      const value = this.table.tableForm[this.column.prop]
+      const { prop } = this
+      if (!prop) return
+      const value = this.table.tableForm[prop]
       const { search: { operatorDefault } = {}} = this.column
-      this.form[this.column.prop] = value || ''
+      this.form[prop] = value || ''
       this.form.type = this.value.operator || operatorDefault || 'like'
     },
     handleMouseenter(e) {
@@ -103,8 +106,7 @@ export default {
       this.$refs.popover.doHide()
     },
     operatorChange(type) {
-      const { column } = this
-      const { prop } = column
+      const { prop, column } = this
       const operatorDefault = (column.search || {}).operatorDefault
       if (type === 'like' && operatorDefault) type = operatorDefault
       if (this.form.type === type) return
@@ -127,8 +129,8 @@ export default {
       const { column } = this
       const { search } = column
       if (search) {
-        const { table, form, columnIndex, searchChange } = this
-        const { prop, config } = column
+        const { table, form, prop, columnIndex, searchChange } = this
+        const { config } = column
         const { operator, rangeRender } = search || {}
         const value = form[prop]
         const { type } = form
@@ -141,10 +143,11 @@ export default {
           const renderOpts = XEUtils.merge({}, config, render || {})
           const { name } = renderOpts
           const compConf = renderer.get(name)
+          // name !== 'input' &&
           if (compConf && typeof compConf.renderSearch === 'function') {
-            slot = compConf.renderSearch(h, renderOpts, { root: table, table, vue: this, row: form, data: form, column, columnIndex, prop, searchChange }) || ''
+            slot = compConf.renderSearch(h, renderOpts, { root: table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
           } else {
-            slot = <Input value={value} on-input={val => (this.form[prop] = val)} on-change={searchChange}/>
+            slot = <Input value={value} on-input={val => this.$set(this.form, prop, val)} on-change={searchChange}/>
           }
         }
         if (operator && type === 'range') {
@@ -155,7 +158,7 @@ export default {
             const { name, type } = renderOpts
             const compConf = renderer.get(name || type)
             if (compConf && compConf.renderSearchRange) {
-              rangeSlot = compConf.renderSearchRange(h, renderOpts, { root: table, table, vue: this, row: form, data: form, column, columnIndex, prop, searchChange }) || ''
+              rangeSlot = compConf.renderSearchRange(h, renderOpts, { root: table, vue: this, data: form, column, columnIndex, prop, searchChange }) || ''
             } else {
               rangeSlot = <RangeInput value={value} column={column} on-change={searchChange}/>
             }

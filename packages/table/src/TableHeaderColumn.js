@@ -162,11 +162,11 @@ export default {
           tableEdit && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
         }
         {
-          renderHelp(titlePrefix, prefixIcon)
+          XEUtils.isFunction(titlePrefix) ? titlePrefix(h, { column, title, prop }) : renderHelp(titlePrefix, prefixIcon)
         }
         <span class='eff-cell--title'>{slot}</span>
         {
-          renderHelp(titleSuffix, suffixIcon)
+          XEUtils.isFunction(titleSuffix) ? titleSuffix({ column, title, prop }) : renderHelp(titleSuffix, suffixIcon)
         }
         {
           sortable ? <span class='eff-cell--sort'>

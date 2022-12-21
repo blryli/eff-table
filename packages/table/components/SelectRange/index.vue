@@ -168,7 +168,7 @@ export default {
               const col = table.bodyColumns[i]
               const { prop } = col
               if (prop) {
-                setFieldValue.call(this, table, row, prop, getFieldValue(sourceRow, prop))
+                setFieldValue.call(this, row, prop, getFieldValue(sourceRow, prop))
                 table.updateRow(row)
               }
             }

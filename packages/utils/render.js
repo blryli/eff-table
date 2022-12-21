@@ -62,14 +62,13 @@ function renderVModel(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
         table.editField([{ row, rowIndex, columnIndex, content: val }])
       }
       // console.log('data', JSON.stringify(data, null, 2))
     },
     change: val => {
-      if (!table) return
       searchChange && searchChange(val)
     },
     blur: v => {
@@ -85,7 +84,7 @@ function renderVModel(h, renderOpts, params) {
 
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
-  const { vue, data, prop, root } = params
+  const { vue, data, prop } = params
   const props = {
     value: getFieldValue(data, prop) || null,
     type: 'textarea'
@@ -96,7 +95,7 @@ function renderTextareaEdit(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
     },
     blur: v => {
       oldData = null
@@ -131,15 +130,16 @@ function renderSelect(h, renderOpts, params, renderType) {
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getFieldValue(data, prop),
-    placeholder: oProps.placeholder || '请选择' + (column.title || '')
+    placeholder: oProps.placeholder || '请选择' + (column.title || ''),
+    ...oProps
   }
+  const { multiple } = props
   const on = {
-    input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+    [multiple ? 'change' : 'input']: val => {
+      setFieldValue.call(vue, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => { oldData = null }
-
   }
   if (renderType) {
     Object.assign(props, {
@@ -199,7 +199,7 @@ function renderDatepicker(h, renderOpts, params, renderType) {
   }
   const on = {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => {
@@ -323,7 +323,7 @@ function renderForm(h, renderOpts, params) {
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
-  const { vue, table, row, rowIndex, columnIndex, data, prop, root } = params
+  const { vue, table, row, rowIndex, columnIndex, data, prop } = params
   const isBoolean = typeof getFieldValue(data, prop) === 'boolean'
   const props = {
     value: isBoolean ? getFieldValue(data, prop) : '' + getFieldValue(data, prop),
@@ -336,7 +336,7 @@ function renderSwitch(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, isBoolean ? val : '' + val)
+      setFieldValue.call(vue, data, prop, isBoolean ? val : '' + val)
     },
     change: val => {
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
@@ -362,7 +362,7 @@ function renderSwitchSearch(h, renderOpts, params) {
 // 多选框组 checkbox-group
 function renderCheckboxGroup(h, renderOpts, params) {
   const { children = [] } = renderOpts
-  const { data, vue, prop, root } = params
+  const { data, vue, prop } = params
   const props = {
     value: getFieldValue(data, prop) || []
   }
@@ -372,7 +372,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
     },
     blur: v => {
       oldData = null

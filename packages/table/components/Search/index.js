@@ -96,8 +96,11 @@ export default {
     return <div class='eff-table__search' style={{ height, '--rowHeight': height }}>
       {
         columns.map((column, columnIndex) => {
+          const { prop: searchProp } = column.search || {}
+          const prop = searchProp || column.prop
           return <SearchColumn
-            value={searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
+            value={searchData.find(d => d.field === prop) || { value: '', type: '' }}
+            prop={prop}
             column={column}
             column-index={columnIndex}
             operators={operators}

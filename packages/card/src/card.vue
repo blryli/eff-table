@@ -44,8 +44,8 @@ export default {
     inline: Boolean,
     addToBody: Boolean,
     limit: { type: Number, default: 15 },
-    titlePrefix: { type: Object, default: () => {} },
-    titleSuffix: { type: Object, default: () => {} }
+    titlePrefix: { type: [Object, Function], default: () => {} },
+    titleSuffix: { type: [Object, Function], default: () => {} }
   },
   data() {
     return {

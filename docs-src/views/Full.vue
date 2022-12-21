@@ -301,22 +301,6 @@ export default {
           },
           {
             show: true,
-            prop: 'switch',
-            title: '开关',
-            config: { name: 'switch', defaultValue: false },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
-            prop: 'switch',
-            title: '开关',
-            config: { name: 'switch', defaultValue: false },
-            edit: true,
-            search: true
-          },
-          {
-            show: true,
             prop: 'date',
             title: '日期',
             config: {

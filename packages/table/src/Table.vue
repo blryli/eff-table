@@ -341,12 +341,12 @@ export default {
           const { children = [], minWidth = 30 } = cur
           if (!cur.width && width) cur.width = width
           // 设置最小宽度
-          const { edit, sortable, titlePrefix = {}, titleSuffix = {}} = cur
+          const { edit, sortable, titlePrefix, titleSuffix } = cur
           const widths = [
             { el: edit, width: 16 },
             { el: sortable, width: 20 },
-            { el: titlePrefix.message, width: 18 },
-            { el: titleSuffix.message, width: 18 },
+            { el: titlePrefix, width: 18 },
+            { el: titleSuffix, width: 18 },
             { el: cur.rules && Boolean(cur.rules.find(d => d.required)), width: 12 }
           ]
           const min_width = widths.reduce((acc, cur) => cur.el ? acc + cur.width : acc, this.isTypeColumn(cur) ? 30 : 72)
@@ -634,7 +634,7 @@ export default {
       if (!opts.name) opts.name = 'input'
       const { name, props } = opts
       if (name === 'input') {
-        setFieldValue.call(this, this, row, prop, content)
+        setFieldValue.call(this, row, prop, content)
       } else if (name === 'select') { // 下拉框
         const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
         const { labelKey = 'label', valueKey = 'value', mutiple } = props || {}
@@ -649,9 +649,9 @@ export default {
               const val = getValue(cur)
               return val ? acc.concat([val]) : acc
             }, [])
-            setFieldValue.call(this, this, row, prop, ct)
+            setFieldValue.call(this, row, prop, ct)
           } else {
-            setFieldValue.call(this, this, row, prop, getValue(content))
+            setFieldValue.call(this, row, prop, getValue(content))
           }
         }
       } else if (name === 'date-picker') { // 日期
@@ -662,7 +662,7 @@ export default {
           const toStringDate = XEUtils.toStringDate(content, format)
           date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
         }
-        setFieldValue.call(this, this, row, prop, date)
+        setFieldValue.call(this, row, prop, date)
       } else if (name === 'cascader') { // 级联选择器
         const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
         const { label = 'label', value = 'value', children = 'children' } = props.props
@@ -695,7 +695,7 @@ export default {
           const path = paths.find(d => Object.values(getStr(d)).indexOf(content) > -1)
           if (path) showValue = path.map(d => d[value])
         }
-        return setFieldValue.call(this, this, row, prop, showValue)
+        return setFieldValue.call(this, row, prop, showValue)
       } else if (name === 'switch') { // 开关
         const { props = {}} = opts
         const activeValue = props['active-value'] || true
@@ -711,7 +711,7 @@ export default {
           }
         }
 
-        setFieldValue.call(this, this, row, prop, data)
+        setFieldValue.call(this, row, prop, data)
       }
     },
     editField(fileds, copy) {
@@ -741,7 +741,7 @@ export default {
           if (copy) {
             this.handleCopy({ row, rowIndex, column, columnIndex, prop, content })
           } else {
-            setFieldValue.call(this, this, row, prop, content)
+            setFieldValue.call(this, row, prop, content)
           }
           if (rules && rules.length) {
             this.validateField(prop, rules, row)

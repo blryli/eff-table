@@ -19,15 +19,19 @@ export default {
   },
   data() {
     return {
-      date: this.getValue(),
       form: { start: '', end: '' },
       show: false,
       style: {}
     }
   },
-  watch: {
-    value(val) {
-      this.date = this.getValue()
+  computed: {
+    date: {
+      get() {
+        return this.getValue()
+      },
+      set(val) {
+        this.$emit('input', val)
+      }
     }
   },
   methods: {

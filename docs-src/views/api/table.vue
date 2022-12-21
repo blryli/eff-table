@@ -51,8 +51,8 @@ export default {
       // table标题 (优先级 titleRender > type > title)
       title: '', // string
       titleRender: {}, // object/function(h, {title, column, columnIndex})
-      titlePrefix: {message: '', icon: ''} //表头标题前缀
-      titleSuffix: {message: '', icon: ''} //表头标题后缀
+      titlePrefix: {message: string/function, icon: ''}/function(h, { column, title, prop }) //表头标题前缀
+      titleSuffix: {message: string/function, icon: ''}/function(h, { column, title, prop }) //表头标题后缀
 
       // table单元格 (优先级 cellRender > type > prop)
       prop: '', // string
@@ -65,7 +65,27 @@ export default {
         disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
       }
 
-      // 校验规则
+      // 搜索
+      search: {
+        render: { name: 'input' }, // object/function(h, { column, columnIndex }) 搜索元素
+        rangeRender: { name: 'input' }, // object/function(h, { column, columnIndex }) 范围搜索元素
+        operator: false, // boolean 范围符号
+        operatorDefault: 'like', // string 默认类型
+        prop: '', // 搜索字段名，不填默认使用column.prop
+        type: '' // string 扩展字段
+      }
+
+      drag: true,// boolean 列是否可拖动
+
+      sortable: false, // 列是否可排序
+
+      selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
+
+      filter: false,  // boolean  是否开启筛选功能
+      filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
+      filterMethod: ({ value, option, cellValue, row, column, $table }) => {}  // function  筛选方法
+
+       // 校验规则
       rules: [
         {
           required: true, 
@@ -96,25 +116,6 @@ export default {
           validator: Function // 自定义校验，支持异步
         }
       ]
-
-      // 搜索
-      search: {
-        render: { name: 'input' }, // object/function(h, { column, columnIndex }) 搜索元素
-        rangeRender: { name: 'input' }, // object/function(h, { column, columnIndex }) 范围搜索元素
-        operator: false, // boolean 范围符号
-        operatorDefault: 'like', // string 默认类型
-        type: '' // string 扩展字段
-      }
-
-      drag: true,// boolean 列是否可拖动
-
-      sortable: false, // 列是否可排序
-
-      selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
-
-      filter: false,  // boolean  是否开启筛选功能
-      filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
-      filterMethod: ({ value, option, cellValue, row, column, $table }) => {}  // function  筛选方法
     }
   ]
   `
