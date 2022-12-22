@@ -193,6 +193,7 @@ export default {
         edit: true,
         showSummary: true,
         rowId: '_rowId',
+        searchConfig: { remote: false },
         toolbarConfig: {
           height: 400,
           columnControl: true,

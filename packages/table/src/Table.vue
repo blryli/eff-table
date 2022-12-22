@@ -281,6 +281,7 @@ export default {
     selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
     editConfig: { type: Object, default: () => {} }, // 编辑配置
     checkboxConfig: { type: Object, default: () => ({}) }, // 编辑配置
+    searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
@@ -390,25 +391,38 @@ export default {
       return style
     },
     afterData() {
-      const { tableData, filters, sorts, sortConfig = {}, tableId, rowId } = this
+      const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig: { remote = true }} = this
+      const isRemote = remote !== false
       let data = tableData.slice(0)
       // 筛选数据
-      if (filters && filters.length) {
+      if (filters && filters.length || searchForm.length) {
         data = data.filter(row => {
-          return filters.every(filter => {
+          const filterFunc = () => filters.every(filter => {
             const { column, values } = filter
             const { filterMethod, columnId, prop } = column
             const value = XEUtils.get(row, prop)
             if (values.length) {
+              const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
+              const cellValue = cell ? cell.innerText : value
               if (filterMethod) {
-                const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
-                const cellValue = cell ? cell.innerText : value
                 return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
               }
-              return values.indexOf(value) > -1
+              return values.some(d => cellValue.indexOf(d) > -1)
             }
             return true
           })
+          // 前端搜索过滤
+          const searchFilter = () => searchForm.every(item => {
+            if (isRemote) return true
+            const { column, content, field: prop } = item
+            const { columnId } = column
+            const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
+            const value = XEUtils.get(row, prop)
+            const cellValue = cell ? cell.innerText : value
+            const values = XEUtils.isArray(content) ? content : [content]
+            return values.some(d => ('' + cellValue).indexOf('' + d) > -1)
+          })
+          return filterFunc() && searchFilter()
         })
       }
       // 数据排序
@@ -862,7 +876,7 @@ export default {
       // console.log('search change', JSON.stringify(val, null, 2))
       this.searchForm = val
       this.$emit('search-change', val)
-      if (this.proxyConfig) this.commitProxy('query')
+      if (this.proxyConfig && this.searchConfig.remote !== false) this.commitProxy('query')
     },
     dataChange() {
       const { tableData, getEditStore } = this

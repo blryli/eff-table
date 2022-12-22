@@ -420,6 +420,20 @@ export default {
   `
           },
           {
+            attribute: 'search-config',
+            explain: '行内搜索配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    remote: true, // boolean 是否统一使用远程排序
+    searchMethod: null // function({ data, column, prop, order, $table }) 服务端排序，需要监听 search-change 事件
+  }
+  `
+          },
+          {
             attribute: 'proxy-config',
             explain: '代理配置',
             type: 'object',

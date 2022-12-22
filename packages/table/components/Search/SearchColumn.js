@@ -80,7 +80,7 @@ export default {
       table.$emit('update:form', tableForm)
     },
     change() {
-      const { form, prop } = this
+      const { form, prop, column } = this
       const operator = form.type
       let content = this.form[prop]
       if (Array.isArray(content) && isDate(content[0])) {
@@ -88,8 +88,8 @@ export default {
       } else if (isDate(content)) {
         content = new Date(content).getTime()
       }
-      const type = this.column.search.type || null
-      this.$emit('change', { field: prop, operator, content, type })
+      const type = column.search.type || null
+      this.$emit('change', { column, field: prop, operator, content, type })
     },
     init() {
       const { prop } = this
