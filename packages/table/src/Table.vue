@@ -391,7 +391,8 @@ export default {
       return style
     },
     afterData() {
-      const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig: { remote = true }} = this
+      const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
+      const { remote = true, searchMethod } = searchConfig
       const isRemote = remote !== false
       let data = tableData.slice(0)
       // 筛选数据
@@ -405,7 +406,7 @@ export default {
               const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
               const cellValue = cell ? cell.innerText : value
               if (filterMethod) {
-                return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
+                return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, prop, $table: this }))
               }
               return values.some(d => cellValue.indexOf(d) > -1)
             }
@@ -415,11 +416,15 @@ export default {
           const searchFilter = () => searchForm.every(item => {
             if (isRemote) return true
             const { column, content, field: prop } = item
-            const { columnId } = column
+            const { columnId, search } = column
             const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
             const value = XEUtils.get(row, prop)
             const cellValue = cell ? cell.innerText : value
             const values = XEUtils.isArray(content) ? content : [content]
+            const searchFn = search.searchMethod || searchMethod
+            if (searchFn) {
+              return values.some(value => searchFn({ value, cellValue, row, column, prop, $table: this }))
+            }
             return values.some(d => ('' + cellValue).indexOf('' + d) > -1)
           })
           return filterFunc() && searchFilter()

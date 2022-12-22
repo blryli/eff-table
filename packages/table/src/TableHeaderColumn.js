@@ -124,7 +124,8 @@ export default {
           return d
         })
       } else {
-        message = [...new Set(tableData.map(d => getFieldValue(d, prop)))].map(value => {
+        message = [...new Set(tableData.map(d => getFieldValue(d, prop)))].map(val => {
+          const value = val.toString()
           if (!value) return null
           return { label: value, value, checked: false }
         })
