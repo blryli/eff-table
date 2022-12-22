@@ -20,6 +20,7 @@
           v-model="columns"
           :data="data"
           search
+          :search-config="{remote: false}"
           border
         />
       </div>
@@ -403,14 +404,15 @@ export default {
         }
       ],
       data: [
-        { id: 1, name: '张三', sex: '男', age: '20', phone: '13715201314' },
-        { id: 2, name: '李四', sex: '女', age: '25', phone: '13715201314' },
-        { id: 3, name: '王五', sex: '男', age: '32', phone: '13715201314' },
-        { id: 4, name: '赵六', sex: '男', age: '18', phone: '13715201314' }
+        { id: 1, name: '张三', sex: '1', age: '20', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '2', age: '25', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '1', age: '32', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '1', age: '18', phone: '13715201314' }
       ],
       tableOptions: {
         maxHeight: 400,
         search: true,
+        searchConfig: { remote: false },
         border: true,
         data: [
           { id: 1, name: '张三', sex: '1', phone: '13715201314', date: 1622476800000, vaccination: '1' },

@@ -406,26 +406,27 @@ export default {
               const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
               const cellValue = cell ? cell.innerText : value
               if (filterMethod) {
-                return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, prop, $table: this }))
+                return filterMethod({ value, option: filter, cellValue, row, column, prop, $table: this })
               }
-              return values.some(d => cellValue.indexOf(d) > -1)
+              return values.includes(cellValue)
             }
             return true
           })
           // 前端搜索过滤
-          const searchFilter = () => searchForm.every(item => {
+          const searchFilter = () => searchForm.every(option => {
             if (isRemote) return true
-            const { column, content, field: prop } = item
-            const { columnId, search } = column
-            const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
-            const value = XEUtils.get(row, prop)
-            const cellValue = cell ? cell.innerText : value
+            const { column, content } = option
+            const { search, prop } = column
+            const rowValue = XEUtils.get(row, prop)
             const values = XEUtils.isArray(content) ? content : [content]
             const searchFn = search.searchMethod || searchMethod
-            if (searchFn) {
-              return values.some(value => searchFn({ value, cellValue, row, column, prop, $table: this }))
+            if (values.length) {
+              if (searchFn) {
+                return searchFn({ rowValue, value: content, row, column, prop, option })
+              }
+              return values.some(d => ('' + rowValue).indexOf('' + d) > -1)
             }
-            return values.some(d => ('' + cellValue).indexOf('' + d) > -1)
+            return true
           })
           return filterFunc() && searchFilter()
         })

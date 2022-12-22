@@ -72,7 +72,7 @@ export default {
         operator: false, // boolean 范围符号
         operatorDefault: 'like', // string 默认类型
         prop: '', // 搜索字段名，不填默认使用column.prop
-        searchMethod: null, // function({ value, cellValue, row, column, prop, $table }) 自定义搜索方法
+        searchMethod: null, // function({ rowValue, value, row, column, prop, option }) 自定义搜索方法
         type: '' // string 扩展字段
       }
 
@@ -430,7 +430,7 @@ export default {
 `
   {
     remote: true, // boolean 是否统一使用远程排序
-    searchMethod: null, // function({ value, cellValue, row, column, prop, $table }) 自定义搜索方法，需要监听 search-change 事件
+    searchMethod: null, // function({ rowValue, value, row, column, prop, option }) 自定义搜索方法，需要监听 search-change 事件
   }
   `
           },
