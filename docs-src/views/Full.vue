@@ -247,7 +247,8 @@ export default {
             show: true,
             type: 'selection',
             width: 40,
-            fixed: 'left'
+            fixed: 'left',
+            selectable: ({ row }) => row.input === 2
           },
           {
             show: true,

@@ -169,7 +169,10 @@ export default {
     const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) === false : false
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) === true : false
+    if (isDisabled) {
+      if (!table.disableds.includes(rowid)) table.disableds.push(rowid)
+    }
 
     const renderSelection = function() {
       if (subtotal) return ''

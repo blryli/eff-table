@@ -24,7 +24,7 @@ export default {
   },
   render(h) {
     const { table, $slots, load } = this
-    const { buttons = [], showPager, showBorder, changeOver } = table.footerActionConfig
+    const { buttons = [], showPager, showBorder, changeOver } = table.tableFooterConfig
     const { pageNum, pageSize, total } = table.pager
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur

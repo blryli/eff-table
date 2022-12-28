@@ -24,10 +24,10 @@ export default {
   render(h) {
     const render = renderer.get('default').renderDefault
     const { pageNum, pageSize, total, table } = this
-    const { footerActionConfig: { pageConfig = {}} = {}} = table
+    const { tableFooterConfig: { pageConfig = {}} = {}} = table
     const props = Object.assign({
       pageSizes: [10, 50, 100, 200, 300, 400],
-      layout: 'sizes,prev,pager,next,jumper,total',
+      layout: 'total,prev,pager,next,sizes,jumper',
       pagerCount: 5
     }, pageConfig, { currentPage: pageNum, pageSize, total })
 

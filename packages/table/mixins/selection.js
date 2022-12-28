@@ -4,6 +4,7 @@ export default {
   data() {
     return {
       selecteds: [],
+      disableds: [],
       selectionAll: false,
       indeterminate: false,
       isCopyFunc: false
@@ -34,9 +35,9 @@ export default {
   },
   methods: {
     updateSelecteds() {
-      const { selecteds, tableSourceData } = this
+      const { selecteds, tableSourceData, rowId, disableds } = this
       const selectedsLength = selecteds.length
-      const tableDataLength = tableSourceData.length
+      const tableDataLength = tableSourceData.filter(d => !disableds.includes(d[rowId])).length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     },
@@ -75,10 +76,10 @@ export default {
       selectionChange()
     },
     allselectionChange(selected) {
-      const { tableDataMap, selectionChange } = this
+      const { tableDataMap, selectionChange, disableds } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? this.checkedsSet = new Set([...tableDataMap.keys()]) : this.checkedsSet.clear()
+      selected ? this.checkedsSet = new Set([...tableDataMap.keys()].filter(d => !disableds.includes(d))) : this.checkedsSet.clear()
       selectionChange()
       this.$emit('select-all', this.checkeds)
     },

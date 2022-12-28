@@ -51,7 +51,7 @@
       <!-- fixed left  -->
       <div
         v-if="leftWidth && overflowX"
-        :class="['eff-table__fixed-left', scrollLeft ? 'is-scroll--start' : '']"
+        :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
         :style="{width: leftWidth + 'px', height: fixedHeight}"
       >
         <TableHeader
@@ -315,7 +315,7 @@ export default {
       },
       pager: {
         pageNum: 1,
-        pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
+        pageSize: ((this.tableFooterConfig || {}).pageConfig || {}).pageSize || 10
       },
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
@@ -461,8 +461,8 @@ export default {
       return show
     },
     showFooterToolbar() {
-      const { footerActionConfig = {}, $slots } = this
-      const { buttons = [], showPager } = footerActionConfig
+      const { tableFooterConfig = {}, $slots } = this
+      const { buttons = [], showPager } = tableFooterConfig
       return buttons.length || showPager || $slots.footer_action
     },
     isSeniorQuery() {
@@ -542,10 +542,11 @@ export default {
       loadData: false,
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
-      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
-      tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: Object.assign({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
-      tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig)
+      tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
+      tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
+      tableTreeConfig: XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
+      tableFooterConfig: XEUtils.merge(this.$EFF.footerActionConfig, this.footerActionConfig)
     })
     if ((this.data || []).length) {
       this.loadTableData(this.data)
