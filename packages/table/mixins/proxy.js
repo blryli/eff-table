@@ -326,8 +326,8 @@ export default {
       return this.$nextTick().then(() => rowIndex)
     },
     refresh() {
-      const { footerActionConfig = {}} = this
-      const { pageConfig: { pageSizes = [] } = {}} = footerActionConfig || {}
+      const { tableFooterConfig = {}} = this
+      const { pageConfig: { pageSizes = [] } = {}} = tableFooterConfig || {}
       this.$set(this, 'pager', { pageNum: 1, pageSize: pageSizes[0] || 10, total: this.pager.total })
       this.commitProxy('query')
     },

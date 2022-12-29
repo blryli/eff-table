@@ -32,6 +32,7 @@ export default {
     const columnWidth = table.getColumnWidth(column)
     columnStyle.minWidth = columnWidth + 'px'
     columnStyle.maxWidth = columnWidth + 'px'
+    columnStyle['--width'] = columnWidth + 'px'
     if (!column.parent && columnIndex === 0) {
       columnStyle.borderLeft = 0
     }

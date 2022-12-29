@@ -33,7 +33,7 @@ export default {
     const { props, data, injections } = context
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
-    const { type, prop, className, align } = column
+    const { type, prop, className, align, showOverflow } = column
     const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
@@ -64,6 +64,7 @@ export default {
     }
     style.minWidth = columnWidth + 'px'
     style.maxWidth = columnWidth + 'px'
+    style['--width'] = columnWidth + 'px'
     if (columnHeight) {
       style.height = columnHeight + 'px'
       style.zIndex = 1
@@ -169,15 +170,12 @@ export default {
     const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) === true : false
-    if (isDisabled) {
-      if (!table.disableds.includes(rowid)) table.disableds.push(rowid)
-    }
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, column, columnIndex, rowid, cellId }) === true : false
 
     const renderSelection = function() {
       if (subtotal) return ''
       return h(VCheckbox, {
-        props: { value: table.isChecked(row), disabled: isDisabled },
+        props: { value: table.isChecked(row), disabled: isDisabled, rowid },
         key: _rowId,
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
@@ -266,7 +264,7 @@ export default {
 
       let placement = 'top'
 
-      if (textOverflow(cellLabel)) {
+      if (showOverflow !== false && textOverflow(cellLabel)) {
         table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true })
         placement = 'bottom'
       }

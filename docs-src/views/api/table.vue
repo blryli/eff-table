@@ -80,7 +80,9 @@ export default {
 
       sortable: false, // 列是否可排序
 
-      selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
+      showOverflow: true, // 列文本溢出是否隐藏显示...
+
+      selectable: true, // function({ row, rowIndex, rowid, column, columnIndex }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
 
       filter: false,  // boolean  是否开启筛选功能
       filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
