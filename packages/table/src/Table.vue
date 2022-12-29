@@ -290,7 +290,7 @@ export default {
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
-    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    footerActionConfig: { type: Object, default: () => ({}) } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },
   data() {
     return {
@@ -315,7 +315,7 @@ export default {
       },
       pager: {
         pageNum: 1,
-        pageSize: ((this.tableFooterConfig || {}).pageConfig || {}).pageSize || 10
+        pageSize: 10
       },
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
@@ -548,6 +548,10 @@ export default {
       tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
       tableFooterConfig: XEUtils.merge(this.$EFF.footerActionConfig, this.footerActionConfig)
     })
+    const pageConfig = this.tableFooterConfig.pageConfig || {}
+    if (pageConfig.pageSize) {
+      this.pager.pageSize = pageConfig.pageSize
+    }
     if ((this.data || []).length) {
       this.loadTableData(this.data)
     }

@@ -67,7 +67,7 @@ const install = function(Vue, opts = {}) {
     renderMap: opts.renderMap,
     toolbarHeight: opts.toolbarHeight,
     headerRowHeight: opts.headerRowHeight,
-    footerActionConfig: opts.footerActionConfig
+    footerActionConfig: opts.footerActionConfig || {}
   }
 }
 

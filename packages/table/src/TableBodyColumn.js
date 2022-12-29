@@ -134,7 +134,7 @@ export default {
 
     // 处理class
     const sourceRow = updateList.find(d => {
-      return d.$old[rowId] === row[rowId]
+      return d.$old[rowId] === _rowId
     })
     const { message } = props.message || {}
 
@@ -167,15 +167,15 @@ export default {
       style.paddingLeft = treeFloor * 28 + 'px'
     }
     // row[columnIndex] summary合计列
-    const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
+    const cellId = `${tableId}-${_rowId}-${column.columnId}`
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, column, columnIndex, rowid, cellId }) === true : false
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, column, columnIndex, rowid: _rowId, cellId }) === true : false
 
     const renderSelection = function() {
       if (subtotal) return ''
       return h(VCheckbox, {
-        props: { value: table.isChecked(row), disabled: isDisabled, rowid },
+        props: { value: table.isChecked(row), disabled: isDisabled, rowid: _rowId },
         key: _rowId,
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
@@ -202,7 +202,7 @@ export default {
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
-        const sourceRow = table.tableDataMap.get(row[rowId]) || {}
+        const sourceRow = table.tableDataMap.get(_rowId) || {}
         const params = { root: table, table, vue, data: row, row, rowid: _rowId, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {
@@ -241,7 +241,7 @@ export default {
         return renderCell(cellRender)
       }
     }
-    const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
+    const rowExpanded = table.expands.find(d => d.rowId === _rowId) || {}
     const expandClick = function(e) {
       !disabled && table.toggleRowExpand(row)
     }

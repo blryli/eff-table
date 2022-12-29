@@ -2,7 +2,7 @@ import XEUtils from 'xe-utils'
 import { getType } from 'pk/utils'
 let row_id = 100
 export default {
-  created() {
+  mounted() {
     const { request } = this.proxyConfig || {}
     request && this.commitProxy('query')
   },

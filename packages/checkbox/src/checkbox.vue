@@ -24,19 +24,22 @@ export default {
     value(val) {
       this.isChecked = val
     },
-    disabled(val) {
-      const { table, rowid } = this
-      if (!table || !rowid) return
-      if (val) {
-        if (!table.disableds.includes(rowid)) table.disableds.push(rowid)
-      } else {
-        if (table.disableds.includes(rowid)) {
-          const index = table.disableds.findIndex(d => d === rowid)
-          if (index > -1) {
-            table.disableds.splice(index, 1)
+    disabled: {
+      handler(val) {
+        const { table, rowid } = this
+        if (!table || !rowid) return
+        if (val) {
+          if (!table.disableds.includes(rowid)) table.disableds.push(rowid)
+        } else {
+          if (table.disableds.includes(rowid)) {
+            const index = table.disableds.findIndex(d => d === rowid)
+            if (index > -1) {
+              table.disableds.splice(index, 1)
+            }
           }
         }
-      }
+      },
+      immediate: true
     }
   },
   methods: {
