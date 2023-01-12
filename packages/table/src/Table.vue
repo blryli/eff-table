@@ -259,6 +259,7 @@ export default {
     stripe: Boolean, // 是否带有斑马线
     highlightCurrentRow: Boolean, // 是否高亮显示行
     showOverflowTooltip: Boolean, // 是否单元格文本不换行，溢出文本用提示框展示
+    focusToSelect: Boolean, // 编辑时聚焦是否全选
     loading: Boolean, // 是否显示表格loading效果
     headerContextmenu: { type: Boolean, default: true }, // 表头右键扩展菜单
     rowClassName: { type: [String, Function], default: '' }, // 行的 className
@@ -533,20 +534,22 @@ export default {
     }
   },
   created() {
-    const { seniorQueryConfig } = this
+    const { seniorQueryConfig, $EFF } = this
     const { fieldList } = seniorQueryConfig
+    const { footerActionConfig, focusToSelect } = $EFF
     this.seniorQueryList = fieldList
 
     this.tableColumns = getComColumns(this.columns)
     Object.assign(this, {
       loadData: false,
+      tableFocusToSelect: this.focusToSelect || !!focusToSelect,
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
       tableTreeConfig: XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
       tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
-      tableFooterConfig: XEUtils.merge(this.$EFF.footerActionConfig, this.footerActionConfig)
+      tableFooterConfig: XEUtils.merge({}, footerActionConfig, this.footerActionConfig)
     })
     const pageConfig = this.tableFooterConfig.pageConfig || {}
     if (pageConfig.pageSize) {

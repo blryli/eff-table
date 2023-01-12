@@ -132,10 +132,12 @@ export default {
     onFocus(component) {
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
       // 聚焦时全选
-      if (this.form.focusTextAllSelected) {
+      if (this.form.formFocusToSelect) {
         if (this.input) {
           this.input.select && this.input.select()
-        } else component && component.select && component.select()
+        } else {
+          component && component.select && component.select()
+        }
       }
     },
     onBlur() {

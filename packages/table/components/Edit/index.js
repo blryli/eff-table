@@ -368,7 +368,7 @@ export default {
           const { elm } = editRender
           on(elm, 'input', fieldChange)
           elm.focus && elm.focus()
-          elm.select && elm.select()
+          table.tableFocusToSelect && elm.select && elm.select()
           return
         }
 
@@ -406,7 +406,7 @@ export default {
 
           this.table.$emit('focus', { prop: column.prop, row: this.row, rowIndex, columnIndex })
         }
-        target && target.select && target.select()
+        table.tableFocusToSelect && target && target.select && target.select()
         const { rowId } = table
 
         // 编辑时的校验提示

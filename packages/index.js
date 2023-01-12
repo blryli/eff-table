@@ -62,13 +62,7 @@ const install = function(Vue, opts = {}) {
     Vue.component(component.name, component)
   })
 
-  Vue.prototype.$EFF = {
-    request: opts.request,
-    renderMap: opts.renderMap,
-    toolbarHeight: opts.toolbarHeight,
-    headerRowHeight: opts.headerRowHeight,
-    footerActionConfig: opts.footerActionConfig || {}
-  }
+  Vue.prototype.$EFF = opts
 }
 
 if (typeof window !== 'undefined' && window.Vue) {

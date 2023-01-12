@@ -8,7 +8,6 @@
 
 <script>
 import Document from '../../components/Document.vue'
-
 export default {
   name: 'TableApi',
   components: {
@@ -17,6 +16,102 @@ export default {
   data() {
     return {
       documentForm: {
+        global: [
+          {
+            attribute: 'request',
+            explain: '全局接口',
+            type: 'function',
+            choosable: '',
+            default: '',
+            code: ``
+          },
+          {
+            attribute: 'renderMap',
+            explain: '全局render使用的组件映射',
+            type: 'object',
+            choosable: '',
+            default: '看左边属性',
+            code: `
+{
+  // element
+  'input': 'el-input',
+  'input-number': 'el-input-number',
+  'textarea': 'el-textarea',
+  'select': 'el-select',
+  'option': 'el-option',
+  'date-picker': 'el-date-picker',
+  'button': 'el-button',
+  'link': 'el-link',
+  'tag': 'el-tag',
+  'image': 'el-image',
+  'popover': 'el-popover',
+  'tooltip': 'el-tooltip',
+  'dropdown': 'el-dropdown',
+  'dialog': 'el-dialog',
+  'switch': 'el-switch',
+  'checkbox': 'el-checkbox',
+  'checkbox-group': 'el-checkbox-group',
+  'pagination': 'el-pagination',
+  'radio': 'el-radio',
+  'radio-group': 'el-radio-group',
+  'cascader': 'el-cascader',
+
+  // 内置组件
+  'popup': 'popup',
+  'help': 'help',
+  'layout': 'layout',
+  'panel': 'panel',
+  'form': 'v-form',
+  'form-item': 'v-form-item',
+  'ciphertext': 'ciphertext' // 加密组件
+}`
+          },
+          {
+            attribute: 'focus-to-select',
+            explain: '全局聚焦时是否全选',
+            type: 'boolean',
+            choosable: '',
+            default: 'false',
+            code: ``
+          },
+          {
+            attribute: 'toolbar-height',
+            explain: '全局配置工具栏高度',
+            type: 'number',
+            choosable: '',
+            default: '30',
+            code: ``
+          },
+          {
+            attribute: 'header-row-height',
+            explain: '全局配置行高度',
+            type: 'number',
+            choosable: '',
+            default: '30',
+            code: ``
+          },
+          {
+            attribute: 'footer-action-config',
+            explain: '底部行配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    showBorder: false // boolean 底部行是否显示边框
+    showPager: false // boolean 是否显示分页
+    pageInLeft: false // boolean 分页是否显示在左侧
+    pageConfig: { // object 分页配置
+      pageNum: 1 // 当前页码
+      pageSize: 10 // 每页显示条目个数
+      total: 10 // 总条数
+      ... // 其余参数参照项目所使用ui库分页组件的配置
+    }
+  }
+  `
+          }
+        ],
         props: [
           {
             attribute: 'columns / v-model',
@@ -152,6 +247,13 @@ export default {
             default: ''
           },
           {
+            attribute: 'header-row-height',
+            explain: 'Table 表头高度',
+            type: 'number',
+            choosable: '',
+            default: ''
+          },
+          {
             attribute: 'max-height',
             explain: 'Table 最大高度',
             type: 'number',
@@ -203,6 +305,13 @@ export default {
           {
             attribute: 'edit',
             explain: '是否开启编辑功能',
+            type: 'boolean',
+            choosable: '',
+            default: 'false'
+          },
+          {
+            attribute: 'focus-to-select',
+            explain: '开启编辑功能时聚焦是否全选文本',
             type: 'boolean',
             choosable: '',
             default: 'false'
@@ -433,6 +542,19 @@ export default {
   {
     remote: true, // boolean 是否统一使用远程排序
     searchMethod: null, // function({ rowValue, value, row, column, prop, option }) 自定义搜索方法，需要监听 search-change 事件
+  }
+  `
+          },
+          {
+            attribute: 'checkbox-config',
+            explain: '复选框配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    showHeader: true, // boolean 是否显示全选按钮
   }
   `
           },

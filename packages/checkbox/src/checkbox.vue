@@ -7,7 +7,7 @@ export default {
     indeterminate: Boolean,
     disabled: Boolean,
     checked: Boolean,
-    rowid: { type: String, default: '' },
+    rowid: { type: [String, Number], default: '' },
     label: { type: [String, Number], default: '' },
     labelWidth: { type: Number, default: 0 }
   },

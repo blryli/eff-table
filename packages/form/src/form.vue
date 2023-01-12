@@ -22,13 +22,13 @@ export default {
     rowledge: { type: String, default: '24px' },
     focusOpen: { type: Boolean, default: true },
     focusOptions: { type: Object, default: () => {} },
-    focusTextAllSelected: { type: Boolean, default: true },
     width: { type: String, default: '' },
     messageType: { type: String, default: '' },
     focusStop: Boolean,
     focusPause: Boolean,
     readonly: Boolean,
-    autofocus: Boolean
+    autofocus: Boolean,
+    focusToSelect: Boolean // 聚焦是否全选
   },
   provide() {
     return {
@@ -59,6 +59,12 @@ export default {
     focusStop(val) {
       this.editIsStop = val
     }
+  },
+  created() {
+    const { focusToSelect } = this.$EFF
+    Object.assign(this, {
+      formFocusToSelect: this.focusToSelect || !!focusToSelect
+    })
   },
   mounted() {
     this.autofocus && this.$nextTick(() => {
