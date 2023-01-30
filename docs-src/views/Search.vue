@@ -20,8 +20,8 @@
           v-model="columns"
           :data="data"
           search
-          :search-config="{remote: false}"
           border
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -41,6 +41,7 @@
       <div class="section-content">
         <eff-table
           v-bind="tableOptions"
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -61,12 +62,12 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          ref="table"
           v-model="columns2"
           :data="data1"
           :max-height="400"
           search
           border
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -563,53 +564,8 @@ export default {
     }
   },
   methods: {
-    updateForm(prop, val) {
-      this.$set(this.form, prop, val)
-    },
     searchChange(val) {
-      // console.log(JSON.stringify(val, null, 2))
-      this.searchData = val
-      let list = [...this.data]
-      if (val.length) {
-        val.forEach(d => {
-          const { field, operator, content } = d
-          list = list.filter(da => {
-            if (Array.isArray(content)) {
-              if (operator === 'like') {
-                return content.includes(da[field])
-              } else {
-                const [start, end] = content
-                return +da[field] > +start && +da[field] < +end
-              }
-            } else {
-              const daValue = da[field]
-              switch (operator) {
-                case 'equals':
-                  return daValue === content
-
-                case 'unequals':
-                  return daValue.indexOf(content) === -1
-
-                case 'less':
-                  return +daValue < +content
-
-                case 'greater':
-                  return +daValue > +content
-
-                case 'lessthan':
-                  return +daValue <= +content
-
-                case 'greaterthan':
-                  return +daValue >= +content
-
-                default:
-                  return daValue.indexOf(content) > -1
-              }
-            }
-          })
-        })
-      }
-      this.list = list
+      console.log('search change', JSON.stringify(val, null, 2))
     }
   }
 }

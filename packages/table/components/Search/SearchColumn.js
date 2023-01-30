@@ -89,7 +89,7 @@ export default {
         content = new Date(content).getTime()
       }
       const type = column.search.type || null
-      this.$emit('change', { column, field: prop, operator, content, type })
+      this.$emit('change', { column, prop, operator, content, type })
     },
     init() {
       const { prop } = this

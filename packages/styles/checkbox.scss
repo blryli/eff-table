@@ -38,18 +38,13 @@
     }
   }
   &-label{
+    color: #333;
     display: inline-block;
-    width: 100%;
     padding-left: 10px;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     box-sizing: border-box;
   }
   &:hover{
-    .eff-table__checkbox-label{
-      color: #409eff
-    }
     .eff-table__checkbox-icon {
       border-color: #409eff;
     }

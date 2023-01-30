@@ -193,6 +193,7 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange'
 import Copy from '../components/Copy'
 import columnBatchControl from '../components/ColumnBatchControl'
+// import ColumnManage from '../components/ColumnManage'
 import Replace from '../components/Replace'
 import EffFilter from '../components/Filter'
 import SeniorQuery from 'pk/senior-query'
@@ -281,6 +282,7 @@ export default {
     copy: Boolean, // 是否开启复制功能
     selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
     editConfig: { type: Object, default: () => {} }, // 编辑配置
+    dragConfig: { type: Object, default: () => {} }, // 编辑配置
     checkboxConfig: { type: Object, default: () => ({}) }, // 编辑配置
     searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
@@ -393,8 +395,7 @@ export default {
     },
     afterData() {
       const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
-      const { remote = true, searchMethod } = searchConfig
-      const isRemote = remote !== false
+      const { remote, searchMethod } = searchConfig
       let data = tableData.slice(0)
       // 筛选数据
       if (filters && filters.length || searchForm.length) {
@@ -415,15 +416,15 @@ export default {
           })
           // 前端搜索过滤
           const searchFilter = () => searchForm.every(option => {
-            if (isRemote) return true
-            const { column, content } = option
-            const { search, prop } = column
+            if (remote) return true
+            const { column, content, prop } = option
+            const { search } = column || {}
             const rowValue = XEUtils.get(row, prop)
             const values = XEUtils.isArray(content) ? content : [content]
-            const searchFn = search.searchMethod || searchMethod
+            const searchFn = search && search.searchMethod || searchMethod
             if (values.length) {
               if (searchFn) {
-                return searchFn({ rowValue, value: content, row, column, prop, option })
+                return searchFn({ rowValue, value: values, row, column, prop, option })
               }
               return values.some(d => ('' + rowValue).indexOf('' + d) > -1)
             }
@@ -546,6 +547,7 @@ export default {
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
       tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
+      tableDragConfig: XEUtils.merge({}, this.dragConfig),
       tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
       tableTreeConfig: XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
       tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
@@ -885,6 +887,14 @@ export default {
     },
     handleCardClose() {
       this.$emit('drag-card-close')
+    },
+    searching(val) {
+      this.clearSearch()
+      this.$nextTick(() => {
+        const data = XEUtils.isObject(val) ? [val] : val
+        this.searchForm = data
+        if (this.proxyConfig && this.searchConfig.remote !== false) this.commitProxy('query')
+      })
     },
     searchChange(val) {
       // console.log('search change', JSON.stringify(val, null, 2))

@@ -61,7 +61,8 @@ export default {
     }
   },
   render(h) {
-    const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave } = this
+    const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave, $slots } = this
+    const content = $slots.default || label
     const labelStyle = {}
     let labelOn = {}
     if (labelWidth) {
@@ -83,7 +84,7 @@ export default {
       on: { click: handleChange }
     }, [
       h('span', { class: 'eff-table__checkbox-icon' }),
-      label ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: labelStyle, on: labelOn }, label) : ''
+      content ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: labelStyle, on: labelOn }, content) : ''
     ])
   }
 }

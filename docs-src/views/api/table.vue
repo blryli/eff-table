@@ -721,6 +721,30 @@ export default {
             default: ``
           },
           {
+            attribute: 'searching',
+            explain: '对表格进行搜索',
+            default: `opts`,
+            code:
+`
+  // opts 为对象
+  {
+    prop: '', // 字段名
+    content: '', string/array // 字段值
+    searchMethod: function // 搜索方法(可选)
+  }
+
+  // opts 为数组
+  [
+    {
+      prop: '', // 字段名
+      content: '', string/array // 字段值
+      searchMethod: function // 搜索方法(可选)
+    },
+    ...
+  ]
+  `
+          },
+          {
             attribute: 'clearSearch',
             explain: '清空搜索条件',
             default: ``
