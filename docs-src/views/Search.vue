@@ -565,7 +565,7 @@ export default {
   },
   methods: {
     searchChange(val) {
-      console.log('search change', JSON.stringify(val, null, 2))
+      console.log('val', JSON.stringify(val, null, 2))
     }
   }
 }

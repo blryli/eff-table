@@ -326,9 +326,7 @@ export default {
       return this.$nextTick().then(() => rowIndex)
     },
     refresh() {
-      const { tableFooterConfig = {}} = this
-      const { pageConfig: { pageSizes = [] } = {}} = tableFooterConfig || {}
-      this.$set(this, 'pager', { pageNum: 1, pageSize: pageSizes[0] || 10, total: this.pager.total })
+      this.$set(this.pager, 'pageNum', 1)
       this.commitProxy('query')
     },
     getInsertList() {

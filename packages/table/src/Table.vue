@@ -417,11 +417,11 @@ export default {
           // 前端搜索过滤
           const searchFilter = () => searchForm.every(option => {
             if (remote) return true
-            const { column, content, prop } = option
+            const { column, content, prop, searchMethod: method } = option
             const { search } = column || {}
             const rowValue = XEUtils.get(row, prop)
             const values = XEUtils.isArray(content) ? content : [content]
-            const searchFn = search && search.searchMethod || searchMethod
+            const searchFn = method || search && search.searchMethod || searchMethod
             if (values.length) {
               if (searchFn) {
                 return searchFn({ rowValue, value: values, row, column, prop, option })
@@ -891,7 +891,7 @@ export default {
     searching(val) {
       this.clearSearch()
       this.$nextTick(() => {
-        const data = XEUtils.isObject(val) ? [val] : val
+        const data = XEUtils.isArray(val) ? val : [val]
         this.searchForm = data
         if (this.proxyConfig && this.searchConfig.remote !== false) this.commitProxy('query')
       })

@@ -730,7 +730,7 @@ export default {
   {
     prop: '', // 字段名
     content: '', string/array // 字段值
-    searchMethod: function // 搜索方法(可选)
+    searchMethod: function({ prop, value, row, column, option }) // 搜索方法(可选)，返回boolean
   }
 
   // opts 为数组
@@ -738,7 +738,7 @@ export default {
     {
       prop: '', // 字段名
       content: '', string/array // 字段值
-      searchMethod: function // 搜索方法(可选)
+      searchMethod: function({ prop, value, row, column, option }) // 搜索方法(可选)，返回boolean
     },
     ...
   ]

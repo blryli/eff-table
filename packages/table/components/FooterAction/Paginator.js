@@ -9,16 +9,16 @@ export default {
     'total'
   ],
   methods: {
-    onSizeChange(e) {
+    onSizeChange(pageSize) {
       this.table.pager.pageNum = 1
-      this.table.pager.pageSize = e
+      this.table.pager.pageSize = pageSize
       this.table.commitProxy('query')
-      this.table.$emit('table-page-num-change', { pageSize: e })
+      this.table.$emit('table-page-num-change', { pageSize })
     },
-    onCurrentChange(e) {
-      this.table.pager.pageNum = e
+    onCurrentChange(pageNum) {
+      this.table.pager.pageNum = pageNum
       this.table.commitProxy('query')
-      this.table.$emit('table-page-size-change', { pageNum: e })
+      this.table.$emit('table-page-size-change', { pageNum })
     }
   },
   render(h) {
