@@ -46,4 +46,5 @@ export default {
     background-color: currentColor;
   }
 }
+
 </style>
