@@ -417,8 +417,9 @@ export default {
           // 前端搜索过滤
           const searchFilter = () => searchForm.every(option => {
             if (remote) return true
-            const { column, content, prop, searchMethod: method } = option
-            const { search } = column || {}
+            const { column, content, prop: optProp, searchMethod: method } = option
+            const { search, prop: colProp } = column || {}
+            const prop = colProp || optProp
             const rowValue = XEUtils.get(row, prop)
             const values = XEUtils.isArray(content) ? content : [content]
             const searchFn = method || search && search.searchMethod || searchMethod
