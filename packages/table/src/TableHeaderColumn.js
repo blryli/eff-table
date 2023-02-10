@@ -19,8 +19,8 @@ export default {
   render(h, context) {
     const { props, data, parent, injections } = context
     const { table } = injections
-    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig } = table
-    const { column, columnIndex, colid, isChecked, isLastColumn } = props
+    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border } = table
+    const { column, columnIndex, bodyColumnIndex, colid, isChecked, isLastColumn } = props
     const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
@@ -33,13 +33,12 @@ export default {
     columnStyle.minWidth = columnWidth + 'px'
     columnStyle.maxWidth = columnWidth + 'px'
     columnStyle['--width'] = columnWidth + 'px'
-    if (!column.parent && columnIndex === 0) {
-      columnStyle.borderLeft = 0
-    }
 
     const { titleClassName, drag, edit, fixed, prop, filter, filters } = column
 
     let columnClass = `eff-table__column`
+    if (border) columnClass += ' is--border'
+    if (bodyColumnIndex === 0) columnClass += ' is--start'
     // 对齐方式
     if (headerAlign) {
       columnClass += ` is--align-${headerAlign || 'left'}`

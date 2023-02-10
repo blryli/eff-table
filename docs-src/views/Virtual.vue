@@ -133,7 +133,7 @@ export default {
   methods: {
     setColumns(val) {
       let num = 1
-      this.tableOptions.columns = [{ type: 'index', width: 60 }].concat(mock.mock({
+      this.tableOptions.columns = [{ type: 'index', width: 60, fixed: 'left' }].concat(mock.mock({
         ['array|' + val]: [
           {
             show: true,

@@ -31,20 +31,19 @@ export default {
   inject: ['table'],
   computed: {
     columnClass() {
-      const { titleClassName } = this.column
+      const { table: { border }, column: { titleClassName }, columnIndex } = this
       let classes = `eff-table__column`
+      if (border) classes += ' is--border'
+      if (columnIndex === 0) classes += ' is--start'
       titleClassName && (classes += ` ${titleClassName}`)
       return classes
     },
     columnStyle() {
-      const { table, column, columnIndex } = this
+      const { table, column } = this
       const style = {}
       const columnWidth = table.getColumnWidth(column)
       style.minWidth = columnWidth + 'px'
       style.maxWidth = columnWidth + 'px'
-      if (columnIndex === 0) {
-        style.borderLeft = 0
-      }
 
       return style
     }

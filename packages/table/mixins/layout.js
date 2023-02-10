@@ -36,11 +36,8 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table__container'
-      const { overflowX, overflowY, border, stripe, heights } = this
+      const { stripe, heights } = this
       const { bodyHeight, dataHeight } = heights
-      overflowX && (tClass += ' is-overflow--x')
-      overflowY && (tClass += ' is-overflow--y')
-      border && (tClass += ' is--border')
       stripe && (tClass += ' is--stripe')
       bodyHeight === dataHeight && (tClass += ' is-bottom--coincide')
       return tClass
@@ -87,17 +84,16 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
-      const { rowHeight } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return rowHeight === 'auto' ? true : bodyHeight && (tableMaxHeight ? dataHeight - 2 > tableMaxHeight : dataHeight - 2 > bodyHeight - overflowXHeight)
+      return bodyHeight && (tableMaxHeight ? dataHeight - 2 > tableMaxHeight : dataHeight - 2 > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
     autoHeight() {
       const { tableRect, height } = this
-      return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 40 : height, 2)
+      return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 20 : height, 2)
     },
     heights() {
       const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, toolbarHeight: tHeight, $EFF: { toolbarHeight: EFFToolbarHeight, HeaderRowHeight: EFFHeaderRowHeight }} = this

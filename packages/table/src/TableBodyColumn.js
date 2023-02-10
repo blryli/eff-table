@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align, showOverflow } = column
-    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
+    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -69,9 +69,6 @@ export default {
       style.height = columnHeight + 'px'
       style.zIndex = 1
     }
-    if (columnIndex === 0) {
-      style.borderLeft = 0
-    }
 
     // 小计
     if (subtotal) {
@@ -79,6 +76,8 @@ export default {
     }
 
     let columnClass = `eff-table__column`
+    if (border) columnClass += ' is--border'
+    if (columnIndex === 0) columnClass += ' is--start'
     // 对齐方式
     if (align) {
       columnClass += ` is--align-${align || 'left'} `

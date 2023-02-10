@@ -115,7 +115,7 @@ export default {
     },
     renderColumns() {
       const { table, bodyColumns } = this
-      const { baseHeight } = table
+      const { baseHeight, border } = table
       const { columns = [], startIndex } = this.getColumnsStore
       let index = startIndex
       const render = (columns, colid = '', parentProp = []) => {
@@ -129,7 +129,7 @@ export default {
           column.columnId = parent
           if (children.length) {
             acc.push(<div class={['eff-table__header-group', table.headerCheckedColumns.some(d => d === column) ? 'is--checked' : '']} data-colid={parent}>
-              <div class='eff-table__header-group-title' style={{ maxHeight: baseHeight + 'px', borderLeft: !column.parent && renderColumnIndex === 0 ? 0 : '' }}>
+              <div class={['eff-table__header-group-title', border ? 'is--border' : '']} style={{ maxHeight: baseHeight + 'px', borderLeft: !column.parent && renderColumnIndex === 0 ? 0 : '' }}>
                 {column.title}
               </div>
               <div class='eff-table__header-group-children'>
@@ -392,7 +392,9 @@ export default {
   },
   render(h) {
     const { table, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, marginLeft, xSpaceWidth, contextmenuList, contextmenuListMethod, contextmenuClick } = this
-    const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }} = table
+    const { showSpace, search, drag, headerContextmenu, heights: { headerHeight }, overflowY } = table
+    let classes = 'eff-table__header-wrapper'
+    if (overflowY) classes += ' is-overflow--y'
     const height = headerHeight + 'px'
     const renderCols = renderColumns()
     // console.log(renderCols)
@@ -406,7 +408,7 @@ export default {
     }
 
     return (
-      <div class='eff-table__header-wrapper'>
+      <div class={classes}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         {
           h('Contextmenu', {
