@@ -47,7 +47,7 @@ export default {
           // 有分页
           const { pageNum, pageSize, total } = data
           this.reloadData(data.list || [])
-          Object.assign(this.pager, { pageNum, pageSize, total })
+          this.pager && Object.assign(this.pager, { pageNum, pageSize, total })
         }
         this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))

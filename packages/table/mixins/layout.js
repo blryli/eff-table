@@ -144,7 +144,7 @@ export default {
     resize() {
       this.$nextTick(() => {
         const { $el, setOverflowX, scrollLeftEvent } = this
-        this.bodyWrapper = this.$refs.body.$el
+        this.bodyWrapper = (this.$refs.body || {}).$el
         this.bodyWrapperWidth = this.getBodyWidth()
         setOverflowX()
         scrollLeftEvent()

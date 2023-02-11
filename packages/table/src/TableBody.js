@@ -149,7 +149,7 @@ export default {
         style.height = height + 'px'
       } else {
         style.paddingLeft = leftWidth + 15 + 'px'
-        style.paddingRight = rightWidth + 'px'
+        style.paddingRight = (Math.max(rightWidth, 15)) + 'px'
       }
       const on = edit ? { mouseenter: () => (editStore.editRow = row) } : {}
 
