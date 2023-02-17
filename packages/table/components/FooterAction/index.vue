@@ -1,12 +1,11 @@
 <script>
 import Paginator from './Paginator.js'
-import ToolbarShrink from 'pk/toolbar-shrink'
 import { renderer, getOn } from 'pk/utils/render'
 import XEUtils from 'xe-utils'
 
 export default {
   name: 'FooterAction',
-  components: { Paginator, ToolbarShrink },
+  components: { Paginator },
   inject: ['table'],
   data() {
     return {
@@ -44,10 +43,10 @@ export default {
           <div class='eff-table__toobar-left'>
             {paginator}
           </div>,
-          <ToolbarShrink list={list} class='eff-table__toobar-right' />
+          <dev list={list} class='eff-table__toobar-right'>{list}</dev>
 
         ] : [
-          <ToolbarShrink list={list} class='eff-table__toobar-left' />,
+          <dev list={list} class='eff-table__toobar-right'>{list}</dev>,
           <div class='eff-table__toobar-right'>
             { paginator}
           </div>

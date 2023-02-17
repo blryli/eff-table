@@ -8,6 +8,24 @@ export default {
 </script>
 <style lang="scss">
 @import './imports.scss';
+.auto-width{
+  .el-select__tags{
+    flex-wrap: nowrap;
+  }
+  .el-select__tags-text{
+    overflow: visible;
+  }
+  .el-select__input{
+    margin-left: 10px;
+  }
+}
+.el-input__value-text{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0;
+}
 .is-overflow--y {
   &.eff-table__header-wrapper,
   &.eff-table__body-wrapper,
@@ -69,5 +87,9 @@ export default {
 .eff-table__expanded{
   background-clip: content-box;
 }
-
+.eff-table__form{
+  .el-button{
+    height: 32px;
+  }
+}
 </style>

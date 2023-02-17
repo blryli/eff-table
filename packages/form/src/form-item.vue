@@ -1,45 +1,39 @@
 <template>
-  <layout
-    :span="span"
-    :style="{ padding: form.itemGutter ? `0 ${form.itemGutter / 2}px` : '', marginBottom: form.rowledge }"
+  <div
+    :class="['v-form-item', span && `span-${span}`, required && 'is-required']"
+    :style="{'--lineHeight': form.lineHeight}"
   >
-    <div
-      class="v-form-item"
-      :class="{'is-required': required}"
-      :style="{'--lineHeight': form.lineHeight}"
-    >
 
-      <PrefixSuffix
-        v-if="title || form.titleAlign === 'top'"
-        ref="title"
-        tag="label"
-        :prefix="titlePrefix"
-        :suffix="titleSuffix"
-        class="v-form-item__title"
-        :style="{ flex: `0 0 ${tWidth}`, height: '32px' }"
+    <PrefixSuffix
+      v-if="title || form.titleAlign === 'top'"
+      ref="title"
+      tag="label"
+      :prefix="titlePrefix"
+      :suffix="titleSuffix"
+      class="v-form-item__title"
+      :style="{ flex: `0 0 ${tWidth}`, height: '32px' }"
+    >
+      <div
+        ref="label"
+        class="v-form-item__title-label"
+        :style="{maxWidth: form.titleAlign === 'top' ? 'auto' : labelWidth + 'px'}"
+        @mouseenter="mouseenter"
+        @mouseleave="mouseleave"
+      >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</div>
+    </PrefixSuffix>
+    <div class="v-form-item__content">
+      <FormField
+        ref="formField"
+        :prop="prop"
+        :rules="rules"
+        @mouseenter="handlerNodeMouseenter"
+        @mouseleave="handlerNodeMouseleave"
       >
-        <div
-          ref="label"
-          class="v-form-item__title-label"
-          :style="{maxWidth: form.titleAlign === 'top' ? 'auto' : labelWidth + 'px'}"
-          @mouseenter="mouseenter"
-          @mouseleave="mouseleave"
-        >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</div>
-      </PrefixSuffix>
-      <div class="v-form-item__content">
-        <FormField
-          ref="formField"
-          :prop="prop"
-          :rules="rules"
-          @mouseenter="handlerNodeMouseenter"
-          @mouseleave="handlerNodeMouseleave"
-        >
-          <slot />
-        </FormField>
-        <div v-if="msgType === 'text' && message" class="v-form-filed--message">{{ message }}</div>
-      </div>
+        <slot />
+      </FormField>
+      <div v-if="msgType === 'text' && message" class="v-form-filed--message">{{ message }}</div>
     </div>
-  </layout>
+  </div>
 </template>
 
 <script>
@@ -74,11 +68,14 @@ export default {
     },
     tWidth() {
       const { titleWidth, form } = this
-      return titleWidth || form.titleWidth || '80px'
+      const width = titleWidth || form.titleWidth
+      if (width === 'auto') return width
+      return width || '80px'
     },
     labelWidth() {
-      const { titleWidth, form, required, titlePrefix, titleSuffix } = this
-      let width = parseInt(titleWidth || form.titleWidth || 80)
+      const { required, titlePrefix, titleSuffix, tWidth } = this
+      if (tWidth === 'auto') return tWidth
+      let width = parseInt(tWidth)
       if (required) width -= 10
       if (titlePrefix) width -= 16
       if (titleSuffix) width -= 16
@@ -95,8 +92,9 @@ export default {
   },
   methods: {
     mouseenter() {
+      if (labelWidth === 'auto') return
       const { form, title, labelWidth, $refs } = this
-      const label = $refs.label
+      const { label } = $refs
       if (getTextWidth(label) > labelWidth) {
         form.tipShow({ reference: label, effect: 'dark', message: title, isFixed: true })
       }
@@ -124,7 +122,6 @@ export default {
   font-size: 12px;
 }
 .v-form-item {
-  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: flex-start;

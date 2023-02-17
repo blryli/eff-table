@@ -12,7 +12,7 @@ export default {
   mixins: [Validator, FocusControl],
   props: {
     data: { type: Object, default: () => ({}) },
-    columns: { type: Array, default: () => ([]) },
+    items: { type: Array, default: () => ([]) },
     direction: { type: String, default: 'row' },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
@@ -122,17 +122,19 @@ export default {
     }
   },
   render(h) {
-    const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts, direction } = this
-    return h('layout', {
+    const { items, titleAlign, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts, direction } = this
+    return h('div', {
       class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : '', direction === 'column' ? 'is--column' : ''],
       style: {
         width: width,
-        'margin-left': itemGutter ? `-${itemGutter / 2}px` : '',
-        'margin-right': itemGutter ? `-${itemGutter / 2}px` : ''
+        'column-gap': itemGutter + 'px',
+        'row-gap': rowledge,
+        'margin-left': -itemGutter + 'px',
+        'margin-right': -itemGutter + 'px'
       }
     },
     [
-      columns.map(column => {
+      items.map(column => {
         const props = Object.assign({}, column, { data, column })
         return h('v-form-item', { props }, [itemRender(column)])
       }),

@@ -34,8 +34,8 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { tableData: { length } = [], useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
-      return !isSpanMethod && length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
+      const { tableData, useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
+      return !isSpanMethod && tableData && tableData.length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this

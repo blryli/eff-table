@@ -371,38 +371,16 @@ export default {
         label: '2'
       }],
       columns: [
-        {
-          show: true,
-          prop: 'id',
-          title: 'ID'
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          search: true
-        },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别',
+        { type: 'selection' },
+        { prop: 'id', title: 'ID' },
+        { prop: 'name', title: '名字', search: true },
+        { prop: 'sex', title: '性别',
           config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
           search: true
         },
-        {
-          show: true,
-          prop: 'age',
-          title: '年龄',
-          search: {
-            operator: true
-          }
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          search: true
-        }
+        { prop: 'age', title: '年龄', search: { operator: true }},
+        { prop: 'phone', title: '手机', search: true },
+        { title: '操作', cellRender: (h, { row }) => <el-button type='text' on-click={() => (this.data = this.data.filter(d => d.id !== row.id))}>删除</el-button> }
       ],
       data: [
         { id: 1, name: '张三', sex: '1', age: '20', phone: '13715201314' },

@@ -16,7 +16,9 @@ import ciphertext from './ciphertext'
 import Transfer from './transfer'
 import SeniorQuery from './senior-query'
 
-const directives = []
+import AutoWidth from './directives/auto-width'
+
+const directives = [AutoWidth]
 const components = [
   Table,
   Popup,

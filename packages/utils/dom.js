@@ -198,15 +198,15 @@ export const onMousemove = function(fns) {
   on(document, 'mousemove', handleMouseMove)
   on(document, 'mouseup', handleMouseUp)
 }
+export const getStyle = function(elem, prop) {
+  return window.getComputedStyle(elem, null).getPropertyValue(prop)
+}
 
 /**
  * * 获取节点文本宽度
  * @param {node} node
  */
 export const getTextWidth = function(node) {
-  function getStyle(elem, prop) {
-    return window.getComputedStyle(elem, null).getPropertyValue(prop)
-  }
   const range = document.createRange()
   range.setStart(node, 0)
   range.setEnd(node, node.childNodes.length)

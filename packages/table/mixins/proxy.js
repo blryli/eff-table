@@ -12,7 +12,7 @@ export default {
       // console.log('commitProxy', code)
       const { add, insert, focus, triggerPending, checkoutSelectType } = this
       const { request } = this.proxyConfig || {}
-      const { query, delete: deleted, save } = request || {}
+      const { query, delete: deleted, save, queryTemplate, saveTemplate, deleteTemplate } = request || {}
       const code = ags[0]
       const codes = [
         { code: 'add', fn: () => add() },
@@ -24,6 +24,9 @@ export default {
         { code: 'remove_check_row', fn: () => this.removeCheckRow() },
         { code: 'query', fn: () => query && typeof query === 'function' ? this.query(query) : this.loadTableData() },
         { code: 'save', fn: () => save && typeof save === 'function' && this.save(save) },
+        { code: 'query_template', fn: () => queryTemplate && typeof queryTemplate === 'function' && this.queryTemplate(queryTemplate) },
+        { code: 'save_template', fn: () => saveTemplate && typeof saveTemplate === 'function' && this.saveTemplate(saveTemplate) },
+        { code: 'delete_template', fn: () => deleteTemplate && typeof deleteTemplate === 'function' && this.deleteTemplate(deleteTemplate) },
         { code: 'checkout_select_type', fn: () => checkoutSelectType() },
         { code: 'refresh', fn: () => this.refresh() }
       ]
@@ -54,10 +57,12 @@ export default {
       }).catch(e => {
         console.error(e)
         this.loadingClose()
+      }).finally(() => {
+        this.doLayout()
       })
     },
     getList(query) {
-      const { pager: page, sorts, filters, searchForm, seniorQuery } = this
+      const { pager: page, sorts, filters, tForm, searchForm, seniorQuery } = this
       // 配置模式
       if (typeof query === 'object') {
         const formData = Object.assign({}, { form: searchForm })
@@ -75,7 +80,14 @@ export default {
         return this.$EFF.request({ getMethos, url: `${url}/${page.pageSize}/${page.pageNum}`, formData })
       } else if (typeof query === 'function') {
         // 函数模式 seniorQuery
-        const q = query({ page, sorts, filters, form: searchForm, seniorQuery })
+        const form = {}
+        for (const prop in tForm) {
+          if (prop.indexOf('filter_') < 0) {
+            const filterValue = tForm['filter_' + prop]
+            form[prop] = filterValue && filterValue.length ? filterValue : tForm[prop]
+          }
+        }
+        const q = query({ page, sorts, filters, form, lineForm: searchForm, seniorQuery })
         return getType(q) === 'Promise' ? q : new Promise(resolve => resolve(q))
       }
     },

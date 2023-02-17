@@ -382,9 +382,11 @@ export default {
   },
   mounted() {
     this.table.headerLoad = true
-    on(this.$el, 'scroll', this.handleScroll)
     this.$nextTick(() => {
-      this.height = this.$refs.header.offsetHeight
+      const { header } = this.$refs
+      if (!header) return
+      this.height = header.offsetHeight
+      on(this.$el, 'scroll', this.handleScroll)
     })
   },
   beforeDestroy() {

@@ -13,7 +13,15 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <!-- <VForm v-bind="formConfig" /> -->
+    <!-- {{ tableData }}
+    {{ checkeds.map(d => d.id) }}
+    <div>{{ filterList }}</div> -->
+    <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" v-model="tForm" :form-config="formConfig">
+      <slot name="form" />
+      <!-- <v-form-item v-for="(item, idx) in formConfig.items" :key="idx" v-bind="item">
+        <slot :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
+      </v-form-item> -->
+    </TableForm>
     <Toolbar
       v-if="showToolbar"
       ref="toolbar"
@@ -196,6 +204,7 @@ import columnBatchControl from '../components/ColumnBatchControl'
 // import ColumnManage from '../components/ColumnManage'
 import Replace from '../components/Replace'
 import EffFilter from '../components/Filter'
+import TableForm from '../components/TableForm'
 import SeniorQuery from 'pk/senior-query'
 // import Sort from '../components/Sort'
 import XEUtils from 'xe-utils'
@@ -220,7 +229,8 @@ export default {
     FooterAction,
     Replace,
     SeniorQuery,
-    EffFilter
+    EffFilter,
+    TableForm
     // Sort
   },
   mixins: [
@@ -254,7 +264,6 @@ export default {
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
     baseRowHeight: { type: Number, default: 36 }, // 行以外的默认高度
     rowHeight: { type: [Number, String], default: 36 }, // 行高度
-    toolbarHeight: { type: [Number, String], default: 36 }, // 工具栏高度
     headerRowHeight: { type: [Number, String], default: 36 }, // header行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
@@ -287,6 +296,7 @@ export default {
     searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
+    formTemplateConfig: { type: Object, default: () => {} }, // 表单模板配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
@@ -301,6 +311,7 @@ export default {
       tableColumns: [],
       visibleColumns: [],
       fixedColumns: [],
+      tForm: {},
       tableForm: {},
       searchForm: [],
       currentRow: null,
@@ -397,6 +408,7 @@ export default {
       const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
       const { remote, searchMethod } = searchConfig
       let data = tableData.slice(0)
+      const filterList = []
       // 筛选数据
       if (filters && filters.length || searchForm.length) {
         data = data.filter(row => {
@@ -431,8 +443,13 @@ export default {
             }
             return true
           })
-          return filterFunc() && searchFilter()
+          const isFilter = filterFunc() && searchFilter()
+          !isFilter && filterList.push(row[rowId])
+          this.setFilterList(filterList)
+          return isFilter
         })
+      } else {
+        this.setFilterList([])
       }
       // 数据排序
       if (sorts && sorts.length) {
