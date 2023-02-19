@@ -71,8 +71,13 @@ export default {
   }
 }
 
-.is--border:not(.is--start) {
-  border-left: 1px solid #ddd;
+.is--border{
+  &:not(.is--start) {
+    border-left: 1px solid #ddd;
+  }
+  .eff-table__search-empty{
+    border-left: 1px solid #ddd;
+  }
 }
 .eff-table__fixed-right {
   .is--border.is--start{

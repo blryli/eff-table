@@ -14,7 +14,7 @@
     @mousemove="rootMousemove($event)"
   >
     <!-- {{ tableData }}
-    {{ checkeds.map(d => d.id) }}
+    <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
     <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" v-model="tForm" :form-config="formConfig">
       <slot name="form" />
@@ -296,7 +296,7 @@ export default {
     searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
-    formTemplateConfig: { type: Object, default: () => {} }, // 表单模板配置
+    formRequest: { type: Object, default: () => {} }, // 表单代理配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
@@ -911,14 +911,14 @@ export default {
       this.$nextTick(() => {
         const data = XEUtils.isArray(val) ? val : [val]
         this.searchForm = data
-        if (this.proxyConfig && this.searchConfig.remote !== false) this.commitProxy('query')
+        if (this.proxyConfig && this.searchConfig.remote === true) this.commitProxy('query')
       })
     },
     searchChange(val) {
       // console.log('search change', JSON.stringify(val, null, 2))
       this.searchForm = val
       this.$emit('search-change', val)
-      if (this.proxyConfig && this.searchConfig.remote !== false) this.commitProxy('query')
+      if (this.proxyConfig && this.searchConfig.remote === true) this.commitProxy('query')
     },
     dataChange() {
       const { tableData, getEditStore } = this

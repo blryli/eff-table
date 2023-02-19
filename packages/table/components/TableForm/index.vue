@@ -81,6 +81,9 @@ export default {
         this.$emit('input', val)
       }
     },
+    formRequest() {
+      return this.table.formRequest
+    },
     formTemplateConfig() {
       return this.table.formTemplateConfig
     },
@@ -129,11 +132,6 @@ export default {
       showSearchBtn: true, // 是否显示搜索按钮
       isSave: false, // 是否使用保存模板功能
       items: [], // 表单字段集合
-      api: {
-        query: () => Promise.reject('未传入 query 方法'),
-        add: () => Promise.reject('未传入 add 方法'),
-        delete: () => Promise.reject('未传入 deleted 方法')
-      }, // 请求接口
       beforeClear: () => {} // 清空搜索前处理函数
     }, this.formConfig)
     this.isSave && this.queryTamplate()
@@ -158,18 +156,17 @@ export default {
       query && this.query()
     },
     queryTamplate() {
-      const { api } = this
-      api.query().then(res => {
+      const { formRequest, formRequestParams } = this
+      formRequest.query({ formRequestParams }).then(res => {
         this.$set(this, 'list', res)
       }).catch(e => {
         this.$message.error(e)
       })
     },
     addTamplate() {
-      const { saveForm: { title }, form, close } = this
-      const { api } = this
+      const { saveForm: { title }, form, formRequest, formRequestParams, close } = this
       this.$refs.form.validate().then(res => {
-        api.add({ name: title, form }).then(res => {
+        formRequest.add({ name: title, value: form, formRequestParams }).then(res => {
           this.$message.success('保存成功!')
           close()
           this.queryTamplate()
@@ -178,9 +175,9 @@ export default {
         })
       })
     },
-    deleteTamplate(d) {
-      const { api } = this
-      api.delete(d).then(res => {
+    deleteTamplate(row) {
+      const { formRequest, formRequestParams } = this
+      formRequest.delete({ row, formRequestParams }).then(res => {
         this.queryTamplate()
         this.$message({ type: 'success', message: '删除成功!' })
       }).catch(e => {
