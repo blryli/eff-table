@@ -16,11 +16,11 @@
     <!-- {{ tableData }}
     {{ checkeds.map(d => d.id) }}
     <div>{{ filterList }}</div> -->
+    <div v-for="(item, idx) in formConfig.items" :key="idx" v-bind="item">
+      <slot :name="'item_'+item.prop" v-bind="{data: tForm, item}">{{ 'item_'+item.prop }}</slot>
+    </div>
     <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" v-model="tForm" :form-config="formConfig">
       <slot name="form" />
-      <!-- <v-form-item v-for="(item, idx) in formConfig.items" :key="idx" v-bind="item">
-        <slot :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
-      </v-form-item> -->
     </TableForm>
     <Toolbar
       v-if="showToolbar"

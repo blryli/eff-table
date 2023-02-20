@@ -5,12 +5,12 @@
   >
 
     <PrefixSuffix
-      v-if="title || form.titleAlign === 'top'"
+      v-if="showTitle && (title || form.titleAlign === 'top')"
       ref="title"
       tag="label"
       :prefix="titlePrefix"
       :suffix="titleSuffix"
-      class="v-form-item__title"
+      :class="['v-form-item__title', titleBorder && 'is--title-border']"
       :style="{ flex: `0 0 ${tWidth}`, height: '32px' }"
     >
       <div
@@ -49,6 +49,8 @@ export default {
   props: {
     title: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
+    showTitle: { type: Boolean, default: true },
+    titleBorder: Boolean,
     span: { type: Number, default: () => 0 },
     rules: { type: Array, default: () => [] },
     prop: { type: String, default: '' },
@@ -144,6 +146,7 @@ export default {
     color: #606266;
     padding-right: 12px;
     line-height: var(--lineHeight);
+      border: 1px solid transparent;
     box-sizing: border-box;
     &-label{
       display: inline-block;
@@ -151,6 +154,18 @@ export default {
       text-overflow: ellipsis;
       overflow: hidden;
       vertical-align: middle;
+    }
+    &.is--title-border{
+      line-height: 30px;
+      border-color: #ddd;
+      padding-left: 8px;
+      border-radius: 4px 0 0 4px;
+      &+.v-form-item__content{
+        .el-input__inner{
+          margin-left: -1px;
+          border-radius: 0 4px 4px 0;
+        }
+      }
     }
   }
 

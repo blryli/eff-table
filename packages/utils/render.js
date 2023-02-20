@@ -53,7 +53,7 @@ function renderVModel(h, renderOpts, params) {
   }
   const { placeholder } = renderOpts.props || {}
   const attrs = {
-    placeholder: placeholder || '请输入' + (column.title || '内容')
+    placeholder: placeholder || column.title || '请输入'
   }
 
   if (params.row) {
@@ -130,7 +130,7 @@ function renderSelect(h, renderOpts, params, renderType) {
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getFieldValue(data, prop),
-    placeholder: oProps.placeholder || '请选择' + (column.title || ''),
+    placeholder: oProps.placeholder || column.title || '请选择',
     ...oProps
   }
   const { multiple } = props

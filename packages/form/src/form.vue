@@ -33,7 +33,8 @@ export default {
   provide() {
     return {
       form: this,
-      root: this
+      root: this,
+      table: this
     }
   },
   inject: {
@@ -67,8 +68,8 @@ export default {
     })
   },
   mounted() {
-    this.autofocus && this.$nextTick(() => {
-      this.focus()
+    this.$nextTick(() => {
+      this.autofocus && this.focus()
     })
   },
   methods: {

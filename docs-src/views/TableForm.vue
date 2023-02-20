@@ -9,7 +9,12 @@
         <eff-table
           ref="table"
           v-bind="tableOptions"
-        />
+        >
+          <template #item_name="{data}">
+            <el-input v-model="data.name" />
+            <el-button>点位</el-button>
+          </template>
+        </eff-table>
       </div>
     </section>
     <!-- <section class="snippets">
@@ -231,8 +236,8 @@ export default {
           items: [
             { title: '名字', prop: 'name', itemRender: { name: 'input', autoWidth: true }},
             { title: '年龄', prop: 'age', itemRender: { name: 'input', autoWidth: true, props: { controlsPosition: 'right' }}},
-            { title: '性别', prop: 'sex', itemRender: { name: 'select', autoWidth: true, options: [{ sexName: '男', sexValue: '0' }, { sexName: '女', sexValue: '1' }], props: { labelKey: 'sexName', valueKey: 'sexValue', multiple: true, collapseTags: true }}},
-            { title: '爱好', prop: 'hobby', itemRender: { name: 'select', autoWidth: true, options: () => [{ label: '游泳', value: '0' }, { label: '乒乓球', value: '1' }, { label: '到公园跑步', value: '2' }], props: { labelKey: 'label', valueKey: 'value', multiple: true, collapseTags: true }}}
+            { title: '性别', prop: 'sex', showTitle: false, itemRender: { name: 'select', autoWidth: true, options: [{ sexName: '男', sexValue: '0' }, { sexName: '女', sexValue: '1' }], props: { labelKey: 'sexName', valueKey: 'sexValue', multiple: true, collapseTags: true }}},
+            { title: '爱好', prop: 'hobby', titleBorder: true, itemRender: { name: 'select', autoWidth: true, options: () => [{ label: '游泳', value: '0' }, { label: '乒乓球', value: '1' }, { label: '到公园跑步', value: '2' }], props: { labelKey: 'label', valueKey: 'value', multiple: true, collapseTags: true }}}
           ]
         },
         search: true,
