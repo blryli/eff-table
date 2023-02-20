@@ -24,7 +24,7 @@ const api = {
 
 // 配置接口
 EffTable.Table.props.formRequest.default = () => ({
-  query: ({formRequestParams}) => api.query({type: formRequestParams}),
+  query: ({formRequestParams}) => api.query(formRequestParams),
   add: ({name, value, formRequestParams}) => api.add({name, value, type: formRequestParams.type}),
   delete: ({row, formRequestParams}) => api.delete(row)
 })

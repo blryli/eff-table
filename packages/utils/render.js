@@ -27,8 +27,7 @@ export function getOptions(renderOpts, params) {
 
 // 带标签的 children
 function getOptionsRender(h, renderOpts, params, optionName) {
-  const { props = {}} = renderOpts
-  const { labelKey = 'label', valueKey = 'value' } = props
+  const { label: labelKey = 'label', value: valueKey = 'value' } = renderOpts
   return getOptions(renderOpts, params).map(item => h(map.get(optionName), { key: item.value, props: { label: item[labelKey], value: item[valueKey], disabled: Boolean(item.disabled) }}))
 }
 
@@ -389,7 +388,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
 // 标签 tag
 function renderTag(h, renderOpts, params) {
   try {
-    const { labelKey = 'label' } = renderOpts
+    const { label: labelKey = 'label' } = renderOpts
     const { data, prop } = params || {}
     const value = getFieldValue(data, prop)
     if (!value) return ''

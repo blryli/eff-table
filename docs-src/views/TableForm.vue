@@ -10,10 +10,30 @@
           ref="table"
           v-bind="tableOptions"
         >
-          <template #item_name="{data}">
-            <el-input v-model="data.name" />
-            <el-button>点位</el-button>
+          <!-- <template #form="{data}">
+            <v-form-item>
+              <el-input v-model="data.name" v-auto-width />
+            </v-form-item>
+            <v-form-item>
+              <el-select v-model="data.sex" v-auto-width multiple collapse-tags>
+                <el-option v-for="d in sexOptions" :key="d.sexValue" :value="d.sexValue" :label="d.sexName" />
+              </el-select>
+            </v-form-item>
+          </template> -->
+          <!-- <template #item_name="{data}">
+            <el-input v-model="data.name" v-auto-width />
           </template>
+          <template #item_sex="{data, item}">
+            <el-select v-model="data.sex" v-auto-width multiple collapse-tags>
+              <el-option v-for="d in item.options" :key="d.sexValue" :value="d.sexValue" :label="d.sexName" />
+            </el-select>
+          </template> -->
+          <!-- <template #form>
+            <v-form-item>
+              <el-input />
+              <el-button>点位</el-button>
+            </v-form-item>
+          </template> -->
         </eff-table>
       </div>
     </section>
@@ -171,6 +191,7 @@ export default {
       jsCode,
       jsCode1,
       list: [],
+      sexOptions: [{ sexName: '男', sexValue: '0' }, { sexName: '女', sexValue: '1' }],
       tableOptions: {
         border: true,
         height: '100%',
@@ -217,10 +238,10 @@ export default {
           isSave: true,
           formRequestParams: { type: 1 },
           items: [
-            { title: '名字', prop: 'name', itemRender: { name: 'input', autoWidth: true }},
-            { title: '年龄', prop: 'age', itemRender: { name: 'input', autoWidth: true, props: { controlsPosition: 'right' }}},
-            { title: '性别', prop: 'sex', showTitle: false, itemRender: { name: 'select', autoWidth: true, options: [{ sexName: '男', sexValue: '0' }, { sexName: '女', sexValue: '1' }], props: { labelKey: 'sexName', valueKey: 'sexValue', multiple: true, collapseTags: true }}},
-            { title: '爱好', prop: 'hobby', titleBorder: true, itemRender: { name: 'select', autoWidth: true, options: () => [{ label: '游泳', value: '0' }, { label: '乒乓球', value: '1' }, { label: '到公园跑步', value: '2' }], props: { labelKey: 'label', valueKey: 'value', multiple: true, collapseTags: true }}}
+            { title: '名字', prop: 'name', itemRender: { name: 'input', directives: [{ name: 'auto-width' }] }},
+            { title: '年龄', prop: 'age', itemRender: { name: 'input', directives: [{ name: 'auto-width' }], props: { controlsPosition: 'right' }}},
+            { title: '性别', prop: 'sex', showTitle: false, options: () => this.sexOptions, label: 'sexName', value: 'sexValue', itemRender: { name: 'select', directives: [{ name: 'auto-width' }], props: { multiple: true, collapseTags: true }}},
+            { title: '爱好', prop: 'hobby', titleBorder: true, options: () => [{ label: '游泳', value: '0' }, { label: '乒乓球', value: '1' }, { label: '到公园跑步', value: '2' }], itemRender: { name: 'select', directives: [{ name: 'auto-width' }], props: { multiple: true, collapseTags: true }}}
           ]
         },
         search: true,

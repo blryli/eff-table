@@ -75,7 +75,7 @@ export default {
   methods: {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
-      const { prop, itemRender, format } = column
+      const { prop, itemRender, options, label = 'label', value = 'value', format } = column
       if (readonly) return XEUtils.get(data, prop)
       const params = { root: this, table, row: data, form: this, vue: this, data, column, prop }
       // 处理format
@@ -85,7 +85,7 @@ export default {
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {
-        const renderOpts = Object.assign({ name: 'input' }, itemRender)
+        const renderOpts = Object.assign({ name: 'input', options, label, value }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
         if (compConf) {
@@ -135,9 +135,11 @@ export default {
       }
     },
     [
-      items.map(column => {
+      $slots.form || items.map(column => {
         const props = Object.assign({}, column, { data, column })
-        return h('v-form-item', { props }, [itemRender(column)])
+        const { prop } = column
+        const slot = $slots['item_' + prop]
+        return h('v-form-item', { props }, [slot || itemRender(column)])
       }),
       $slots.default,
       h('Popover', { ref: 'popover', props: popoverOpts })

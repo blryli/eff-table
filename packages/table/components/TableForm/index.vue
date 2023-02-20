@@ -1,7 +1,11 @@
 <template>
   <div class="eff-table__form">
     <!-- {{ formTemplateConfig }} -->
-    <v-form :items="items" :data="form" :title-width="titleWidth" :item-gutter="itemGutter" rowledge="10px">
+    <v-form :items="$slots.form ? []: items" :data="form" :title-width="titleWidth" :item-gutter="itemGutter" rowledge="10px">
+      <slot v-if="$slots.form" slot="form" name="form" />
+      <template v-for="item in items" v-else>
+        <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" />
+      </template>
       <div class="eff-table__form__query">
         <el-button v-if="showSearchBtn" :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
         <el-popover v-if="isSave" ref="popover" placement="bottom-end" trigger="click">
@@ -91,8 +95,7 @@ export default {
       const tags = []
       const { form, items, getFilterProp } = this
       const getPaths = (renderOpts, arr) => {
-        const { options, props } = renderOpts || {}
-        const { valueKey = 'value', labelKey = 'label' } = props || {}
+        const { options, label: labelKey = 'label', value: valueKey = 'value' } = renderOpts || {}
         const opts = XEUtils.isFunction(options) ? options() : options
         if (opts) {
           return arr.reduce((acc, cur) => {
@@ -113,8 +116,8 @@ export default {
         if (XEUtils.isArray(values) && values.length > 1) {
           if (!form[getFilterProp(prop)]) this.$set(this.form, getFilterProp(prop), [])
           const item = items.find(d => d.prop === prop) || {}
-          const { title, itemRender } = item
-          const paths = getPaths(itemRender, values)
+          const { title } = item
+          const paths = getPaths(item, values)
           tags.push({ title, prop, values, ...paths })
         }
       }
@@ -135,6 +138,7 @@ export default {
       beforeClear: () => {} // 清空搜索前处理函数
     }, this.formConfig)
     this.isSave && this.queryTamplate()
+    this.clear(false)
   },
   updated() {
     this.$nextTick(() => {
@@ -149,9 +153,9 @@ export default {
       this.table.commitProxy('query')
     },
     clear(query = true) {
-      const { beforeClear, field } = this
+      const { beforeClear } = this
       beforeClear && beforeClear()
-      this.$emit('input', Object.assign({ [field]: [] }, this.defaultValue))
+      this.$emit('input', Object.assign({}, this.defaultValue))
       this.$emit('clear')
       query && this.query()
     },

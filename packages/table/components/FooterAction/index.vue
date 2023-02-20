@@ -43,10 +43,10 @@ export default {
           <div class='eff-table__toobar-left'>
             {paginator}
           </div>,
-          <dev list={list} class='eff-table__toobar-right'>{list}</dev>
+          <div list={list} class='eff-table__toobar-right'>{list}</div>
 
         ] : [
-          <dev list={list} class='eff-table__toobar-right'>{list}</dev>,
+          <div list={list} class='eff-table__toobar-right'>{list}</div>,
           <div class='eff-table__toobar-right'>
             { paginator}
           </div>
