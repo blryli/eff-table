@@ -171,11 +171,6 @@ export default {
       jsCode,
       jsCode1,
       list: [],
-      templateId: 3,
-      templateList: [
-        { id: 1, name: '模板1', value: { name: '张三' }},
-        { id: 2, name: '模板2', value: { name: '李四', sex: ['1'] }}
-      ],
       tableOptions: {
         border: true,
         height: '100%',
@@ -220,19 +215,7 @@ export default {
             hobby: []
           },
           isSave: true,
-          api: {
-            query: () => Promise.resolve(this.templateList),
-            add: ({ name, value }) => new Promise(resolve => {
-              this.templateId++
-              this.templateList.push({ id: this.templateId, name, value })
-              resolve()
-            }),
-            delete: (row) => new Promise(resolve => {
-              const index = this.templateList.findIndex(d => d.id === row.id)
-              this.templateList.splice(index, 1)
-              resolve()
-            })
-          },
+          formRequestParams: { type: 1 },
           items: [
             { title: '名字', prop: 'name', itemRender: { name: 'input', autoWidth: true }},
             { title: '年龄', prop: 'age', itemRender: { name: 'input', autoWidth: true, props: { controlsPosition: 'right' }}},
