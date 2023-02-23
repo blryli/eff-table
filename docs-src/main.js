@@ -22,7 +22,7 @@ const api = {
   delete: (row) => Promise.resolve(templateList.splice(templateList.findIndex(d => d.id === row.id), 1))
 }
 
-// 配置接口
+// 配置表单接口
 EffTable.Table.props.formRequest.default = () => ({
   query: ({formRequestParams}) => api.query(formRequestParams),
   add: ({name, value, formRequestParams}) => api.add({name, value, type: formRequestParams.type}),

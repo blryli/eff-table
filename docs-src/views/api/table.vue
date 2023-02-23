@@ -241,8 +241,8 @@ export default {
           },
           {
             attribute: 'height',
-            explain: 'Table 高度',
-            type: 'number',
+            explain: 'Table 高度，字符串只能设置 100%，使表格自适应撑满',
+            type: 'number/string',
             choosable: '',
             default: ''
           },
@@ -262,8 +262,8 @@ export default {
           },
           {
             attribute: 'row-height',
-            explain: 'Table 行高度',
-            type: 'number',
+            explain: 'Table 行高度，字符串只能设置 auto，使用自适应行高',
+            type: 'number/string',
             choosable: '',
             default: '36'
           },
@@ -483,6 +483,47 @@ export default {
   {
     width: null, // number 列默认宽度，当所有列都设置了宽度时，列为固定宽度，宽度之和小于表格宽度时不会自动撑满表格
     sort: [] // 列默认排序
+  }
+  `
+          },
+          {
+            attribute: 'form-config',
+            explain: '表单配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    defaultValue: {}, // object 表单默认值，在表单初始化、重置表单、表单赋值时使用
+    isSave: false, // boolean 是否使用保存搜索模板功能
+    titleWidth: 'auto',
+    itemGutter: 10,
+    showQuery: true, // 是否显示搜索按钮
+    showClear: true, // 是否显示重置按钮
+    beforeClear: () => {} // 点击重置按钮时的前置处理函数
+    formRequest: { // object 使用保存模板时的接口配置，可以在注册eff-table组件时统一设置
+      // 函数在eff-table内调用，这里返回配置好参数的api
+      query: ({ formRequestParams }) => api.query(formRequestParams),
+      add: ({ name, value, formRequestParams }) => api.add(Object.assign({ name, value }, formRequestParams)),
+      delete: ({ row, formRequestParams }) => api.deleted({ type: formRequestParams.type, id: row.id })
+    },
+    formRequestParams: { type: 1 }, // object 保存模板使用的参数
+    items: [ // array 表单字段集， 使用插槽 form 时渲染表单时，items 无效
+      { 
+        title: '名字',
+        prop: 'name',
+        showTitle: true, // boolean 是否显示标题
+        titleBorder: false, // boolean 显示标题时是否使用边框
+        options: [], // array|function 使用select元素时的 option
+        label: 'label', // string 使用select元素时的 labelKey
+        value: 'value', // string 使用select元素时的 valueKey
+        itemRender: { // 使用插槽 item_name 时，itemRender 无效
+          name: 'input',
+          directives: [{ name: 'auto-width' }] // 可以使用自适应宽度指令
+        }
+      }
+    ],
   }
   `
           },
@@ -745,8 +786,23 @@ export default {
   `
           },
           {
+            attribute: 'setForm',
+            explain: '设置表单值，会跟 defaultValue 进行合并覆盖',
+            default: `value`
+          },
+          {
+            attribute: 'setFormFiled',
+            explain: '设置表单字段值',
+            default: `prop, value`
+          },
+          {
+            attribute: 'clearForm',
+            explain: '重置搜索表单，参数 query ，清空后是否执行搜索操作，默认清空后进行搜索',
+            default: `query`
+          },
+          {
             attribute: 'clearSearch',
-            explain: '清空搜索条件',
+            explain: '清空行内搜索条件',
             default: ``
           },
           {

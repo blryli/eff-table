@@ -7,7 +7,7 @@
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" />
       </template>
       <div class="eff-table__form__query">
-        <el-button v-if="showSearchBtn" :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
+        <el-button v-if="showQuery" :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
         <el-popover v-if="isSave" ref="popover" placement="bottom-end" trigger="click">
           <small v-if="!list.length" class="text-gray-500">暂无搜索模板</small>
           <div v-for="(d, i) in list" :key="i" class="eff-table__form__dropdown">
@@ -25,7 +25,7 @@
       <div v-if="isSave">
         <el-button title="保存为查询模板" @click="open">保存</el-button>
       </div>
-      <el-button title="重置查询条件" @click="clear">重置</el-button>
+      <el-button v-if="showClear" title="重置查询条件" @click="clear">重置</el-button>
     </v-form>
     <div v-if="tags.length" class="eff-table__form__tags">
       <div v-for="tag in tags" :key="tag.key" class="eff-table__form__tags-tag">
@@ -131,11 +131,14 @@ export default {
   },
   created() {
     Object.assign(this, {
-      defaultValue: {}, // 默认值
-      showSearchBtn: true, // 是否显示搜索按钮
-      isSave: false, // 是否使用保存模板功能
+      titleWidth: 'auto',
+      itemGutter: 10,
       items: [], // 表单字段集合
-      beforeClear: () => {} // 清空搜索前处理函数
+      defaultValue: {}, // 默认值
+      isSave: false, // 是否使用保存模板功能
+      showQuery: true, // 是否显示搜索按钮
+      showClear: true, // 是否显示重置按钮
+      beforeClear: () => {} // 点击重置按钮时的前置处理函数
     }, this.formConfig)
     this.isSave && this.queryTamplate()
     this.clear(false)
@@ -155,9 +158,12 @@ export default {
     clear(query = true) {
       const { beforeClear } = this
       beforeClear && beforeClear()
-      this.$emit('input', Object.assign({}, this.defaultValue))
+      this.setForm()
       this.$emit('clear')
       query && this.query()
+    },
+    setForm(val) {
+      this.$set(this, 'form', Object.assign({}, this.defaultValue, val || {}))
     },
     queryTamplate() {
       const { formRequest, formRequestParams } = this

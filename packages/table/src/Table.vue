@@ -16,7 +16,7 @@
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
-    <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" v-model="tForm" :form-config="formConfig">
+    <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" ref="tableForm" v-model="tForm" :form-config="formConfig">
       <slot slot="form" name="form" v-bind="{data: tForm, items: formConfig.items}" />
       <template v-for="item in formConfig.items">
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
@@ -188,6 +188,7 @@ import tree from '../mixins/tree'
 import virtual from '../mixins/virtual'
 import expand from '../mixins/expand'
 import shortcutKey from '../mixins/shortcutKey'
+import tForm from '../mixins/tForm'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
@@ -243,7 +244,8 @@ export default {
     expand,
     shortcutKey,
     proxy,
-    tree
+    tree,
+    tForm
   ],
   provide() {
     return {
@@ -311,7 +313,6 @@ export default {
       tableColumns: [],
       visibleColumns: [],
       fixedColumns: [],
-      tForm: {},
       tableForm: {},
       searchForm: [],
       currentRow: null,

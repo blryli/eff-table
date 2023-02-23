@@ -6,6 +6,7 @@ export default {
     return {
       tableRect: null,
       bodyWidth: 0,
+      bodyHeight: 0,
       bodyWrapperWidth: 0,
       screenfullHeight: 0,
       offset: 0,
@@ -86,9 +87,11 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
+      const { bodyHeight: bHeight, rowHeight } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return bodyHeight && (tableMaxHeight ? dataHeight - 2 > tableMaxHeight : dataHeight - 2 > bodyHeight - overflowXHeight)
+      const height = rowHeight === 'auto' ? bHeight : dataHeight
+      return bodyHeight && (tableMaxHeight ? height - 2 > tableMaxHeight : height - 2 > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
@@ -150,6 +153,7 @@ export default {
         const { body } = this.$refs
         if (!body) return
         this.bodyWrapper = body.$el
+        this.bodyHeight = this.bodyWrapper.querySelector('.eff-table__body').offsetHeight
         this.bodyWrapperWidth = this.getBodyWidth()
         setOverflowX()
         scrollLeftEvent()
@@ -169,6 +173,7 @@ export default {
     },
     setTableRect() {
       const tableWrapper = this.$refs.tableWrapper
+      if (!tableWrapper) return
       this.tableRect = tableWrapper.getBoundingClientRect()
     }
   },
