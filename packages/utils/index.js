@@ -15,6 +15,14 @@ export const getRowId = function(table, row) {
 }
 
 /**
+ * * 获取行主键
+ * @param {params} params
+ */
+export const getFormItemTitle = function(title, form) {
+  return XEUtils.isFunction(title) ? title(form) : title
+}
+
+/**
  * * 键盘组合键
  * @param {event} event
  */

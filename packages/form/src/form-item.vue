@@ -5,7 +5,7 @@
   >
 
     <PrefixSuffix
-      v-if="showTitle && (title || form.titleAlign === 'top')"
+      v-if="showTitle && (titleName || form.titleAlign === 'top')"
       ref="title"
       tag="label"
       :prefix="titlePrefix"
@@ -19,7 +19,7 @@
         :style="{maxWidth: form.titleAlign === 'top' ? 'auto' : labelWidth + 'px'}"
         @mouseenter="mouseenter"
         @mouseleave="mouseleave"
-      >{{ form.titleAlign === 'top' && !title ? '&nbsp;' : title }}</div>
+      >{{ form.titleAlign === 'top' && !titleName ? '&nbsp;' : titleName }}</div>
     </PrefixSuffix>
     <div class="v-form-item__content">
       <FormField
@@ -40,6 +40,8 @@
 import FormField from './form-field'
 import PrefixSuffix from 'pk/prefix-suffix'
 import { getTextWidth } from 'pk/utils/dom'
+import { getFormItemTitle } from 'pk/utils'
+import XEUtils from 'xe-utils'
 export default {
   name: 'VFormItem',
   components: {
@@ -47,7 +49,7 @@ export default {
     PrefixSuffix
   },
   props: {
-    title: { type: String, default: '' },
+    title: { type: [String, Function], default: '' },
     titleWidth: { type: String, default: '' },
     showTitle: { type: Boolean, default: true },
     titleBorder: Boolean,
@@ -62,6 +64,13 @@ export default {
     table: { default: null }
   },
   computed: {
+    titleName() {
+      const { title } = this
+      if (XEUtils.isFunction(title)) {
+        return this.table ? getFormItemTitle(title, this.table.tForm) : getFormItemTitle(title, this.form.data)
+      }
+      return title
+    },
     root() {
       return this.form || this.table
     },
@@ -95,10 +104,10 @@ export default {
   methods: {
     mouseenter() {
       if (labelWidth === 'auto') return
-      const { form, title, labelWidth, $refs } = this
+      const { form, titleName, labelWidth, $refs } = this
       const { label } = $refs
       if (getTextWidth(label) > labelWidth) {
-        form.tipShow({ reference: label, effect: 'dark', message: title, isFixed: true })
+        form.tipShow({ reference: label, effect: 'dark', message: titleName, isFixed: true })
       }
     },
     mouseleave() {

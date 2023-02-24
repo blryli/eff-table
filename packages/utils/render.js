@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
-import { setFieldValue, getFieldValue, isNoValue } from 'pk/utils'
+import { setFieldValue, getFieldValue, isNoValue, getFormItemTitle } from 'pk/utils'
 
 let oldData = null
 
@@ -52,7 +52,7 @@ function renderVModel(h, renderOpts, params) {
   }
   const { placeholder } = renderOpts.props || {}
   const attrs = {
-    placeholder: placeholder || column.title || '请输入'
+    placeholder: placeholder || getFormItemTitle(column.title, table || data) || '请输入'
   }
 
   if (params.row) {
@@ -129,7 +129,7 @@ function renderSelect(h, renderOpts, params, renderType) {
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getFieldValue(data, prop),
-    placeholder: oProps.placeholder || column.title || '请选择',
+    placeholder: oProps.placeholder || getFormItemTitle(column.title, data) || '请选择',
     ...oProps
   }
   const { multiple } = props
@@ -276,7 +276,7 @@ function renderDialog(h, renderOpts, params) {
   const props = {
     visible: edit.dialogVisible,
     modal: false,
-    title: column.title,
+    title: getFormItemTitle(column.title, data),
     addendToBody: true
   }
 

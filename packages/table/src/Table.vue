@@ -16,7 +16,7 @@
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
-    <TableForm v-if="formConfig && formConfig.items && formConfig.items.length" ref="tableForm" v-model="tForm" :form-config="formConfig">
+    <TableForm v-if="formConfig && formConfig.items" ref="tableForm" v-model="tForm" :form-config="formConfig">
       <slot slot="form" name="form" v-bind="{data: tForm, items: formConfig.items}" />
       <template v-for="item in formConfig.items">
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />

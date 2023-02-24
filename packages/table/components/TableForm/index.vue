@@ -59,6 +59,7 @@
 </template>
 <script>
 import XEUtils from 'xe-utils'
+import { getFormItemTitle } from 'pk/utils'
 export default {
   name: 'TableForm',
   props: {
@@ -116,7 +117,7 @@ export default {
         if (XEUtils.isArray(values) && values.length > 1) {
           if (!form[getFilterProp(prop)]) this.$set(this.form, getFilterProp(prop), [])
           const item = items.find(d => d.prop === prop) || {}
-          const { title } = item
+          const title = getFormItemTitle(item.title, form)
           const paths = getPaths(item, values)
           tags.push({ title, prop, values, ...paths })
         }
