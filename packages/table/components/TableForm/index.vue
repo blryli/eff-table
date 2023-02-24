@@ -29,9 +29,9 @@
     </v-form>
     <div v-if="tags.length" class="eff-table__form__tags">
       <div v-for="tag in tags" :key="tag.key" class="eff-table__form__tags-tag">
-        <small>{{ tag.title }}：</small>
+        <small class="eff-table__form__tags-title">{{ tag.title }}：</small>
         <el-checkbox-group :key="form[getFilterProp(tag.prop)][0]" v-model="form[getFilterProp(tag.prop)]" size="mini">
-          <el-checkbox-button v-for="d in tag.paths" :key="d.value" :label="d.value" @click.native="tagClick(d.value, tag.prop)">{{ d.label }}</el-checkbox-button>
+          <el-checkbox-button v-for="d in tag.paths" :key="d.value" :label="d.value" @click.native="throttleClick(d.value, tag.prop)">{{ d.label }}</el-checkbox-button>
           <div class="el-checkbox-button el-checkbox-button el-checkbox-button--mini">
             <div class="el-checkbox-button__inner" title="删除" @click="tagClose(tag)"><i class="el-icon-close" /></div>
           </div>
@@ -143,6 +143,7 @@ export default {
     }, this.formConfig)
     this.isSave && this.queryTamplate()
     this.clear(false)
+    this.throttleClick = XEUtils.throttle(this.tagClick)
   },
   updated() {
     this.$nextTick(() => {
@@ -209,8 +210,10 @@ export default {
       this.query()
     },
     tagClick(value, prop) {
+      const filterProp = this.getFilterProp(prop)
+      const filterValue = this.form[filterProp]
       this.$nextTick(() => {
-        this.$set(this.form, this.getFilterProp(prop), [value])
+        this.$set(this.form, filterProp, filterValue.includes(value) ? [] : [value])
         this.query()
       })
     },
@@ -254,8 +257,20 @@ export default {
       display: flex;
       align-items: center;
     }
+    &-title{
+      min-width: 40px;
+    }
+    .el-checkbox-group{
+      min-width: 100px;
+      border-left: 1px solid #DCDFE6;
+    }
     .el-checkbox-button__inner{
       padding: 5px 8px;
+      border-radius: 0!important;
+      border-left-color: transparent!important;
+    }
+    .el-checkbox-button:first-child.is-checked .el-checkbox-button__inner{
+      border-left-color: #409EFF!important;
     }
     .el-checkbox-button.is-checked .el-checkbox-button__inner{
       color: #409EFF;

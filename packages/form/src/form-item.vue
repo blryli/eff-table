@@ -41,7 +41,6 @@ import FormField from './form-field'
 import PrefixSuffix from 'pk/prefix-suffix'
 import { getTextWidth } from 'pk/utils/dom'
 import { getFormItemTitle } from 'pk/utils'
-import XEUtils from 'xe-utils'
 export default {
   name: 'VFormItem',
   components: {
@@ -66,10 +65,7 @@ export default {
   computed: {
     titleName() {
       const { title } = this
-      if (XEUtils.isFunction(title)) {
-        return this.table ? getFormItemTitle(title, this.table.tForm) : getFormItemTitle(title, this.form.data)
-      }
-      return title
+      return getFormItemTitle(title, this.form.data)
     },
     root() {
       return this.form || this.table
@@ -144,7 +140,6 @@ export default {
   &.is-required .v-form-item__title:before {
     content: "*";
     display: inline-block;
-    line-height: var(--lineHeight);
     color: #f52b2b;
     margin-right: 3px;
   }
@@ -154,7 +149,7 @@ export default {
     font-size: 14px;
     color: #606266;
     padding-right: 12px;
-    line-height: var(--lineHeight);
+    line-height: calc(var(--lineHeight) - 4px);
       border: 1px solid transparent;
     box-sizing: border-box;
     &-label{
@@ -165,7 +160,6 @@ export default {
       vertical-align: middle;
     }
     &.is--title-border{
-      line-height: 30px;
       border-color: #ddd;
       padding-left: 8px;
       border-radius: 4px 0 0 4px;

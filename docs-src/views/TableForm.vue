@@ -353,6 +353,7 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
+              console.log('form', form)
               // 模拟数据
               return [
                 { id: 5, name: '张三', age: '22', sex: '0', sexName: '男', hobby: '0', hobbyName: '游泳' },
