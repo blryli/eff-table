@@ -110,9 +110,6 @@ export default {
   },
   inject: ['table'],
   methods: {
-    sortChange(sort) {
-      this.$emit('sort-change', sort)
-    },
     renderColumns() {
       const { table, bodyColumns } = this
       const { baseHeight, border } = table

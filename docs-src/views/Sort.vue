@@ -4,16 +4,18 @@
     <p class="hint">
       单字段排序<br>
       设置v-model字段的
-      <span class="primary">sortable</span>属性 = <span class="primary">true</span> 开启<br>
-      也可以通过sort(prop, 'asc' || 'desc')方法进行排序
+      <span class="primary">sortable</span>属性 = <span class="primary">true</span> 开启排序<br>
+      可以通过 <span class="primary">sort(prop, 'asc' || 'desc')</span> 方法进行排序<br>
+      也可以通过 <span class="primary">toggleSort(prop)</span> 方法进行循环排序，循环顺序为<span class="primary">['desc', 'asc', '']</span><br>
     </p>
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-bind="tableOptions">
+        <eff-table ref="table" v-bind="tableOptions" @sort-change="sortChange">
           <template slot="toolbar">
-            <el-button @click="$refs.table.sort('age', 'asc')">年龄升序</el-button>
-            <el-button @click="$refs.table.sort('age', 'desc')">年龄降序</el-button>
+            <el-button @click="$refs.table.sort('name', 'asc')">名字升序</el-button>
+            <el-button @click="$refs.table.sort('name', 'desc')">名字降序</el-button>
+            <el-button @click="$refs.table.toggleSort('name')">名字循环切换</el-button>
             <el-button @click="$refs.table.clearSort()">清除排序</el-button>
           </template>
         </eff-table>
@@ -42,7 +44,7 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table v-bind="tableOptions1" />
+        <eff-table v-bind="tableOptions1" @sort-change="sortChange" />
       </div>
     </section>
 
@@ -127,6 +129,7 @@ export default {
             show: true,
             prop: 'name',
             title: '名字',
+            titleSort: true,
             sortable: true
           },
           {
@@ -145,7 +148,6 @@ export default {
       },
       tableOptions1: {
         maxHeight: 400,
-        drag: true,
         border: true,
         sortConfig: { multiple: true },
         toolbarConfig: { batchSort: true },
@@ -178,6 +180,11 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    sortChange(val) {
+      console.log('sorts', JSON.stringify(val, null, 2))
     }
   }
 }

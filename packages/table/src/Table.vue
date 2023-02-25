@@ -37,7 +37,6 @@
           :visible-columns="visibleColumns"
           :body-columns="bodyColumns"
           @dragend="handleDragend"
-          @sort-change="sortChange"
         />
         <TableBody
           ref="body"
@@ -69,7 +68,6 @@
           :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
           fixed="left"
           @dragend="handleDragend"
-          @sort-change="sortChange"
         />
         <TableBody
           ref="leftBody"
@@ -102,7 +100,6 @@
           :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
           fixed="right"
           @dragend="handleDragend"
-          @sort-change="sortChange"
         />
         <TableBody
           ref="rightBody"

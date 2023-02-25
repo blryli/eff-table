@@ -17,11 +17,11 @@ export default {
   inject: ['table'],
   functional: true,
   render(h, context) {
-    const { props, data, parent, injections } = context
+    const { props, data, injections } = context
     const { table } = injections
     const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border } = table
     const { column, columnIndex, bodyColumnIndex, colid, isChecked, isLastColumn } = props
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
+    const { sortable, title, titleSort, titlePrefix, titleSuffix, type, rules = [], headerAlign, titleRender } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
     const renderId = `header-column-${tableId}-${colid}`
@@ -79,16 +79,7 @@ export default {
         on: { change: table.allselectionChange }
       })
     }
-    const titleRender = (h, { column, columnIndex }) => {
-      if (column.titleRender) {
-        if (typeof column.titleRender === 'function') {
-          return column.titleRender(h, { title: column.title, column, columnIndex })
-        } else {
-          console.error('titleRender 必须是函数')
-        }
-      }
-      return false
-    }
+
     const handleMouseenter = () => {
       const cell = document.getElementById(renderId)
       const cellTitle = cell.querySelector('.eff-cell--title')
@@ -102,12 +93,6 @@ export default {
     }
     const handleMouseleave = () => {
       table.$refs.popovers.tipClose()
-    }
-    const sortClick = (order) => {
-      const { sortChange } = parent
-      if (!sortChange) return
-      column.order = column.order && column.order === order ? '' : order
-      sortChange(column)
     }
     // filter
     if (filter) {
@@ -135,7 +120,7 @@ export default {
       table.$refs.filter.toggleTipShow({ reference, showAllways: true, placement: 'bottom', column })
     }
 
-    const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
+    const slot = type === 'expand' ? '' : titleRender ? titleRender(h, { title, column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
 
     const renderHelp = (title, icon) => {
       const { message } = title || {}
@@ -165,7 +150,7 @@ export default {
         {
           XEUtils.isFunction(titlePrefix) ? titlePrefix(h, { column, title, prop }) : renderHelp(titlePrefix, prefixIcon)
         }
-        <span class='eff-cell--title'>{slot}</span>
+        <span class={['eff-cell--title', titleSort && 'is--cursor']} on-click={() => titleSort && !titleRender && table.handleClickSort(column)}>{slot}</span>
         {
           XEUtils.isFunction(titleSuffix) ? titleSuffix({ column, title, prop }) : renderHelp(titleSuffix, suffixIcon)
         }
@@ -173,11 +158,11 @@ export default {
           sortable ? <span class='eff-cell--sort'>
             <i
               class={{ 'eff-cell--sort-asc': true, 'is--active': sortActive('asc') }}
-              on-click={() => sortClick('asc')}
+              on-click={() => table.handleSort(column, 'asc')}
             ></i>
             <i
               class={{ 'eff-cell--sort-desc': true, 'is--active': sortActive('desc') }}
-              on-click={() => sortClick('desc')}
+              on-click={() => table.handleSort(column, 'desc')}
             ></i>
           </span> : ''
         }

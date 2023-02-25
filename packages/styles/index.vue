@@ -97,4 +97,7 @@ export default {
     height: 32px;
   }
 }
+.is--cursor{
+  cursor: pointer;
+}
 </style>
