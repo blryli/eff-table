@@ -129,9 +129,7 @@ export default {
       style: {
         width: width,
         'column-gap': itemGutter + 'px',
-        'row-gap': rowledge,
-        'margin-left': -itemGutter + 'px',
-        'margin-right': -itemGutter + 'px'
+        'row-gap': rowledge
       }
     },
     [
@@ -156,23 +154,6 @@ export default {
   flex-wrap: wrap;
   &.is--column{
     flex-direction: column;
-  }
-  &::before, &::after{
-    display: table;
-    content: "";
-  }
-  &:after{
-    clear: both;
-  }
-
-  &-line{
-    &:before, &:after{
-      display: table;
-      content: "";
-    }
-    &:after {
-      clear: both;
-    }
   }
 
   .is--dirty::before{

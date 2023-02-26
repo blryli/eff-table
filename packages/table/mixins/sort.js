@@ -76,11 +76,11 @@ export default {
       } else {
         // 如果sorts有值并且不是当前column，则置空order
         if (this.sorts.length && !this.sorts.some(d => d === column)) {
-          const oldColumn = this.sorts[0]
+          let oldColumn = this.sorts[0]
           if (oldColumn) {
             const { columnId } = oldColumn
-            const col = this.getColumn(columnId)
-            col.order = ''
+            if (columnId) oldColumn = this.getColumn(columnId)
+            oldColumn.order = ''
           }
         }
         this.sorts = column.order ? [column] : []
