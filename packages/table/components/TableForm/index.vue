@@ -208,10 +208,8 @@ export default {
     tagClose({ prop }) {
       this.form[prop] = []
       this.$set(this.form, this.getFilterProp(prop), [])
-      this.query()
     },
     tagClick(value, prop) {
-      if (!this.tagCheck) return
       const filterProp = this.getFilterProp(prop)
       const filterValue = this.form[filterProp]
       this.$nextTick(() => {

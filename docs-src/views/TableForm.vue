@@ -353,30 +353,34 @@ export default {
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
-              console.log('form', form)
               // 模拟数据
-              return [
-                { id: 5, name: '张三', age: '22', sex: '0', sexName: '男', hobby: '0', hobbyName: '游泳' },
-                { id: 2, name: '李四', age: '18', sex: '1', sexName: '女', hobby: '1', hobbyName: '乒乓球' },
-                { id: 3, name: '王五', age: '24', sex: '0', sexName: '男', hobby: '2', hobbyName: '到公园跑步' },
-                { id: 4, name: '赵六', age: '28', sex: '0', sexName: '男', hobby: '0', hobbyName: '游泳' }
-              ].filter(da => {
-                const list = []
-                for (const prop in form) {
-                  if (prop) {
-                    const val = form[prop]
-                    const values = val ? (Array.isArray(val) ? val : [val]) : []
-                    list.push({ prop, values })
-                  }
-                }
-                return list.every(item => {
-                  const { prop, values } = item
-                  const rowValue = da[prop]
-                  if (values.length) {
-                    return values.some(d => rowValue.indexOf(d) > -1)
-                  }
-                  return true
-                })
+              return new Promise(resolve => {
+                setTimeout(() => {
+                  const data = [
+                    { id: 5, name: '张三', age: '22', sex: '0', sexName: '男', hobby: '0', hobbyName: '游泳' },
+                    { id: 2, name: '李四', age: '18', sex: '1', sexName: '女', hobby: '1', hobbyName: '乒乓球' },
+                    { id: 3, name: '王五', age: '24', sex: '0', sexName: '男', hobby: '2', hobbyName: '到公园跑步' },
+                    { id: 4, name: '赵六', age: '28', sex: '0', sexName: '男', hobby: '0', hobbyName: '游泳' }
+                  ].filter(da => {
+                    const list = []
+                    for (const prop in form) {
+                      if (prop) {
+                        const val = form[prop]
+                        const values = val ? (Array.isArray(val) ? val : [val]) : []
+                        list.push({ prop, values })
+                      }
+                    }
+                    return list.every(item => {
+                      const { prop, values } = item
+                      const rowValue = da[prop]
+                      if (values.length) {
+                        return values.some(d => rowValue.indexOf(d) > -1)
+                      }
+                      return true
+                    })
+                  })
+                  resolve(data)
+                }, 500)
               })
             }
           }

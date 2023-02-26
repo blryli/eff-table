@@ -452,11 +452,13 @@ export default {
       // 数据排序
       if (sorts && sorts.length) {
         const { sortMethod, remote } = sortConfig
-        const sort = sorts.reduce((acc, column) => {
-          const { prop, order } = column
-          return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data, column, prop, order, $table: this })] : [prop, order]])
-        }, [])
-        !remote && sort.length && (data = XEUtils.sortBy(data, sort))
+        if (!remote) {
+          const sort = sorts.reduce((acc, column) => {
+            const { prop, order } = column
+            return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data, column, prop, order, $table: this })] : [prop, order]])
+          }, [])
+          sort.length && (data = XEUtils.sortBy(data, sort))
+        }
       }
       return data
     },
@@ -592,7 +594,7 @@ export default {
         this.$data[key] = null
       }
     },
-    loadTableData(data = this.data, opts = { clearScroll: true }) {
+    loadTableData(data = this.data) {
       const { editStore, rowId, loadData, useExpand } = this
       this.tableData = Object.freeze(XEUtils.mapTree(data, d => {
         !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
@@ -605,7 +607,6 @@ export default {
         this.clearValidate()
       }
       this.updateCache()
-      opts.clearScroll && this.clearScroll()
       this.resize()
       if (!loadData) {
         useExpand && this.initExpand()

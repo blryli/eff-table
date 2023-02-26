@@ -69,7 +69,7 @@ export default {
       }, this.sortColumns)
     },
     sortChange(column, subtotal) {
-      const { sortConfig: { multiple } = {}, getSorts } = this
+      const { sortConfig: { multiple, remote } = {}, getSorts } = this
       if (multiple || subtotal) { // 小计功能要先排序
         this.sorts = getSorts(this.sortColumns)
         this.$emit('sort-change', this.sorts)
@@ -86,6 +86,7 @@ export default {
         this.sorts = column.order ? [column] : []
         this.$emit('sort-change', this.sorts)
       }
+      remote && this.commitProxy('query')
       return this.$nextTick()
     }
   }
