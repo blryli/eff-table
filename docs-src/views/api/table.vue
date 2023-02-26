@@ -496,9 +496,10 @@ export default {
 `
   {
     defaultValue: {}, // object 表单默认值，在表单初始化、重置表单、表单赋值时使用
-    isSave: false, // boolean 是否使用保存搜索模板功能
     titleWidth: 'auto',
     itemGutter: 10,
+    isSave: false, // boolean 是否使用保存搜索模板功能
+    showTags: true, // 数组是否用tags展示
     showQuery: true, // 是否显示搜索按钮
     showClear: true, // 是否显示重置按钮
     beforeClear: () => {} // 点击重置按钮时的前置处理函数

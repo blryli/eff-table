@@ -27,7 +27,7 @@
       </div>
       <el-button v-if="showClear" title="重置查询条件" @click="clear">重置</el-button>
     </v-form>
-    <div v-if="tags.length" class="eff-table__form__tags">
+    <div v-if="showTags && tags.length" class="eff-table__form__tags">
       <div v-for="tag in tags" :key="tag.key" class="eff-table__form__tags-tag">
         <small class="eff-table__form__tags-title">{{ tag.title }}：</small>
         <el-checkbox-group :key="form[getFilterProp(tag.prop)][0]" v-model="form[getFilterProp(tag.prop)]" size="mini">
@@ -110,7 +110,7 @@ export default {
             return acc
           }, { labels: [], paths: [] })
         }
-        return {}
+        return null
       }
       for (const prop in form) {
         const values = form[prop]
@@ -118,7 +118,7 @@ export default {
           if (!form[getFilterProp(prop)]) this.$set(this.form, getFilterProp(prop), [])
           const item = items.find(d => d.prop === prop) || {}
           const title = getFormItemTitle(item.title, form)
-          const paths = getPaths(item, values)
+          const paths = getPaths(item, values) || { paths: values.map(d => ({ value: d, label: d })) }
           tags.push({ title, prop, values, ...paths })
         }
       }
@@ -137,6 +137,7 @@ export default {
       items: [], // 表单字段集合
       defaultValue: {}, // 默认值
       isSave: false, // 是否使用保存模板功能
+      showTags: true, // 数组是否用tags展示
       showQuery: true, // 是否显示搜索按钮
       showClear: true, // 是否显示重置按钮
       beforeClear: () => {} // 点击重置按钮时的前置处理函数
@@ -210,6 +211,7 @@ export default {
       this.query()
     },
     tagClick(value, prop) {
+      if (!this.tagCheck) return
       const filterProp = this.getFilterProp(prop)
       const filterValue = this.form[filterProp]
       this.$nextTick(() => {
