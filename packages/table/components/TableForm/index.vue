@@ -6,8 +6,8 @@
       <template v-for="item in items" v-else>
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" />
       </template>
-      <div class="eff-table__form__query">
-        <el-button v-if="showQuery" :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
+      <div v-if="showQuery" class="eff-table__form__query">
+        <el-button :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
         <el-popover v-if="isSave" ref="popover" placement="bottom-end" trigger="click">
           <small v-if="!list.length" class="text-gray-500">暂无搜索模板</small>
           <div v-for="(d, i) in list" :key="i" class="eff-table__form__dropdown">
@@ -162,7 +162,7 @@ export default {
       const { beforeClear } = this
       beforeClear && beforeClear()
       this.setForm()
-      this.$emit('clear')
+      this.table.$emit('clear-form')
       query && this.query()
     },
     setForm(val) {

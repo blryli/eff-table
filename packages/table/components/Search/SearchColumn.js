@@ -42,8 +42,7 @@ export default {
       const { table, column } = this
       const style = {}
       const columnWidth = table.getColumnWidth(column)
-      style.minWidth = columnWidth + 'px'
-      style.maxWidth = columnWidth + 'px'
+      style.flex = `0 0 ${columnWidth}px`
 
       return style
     }

@@ -30,8 +30,7 @@ export default {
 
     const columnStyle = {}
     const columnWidth = table.getColumnWidth(column)
-    columnStyle.minWidth = columnWidth + 'px'
-    columnStyle.maxWidth = columnWidth + 'px'
+    columnStyle.flex = `0 0 ${columnWidth}px`
     columnStyle['--width'] = columnWidth + 'px'
 
     const { titleClassName, drag, edit, fixed, prop, filter, filters } = column

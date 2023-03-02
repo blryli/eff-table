@@ -28,100 +28,101 @@
     >
       <slot name="toolbar" />
     </Toolbar>
+    <slot name="table" v-bind="{data: tableData}">
+      <div ref="table" :class="tableClass">
+        <div class="eff-table__wrapper">
+          <TableHeader
+            v-if="showHeader"
+            ref="header"
+            :visible-columns="visibleColumns"
+            :body-columns="bodyColumns"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="body"
+            :body-columns="bodyColumns"
+            :data="tableData"
+            :validators="validators"
+            :messages="messages"
+          />
+          <TableFooter
+            v-if="showSummary"
+            ref="footer"
+            :data="tableData"
+            :columns="bodyColumns"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+          />
+        </div>
 
-    <div ref="table" :class="tableClass">
-      <div class="eff-table__wrapper">
-        <TableHeader
-          v-if="showHeader"
-          ref="header"
-          :visible-columns="visibleColumns"
-          :body-columns="bodyColumns"
-          @dragend="handleDragend"
-        />
-        <TableBody
-          ref="body"
-          :body-columns="bodyColumns"
-          :data="tableData"
-          :validators="validators"
-          :messages="messages"
-        />
-        <TableFooter
-          v-if="showSummary"
-          ref="footer"
-          :data="tableData"
-          :columns="bodyColumns"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-        />
+        <!-- fixed left  -->
+        <div
+          v-if="leftWidth && overflowX"
+          :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
+          :style="{width: leftWidth + 'px', height: fixedHeight}"
+        >
+          <TableHeader
+            v-if="showHeader"
+            ref="leftHeader"
+            :visible-columns="rowHeight === 'auto' ? visibleColumns : visibleColumns.filter(d => d.fixed === 'left')"
+            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            fixed="left"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="leftBody"
+            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            :data="tableData"
+            fixed="left"
+            :validators="validators"
+            :messages="messages"
+          />
+          <TableFooter
+            v-if="showSummary"
+            :data="tableData"
+            :columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+            fixed="left"
+          />
+        </div>
+
+        <!-- fixed right  -->
+        <div
+          v-if="rightWidth && overflowX"
+          :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
+          :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
+        >
+          <TableHeader
+            v-if="showHeader"
+            ref="rightHeader"
+            :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
+            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+            fixed="right"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="rightBody"
+            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :data="tableData"
+            :validators="validators"
+            :messages="messages"
+            fixed="right"
+          />
+          <TableFooter
+            v-if="showSummary"
+            :data="tableData"
+            :columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+            fixed="right"
+          />
+        </div>
+
+        <!-- footer存在时的 body 滚动 -->
+        <ScrollX v-if="showSummary && overflowX" />
       </div>
-
-      <!-- fixed left  -->
-      <div
-        v-if="leftWidth && overflowX"
-        :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
-        :style="{width: leftWidth + 'px', height: fixedHeight}"
-      >
-        <TableHeader
-          v-if="showHeader"
-          ref="leftHeader"
-          :visible-columns="rowHeight === 'auto' ? visibleColumns : visibleColumns.filter(d => d.fixed === 'left')"
-          :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-          fixed="left"
-          @dragend="handleDragend"
-        />
-        <TableBody
-          ref="leftBody"
-          :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-          :data="tableData"
-          fixed="left"
-          :validators="validators"
-          :messages="messages"
-        />
-        <TableFooter
-          v-if="showSummary"
-          :data="tableData"
-          :columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-          fixed="left"
-        />
-      </div>
-
-      <!-- fixed right  -->
-      <div
-        v-if="rightWidth && overflowX"
-        :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-        :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
-      >
-        <TableHeader
-          v-if="showHeader"
-          ref="rightHeader"
-          :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
-          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-          fixed="right"
-          @dragend="handleDragend"
-        />
-        <TableBody
-          ref="rightBody"
-          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-          :data="tableData"
-          :validators="validators"
-          :messages="messages"
-          fixed="right"
-        />
-        <TableFooter
-          v-if="showSummary"
-          :data="tableData"
-          :columns="bodyColumns.filter(d => d.fixed ==='right')"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-          fixed="right"
-        />
-      </div>
-
-      <!-- footer存在时的 body 滚动 -->
-      <ScrollX v-if="showSummary && overflowX" />
-    </div>
+    </slot>
     <FooterAction
       v-if="showFooterToolbar"
       ref="footerAction"
@@ -148,29 +149,43 @@
     />
 
     <!-- 批量替换 -->
-    <replace v-if="toolbarConfig.replace" ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
+    <template v-if="toolbarConfig.replace">
+      <replace ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
+    </template>
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
-    <edit v-if="edit" ref="edit" :columns="bodyColumns" />
+    <template v-if="edit">
+      <edit ref="edit" :columns="bodyColumns" />
+    </template>
     <!-- 高级查询 -->
-    <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
+    <template v-if="isSeniorQuery">
+      <SeniorQuery ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
+    </template>
     <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
 
     <!-- 过滤 -->
-    <EffFilter v-if="useFilter" ref="filter" />
+    <template v-if="useFilter">
+      <EffFilter ref="filter" />
+    </template>
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
 
     <!-- expand插槽 -->
-    <slot v-if="false" name="expand" />
+    <template v-if="false">
+      <slot name="expand" />
+    </template>
 
     <Loading :visible="isLoading" />
-    <SelectRange v-if="selectRange || copy" ref="selectRange" />
-    <copy v-if="copy" />
+    <template v-if="selectRange || copy">
+      <SelectRange ref="selectRange" />
+    </template>
+    <template v-if="copy">
+      <copy />
+    </template>
   </div>
 </template>
 
@@ -442,6 +457,7 @@ export default {
             return true
           })
           const isFilter = filterFunc() && searchFilter()
+          // 过滤掉的数据从selection中剔除
           !isFilter && filterList.push(row[rowId])
           this.setFilterList(filterList)
           return isFilter

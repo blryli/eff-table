@@ -62,8 +62,7 @@ export default {
       columnHeight = heights
       table.isSpanMethod = true
     }
-    style.minWidth = columnWidth + 'px'
-    style.maxWidth = columnWidth + 'px'
+    style.flex = `0 0 ${columnWidth}px`
     style['--width'] = columnWidth + 'px'
     if (columnHeight) {
       style.height = columnHeight + 'px'

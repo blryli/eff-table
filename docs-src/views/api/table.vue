@@ -948,6 +948,10 @@ export default {
         ],
         slots: [
           {
+            attribute: 'table',
+            explain: '自定义表格展示内容，不包括表单搜索及表尾'
+          },
+          {
             attribute: 'toolbar',
             explain: '工具栏区域左侧的内容'
           },
@@ -1077,6 +1081,11 @@ export default {
           {
             attribute: 'search-clear-filed',
             explain: '使用默认range范围搜索时，点击清空按钮时触发',
+            default: `{ column, prop }`
+          },
+          {
+            attribute: 'clear-form',
+            explain: '使用默认表单搜索时，点击重置按钮触发',
             default: `{ column, prop }`
           },
           {
