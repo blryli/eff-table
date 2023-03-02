@@ -7,7 +7,11 @@
     </p>
     <section class="demo">
       <div class="section-content">
-        <eff-table v-bind="tableOptions" />
+        <eff-table v-bind="tableOptions">
+          <!-- <template #table="{data}">
+            {{ data }}
+          </template> -->
+        </eff-table>
       </div>
     </section>
     <section class="snippets">
@@ -74,10 +78,6 @@
     <section class="demo">
       <div class="section-content">
         <eff-table v-bind="tableOptions">
-          <!-- 可以部分使用item插槽 -->
-          <!-- <template #item_name="{data}">
-            <el-input v-model="data.name" v-auto-width placeholder="名字" />
-          </template> -->
           <template #item_age="{data}">
             <el-input v-model="data.age" v-auto-width placeholder="年龄" />
           </template>
@@ -350,6 +350,7 @@ export default {
       hobbyOptions: [{ label: '游泳', value: '0' }, { label: '乒乓球', value: '1' }, { label: '到公园跑步', value: '2' }],
       tableOptions: {
         border: true,
+        footerActionConfig: { showPager: true, showBorder: true, pageConfig: { pageSize: 20, pageSizes: [20, 50, 100, 200] }},
         proxyConfig: {
           request: {
             query: ({ page, sorts, filters, form }) => {
@@ -379,7 +380,7 @@ export default {
                       return true
                     })
                   })
-                  resolve(data)
+                  resolve({ list: data, pageNum: 1, pageSize: 10, total: 4 })
                 }, 500)
               })
             }

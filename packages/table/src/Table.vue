@@ -28,8 +28,8 @@
     >
       <slot name="toolbar" />
     </Toolbar>
-    <slot name="table" v-bind="{data: tableData}">
-      <div ref="table" :class="tableClass">
+    <div ref="table" :class="tableClass" :style="tableStyle">
+      <slot name="table" v-bind="{data: tableData}">
         <div class="eff-table__wrapper">
           <TableHeader
             v-if="showHeader"
@@ -121,8 +121,8 @@
 
         <!-- footer存在时的 body 滚动 -->
         <ScrollX v-if="showSummary && overflowX" />
-      </div>
-    </slot>
+      </slot>
+    </div>
     <FooterAction
       v-if="showFooterToolbar"
       ref="footerAction"

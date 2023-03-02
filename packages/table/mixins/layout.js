@@ -45,6 +45,14 @@ export default {
       bodyHeight === dataHeight && (tClass += ' is-bottom--coincide')
       return tClass
     },
+    tableStyle() {
+      const style = {}
+      const { height, $scopedSlots: { table }, heights } = this
+      if (height === '100%' && table) {
+        style.height = heights.tableWrapperHeight + 'px'
+      }
+      return style
+    },
     bodyRenderWidth() {
       const { columnIsVirtual, columnWidths, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
       return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
@@ -119,11 +127,13 @@ export default {
       if (!height && !tableMaxHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
+      const tableWrapperHeight = tableHeight - formHeight - toolbarHeight - footerHeight - footerActionHeight
       return {
-        tableHeight,
-        dataHeight,
         formHeight,
         toolbarHeight,
+        tableWrapperHeight,
+        tableHeight,
+        dataHeight,
         headerHeight,
         searchHeight,
         footerHeight,
@@ -151,13 +161,14 @@ export default {
       this.$nextTick(() => {
         const { $el, setOverflowX, scrollLeftEvent } = this
         const { body } = this.$refs
-        if (!body) return
-        this.bodyWrapper = body.$el
-        this.bodyHeight = this.bodyWrapper.querySelector('.eff-table__body').offsetHeight
-        this.bodyWrapperWidth = this.getBodyWidth()
-        setOverflowX()
-        scrollLeftEvent()
-        this.tableBodyEl = $el.querySelector('.eff-table__body')
+        if (body) {
+          this.bodyWrapper = body.$el
+          this.bodyHeight = this.bodyWrapper.querySelector('.eff-table__body').offsetHeight
+          this.bodyWrapperWidth = this.getBodyWidth()
+          setOverflowX()
+          scrollLeftEvent()
+          this.tableBodyEl = $el.querySelector('.eff-table__body')
+        }
         setTimeout(() => {
           this.setTableRect()
         }, 0)
