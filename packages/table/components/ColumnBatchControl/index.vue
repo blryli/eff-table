@@ -21,17 +21,7 @@
           <span>左固定列</span> <small>({{ subfieldColumns.left.length }})</small>
         </div>
         <div class="eff-column__batch-control--list left" :data-index="0">
-          <template v-for="(d, i) in subfieldColumns.left">
-            <div
-              :key="i"
-              :data-index="i"
-              class="eff-column__batch-control--item"
-              :class="d.show ? 'active' : ''"
-              @click.stop="clickShow(d)"
-            >
-              {{ d.title || d.type }}
-            </div>
-          </template>
+          <VCheckbox v-for="(d, i) in subfieldColumns.left" :key="i" v-model="d.show" class="eff-column__batch-control--item">{{ d.title || d.type }}</VCheckbox>
         </div>
       </div>
       <div class="eff-column__batch-control--center">
@@ -39,17 +29,7 @@
           <span>基础列</span> <small>({{ subfieldColumns.center.length }})</small>
         </div>
         <div class="eff-column__batch-control--list center" :data-index="subfieldColumns.left.length">
-          <template v-for="(d, i) in subfieldColumns.center">
-            <div
-              :key="i"
-              :data-index="i"
-              class="eff-column__batch-control--item"
-              :class="d.show ? 'active' : ''"
-              @click.stop="clickShow(d)"
-            >
-              {{ d.title || d.type }}
-            </div>
-          </template>
+          <VCheckbox v-for="(d, i) in subfieldColumns.center" :key="i" v-model="d.show" class="eff-column__batch-control--item">{{ d.title || d.type }}</VCheckbox>
         </div>
       </div>
       <div class="eff-column__batch-control--right" :style="rightStyle">
@@ -57,17 +37,7 @@
           <span>右固定列</span> <small>({{ subfieldColumns.right.length }})</small>
         </div>
         <div class="eff-column__batch-control--list right" :data-index="subfieldColumns.left.length + subfieldColumns.center.length">
-          <template v-for="(d, i) in subfieldColumns.right">
-            <div
-              :key="i"
-              :data-index="i"
-              class="eff-column__batch-control--item"
-              :class="d.show ? 'active' : ''"
-              @click.stop="clickShow(d)"
-            >
-              {{ d.title || d.type }}
-            </div>
-          </template>
+          <VCheckbox v-for="(d, i) in subfieldColumns.right" :key="i" v-model="d.show" class="eff-column__batch-control--item">{{ d.title || d.type }}</VCheckbox>
         </div>
       </div>
     </div>
@@ -80,10 +50,11 @@ import Sortable from 'pk/utils/sortable'
 import { hasClass } from 'pk/utils/dom'
 import { getSubfieldColumns } from 'pk/utils'
 import XEUtils from 'xe-utils'
+import VCheckbox from 'pk/checkbox'
 
 export default {
   name: 'TablecolumnBatchControl',
-  components: { Card },
+  components: { Card, VCheckbox },
   props: {
     value: { type: Array, default: () => ([]) }
   },
@@ -142,9 +113,6 @@ export default {
       this.$emit('input', this.columns)
       this.close()
       this.table.doLayout()
-    },
-    clickShow(item) {
-      item.show = !item.show
     },
     close() {
       this.show = false
@@ -215,29 +183,9 @@ export default {
     justify-content: center;
   }
   &--item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    padding: 5px 10px;
-    color: #666;
-    border-color: #ccc;
-    background-color: #e5e5e5;
-    margin-right: 10px;
-    margin-right: 10px;
-    font-size: 12px;
-    cursor: default;
-    user-select: none;
-    &.active {
-      color: #fff;
-      border-color: #888;
-      background-color: #888;
-    }
+    margin: 0 10px;
     &.is--draging{
       color: #fff;
-      border-color: #666;
-      background-color: #666;
     }
     &.drag{
       cursor: move;

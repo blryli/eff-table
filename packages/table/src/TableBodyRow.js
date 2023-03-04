@@ -79,8 +79,8 @@ export default {
     ]
 
     const rowStyle = {}
-    const { overflowX, bodyRenderWidth } = table
-    rowStyle.height = rowHeight || table.rowHeight + 'px'
+    const { overflowX, bodyRenderWidth, _rowHeight, baseHeight } = table
+    rowStyle.height = summary ? baseHeight + 'px' : rowHeight === 'auto' ? '' : _rowHeight + 'px'
     if (overflowX && !fixed) {
       rowStyle.width = bodyRenderWidth + 'px'
     }

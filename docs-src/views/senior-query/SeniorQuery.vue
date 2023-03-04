@@ -102,6 +102,11 @@ const jsCode = `
           }
         ]
       }
+    },
+    methods: {
+      handleSeniorQuery(seniorQuery) {
+        console.log('seniorQuery', JSON.stringify(seniorQuery, null, 2))
+      }
     }
   }
   `
@@ -124,6 +129,8 @@ export default {
           fieldChildType: '', // 字段子类型，如果字段类型是Object或者Array则子类型必填
           operateTypeList: [{ label: '等于', value: '=' }, { label: '不包含', value: 'not in' }], // 操作类型
           componentType: 'input', // 组件类型（input，select）
+          componentProps: { type: 'textarea' },
+          usePopup: true,
           dataSourceType: 0, // 数据源类型（0：无数据源，1：静态数据源，2：接口数据源）
           requestParam: '', // 请求要携带的参数名
           sourceType: 'query', // static为静态数据，query是模糊查询

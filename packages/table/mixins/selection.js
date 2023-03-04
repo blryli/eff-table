@@ -4,6 +4,8 @@ export default {
   data() {
     return {
       selecteds: [],
+      disableds: [],
+      filterList: [],
       selectionAll: false,
       indeterminate: false,
       isCopyFunc: false
@@ -15,13 +17,10 @@ export default {
   computed: {
     checkeds() {
       const { tableDataMap, selecteds } = this
-      return selecteds.map(id => {
-        const mapId = tableDataMap.get(id)
-        if (!mapId) {
-          console.warn(id + ' 不存在于tableData')
-        }
-        return mapId
-      }).filter(d => d)
+      return selecteds.reduce((acc, id) => {
+        const row = tableDataMap.get(id)
+        return row ? acc.concat([row]) : acc
+      }, [])
     }
   },
   watch: {
@@ -36,10 +35,13 @@ export default {
     }
   },
   methods: {
+    setFilterList(filterList) {
+      this.filterList = filterList
+    },
     updateSelecteds() {
-      const { selecteds, tableData } = this
+      const { selecteds, tableSourceData, rowId, disableds, filterList } = this
       const selectedsLength = selecteds.length
-      const tableDataLength = tableData.length
+      const tableDataLength = tableSourceData.filter(d => !disableds.concat(filterList).includes(d[rowId])).length
       this.selectionAll = Boolean(selectedsLength) && selectedsLength === tableDataLength
       this.indeterminate = Boolean(selectedsLength && selectedsLength < tableDataLength)
     },
@@ -78,10 +80,10 @@ export default {
       selectionChange()
     },
     allselectionChange(selected) {
-      const { tableDataMap, selectionChange } = this
+      const { tableDataMap, selectionChange, disableds, filterList } = this
       this.selectionAll = selected
       this.indeterminate = false
-      selected ? this.checkedsSet = new Set([...tableDataMap.keys()]) : this.checkedsSet.clear()
+      selected ? this.checkedsSet = new Set([...tableDataMap.keys()].filter(d => !disableds.concat(filterList).includes(d))) : this.checkedsSet.clear()
       selectionChange()
       this.$emit('select-all', this.checkeds)
     },

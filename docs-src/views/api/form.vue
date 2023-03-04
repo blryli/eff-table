@@ -18,6 +18,16 @@ export default {
   data() {
     return {
       documentForm: {
+        global: [
+          {
+            attribute: 'focus-to-select',
+            explain: '全局聚焦时是否全选',
+            type: 'boolean',
+            choosable: '',
+            default: 'false',
+            code: ``
+          }
+        ],
         props: [
           {
             attribute: 'data',
@@ -131,6 +141,13 @@ export default {
           {
             attribute: 'focus-stop',
             explain: '是否停止聚焦处理，为true时不会抛出事件',
+            type: 'boolean',
+            choosable: '',
+            default: 'false'
+          },
+          {
+            attribute: 'focus-to-select',
+            explain: '聚焦是否全选文本',
             type: 'boolean',
             choosable: '',
             default: 'false'

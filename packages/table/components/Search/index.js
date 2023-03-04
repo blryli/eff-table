@@ -71,9 +71,9 @@ export default {
   },
   methods: {
     change(val) {
-      const { field } = val
+      const { prop } = val
       const { searchData } = this
-      const index = searchData.findIndex(d => d.field === field)
+      const index = searchData.findIndex(d => d.prop === prop)
       index > -1 ? searchData.splice(index, 1, val) : searchData.push(val)
 
       // console.log('handleSearchChange', JSON.stringify(searchData, null, 2))
@@ -96,8 +96,11 @@ export default {
     return <div class='eff-table__search' style={{ height, '--rowHeight': height }}>
       {
         columns.map((column, columnIndex) => {
+          const { prop: searchProp } = column.search || {}
+          const prop = searchProp || column.prop
           return <SearchColumn
-            value={searchData.find(d => d.field === column.prop) || { value: '', type: '' }}
+            value={searchData.find(d => d.prop === prop) || { value: '', type: '' }}
+            prop={prop}
             column={column}
             column-index={columnIndex}
             operators={operators}

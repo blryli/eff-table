@@ -2,18 +2,26 @@
 import Fullscreen from './Fullscreen'
 import EditHistory from './EditHistory'
 import { renderer, getOn } from 'pk/utils/render'
-import ToolbarShrink from 'pk/toolbar-shrink'
 import Icon from 'pk/icon'
 import XEUtils from 'xe-utils'
 
 export default {
   name: 'Toolbar',
-  components: { Fullscreen, EditHistory, ToolbarShrink, Icon },
+  components: { Fullscreen, EditHistory, Icon },
   inject: ['table'],
   data() {
     return {
-      load: true
+      load: true,
+      height: 0
     }
+  },
+  watch: {
+    height(height) {
+      this.table.toolbarHeight = height
+    }
+  },
+  updated() {
+    this.height = this.$el.offsetHeight
   },
   methods: {
     handleColumnControl() {
@@ -32,7 +40,7 @@ export default {
   },
   render(h) {
     const { table, load } = this
-    const { toolbarConfig, search, heights } = table
+    const { toolbarConfig, search } = table
     const { buttons = [], refresh, seniorQuery, columnControl, columnBatchControl, fullscreen, editHistory, replace, subtotal } = toolbarConfig || {}
     // const { multiple } = sortConfig
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
@@ -43,12 +51,13 @@ export default {
       const compConf = renderer.get('default')
       return compConf ? acc.concat(compConf.renderDefault(h, opts, { root: table, table, vue: this, columnIndex: idx })) : acc
     }, []) : ''
-    const list = buttonsRender.concat(this.$slots.default || []) || []
+    const leftList = buttonsRender.concat(this.$slots.default || []) || []
     const replaceClick = () => (table.$refs.replace.show = !table.$refs.replace.show)
+    const idRight = editHistory || subtotal || replace || seniorQuery || refresh || search || columnControl || columnBatchControl || fullscreen
     return (
-      <div class='eff-table__toobar' style={{ height: heights.toolbarHeight + 'px' }}>
-        <ToolbarShrink list={list} class='eff-table__toobar-left' />
-        <div class='eff-table__toobar-right'>
+      <div class='eff-table__toobar'>
+        <div class='eff-table__toobar-left'>{leftList}</div>
+        {idRight ? <div class='eff-table__toobar-right'>
           {
             editHistory && <EditHistory title='编辑记录' /> || ''
           }
@@ -76,7 +85,7 @@ export default {
           {
             fullscreen && <Fullscreen title='全屏' /> || ''
           }
-        </div>
+        </div> : ''}
       </div>
     )
   }
@@ -88,7 +97,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5px;
+  column-gap: 10px;
+  padding: 8px;
   border: 1px solid #ddd;
   border-bottom: 0;
   background-color: #f6f7f8;
@@ -97,15 +107,14 @@ export default {
     height: var(--rowHeight);
     display: flex;
     align-items: center;
-    > * + * {
-      margin-left: 10px;
-    }
+    column-gap: 10px;
+    row-gap: 5px;
   }
   &-left{
     flex: 1;
+    flex-wrap: wrap;
     position: relative;
     overflow: hidden;
-    margin-right: 20px;
   }
   &-gutter{
     position: absolute;
@@ -127,6 +136,9 @@ export default {
         border-color: #ccc;
       }
     }
+  }
+  .el-button+.el-button{
+    margin-left: 0;
   }
 }
 .is--show{

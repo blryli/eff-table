@@ -1,3 +1,4 @@
+const pkg = require('../package.json')
 import Table from './table'
 import VTable from './vTable/src/table'
 import Popup from './popover/src/popup'
@@ -16,7 +17,9 @@ import ciphertext from './ciphertext'
 import Transfer from './transfer'
 import SeniorQuery from './senior-query'
 
-const directives = []
+import AutoWidth from './directives/auto-width'
+
+const directives = [AutoWidth]
 const components = [
   Table,
   Popup,
@@ -35,7 +38,24 @@ const components = [
   SeniorQuery
 ]
 
-export {
+const install = function(Vue, opts = {}) {
+  directives.forEach(directive => {
+    Vue.directive(directive.name, directive)
+  })
+  components.forEach(component => {
+    Vue.component(component.name, component)
+  })
+
+  Vue.prototype.$EFF = opts
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+  install(window.Vue)
+}
+
+export default {
+  version: pkg.version,
+  install,
   Table,
   Popup,
   Layout,
@@ -53,23 +73,3 @@ export {
   Transfer,
   SeniorQuery
 }
-
-const install = function(Vue, opts = {}) {
-  directives.forEach(directive => {
-    Vue.directive(directive.name, directive)
-  })
-  components.forEach(component => {
-    Vue.component(component.name, component)
-  })
-
-  Vue.prototype.$EFF = {
-    request: opts.request,
-    renderMap: opts.renderMap
-  }
-}
-
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue)
-}
-
-export default install

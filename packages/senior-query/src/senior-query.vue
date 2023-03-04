@@ -15,7 +15,7 @@
     </template>
     <div class="eff-senior-query--view">
       <span class="eff-senior-query--view-title">预览</span>
-      <Conditions v-model="treeGroup" @remove="removeTreeExpand" />
+      <Conditions v-model="treeGroup" :preview-use-operator="previewUseOperator" @remove="removeTreeExpand" />
     </div>
     <eff-table
       ref="table"
@@ -23,6 +23,7 @@
       :toolbar-config="toolbarConfig"
       :tree-config="tableTreeConfig"
       :max-height="400"
+      row-drag
       edit
       border
       @data-change="dataChange"
@@ -72,12 +73,12 @@ export default {
       name: 'Conditions',
       functional: true,
       render(h, context) {
-        const { props: { value }, listeners } = context
+        const { props: { value, previewUseOperator }, listeners } = context
         const { remove } = listeners
         const getRender = list => {
           return list.reduce((acc, cur) => {
             const { row, code, children, conditionConnector } = cur
-            const connector = conditionConnector ? h('span', { class: 'eff-view-list-connector' }, conditionConnector) : ''
+            const connector = conditionConnector ? h('span', { class: 'eff-view-list-connector' }, previewUseOperator ? conditionConnector : (conditionConnector === '&' ? '与' : '或')) : ''
             if (children) {
               return acc.concat(h('span', {}, [connector, '( ', getRender(children), ' )']))
             } else {
@@ -100,10 +101,13 @@ export default {
     height: { type: Number, default: 500 },
     minWidth: { type: Number, default: 600 },
     minHeight: { type: Number, default: 300 },
-    treeConfig: { type: Object, default: () => {} }
+    treeConfig: { type: Object, default: () => {} },
+    preview: { type: Boolean, default: true },
+    previewUseOperator: Boolean
   },
   data() {
     return {
+      operatorOptions: [],
       columns: [
         {
           type: 'index',
@@ -136,10 +140,25 @@ export default {
         {
           title: '操作符',
           prop: 'operator',
-          config: { name: 'select', options: ({ row }) => {
-            const { operateTypeList = [] } = this.data.find(d => d.fieldName === row.fieldName) || {}
-            return operateTypeList
-          } },
+          config: {
+            name: 'select',
+            options: ({ row }) => {
+              const { operateTypeList = [] } = this.data.find(d => d.fieldName === row.fieldName) || {}
+              return operateTypeList
+            },
+            on: {
+              focus: (e, { row }) => {
+                const { operateTypeList = [] } = this.data.find(d => d.fieldName === row.fieldName) || {}
+                this.operatorOptions = operateTypeList
+              },
+              change: (val, { row }) => {
+                const option = this.operatorOptions.find(d => d.value === val)
+                if (option) {
+                  row.operatorName = option.label
+                }
+              }
+            }
+          },
           edit: { disabled: ({ row }) => {
             return this.hasChildren(row) || !row.fieldName
           } },
@@ -155,11 +174,15 @@ export default {
             disabled: ({ row }) => {
               return this.hasChildren(row) || !row.fieldName
             },
-            render: (h, { row, prop }) => {
+            render: (h, { row, prop, rowIndex, columnIndex }) => {
               const field = this.data.find(d => d.fieldName === row.fieldName) || {}
-              const { fieldType, componentType, dataSourceType, apiSource } = field
-              // 下拉框
-              if (componentType === 'select') {
+              const { fieldType, componentType, componentProps, componentRender, dataSourceType, apiSource, usePopup } = field
+              // 自定义
+              let opts = {}
+              if (componentRender) {
+                if (XEUtils.isFunction(componentRender)) return componentRender(h, { row })
+                opts = Object.assign(componentRender, { name: 'input' })
+              } else if (componentType === 'select') { // 下拉框
                 const props = {}
                 const on = {}
                 if (dataSourceType === 2) { // 动态数据源
@@ -169,7 +192,7 @@ export default {
                     filterable: true,
                     labelKey: label,
                     valueKey: value
-                  })
+                  }, componentProps)
                   // 模糊查询
                   if (sourceType === 'query') {
                     Object.assign(props, {
@@ -184,10 +207,34 @@ export default {
                 if (fieldType === 'array') {
                   Object.assign(props, { multiple: true, 'collapse-tags': true })
                 }
-                return { name: 'select', options: () => field.staticSourceList, props, on }
+                opts = { name: 'select', options: () => field.staticSourceList, props, on }
+              } else if (componentType === 'date') {
+                opts = { name: 'date-picker', props: componentProps }
               } else {
-                return { name: 'input' }
+                opts = { name: 'input', props: componentProps }
               }
+              if (usePopup) {
+                opts = {
+                  name: 'popup',
+                  props: { content: row[prop] },
+                  key: rowIndex + columnIndex,
+                  children: {
+                    name: 'form',
+                    props: {
+                      titleWidth: '40px',
+                      data: row,
+                      autofocus: true,
+                      columns: [
+                        { prop, span: 24, itemRender: { name: componentType, props: componentProps, on: {
+                          input: (val) => this.$set(row, prop, val)
+                        }}}
+                      ]
+                    },
+                    on: { loop: ({ placement }) => this.$refs.table1 && this.$refs.table1.toX(placement) }
+                  }
+                }
+              }
+              return opts
             }
           },
           rules: [
@@ -256,7 +303,9 @@ export default {
           return data.reduce((acc, cur) => {
             const child = cur.children || []
             const { conditionConnector, fieldName, operator, fieldValue } = cur
-            return acc.concat([{ conditionConnector, fieldName, operator, fieldValue, fieldValueList: fieldValue, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
+            // 统一把带回车符的字符串转换成数组
+            const value = XEUtils.isString(fieldValue) && /\n/.test(fieldValue) ? fieldValue.split('\n') : fieldValue
+            return acc.concat([{ conditionConnector, fieldName, operator, fieldValue: value, fieldValueList: value, childConditionList: child.length ? updateSeniorQuery(child) : [] }])
           }, [])
         }
         this.close()
@@ -266,8 +315,13 @@ export default {
       })
     },
     add() {
-      const { insert, focus } = this.table
-      insert({ children: [] }, -1).then(rowIndex => focus(rowIndex))
+      const { table } = this
+      const { insert, focus } = table
+      const row = { children: [] }
+      if (table.tableData.length) {
+        row.conditionConnector = '&'
+      }
+      insert(row, -1).then(rowIndex => focus(rowIndex, 'fieldName'))
     },
     addChild(event, data) {
       const { rowId } = this.table
@@ -318,7 +372,7 @@ export default {
       return row.children && row.children.length
     },
     getTreeGroup(data) {
-      const { table } = this
+      const { table, previewUseOperator } = this
       return data.reduce((acc, row) => {
         const { rowId } = table
         const rowid = row[rowId]
@@ -333,13 +387,14 @@ export default {
           }
           return acc.concat([{ row, rowid, children }])
         } else {
-          const { conditionConnector, fieldName, operator, fieldValue } = row
+          const { conditionConnector, fieldName, operator, operatorName, fieldValue } = row
           if (fieldName && operator && fieldValue) {
+            const code = `${fieldName} ${previewUseOperator ? operator : operatorName || operator} ${fieldValue} `
             if (this.isFristRow(rowid)) { // 首行
-              return acc.concat([{ row, rowid, code: `${fieldName} ${operator} ${fieldValue} ` }])
+              return acc.concat([{ row, rowid, code }])
             }
             if (conditionConnector) {
-              return acc.concat([{ row, rowid, code: `${fieldName} ${operator} ${fieldValue} `, conditionConnector }])
+              return acc.concat([{ row, rowid, code, conditionConnector }])
             }
             return acc
           }

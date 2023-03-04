@@ -1,4 +1,5 @@
 import { removeBody, getDomClientRect } from 'pk/utils/dom'
+import XEUtils from 'xe-utils'
 
 export default {
   name: 'Popover',
@@ -24,7 +25,8 @@ export default {
     return {
       show: false,
       addedBody: false,
-      momentPlacement: this.placement
+      momentPlacement: this.placement,
+      arrowStyle: { left: null }
     }
   },
   computed: {
@@ -170,7 +172,7 @@ export default {
       changeDirection(popoverRect, referenceRect, popover)
 
       let top
-      const left = referenceRect.centerX - (popoverRect.width / 2)
+      let left = referenceRect.centerX - (popoverRect.width / 2)
       switch (this.momentPlacement) {
         case 'top':
           top = referenceRect.top - popoverRect.height - 10
@@ -184,7 +186,14 @@ export default {
           break
       }
       const { left: tLeft, top: tTop } = getDomClientRect((transferPanel || form || table).$el)
-      popover.style.left = left - (isFixed ? 0 : tLeft) + 'px'
+      !isFixed && (left = left - tLeft)
+      if (left < 0) {
+        left = 0
+        this.arrowStyle.left = referenceRect.left + 6 + 'px'
+      } else {
+        this.arrowStyle.left = null
+      }
+      popover.style.left = left + 'px'
       popover.style.top = top - (isFixed ? 0 : tTop) + 'px'
     },
     changeDirection(popoverRect, referenceRect, popover) {
@@ -210,7 +219,7 @@ export default {
     }
   },
   render(h) {
-    const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message, vslot } = this
+    const { pClass, popoverStyle, mouseenterWrap, mouseleaveWrap, $slots, message, vslot, arrowStyle } = this
     return <transition name='effFade'>
       <div
         ref='popover'
@@ -220,9 +229,11 @@ export default {
         on-mouseleave={mouseleaveWrap}
       >
         {
-          vslot || $slots.default || (Array.isArray(message) ? message : [{ message }]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{d.message}</div>)
+          vslot || $slots.default || (Array.isArray(message) ? message : [{ message }]).map((d, i) => <div key={i} class={`eff-table__popover-item is--${d.type}`}>{
+            XEUtils.isArray(d.message) ? d.message.map(m => <div>{m}</div>) : d.message
+          }</div>)
         }
-        <div ref='arrow' class='eff-table__popover-arrow' />
+        <div ref='arrow' style={arrowStyle} class='eff-table__popover-arrow' />
       </div>
     </transition>
   }

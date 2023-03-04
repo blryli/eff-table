@@ -62,12 +62,16 @@ class Render {
 
   render() {
     const { h, opts, params, children } = this
-    const { name, tag, defaultSlot, disabled, help } = opts
+    const { name, tag, defaultSlot, disabled, help, autoWidth } = opts
     const { vue = {}} = params
     const { renderMap = {}} = vue && vue.$EFF || {}
     // 处理禁用
     if (disabled) {
       opts.props.disabled = Boolean(XEUtils.isFunction(disabled) ? disabled(params) : disabled)
+    }
+    // 处理元素宽度计算指令
+    if (autoWidth) {
+      opts.directives = [{ name: 'auto-width' }]
     }
     const render = h(tag || renderMap[name] || map.get(name), opts, [children, defaultSlot])
     // 处理 help

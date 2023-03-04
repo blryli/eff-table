@@ -192,9 +192,10 @@ export default {
         drag: true,
         edit: true,
         showSummary: true,
-        border: true,
         rowId: '_rowId',
+        searchConfig: { remote: false },
         toolbarConfig: {
+          height: 400,
           columnControl: true,
           fullscreen: true,
           subtotal: true,
@@ -246,10 +247,12 @@ export default {
             show: true,
             type: 'selection',
             width: 40,
-            fixed: 'left'
+            fixed: 'left',
+            selectable: ({ row }) => row.input === 2
           },
           {
             show: true,
+            minWidth: 200,
             prop: 'input',
             title: '输入框',
             config: { name: 'input' },
@@ -265,6 +268,7 @@ export default {
           },
           {
             show: true,
+            minWidth: 100,
             prop: 'async',
             title: '异步校验',
             search: true,

@@ -21,6 +21,7 @@
           :data="data"
           search
           border
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -40,6 +41,7 @@
       <div class="section-content">
         <eff-table
           v-bind="tableOptions"
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -60,12 +62,12 @@
     <section class="demo">
       <div class="section-content">
         <eff-table
-          ref="table"
           v-model="columns2"
           :data="data1"
           :max-height="400"
           search
           border
+          @search-change="searchChange"
         />
       </div>
     </section>
@@ -369,48 +371,27 @@ export default {
         label: '2'
       }],
       columns: [
-        {
-          show: true,
-          prop: 'id',
-          title: 'ID'
-        },
-        {
-          show: true,
-          prop: 'name',
-          title: '名字',
-          search: true
-        },
-        {
-          show: true,
-          prop: 'sex',
-          title: '性别',
+        { type: 'selection' },
+        { prop: 'id', title: 'ID' },
+        { prop: 'name', title: '名字', search: true },
+        { prop: 'sex', title: '性别',
           config: { name: 'select', options: [{ label: '男', value: '1' }, { label: '女', value: '2' }] },
           search: true
         },
-        {
-          show: true,
-          prop: 'age',
-          title: '年龄',
-          search: {
-            operator: true
-          }
-        },
-        {
-          show: true,
-          prop: 'phone',
-          title: '手机',
-          search: true
-        }
+        { prop: 'age', title: '年龄', search: { operator: true }},
+        { prop: 'phone', title: '手机', search: true },
+        { title: '操作', cellRender: (h, { row }) => <el-button type='text' on-click={() => (this.data = this.data.filter(d => d.id !== row.id))}>删除</el-button> }
       ],
       data: [
-        { id: 1, name: '张三', sex: '男', age: '20', phone: '13715201314' },
-        { id: 2, name: '李四', sex: '女', age: '25', phone: '13715201314' },
-        { id: 3, name: '王五', sex: '男', age: '32', phone: '13715201314' },
-        { id: 4, name: '赵六', sex: '男', age: '18', phone: '13715201314' }
+        { id: 1, name: '张三', sex: '1', age: '20', phone: '13715201314' },
+        { id: 2, name: '李四', sex: '2', age: '25', phone: '13715201314' },
+        { id: 3, name: '王五', sex: '1', age: '32', phone: '13715201314' },
+        { id: 4, name: '赵六', sex: '1', age: '18', phone: '13715201314' }
       ],
       tableOptions: {
         maxHeight: 400,
         search: true,
+        searchConfig: { remote: false },
         border: true,
         data: [
           { id: 1, name: '张三', sex: '1', phone: '13715201314', date: 1622476800000, vaccination: '1' },
@@ -561,53 +542,8 @@ export default {
     }
   },
   methods: {
-    updateForm(prop, val) {
-      this.$set(this.form, prop, val)
-    },
     searchChange(val) {
-      // console.log(JSON.stringify(val, null, 2))
-      this.searchData = val
-      let list = [...this.data]
-      if (val.length) {
-        val.forEach(d => {
-          const { field, operator, content } = d
-          list = list.filter(da => {
-            if (Array.isArray(content)) {
-              if (operator === 'like') {
-                return content.includes(da[field])
-              } else {
-                const [start, end] = content
-                return +da[field] > +start && +da[field] < +end
-              }
-            } else {
-              const daValue = da[field]
-              switch (operator) {
-                case 'equals':
-                  return daValue === content
-
-                case 'unequals':
-                  return daValue.indexOf(content) === -1
-
-                case 'less':
-                  return +daValue < +content
-
-                case 'greater':
-                  return +daValue > +content
-
-                case 'lessthan':
-                  return +daValue <= +content
-
-                case 'greaterthan':
-                  return +daValue >= +content
-
-                default:
-                  return daValue.indexOf(content) > -1
-              }
-            }
-          })
-        })
-      }
-      this.list = list
+      console.log('val', JSON.stringify(val, null, 2))
     }
   }
 }

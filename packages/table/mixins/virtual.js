@@ -15,16 +15,17 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length } = [], renderSize, useExpand, useGroupColumn, isSpanMethod } = this
-      return !isSpanMethod && !useExpand && !useGroupColumn && length > 50 && length > renderSize
+      const { tableData: { length } = [], renderSize, useExpand, useGroupColumn, isSpanMethod, rowHeight } = this
+      if (rowHeight === 'auto' || isSpanMethod || useExpand || useGroupColumn) return
+      return length > 50 && length > renderSize
     },
     renderData() {
       const { isVirtual, afterData, renderIndex, renderSize } = this
       return isVirtual ? afterData.slice(renderIndex, renderSize + renderIndex) : afterData
     },
     renderSize() {
-      const { heights: { bodyHeight }, rowHeight } = this
-      return parseInt(bodyHeight / rowHeight + 6)
+      const { heights: { bodyHeight }, _rowHeight } = this
+      return parseInt(bodyHeight / _rowHeight + 6)
     },
     // 列虚拟滚动
     columnVisibleWidth() {
@@ -33,14 +34,15 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { tableData: { length } = [], useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
-      return !isSpanMethod && length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
+      const { tableData, useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
+      return !isSpanMethod && tableData && tableData.length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
       return columnIsVirtual && columnRenderEndIndex ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
     },
     columnAccWidths() {
+      if (!this.isVirtual) return
       return this.columnWidths.reduce((acc, cur) => {
         acc.num += cur
         acc.widths.push(acc.num)
@@ -48,8 +50,9 @@ export default {
       }, { num: 0, widths: [] }).widths
     },
     dataAccHeight() {
+      if (!this.isVirtual) return
       return this.tableData.reduce((acc, cur) => {
-        acc.num += this.rowHeight
+        acc.num += this._rowHeight
         acc.heights.push(acc.num)
         return acc
       }, { num: 0, heights: [] }).heights
@@ -62,8 +65,8 @@ export default {
       }
     },
     scrollTop(scrollTop) {
-      const { rowHeight } = this
-      if (scrollTop < rowHeight) {
+      const { _rowHeight } = this
+      if (scrollTop < _rowHeight) {
         this.renderIndex = 0
       }
       if (this.isVirtual) {
@@ -99,6 +102,7 @@ export default {
   },
   methods: {
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
+      if (!this.isVirtual) return
       if (!(this.tableData || []).length) return
       this.scrollLeft = scrollLeft
       const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
@@ -114,11 +118,11 @@ export default {
       this.columnRenderEndIndex = endIndex
     },
     toScroll(rowIndex) {
-      const { renderSize, rowHeight } = this
+      const { renderSize, _rowHeight } = this
       if (rowIndex < renderSize / 2) {
         this.scrollTop = 0
       } else {
-        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * rowHeight
+        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * _rowHeight
       }
       return this.$nextTick()
     },

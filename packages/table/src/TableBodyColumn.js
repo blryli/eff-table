@@ -3,7 +3,7 @@ import VRadio from 'pk/radio'
 import { textOverflow, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
-import { getFieldValue, initField, isVNode } from 'pk/utils'
+import { getFieldValue, initField, isVNode, isNoValue } from 'pk/utils'
 import XEUtils from 'xe-utils'
 import Icon from 'pk/icon'
 
@@ -33,8 +33,8 @@ export default {
     const { props, data, injections } = context
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
-    const { type, prop, className, align } = column
-    const { spaceWidth, rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, isSpanMethod, tableExpandConfig, keyword } = table
+    const { type, prop, className, align, showOverflow } = column
+    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -43,13 +43,13 @@ export default {
     }
     // 设置style
     const style = {}
-    let columnWidth = Math.max(column.width || spaceWidth, 40)
+    let columnWidth = table.getColumnWidth(column)
     let columnHeight = 0
     if (colspan > 1) { // 合并列
       let widths = 0
       for (let index = 0; index < colspan; index++) {
         const col = bodyColumns[columnIndex + index]
-        widths += Math.max(col.width || spaceWidth, 40)
+        widths += table.getColumnWidth(col)
       }
       columnWidth = widths
       table.isSpanMethod = true
@@ -57,19 +57,16 @@ export default {
     if (rowspan > 1) { // 合并行
       let heights = 0
       for (let index = 0; index < rowspan; index++) {
-        heights += rowHeight
+        heights += _rowHeight
       }
       columnHeight = heights
       table.isSpanMethod = true
     }
-    style.minWidth = columnWidth + 'px'
-    style.maxWidth = columnWidth + 'px'
+    style.flex = `0 0 ${columnWidth}px`
+    style['--width'] = columnWidth + 'px'
     if (columnHeight) {
       style.height = columnHeight + 'px'
       style.zIndex = 1
-    }
-    if (columnIndex === 0) {
-      style.borderLeft = 0
     }
 
     // 小计
@@ -78,6 +75,8 @@ export default {
     }
 
     let columnClass = `eff-table__column`
+    if (border) columnClass += ' is--border'
+    if (columnIndex === 0) columnClass += ' is--start'
     // 对齐方式
     if (align) {
       columnClass += ` is--align-${align || 'left'} `
@@ -133,7 +132,7 @@ export default {
 
     // 处理class
     const sourceRow = updateList.find(d => {
-      return d.$old[rowId] === row[rowId]
+      return d.$old[rowId] === _rowId
     })
     const { message } = props.message || {}
 
@@ -166,16 +165,15 @@ export default {
       style.paddingLeft = treeFloor * 28 + 'px'
     }
     // row[columnIndex] summary合计列
-
-    const cellId = `${tableId}-${row[rowId]}-${column.columnId}`
+    const cellId = `${tableId}-${_rowId}-${column.columnId}`
 
     const { selectable } = column
-    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, rowid }) === false : false
+    const isDisabled = XEUtils.isFunction(selectable) ? selectable({ row, rowIndex, column, columnIndex, rowid: _rowId, cellId }) === true : false
 
     const renderSelection = function() {
       if (subtotal) return ''
       return h(VCheckbox, {
-        props: { value: table.isChecked(row), disabled: isDisabled },
+        props: { value: table.isChecked(row), disabled: isDisabled, rowid: _rowId },
         key: _rowId,
         on: { change: selected => table.rowSelectionChange(row, selected) }
       })
@@ -202,7 +200,7 @@ export default {
         const renderOpts = XEUtils.merge({}, config, dynamicConfig, cellRender)
         const { name, tag, format } = renderOpts
         const compConf = renderer.get(dynamicConfig.name || name) || tag && renderer.get('default')
-        const sourceRow = table.tableSourceData.find(d => d[rowId] === row[rowId]) || {}
+        const sourceRow = table.tableDataMap.get(_rowId) || {}
         const params = { root: table, table, vue, data: row, row, rowid: _rowId, sourceRow, rowIndex, column, columnIndex, prop: dynamicConfig.prop || prop, renderCell: true }
         // 处理format
         if (XEUtils.isFunction(format)) {
@@ -221,11 +219,17 @@ export default {
         } else {
           let filedValue = getFieldValue(row, prop)
           // 关键字处理
-          if (keyword && filedValue && filedValue.indexOf(keyword) > -1) {
-            filedValue = filedValue.split(keyword)
-            filedValue.splice(1, 0, h('span', { class: 'keyword-lighten' }, keyword))
+          const lowerValue = (filedValue + '').toLowerCase()
+          const lowerKeyword = (keyword + '').toLowerCase()
+          if (!isNoValue(keyword) && !isNoValue(filedValue)) {
+            const index = lowerValue.indexOf(lowerKeyword)
+            if (index > -1) {
+              const str = filedValue.substr(index, keyword.length)
+              filedValue = filedValue.split(str)
+              filedValue.splice(1, 0, h('span', { class: 'keyword-lighten' }, str))
+            }
           }
-          return filedValue || ''
+          return filedValue
         }
       }
       if (XEUtils.isFunction(cellRender)) {
@@ -235,9 +239,9 @@ export default {
         return renderCell(cellRender)
       }
     }
-    const rowExpanded = table.expands.find(d => d.rowId === row[rowId]) || {}
+    const rowExpanded = table.expands.find(d => d.rowId === _rowId) || {}
     const expandClick = function(e) {
-      !disabled && table.expandChange({ rowId: row[rowId], height: 0 })
+      !disabled && table.toggleRowExpand(row)
     }
     const expandRender = function() {
       const expand = <span class='eff-table--expand-handle' on-click={e => expandClick(e)}>
@@ -258,7 +262,7 @@ export default {
 
       let placement = 'top'
 
-      if (textOverflow(cellLabel)) {
+      if (showOverflow !== false && textOverflow(cellLabel)) {
         table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true })
         placement = 'bottom'
       }
@@ -293,20 +297,21 @@ export default {
     let treeIcon = ''
 
     const childs = row[children] || []
-    const groupClick = function(e) {
+    const treeClick = function(e) {
       // 异步加载
       if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
         vue.$set(table.treeIds, _rowId, false)
         loadMethod({ row, rowIndex }).then(res => {
           vue.$set(table.treeIds, _rowId, true)
           vue.$set(row, children, res)
+          table.loadTableData(table.tableData)
         })
       } else {
         vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
     if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
-      treeIcon = <span class='eff-table--expand-handle' on-click={e => groupClick(e)}>
+      treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
         {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
       </span>
     }
@@ -327,6 +332,10 @@ export default {
     } else {
       slot = cellRender(h)
     }
+    const labelStyle = {}
+    if (rowHeight === 'auto') {
+      labelStyle['white-space'] = 'pre-wrap'
+    }
 
     return h('div', Object.assign(data, {
       key: treeFloor + '-' + rowIndex + '-' + columnIndex,
@@ -342,7 +351,7 @@ export default {
     }), [
       treeIcon,
       <div id={cellId} class='eff-cell'>
-        <span class='eff-cell--label'>{slot}</span>
+        <span class='eff-cell--label' style={labelStyle}>{slot}</span>
         {/* {h('form-field', { props: { row, rowIndex, prop, cascade, optionsFunc, rules }}, slot)} */}
       </div>
     ])

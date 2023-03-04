@@ -8,7 +8,6 @@
 
 <script>
 import Document from '../../components/Document.vue'
-
 export default {
   name: 'TableApi',
   components: {
@@ -17,6 +16,102 @@ export default {
   data() {
     return {
       documentForm: {
+        global: [
+          {
+            attribute: 'request',
+            explain: '全局接口',
+            type: 'function',
+            choosable: '',
+            default: '',
+            code: ``
+          },
+          {
+            attribute: 'renderMap',
+            explain: '全局render使用的组件映射',
+            type: 'object',
+            choosable: '',
+            default: '看左边属性',
+            code: `
+{
+  // element
+  'input': 'el-input',
+  'input-number': 'el-input-number',
+  'textarea': 'el-textarea',
+  'select': 'el-select',
+  'option': 'el-option',
+  'date-picker': 'el-date-picker',
+  'button': 'el-button',
+  'link': 'el-link',
+  'tag': 'el-tag',
+  'image': 'el-image',
+  'popover': 'el-popover',
+  'tooltip': 'el-tooltip',
+  'dropdown': 'el-dropdown',
+  'dialog': 'el-dialog',
+  'switch': 'el-switch',
+  'checkbox': 'el-checkbox',
+  'checkbox-group': 'el-checkbox-group',
+  'pagination': 'el-pagination',
+  'radio': 'el-radio',
+  'radio-group': 'el-radio-group',
+  'cascader': 'el-cascader',
+
+  // 内置组件
+  'popup': 'popup',
+  'help': 'help',
+  'layout': 'layout',
+  'panel': 'panel',
+  'form': 'v-form',
+  'form-item': 'v-form-item',
+  'ciphertext': 'ciphertext' // 加密组件
+}`
+          },
+          {
+            attribute: 'focus-to-select',
+            explain: '全局聚焦时是否全选',
+            type: 'boolean',
+            choosable: '',
+            default: 'false',
+            code: ``
+          },
+          {
+            attribute: 'toolbar-height',
+            explain: '全局配置工具栏高度',
+            type: 'number',
+            choosable: '',
+            default: '30',
+            code: ``
+          },
+          {
+            attribute: 'header-row-height',
+            explain: '全局配置行高度',
+            type: 'number',
+            choosable: '',
+            default: '30',
+            code: ``
+          },
+          {
+            attribute: 'footer-action-config',
+            explain: '底部行配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    showBorder: false // boolean 底部行是否显示边框
+    showPager: false // boolean 是否显示分页
+    pageInLeft: false // boolean 分页是否显示在左侧
+    pageConfig: { // object 分页配置
+      pageNum: 1 // 当前页码
+      pageSize: 10 // 每页显示条目个数
+      total: 10 // 总条数
+      ... // 其余参数参照项目所使用ui库分页组件的配置
+    }
+  }
+  `
+          }
+        ],
         props: [
           {
             attribute: 'columns / v-model',
@@ -32,7 +127,9 @@ export default {
 
       type: '', // string selection/radio/index/expand
 
-      width: 80, // number  列宽
+      width: 80, // number  列宽度
+
+      minWidth: null, // number  列最小宽度
 
       fixed: '', // string left/right 固定列
 
@@ -49,8 +146,8 @@ export default {
       // table标题 (优先级 titleRender > type > title)
       title: '', // string
       titleRender: {}, // object/function(h, {title, column, columnIndex})
-      titlePrefix: {message: '', icon: ''} //表头标题前缀
-      titleSuffix: {message: '', icon: ''} //表头标题后缀
+      titlePrefix: {message: string/function, icon: ''}/function(h, { column, title, prop }) //表头标题前缀
+      titleSuffix: {message: string/function, icon: ''}/function(h, { column, title, prop }) //表头标题后缀
 
       // table单元格 (优先级 cellRender > type > prop)
       prop: '', // string
@@ -63,7 +160,30 @@ export default {
         disabled: false, // boolean | function({row, rowIndex}){} 为true时禁用字段
       }
 
-      // 校验规则
+      // 搜索
+      search: {
+        render: { name: 'input' }, // object/function(h, { column, columnIndex }) 搜索元素
+        rangeRender: { name: 'input' }, // object/function(h, { column, columnIndex }) 范围搜索元素
+        operator: false, // boolean 范围符号
+        operatorDefault: 'like', // string 默认类型
+        prop: '', // 搜索字段名，不填默认使用column.prop
+        searchMethod: null, // function({ rowValue, value, row, column, prop, option }) 自定义搜索方法
+        type: '' // string 扩展字段
+      }
+
+      drag: true,// boolean 列是否可拖动
+
+      sortable: false, // 列是否可排序
+
+      showOverflow: true, // 列文本溢出是否隐藏显示...
+
+      selectable: true, // function({ row, rowIndex, rowid, column, columnIndex }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
+
+      filter: false,  // boolean  是否开启筛选功能
+      filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
+      filterMethod: ({ value, option, cellValue, row, column, $table }) => {}  // function  筛选方法
+
+       // 校验规则
       rules: [
         {
           required: true, 
@@ -94,25 +214,6 @@ export default {
           validator: Function // 自定义校验，支持异步
         }
       ]
-
-      // 搜索
-      search: {
-        render: { name: 'input' }, // object/function(h, { column, columnIndex }) 搜索元素
-        rangeRender: { name: 'input' }, // object/function(h, { column, columnIndex }) 范围搜索元素
-        operator: false, // boolean 范围符号
-        operatorDefault: 'like', // string 默认类型
-        type: '' // string 扩展字段
-      }
-
-      drag: true,// boolean 列是否可拖动
-
-      sortable: false, // 列是否可排序
-
-      selectable: true, // function({ row, rowIndex, rowid }) 返回值 === false 时checkbox不可勾选，仅对 type=selection 的列有效
-
-      filter: false,  // boolean  是否开启筛选功能
-      filters: [],  // array  筛选选项集合 [{label: '', value: ''}]
-      filterMethod: ({ value, option, cellValue, row, column, $table }) => {}  // function  筛选方法
     }
   ]
   `
@@ -140,7 +241,14 @@ export default {
           },
           {
             attribute: 'height',
-            explain: 'Table 高度',
+            explain: 'Table 高度，字符串只能设置 100%，使表格自适应撑满',
+            type: 'number/string',
+            choosable: '',
+            default: ''
+          },
+          {
+            attribute: 'header-row-height',
+            explain: 'Table 表头高度',
             type: 'number',
             choosable: '',
             default: ''
@@ -154,7 +262,28 @@ export default {
           },
           {
             attribute: 'row-height',
-            explain: 'Table 行高度',
+            explain: 'Table 行高度，字符串只能设置 auto，使用自适应行高',
+            type: 'number/string',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'base-row-height',
+            explain: '行以外的默认高度',
+            type: 'number',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'toolbar-height',
+            explain: '工具栏高度',
+            type: 'number',
+            choosable: '',
+            default: '36'
+          },
+          {
+            attribute: 'header-row-height',
+            explain: 'header行高度',
             type: 'number',
             choosable: '',
             default: '36'
@@ -176,6 +305,13 @@ export default {
           {
             attribute: 'edit',
             explain: '是否开启编辑功能',
+            type: 'boolean',
+            choosable: '',
+            default: 'false'
+          },
+          {
+            attribute: 'focus-to-select',
+            explain: '开启编辑功能时聚焦是否全选文本',
             type: 'boolean',
             choosable: '',
             default: 'false'
@@ -351,6 +487,48 @@ export default {
   `
           },
           {
+            attribute: 'form-config',
+            explain: '表单配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    defaultValue: {}, // object 表单默认值，在表单初始化、重置表单、表单赋值时使用
+    titleWidth: 'auto',
+    itemGutter: 10,
+    isSave: false, // boolean 是否使用保存搜索模板功能
+    showTags: true, // 数组是否用tags展示
+    showQuery: true, // 是否显示搜索按钮
+    showClear: true, // 是否显示重置按钮
+    beforeClear: () => {} // 点击重置按钮时的前置处理函数
+    formRequest: { // object 使用保存模板时的接口配置，可以在注册eff-table组件时统一设置
+      // 函数在eff-table内调用，这里返回配置好参数的api
+      query: ({ formRequestParams }) => api.query(formRequestParams),
+      add: ({ name, value, formRequestParams }) => api.add(Object.assign({ name, value }, formRequestParams)),
+      delete: ({ row, formRequestParams }) => api.deleted({ type: formRequestParams.type, id: row.id })
+    },
+    formRequestParams: { type: 1 }, // object 保存模板使用的参数
+    items: [ // array 表单字段集， 使用插槽 form 时渲染表单时，items 无效
+      { 
+        title: '名字',
+        prop: 'name',
+        showTitle: true, // boolean 是否显示标题
+        titleBorder: false, // boolean 显示标题时是否使用边框
+        options: [], // array|function 使用select元素时的 option
+        label: 'label', // string 使用select元素时的 labelKey
+        value: 'value', // string 使用select元素时的 valueKey
+        itemRender: { // 使用插槽 item_name 时，itemRender 无效
+          name: 'input',
+          directives: [{ name: 'auto-width' }] // 可以使用自适应宽度指令
+        }
+      }
+    ],
+  }
+  `
+          },
+          {
             attribute: 'tree-config',
             explain: '树配置',
             type: 'object',
@@ -392,6 +570,33 @@ export default {
     multiple: false, // boolean 是否开启多列排序
     remote: false, // boolean 是否统一使用远程排序
     sortMethod: null // function({ data, column, prop, order, $table }) 服务端排序，需要监听 sort-change 事件
+  }
+  `
+          },
+          {
+            attribute: 'search-config',
+            explain: '行内搜索配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    remote: true, // boolean 是否统一使用远程排序
+    searchMethod: null, // function({ rowValue, value, row, column, prop, option }) 自定义搜索方法，需要监听 search-change 事件
+  }
+  `
+          },
+          {
+            attribute: 'checkbox-config',
+            explain: '复选框配置',
+            type: 'object',
+            choosable: '',
+            default: '{}',
+            code:
+`
+  {
+    showHeader: true, // boolean 是否显示全选按钮
   }
   `
           },
@@ -558,8 +763,47 @@ export default {
             default: ``
           },
           {
+            attribute: 'searching',
+            explain: '对表格进行搜索',
+            default: `opts`,
+            code:
+`
+  // opts 为对象
+  {
+    prop: '', // 字段名
+    content: '', string/array // 字段值
+    searchMethod: function({ prop, value, row, column, option }) // 搜索方法(可选)，返回boolean
+  }
+
+  // opts 为数组
+  [
+    {
+      prop: '', // 字段名
+      content: '', string/array // 字段值
+      searchMethod: function({ prop, value, row, column, option }) // 搜索方法(可选)，返回boolean
+    },
+    ...
+  ]
+  `
+          },
+          {
+            attribute: 'setForm',
+            explain: '设置表单值，会跟 defaultValue 进行合并覆盖',
+            default: `value`
+          },
+          {
+            attribute: 'setFormFiled',
+            explain: '设置表单字段值',
+            default: `prop, value`
+          },
+          {
+            attribute: 'clearForm',
+            explain: '重置搜索表单，参数 query ，清空后是否执行搜索操作，默认清空后进行搜索',
+            default: `query`
+          },
+          {
             attribute: 'clearSearch',
-            explain: '清空搜索条件',
+            explain: '清空行内搜索条件',
             default: ``
           },
           {
@@ -670,9 +914,43 @@ export default {
             attribute: 'seniorQueryOpen',
             explain: '打开表格高级搜索框',
             default: ``
+          },
+          {
+            attribute: 'toggleRowExpand',
+            explain: '切换展开行的状态',
+            default: `row`
+          },
+          {
+            attribute: 'getRowExpandRecords',
+            explain: '获取已展开行的数据',
+            default: ``
+          },
+          {
+            attribute: 'isRowExpand',
+            explain: '判断行是否为展开状态',
+            default: `row`
+          },
+          {
+            attribute: 'setRowExpand',
+            explain: '设置展开行，二个参数设置这一行展开与否',
+            default: `rows, checked`
+          },
+          {
+            attribute: 'setAllRowExpand',
+            explain: '设置所有行的展开状态',
+            default: `checked`
+          },
+          {
+            attribute: 'clearRowExpand',
+            explain: '清空展开行状态',
+            default: ``
           }
         ],
         slots: [
+          {
+            attribute: 'table',
+            explain: '自定义表格展示内容，不包括表单搜索及表尾'
+          },
           {
             attribute: 'toolbar',
             explain: '工具栏区域左侧的内容'
@@ -803,6 +1081,11 @@ export default {
           {
             attribute: 'search-clear-filed',
             explain: '使用默认range范围搜索时，点击清空按钮时触发',
+            default: `{ column, prop }`
+          },
+          {
+            attribute: 'clear-form',
+            explain: '使用默认表单搜索时，点击重置按钮触发',
             default: `{ column, prop }`
           },
           {

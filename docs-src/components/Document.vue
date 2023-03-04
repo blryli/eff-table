@@ -11,6 +11,35 @@
         @input="debounceSearch"
       />
     </div>
+    <div v-if="data.global && data.global.length">
+      <h3>Global</h3>
+      <CodeSnippet
+        class="javascript"
+        style="margin-bottom: 10px"
+        :code="
+          `// main.js
+import 'EffTable' from 'eff-table'
+Vue.use(EffTable, { focusToSelect: true, ... }) // 表格属性 > 全局表格属性`"
+      />
+      <eff-table
+        :row-height="50"
+        :columns="[
+          {show: !!data.global.find(d => d.code),type: 'expand', width: 40,titleSuffix: { message: '查看详细配置', icon: 'question' }},
+          {title: '属性',prop: 'attribute', width: 160},
+          {title: '说明', prop: 'explain'},
+          {title: '类型', prop: 'type', width: 120},
+          {title: '可选值', prop: 'choosable', width: 120},
+          {title: '默认值', prop: 'default', width: 120}
+        ]"
+        :data="data.global"
+        :keyword="searchValue"
+        :expand-config="{onlyField: 'code'}"
+      >
+        <template #expand="{row}">
+          <CodeSnippet class="javascript" :code="row.code" />
+        </template>
+      </eff-table>
+    </div>
     <div v-if="data.props && data.props.length">
       <h3>Attributes</h3>
       <eff-table
@@ -123,7 +152,7 @@ export default {
       if (val) {
         for (const key in form) {
           this.data[key] = form[key].filter(d => {
-            return ['attribute', 'explain', 'type', 'choosable', 'default'].find(v => d[v] && d[v].indexOf(val) > -1)
+            return ['global', 'attribute', 'explain', 'type', 'choosable', 'default'].find(v => d[v] && d[v].indexOf(val) > -1)
           })
         }
       } else {

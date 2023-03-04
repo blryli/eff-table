@@ -19,7 +19,8 @@
         <router-link class="menu-list" to="/">Base 基础表格</router-link>
         <router-link class="menu-list" to="/Drag">Drag 拖动</router-link>
         <router-link class="menu-list" to="/Edit">Edit 编辑</router-link>
-        <router-link class="menu-list" to="/Search">Search 搜索</router-link>
+        <router-link class="menu-list" to="/Search">Search 行内搜索</router-link>
+        <router-link class="menu-list" to="/TableForm">TableForm 搜索表单</router-link>
         <router-link class="menu-list" to="/Validate">Validate 校验</router-link>
         <router-link class="menu-list" to="/Virtual">Virtual 虚拟滚动</router-link>
         <router-link class="menu-list" to="/Copy">Copy 复制</router-link>
@@ -79,6 +80,7 @@ body {
   background: white;
   margin: 0;
   font-size: 14px;
+  overflow: hidden;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -1,12 +1,11 @@
 <script>
 import Paginator from './Paginator.js'
-import ToolbarShrink from 'pk/toolbar-shrink'
 import { renderer, getOn } from 'pk/utils/render'
 import XEUtils from 'xe-utils'
 
 export default {
   name: 'FooterAction',
-  components: { Paginator, ToolbarShrink },
+  components: { Paginator },
   inject: ['table'],
   data() {
     return {
@@ -24,7 +23,7 @@ export default {
   },
   render(h) {
     const { table, $slots, load } = this
-    const { buttons = [], showPager, showBorder, changeOver } = table.footerActionConfig
+    const { buttons = [], showPager, showBorder, changeOver } = table.tableFooterConfig
     const { pageNum, pageSize, total } = table.pager
     const buttonsRender = load ? buttons.reduce((acc, cur, idx) => {
       const { code, on = {}} = cur
@@ -36,17 +35,18 @@ export default {
     }, []) : ''
     const list = buttonsRender.concat($slots.default || []) || []
     const paginator = showPager && <Paginator pageNum={pageNum} pageSize={pageSize} total={total} /> || ''
+    const height = table.baseHeight + 'px'
 
-    return <div class='eff-table__action eff-table__toobar' style={{ border: showBorder ? '' : 'unset', height: table.baseHeight + 'px' }}>
+    return <div class='eff-table__action eff-table__toobar' style={{ border: showBorder ? '' : 'unset', height, '--rowHeight': height }}>
       {
         changeOver ? [
           <div class='eff-table__toobar-left'>
             {paginator}
           </div>,
-          <ToolbarShrink list={list} class='eff-table__toobar-right' />
+          <div list={list} class='eff-table__toobar-right'>{list}</div>
 
         ] : [
-          <ToolbarShrink list={list} class='eff-table__toobar-left' />,
+          <div list={list} class='eff-table__toobar-right'>{list}</div>,
           <div class='eff-table__toobar-right'>
             { paginator}
           </div>

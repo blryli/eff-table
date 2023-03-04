@@ -7,11 +7,13 @@ export default {
     indeterminate: Boolean,
     disabled: Boolean,
     checked: Boolean,
+    rowid: { type: [String, Number], default: '' },
     label: { type: [String, Number], default: '' },
     labelWidth: { type: Number, default: 0 }
   },
   inject: {
-    transferPanel: { default: null }
+    transferPanel: { default: null },
+    table: { default: null }
   },
   data() {
     return {
@@ -21,6 +23,23 @@ export default {
   watch: {
     value(val) {
       this.isChecked = val
+    },
+    disabled: {
+      handler(val) {
+        const { table, rowid } = this
+        if (!table || !rowid) return
+        if (val) {
+          if (!table.disableds.includes(rowid)) table.disableds.push(rowid)
+        } else {
+          if (table.disableds.includes(rowid)) {
+            const index = table.disableds.findIndex(d => d === rowid)
+            if (index > -1) {
+              table.disableds.splice(index, 1)
+            }
+          }
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -42,7 +61,8 @@ export default {
     }
   },
   render(h) {
-    const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave } = this
+    const { disabled, isChecked, indeterminate, label, labelWidth, transferPanel, handleChange, handleMouseenter, handleMouseleave, $slots } = this
+    const content = $slots.default || label
     const labelStyle = {}
     let labelOn = {}
     if (labelWidth) {
@@ -64,7 +84,7 @@ export default {
       on: { click: handleChange }
     }, [
       h('span', { class: 'eff-table__checkbox-icon' }),
-      label ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: labelStyle, on: labelOn }, label) : ''
+      content ? h('span', { ref: 'label', class: 'eff-table__checkbox-label', style: labelStyle, on: labelOn }, content) : ''
     ])
   }
 }

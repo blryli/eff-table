@@ -8,42 +8,96 @@ export default {
 </script>
 <style lang="scss">
 @import './imports.scss';
-.eff-table--expand-handle{
-  width: 24px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #888;
-  cursor: pointer;
+.auto-width{
+  .el-select__tags{
+    flex-wrap: nowrap;
+  }
+  .el-select__tags-text{
+    overflow: visible;
+  }
+  .el-select__input{
+    margin-left: 10px;
+  }
 }
-.eff-icon-filter{
-  position: relative;
-  width: 14px;
-  height: 14px;
-  color: #bcbdbe;
-  &:hover{
-    cursor: pointer;
-    color: #666;
+.el-input__value-text{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0;
+}
+.is-overflow--y {
+  &.eff-table__header-wrapper,
+  &.eff-table__body-wrapper,
+  &.eff-table__footer{
+    overflow-y: scroll;
   }
-  &::before{
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    display: inline-block;
-    border: 7px solid currentColor;
-    border-color: currentColor transparent transparent transparent;
+  &.eff-table__header-wrapper{
+    &::-webkit-scrollbar {
+      border-left: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
   }
-  &::after{
-    content: '';
-    position: absolute;
-    bottom: 1px;
-    left: 6px;
-    display: inline-block;
-    width: 2px;
-    height: 8px;
-    background-color: currentColor;
+  &.eff-table__footer{
+    &::-webkit-scrollbar {
+      border-left: 1px solid #ddd;
+    }
   }
+}
+.eff-table__fixed-left .is-overflow--y {
+  &.eff-table__header-wrapper,
+  &.eff-table__body-wrapper,
+  &.eff-table__footer{
+    overflow-y: hidden;
+  }
+}
+.is-overflow--x{
+  &.eff-table__body-wrapper{
+    overflow-x: scroll;
+  }
+}
+.is--stripe{
+  .eff-table__body-row:nth-child(even){
+    &.is--hover{
+      .eff-table__column {
+        background-color: #f1f3f5;
+      }
+    }
+  }
+  .eff-table__body-row:nth-child(even){
+    .eff-table__column {
+      background-color: #fafafa;
+    }
+  }
+}
+
+.is--border{
+  &:not(.is--start) {
+    border-left: 1px solid #ddd;
+  }
+  .eff-table__search-empty{
+    border-left: 1px solid #ddd;
+  }
+}
+.eff-table__fixed-right {
+  .is--border.is--start{
+    border-left: 1px solid transparent;
+  }
+  &.is-scroll--end{
+    .is--border.is--start{
+      border-left-color: #ddd;
+    }
+  }
+}
+.eff-table__expanded{
+  background-clip: content-box;
+}
+.eff-table__form{
+  .el-button{
+    height: 32px;
+  }
+}
+.is--cursor{
+  cursor: pointer;
 }
 </style>

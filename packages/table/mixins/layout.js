@@ -1,16 +1,20 @@
 import { on, off } from 'pk/utils/dom'
+import XEUtils from 'xe-utils'
 
 export default {
   data() {
     return {
+      tableRect: null,
       bodyWidth: 0,
+      bodyHeight: 0,
       bodyWrapperWidth: 0,
       screenfullHeight: 0,
       offset: 0,
       overflowX: false,
       headerLoad: false,
       bodyLoad: false,
-      toolbarHeightOffset: 0
+      toolbarHeight: 0,
+      formHeight: 0
     }
   },
   created() {
@@ -35,14 +39,19 @@ export default {
   computed: {
     tableClass() {
       let tClass = 'eff-table__container'
-      const { overflowX, overflowY, border, stripe, heights } = this
+      const { stripe, heights } = this
       const { bodyHeight, dataHeight } = heights
-      overflowX && (tClass += ' is-overflow--x')
-      overflowY && (tClass += ' is-overflow--y')
-      border && (tClass += ' is--border')
       stripe && (tClass += ' is--stripe')
       bodyHeight === dataHeight && (tClass += ' is-bottom--coincide')
       return tClass
+    },
+    tableStyle() {
+      const style = {}
+      const { $scopedSlots: { table }, heights } = this
+      if (table) {
+        style.height = heights.tableWrapperHeight + 'px'
+      }
+      return style
     },
     bodyRenderWidth() {
       const { columnIsVirtual, columnWidths, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
@@ -86,41 +95,50 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
+      const { bodyHeight: bHeight, rowHeight } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
       const overflowXHeight = (this.overflowX ? 17 : 0)
-      return bodyHeight && (tableMaxHeight ? dataHeight > tableMaxHeight : dataHeight > bodyHeight - overflowXHeight)
+      const height = rowHeight === 'auto' ? bHeight : dataHeight
+      return bodyHeight && (tableMaxHeight ? height - 2 > tableMaxHeight : height - 2 > bodyHeight - overflowXHeight)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
+    autoHeight() {
+      const { tableRect, height } = this
+      return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 20 : height, 2)
+    },
     heights() {
-      const { height, tableMaxHeight, isScreenfull, screenfullHeight, afterData, baseHeight, rowHeight, toolbarHeightOffset, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight } = this
+      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, formHeight, toolbarHeight: tHeight, $EFF: { HeaderRowHeight: EFFHeaderRowHeight }} = this
       const { toolbar, header, footer, footerAction } = this.$refs
 
-      const toolbarHeight = toolbar ? baseHeight + toolbarHeightOffset : 0
-      const headerHeight = headerLoad && header ? baseHeight * headerRanked : 0
+      const toolbarHeight = toolbar ? tHeight : 0
+      const headerHeight = headerLoad && header ? ((headerRowHeight === 36 ? EFFHeaderRowHeight || headerRowHeight : headerRowHeight) || baseHeight) * headerRanked : 0
       const searchHeight = search ? baseHeight : 0
       const footerHeight = footer ? baseHeight : 0
       const footerActionHeight = footerAction ? baseHeight : 0
-      const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * rowHeight + expandsHeight : rowHeight
+      const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
-      const tableHeight = isScreenfull ? screenfullHeight : tableMaxHeight || height || toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
-      let bodyHeight = (bodyLoad ? tableHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
+      const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHeight : tableMaxHeight || height || formHeight + toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
+      let bodyHeight = (bodyLoad ? tableHeight - formHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
       if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
       if (!height && !tableMaxHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
+      const tableWrapperHeight = tableHeight - formHeight - toolbarHeight - footerHeight - footerActionHeight
       return {
+        formHeight,
+        toolbarHeight,
+        tableWrapperHeight,
         tableHeight,
         dataHeight,
-        toolbarHeight,
         headerHeight,
         searchHeight,
         footerHeight,
         footerActionHeight,
-        bodyHeight: Math.max(bodyHeight, rowHeight)
+        bodyHeight: Math.max(bodyHeight - 2, _rowHeight)
       }
     },
     bodyRect() {
@@ -139,26 +157,21 @@ export default {
       }
       return node.getBoundingClientRect().width
     },
-    // 工具栏高度自适应
-    setToolbarHeightOffset() {
-      const { $refs, rowHeight } = this
-      if (!$refs.toolbar) return
-      const toolbar = $refs.toolbar.$el
-      const toolbarLefts = [...toolbar.querySelector('.eff-table__toobar-left').childNodes]
-      const toolbarRights = [...toolbar.querySelector('.eff-table__toobar-right').childNodes]
-      const toolbarChildsHeight = toolbarLefts.concat(toolbarRights).map(d => d.offsetHeight || 0)
-      const offsetHeight = rowHeight - Math.max(...toolbarChildsHeight)
-      this.toolbarHeightOffset = offsetHeight < 12 ? 12 - offsetHeight : 0
-    },
     resize() {
       this.$nextTick(() => {
         const { $el, setOverflowX, scrollLeftEvent } = this
-        this.bodyWrapper = this.$refs.body.$el
-        this.bodyWrapperWidth = this.getBodyWidth()
-        setOverflowX()
-        scrollLeftEvent()
-        this.tableBodyEl = $el.querySelector('.eff-table__body')
-        this.setToolbarHeightOffset()
+        const { body } = this.$refs
+        if (body) {
+          this.bodyWrapper = body.$el
+          this.bodyHeight = this.bodyWrapper.querySelector('.eff-table__body').offsetHeight
+          this.bodyWrapperWidth = this.getBodyWidth()
+          setOverflowX()
+          scrollLeftEvent()
+          this.tableBodyEl = $el.querySelector('.eff-table__body')
+        }
+        setTimeout(() => {
+          this.setTableRect()
+        }, 0)
       })
     },
     setOverflowX() {
@@ -168,6 +181,11 @@ export default {
     },
     doLayout() {
       this.resize()
+    },
+    setTableRect() {
+      const tableWrapper = this.$refs.tableWrapper
+      if (!tableWrapper) return
+      this.tableRect = tableWrapper.getBoundingClientRect()
     }
   },
   activated() {
@@ -181,7 +199,7 @@ export default {
     this.timer = setTimeout(() => {
       this.resize()
       clearTimeout(this.timer)
-    }, 300)
+    }, 500)
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })

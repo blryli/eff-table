@@ -9,25 +9,25 @@ export default {
     'total'
   ],
   methods: {
-    onSizeChange(e) {
+    onSizeChange(pageSize) {
       this.table.pager.pageNum = 1
-      this.table.pager.pageSize = e
+      this.table.pager.pageSize = pageSize
       this.table.commitProxy('query')
-      this.table.$emit('table-page-num-change', { pageSize: e })
+      this.table.$emit('table-page-num-change', { pageSize })
     },
-    onCurrentChange(e) {
-      this.table.pager.pageNum = e
+    onCurrentChange(pageNum) {
+      this.table.pager.pageNum = pageNum
       this.table.commitProxy('query')
-      this.table.$emit('table-page-size-change', { pageNum: e })
+      this.table.$emit('table-page-size-change', { pageNum })
     }
   },
   render(h) {
     const render = renderer.get('default').renderDefault
     const { pageNum, pageSize, total, table } = this
-    const { footerActionConfig: { pageConfig = {}} = {}} = table
+    const { tableFooterConfig: { pageConfig = {}} = {}} = table
     const props = Object.assign({
       pageSizes: [10, 50, 100, 200, 300, 400],
-      layout: 'sizes,prev,pager,next,jumper,total',
+      layout: 'total,prev,pager,next,sizes,jumper',
       pagerCount: 5
     }, pageConfig, { currentPage: pageNum, pageSize, total })
 

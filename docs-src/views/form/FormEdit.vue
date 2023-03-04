@@ -40,7 +40,7 @@ const jsCode = `
     data () {
       return {
         formOptions: {
-          columns: [
+          items: [
             {
               title: '名字',
               prop: 'name',
@@ -109,7 +109,7 @@ export default {
       jsCode,
       htmlCode,
       formOptions: {
-        columns: [
+        items: [
           {
             title: '名字',
             prop: 'name',

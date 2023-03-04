@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="tableWrapper"
     :key="tableId"
     class="eff-table"
     :class="{
@@ -12,110 +13,115 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
-    <!-- <VForm v-bind="formConfig" /> -->
-
+    <!-- {{ tableData }}
+    <div>{{ checkeds.map(d => d.id) }}</div>
+    <div>{{ filterList }}</div> -->
+    <TableForm v-if="formConfig && formConfig.items" ref="tableForm" v-model="tForm" :form-config="formConfig">
+      <slot slot="form" name="form" v-bind="{data: tForm, items: formConfig.items}" />
+      <template v-for="item in formConfig.items">
+        <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
+      </template>
+    </TableForm>
     <Toolbar
       v-if="showToolbar"
       ref="toolbar"
     >
       <slot name="toolbar" />
     </Toolbar>
+    <div ref="table" :class="tableClass" :style="tableStyle">
+      <slot name="table" v-bind="{data: tableData}">
+        <div class="eff-table__wrapper">
+          <TableHeader
+            v-if="showHeader"
+            ref="header"
+            :visible-columns="visibleColumns"
+            :body-columns="bodyColumns"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="body"
+            :body-columns="bodyColumns"
+            :data="tableData"
+            :validators="validators"
+            :messages="messages"
+          />
+          <TableFooter
+            v-if="showSummary"
+            ref="footer"
+            :data="tableData"
+            :columns="bodyColumns"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+          />
+        </div>
 
-    <div ref="table" :class="tableClass">
-      <div class="eff-table__wrapper">
-        <TableHeader
-          v-if="showHeader"
-          ref="header"
-          :visible-columns="visibleColumns"
-          :body-columns="bodyColumns"
-          @dragend="handleDragend"
-          @sort-change="sortChange"
-        />
-        <TableBody
-          ref="body"
-          :body-columns="bodyColumns"
-          :data="tableData"
-          :validators="validators"
-          :messages="messages"
-        />
-        <TableFooter
-          v-if="showSummary"
-          ref="footer"
-          :data="tableData"
-          :columns="bodyColumns"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-        />
-      </div>
+        <!-- fixed left  -->
+        <div
+          v-if="leftWidth && overflowX"
+          :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
+          :style="{width: leftWidth + 'px', height: fixedHeight}"
+        >
+          <TableHeader
+            v-if="showHeader"
+            ref="leftHeader"
+            :visible-columns="rowHeight === 'auto' ? visibleColumns : visibleColumns.filter(d => d.fixed === 'left')"
+            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            fixed="left"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="leftBody"
+            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            :data="tableData"
+            fixed="left"
+            :validators="validators"
+            :messages="messages"
+          />
+          <TableFooter
+            v-if="showSummary"
+            :data="tableData"
+            :columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+            fixed="left"
+          />
+        </div>
 
-      <!-- fixed left  -->
-      <div
-        v-if="leftWidth && overflowX"
-        :class="['eff-table__fixed-left', scrollLeft ? 'is-scroll--start' : '']"
-        :style="{width: leftWidth + 'px', height: fixedHeight}"
-      >
-        <TableHeader
-          v-if="showHeader"
-          ref="leftHeader"
-          :visible-columns="visibleColumns.filter(d => d.fixed === 'left')"
-          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
-          fixed="left"
-          @dragend="handleDragend"
-          @sort-change="sortChange"
-        />
-        <TableBody
-          ref="leftBody"
-          :body-columns="bodyColumns.filter(d => d.fixed === 'left')"
-          :data="tableData"
-          fixed="left"
-          :validators="validators"
-          :messages="messages"
-        />
-        <TableFooter
-          v-if="showSummary"
-          :data="tableData"
-          :columns="bodyColumns.filter(d => d.fixed === 'left')"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-          fixed="left"
-        />
-      </div>
+        <!-- fixed right  -->
+        <div
+          v-if="rightWidth && overflowX"
+          :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
+          :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
+        >
+          <TableHeader
+            v-if="showHeader"
+            ref="rightHeader"
+            :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
+            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+            fixed="right"
+            @dragend="handleDragend"
+          />
+          <TableBody
+            ref="rightBody"
+            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :data="tableData"
+            :validators="validators"
+            :messages="messages"
+            fixed="right"
+          />
+          <TableFooter
+            v-if="showSummary"
+            :data="tableData"
+            :columns="bodyColumns.filter(d => d.fixed ==='right')"
+            :sum-text="sumText"
+            :summary-method="summaryMethod"
+            fixed="right"
+          />
+        </div>
 
-      <!-- fixed right  -->
-      <div
-        v-if="rightWidth && overflowX"
-        :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-        :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
-      >
-        <TableHeader
-          v-if="showHeader"
-          ref="rightHeader"
-          :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
-          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-          fixed="right"
-          @dragend="handleDragend"
-          @sort-change="sortChange"
-        />
-        <TableBody
-          ref="rightBody"
-          :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-          :data="tableData"
-          :validators="validators"
-          :messages="messages"
-          fixed="right"
-        />
-        <TableFooter
-          v-if="showSummary"
-          :data="tableData"
-          :columns="bodyColumns.filter(d => d.fixed ==='right')"
-          :sum-text="sumText"
-          :summary-method="summaryMethod"
-          fixed="right"
-        />
-      </div>
-
-      <!-- footer存在时的 body 滚动 -->
-      <ScrollX v-if="showSummary && overflowX" />
+        <!-- footer存在时的 body 滚动 -->
+        <ScrollX v-if="showSummary && overflowX" />
+      </slot>
     </div>
     <FooterAction
       v-if="showFooterToolbar"
@@ -125,7 +131,7 @@
     </FooterAction>
     <!-- 拖动 -->
     <drag
-      v-if="drag && border || rowDrag"
+      v-if="drag || rowDrag"
       ref="drag"
       v-model="tableColumns"
       :column-control="toolbarConfig.columnControl"
@@ -143,29 +149,43 @@
     />
 
     <!-- 批量替换 -->
-    <replace v-if="toolbarConfig.replace" ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
+    <template v-if="toolbarConfig.replace">
+      <replace ref="replace" :columns="bodyColumns.filter(d => !d.type)" />
+    </template>
     <!-- <sort v-if="sortConfig.multiple" ref="sort" /> -->
     <!-- 编辑 -->
-    <edit v-if="edit" ref="edit" :columns="bodyColumns" />
+    <template v-if="edit">
+      <edit ref="edit" :columns="bodyColumns" />
+    </template>
     <!-- 高级查询 -->
-    <SeniorQuery v-if="isSeniorQuery" ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
+    <template v-if="isSeniorQuery">
+      <SeniorQuery ref="seniorQuery" :data="seniorQueryList" @search="handleSeniorQuery" />
+    </template>
     <!-- <p>tableData -  {{ tableData }}</p> -->
 
     <!-- 气泡 -->
     <Popovers ref="popovers" />
 
     <!-- 过滤 -->
-    <EffFilter v-if="useFilter" ref="filter" />
+    <template v-if="useFilter">
+      <EffFilter ref="filter" />
+    </template>
 
     <!-- 列宽度调整辅助线 -->
     <div v-show="lineShow" ref="line" class="eff-table-line" />
 
     <!-- expand插槽 -->
-    <slot v-if="false" name="expand" />
+    <template v-if="false">
+      <slot name="expand" />
+    </template>
 
     <Loading :visible="isLoading" />
-    <SelectRange v-if="selectRange || copy" ref="selectRange" />
-    <copy v-if="copy" />
+    <template v-if="selectRange || copy">
+      <SelectRange ref="selectRange" />
+    </template>
+    <template v-if="copy">
+      <copy />
+    </template>
   </div>
 </template>
 
@@ -178,7 +198,9 @@ import sort from '../mixins/sort'
 import proxy from '../mixins/proxy'
 import tree from '../mixins/tree'
 import virtual from '../mixins/virtual'
+import expand from '../mixins/expand'
 import shortcutKey from '../mixins/shortcutKey'
+import tForm from '../mixins/tForm'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 import TableFooter from './TableFooter'
@@ -192,8 +214,10 @@ import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange'
 import Copy from '../components/Copy'
 import columnBatchControl from '../components/ColumnBatchControl'
+// import ColumnManage from '../components/ColumnManage'
 import Replace from '../components/Replace'
 import EffFilter from '../components/Filter'
+import TableForm from '../components/TableForm'
 import SeniorQuery from 'pk/senior-query'
 // import Sort from '../components/Sort'
 import XEUtils from 'xe-utils'
@@ -218,7 +242,8 @@ export default {
     FooterAction,
     Replace,
     SeniorQuery,
-    EffFilter
+    EffFilter,
+    TableForm
     // Sort
   },
   mixins: [
@@ -228,9 +253,11 @@ export default {
     validate,
     sort,
     virtual,
+    expand,
     shortcutKey,
     proxy,
-    tree
+    tree,
+    tForm
   ],
   provide() {
     return {
@@ -247,14 +274,16 @@ export default {
     data: { type: Array, default: () => ([]) }, // table 数据源
     form: { type: Object, default: () => ({}) }, // 搜索行数据
     rowId: { type: String, default: '_rowId' }, // 行主键
-    height: { type: Number, default: 0 }, // 表格高度
+    height: { type: [Number, String], default: 0 }, // 表格高度
     maxHeight: { type: Number, default: 0 }, // 表格最大高度
-    baseRowHeight: { type: Number, default: 36 }, // body以外的行高度
-    rowHeight: { type: Number, default: 36 }, // 行高度
+    baseRowHeight: { type: Number, default: 36 }, // 行以外的默认高度
+    rowHeight: { type: [Number, String], default: 36 }, // 行高度
+    headerRowHeight: { type: [Number, String], default: 36 }, // header行高度
     border: Boolean, // 是否带有纵向边框
     stripe: Boolean, // 是否带有斑马线
     highlightCurrentRow: Boolean, // 是否高亮显示行
     showOverflowTooltip: Boolean, // 是否单元格文本不换行，溢出文本用提示框展示
+    focusToSelect: Boolean, // 编辑时聚焦是否全选
     loading: Boolean, // 是否显示表格loading效果
     headerContextmenu: { type: Boolean, default: true }, // 表头右键扩展菜单
     rowClassName: { type: [String, Function], default: '' }, // 行的 className
@@ -276,15 +305,19 @@ export default {
     copy: Boolean, // 是否开启复制功能
     selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
     editConfig: { type: Object, default: () => {} }, // 编辑配置
+    dragConfig: { type: Object, default: () => {} }, // 编辑配置
+    checkboxConfig: { type: Object, default: () => ({}) }, // 编辑配置
+    searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
     formConfig: { type: Object, default: () => {} }, // 表单配置
+    formRequest: { type: Object, default: () => {} }, // 表单代理配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
-    footerActionConfig: { type: Object, default: () => {} } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
+    footerActionConfig: { type: Object, default: () => ({}) } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },
   data() {
     return {
@@ -299,8 +332,6 @@ export default {
       isScreenfull: false,
       tableBodyEl: null,
       hoverRowid: null,
-      expands: [],
-      expand: null,
       isLoading: false,
       editStore: {
         editRow: {},
@@ -311,7 +342,7 @@ export default {
       },
       pager: {
         pageNum: 1,
-        pageSize: ((this.footerActionConfig || {}).pageConfig || {}).pageSize || 10
+        pageSize: 10
       },
       headerCheckedColumns: [],
       selectRengeStore: [], // 复制功能选中范围
@@ -335,9 +366,20 @@ export default {
       const { width } = tableColumnConfig
       const plat = arr => {
         return arr.reduce((acc, cur) => {
-          const { children = [] } = cur
+          const { children = [], minWidth = 30 } = cur
           if (!cur.width && width) cur.width = width
-          cur.width = Number(cur.width) // 兼容非数字格式
+          // 设置最小宽度
+          const { edit, sortable, titlePrefix, titleSuffix } = cur
+          const widths = [
+            { el: edit, width: 16 },
+            { el: sortable, width: 20 },
+            { el: titlePrefix, width: 18 },
+            { el: titleSuffix, width: 18 },
+            { el: cur.rules && Boolean(cur.rules.find(d => d.required)), width: 12 }
+          ]
+          const min_width = widths.reduce((acc, cur) => cur.el ? acc + cur.width : acc, this.isTypeColumn(cur) ? 30 : 72)
+          cur.minWidth = Math.max(min_width, minWidth)
+          cur.width = this.isTypeColumn(cur) ? 30 : Number(cur.width || 0) // 兼容非数字格式
           if (children.length) {
             children.forEach(d => cur.fixed && (d.fixed = cur.fixed))
             return acc.concat(plat(children))
@@ -359,53 +401,82 @@ export default {
       // }
       return plat(this.visibleColumns)
     },
+    baseHeight() {
+      return Math.max(this.baseRowHeight, 30)
+    },
+    _rowHeight() {
+      const { rowHeight } = this
+      return Math.max(Number(rowHeight !== 'auto' ? rowHeight : 0), 30)
+    },
     style() {
       const style = {}
-      const { isScreenfull, height, tableMaxHeight } = this
-      style['--rowHeight'] = this.rowHeight + 'px'
+      const { isScreenfull, height } = this
       if (!isScreenfull) {
         if (height) style.height = height + 'px'
-        if (tableMaxHeight) style.maxHeight = tableMaxHeight + 'px'
       }
 
       return style
     },
     afterData() {
-      const { tableData, filters, sorts, sortConfig = {}, tableId, rowId } = this
+      const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
+      const { remote, searchMethod } = searchConfig
       let data = tableData.slice(0)
+      const filterList = []
       // 筛选数据
-      if (filters && filters.length) {
+      if (filters && filters.length || searchForm.length) {
         data = data.filter(row => {
-          return filters.every(filter => {
+          const filterFunc = () => filters.every(filter => {
             const { column, values } = filter
             const { filterMethod, columnId, prop } = column
             const value = XEUtils.get(row, prop)
             if (values.length) {
+              const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
+              const cellValue = cell ? cell.innerText : value
               if (filterMethod) {
-                const cell = document.getElementById(`${tableId}-${row[rowId]}-${columnId}`)
-                const cellValue = cell ? cell.innerText : value
-                return values.some(value => filterMethod({ value, option: filter, cellValue, row, column, $table: this }))
+                return filterMethod({ value, option: filter, cellValue, row, column, prop, $table: this })
               }
-              return values.indexOf(value) > -1
+              return values.includes(cellValue)
             }
             return true
           })
+          // 前端搜索过滤
+          const searchFilter = () => searchForm.every(option => {
+            if (remote) return true
+            const { column, content, prop: optProp, searchMethod: method } = option
+            const { search, prop: colProp } = column || {}
+            const prop = colProp || optProp
+            const rowValue = XEUtils.get(row, prop)
+            const values = XEUtils.isArray(content) ? content : [content]
+            const searchFn = method || search && search.searchMethod || searchMethod
+            if (values.length) {
+              if (searchFn) {
+                return searchFn({ rowValue, value: values, row, column, prop, option })
+              }
+              return values.some(d => ('' + rowValue).indexOf('' + d) > -1)
+            }
+            return true
+          })
+          const isFilter = filterFunc() && searchFilter()
+          // 过滤掉的数据从selection中剔除
+          !isFilter && filterList.push(row[rowId])
+          this.setFilterList(filterList)
+          return isFilter
         })
+      } else {
+        this.setFilterList([])
       }
       // 数据排序
       if (sorts && sorts.length) {
         const { sortMethod, remote } = sortConfig
-        const sort = sorts.reduce((acc, column) => {
-          const { prop, order } = column
-          return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data, column, prop, order, $table: this })] : [prop, order]])
-        }, [])
-        !remote && sort.length && (data = XEUtils.sortBy(data, sort))
+        if (!remote) {
+          const sort = sorts.reduce((acc, column) => {
+            const { prop, order } = column
+            return acc.concat([XEUtils.isFunction(sortMethod) ? [sortMethod({ data, column, prop, order, $table: this })] : [prop, order]])
+          }, [])
+          sort.length && (data = XEUtils.sortBy(data, sort))
+        }
       }
       return data
-    },
-    useExpand() {
-      const { visibleColumns, $slots, expands } = this
-      return Boolean(visibleColumns.find(d => d.type === 'expand') && $slots.expand || expands.length)
     },
     useGroupColumn() {
       const { tableData } = this
@@ -426,8 +497,8 @@ export default {
       return show
     },
     showFooterToolbar() {
-      const { footerActionConfig = {}, $slots } = this
-      const { buttons = [], showPager } = footerActionConfig
+      const { tableFooterConfig = {}, $slots } = this
+      const { buttons = [], showPager } = tableFooterConfig
       return buttons.length || showPager || $slots.footer_action
     },
     isSeniorQuery() {
@@ -501,30 +572,33 @@ export default {
     }
   },
   created() {
-    const { seniorQueryConfig } = this
+    const { seniorQueryConfig, $EFF } = this
     const { fieldList } = seniorQueryConfig
+    const { footerActionConfig, focusToSelect } = $EFF
     this.seniorQueryList = fieldList
 
     this.tableColumns = getComColumns(this.columns)
     Object.assign(this, {
       loadData: false,
+      tableFocusToSelect: this.focusToSelect || !!focusToSelect,
       tableSourceData: Object.freeze([]),
       tableDataMap: new Map(),
-      tableEditConfig: Object.assign({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
-      tableColumnConfig: Object.assign({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: Object.assign({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
-      tableExpandConfig: Object.assign({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig)
+      tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
+      tableDragConfig: XEUtils.merge({}, this.dragConfig),
+      tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
+      tableTreeConfig: XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
+      tableFooterConfig: XEUtils.merge({}, footerActionConfig, this.footerActionConfig)
     })
+    const pageConfig = this.tableFooterConfig.pageConfig || {}
+    if (pageConfig.pageSize) {
+      this.pager.pageSize = pageConfig.pageSize
+    }
     if ((this.data || []).length) {
       this.loadTableData(this.data)
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      const { $scopedSlots, $slots } = this
-      const { expand } = $scopedSlots || $slots
-      this.expand = expand
-    })
     this.$on('edit-fields', this.editField)
   },
   beforeDestroy() {
@@ -539,21 +613,19 @@ export default {
         this.$data[key] = null
       }
     },
-    loadTableData(data = this.data, opts = { clearScroll: true }) {
+    loadTableData(data = this.data) {
       const { editStore, rowId, loadData, useExpand } = this
-      this.tableData =
-        Object.freeze(data.map((d, i) => {
-          !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
-          return d
-        }) || [])
-      this.tableSourceData = Object.freeze(XEUtils.clone(data, true))
+      this.tableData = Object.freeze(XEUtils.mapTree(data, d => {
+        !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
+        return d
+      }))
+      this.tableSourceData = Object.freeze(XEUtils.toTreeArray(XEUtils.clone(data, true)))
       editStore.insertList = []
       if (rowId === '_rowId') {
         this.clearStatus()
         this.clearValidate()
       }
       this.updateCache()
-      opts.clearScroll && this.clearScroll()
       this.resize()
       if (!loadData) {
         useExpand && this.initExpand()
@@ -566,27 +638,27 @@ export default {
       this.clearStatus()
       this.clearValidate()
       this.clearSelection()
-      this.expands = []
+      this.clearRowExpand()
+      this.clearTreeExpand()
       if (!data) {
         data = this.data
       }
       this.loadTableData(data)
     },
     initExpand() {
-      const { tableExpandConfig, rowId } = this
+      const { tableExpandConfig } = this
       if (!tableExpandConfig) return
       const { expandAll, defaultExpandeds, onlyField } = tableExpandConfig
       const hasExpand = row => !onlyField || onlyField && row[onlyField]
       setTimeout(() => {
         if (expandAll) {
           this.tableData.forEach(row => {
-            const id = row[rowId]
-            hasExpand(row) && this.expandChange({ rowId: id, height: 0 })
+            hasExpand(row) && this.toggleRowExpand(row)
           })
         } else {
           defaultExpandeds.forEach(rowId => {
             const row = this.tableDataMap.get(rowId)
-            hasExpand(row) && this.expandChange({ rowId, height: 0 })
+            hasExpand(row) && this.toggleRowExpand(row)
           })
         }
       }, 300)
@@ -628,7 +700,7 @@ export default {
       if (!opts.name) opts.name = 'input'
       const { name, props } = opts
       if (name === 'input') {
-        setFieldValue.call(this, this, row, prop, content)
+        setFieldValue.call(this, row, prop, content)
       } else if (name === 'select') { // 下拉框
         const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
         const { labelKey = 'label', valueKey = 'value', mutiple } = props || {}
@@ -643,9 +715,9 @@ export default {
               const val = getValue(cur)
               return val ? acc.concat([val]) : acc
             }, [])
-            setFieldValue.call(this, this, row, prop, ct)
+            setFieldValue.call(this, row, prop, ct)
           } else {
-            setFieldValue.call(this, this, row, prop, getValue(content))
+            setFieldValue.call(this, row, prop, getValue(content))
           }
         }
       } else if (name === 'date-picker') { // 日期
@@ -656,7 +728,7 @@ export default {
           const toStringDate = XEUtils.toStringDate(content, format)
           date = XEUtils.isValidDate(toStringDate) ? toStringDate : ''
         }
-        setFieldValue.call(this, this, row, prop, date)
+        setFieldValue.call(this, row, prop, date)
       } else if (name === 'cascader') { // 级联选择器
         const options = getOptions(opts, { root: this, table: this, vue: this, data: row, row, rowIndex, column, columnIndex, prop: render.prop || prop, edit: this })
         const { label = 'label', value = 'value', children = 'children' } = props.props
@@ -689,7 +761,7 @@ export default {
           const path = paths.find(d => Object.values(getStr(d)).indexOf(content) > -1)
           if (path) showValue = path.map(d => d[value])
         }
-        return setFieldValue.call(this, this, row, prop, showValue)
+        return setFieldValue.call(this, row, prop, showValue)
       } else if (name === 'switch') { // 开关
         const { props = {}} = opts
         const activeValue = props['active-value'] || true
@@ -705,7 +777,7 @@ export default {
           }
         }
 
-        setFieldValue.call(this, this, row, prop, data)
+        setFieldValue.call(this, row, prop, data)
       }
     },
     editField(fileds, copy) {
@@ -735,7 +807,7 @@ export default {
           if (copy) {
             this.handleCopy({ row, rowIndex, column, columnIndex, prop, content })
           } else {
-            setFieldValue.call(this, this, row, prop, content)
+            setFieldValue.call(this, row, prop, content)
           }
           if (rules && rules.length) {
             this.validateField(prop, rules, row)
@@ -752,21 +824,22 @@ export default {
     },
     updateStatus(row, prop) {
       if (!prop) return
+      const rowid = row[this.rowId]
 
       const sourceRow = this.tableSourceData.find(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       if (!sourceRow) return
 
       const isInsert = this.editStore.insertList.find(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       if (isInsert) return
 
       const newRow = { ...row }
       newRow.$old = { ...sourceRow }
       const index = this.editStore.updateList.findIndex(
-        d => d[this.rowId] === row[this.rowId]
+        d => d[this.rowId] === rowid
       )
       let isSome = true
       for (const key in sourceRow) {
@@ -786,16 +859,23 @@ export default {
     },
     // 更新数据行map
     updateCache() {
-      const { tableData, rowId } = this
+      const { tableData, rowId, tableTreeConfig: { children = 'children' } = {}} = this
       if (!this.tableDataMap) {
         Object.assign(this, {
           tableDataMap: new Map()
         })
       }
       this.tableDataMap.clear()
-      tableData.forEach(d => {
-        this.tableDataMap.set(d[rowId], d)
-      })
+      const setMap = data => {
+        data.forEach(d => {
+          this.tableDataMap.set(d[rowId], d)
+          const childs = d[children]
+          if (childs && childs.length) {
+            setMap(childs)
+          }
+        })
+      }
+      setMap(tableData)
     },
     rootMousemove(event) {
       this.$emit('table-mouse-move', { event })
@@ -844,29 +924,19 @@ export default {
     handleCardClose() {
       this.$emit('drag-card-close')
     },
-    expandChange(obj) {
-      const { rowId } = obj
-      const expand = this.expands.find(d => d.rowId === rowId)
-      if (expand) {
-        this.$set(expand, 'expanded', !expand['expanded'])
-      } else {
-        obj.expanded = true
-        this.expands.push(obj)
-      }
+    searching(val) {
+      this.clearSearch()
       this.$nextTick(() => {
-        // 设置 expand 高度
-        const expand = this.expands.find(d => d.rowId === rowId)
-        if (expand.expanded) {
-          expand.height = document.querySelector('.expandid-' + rowId).offsetHeight
-        }
-        this.$emit('expand-change', this.expands)
+        const data = XEUtils.isArray(val) ? val : [val]
+        this.searchForm = data
+        if (this.proxyConfig && this.searchConfig.remote === true) this.commitProxy('query')
       })
     },
     searchChange(val) {
       // console.log('search change', JSON.stringify(val, null, 2))
       this.searchForm = val
       this.$emit('search-change', val)
-      if (this.proxyConfig) this.commitProxy('query')
+      if (this.proxyConfig && this.searchConfig.remote === true) this.commitProxy('query')
     },
     dataChange() {
       const { tableData, getEditStore } = this

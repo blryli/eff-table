@@ -1,4 +1,7 @@
 const path = require('path')
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 
 module.exports = {
   lintOnSave: false,
@@ -8,11 +11,11 @@ module.exports = {
 
   configureWebpack: {
     entry: {
-      app: path.resolve(__dirname, './docs-src/main.js')
+      app: resolve('docs-src/main.js')
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './docs-src')
+        '@': resolve('docs-src')
       }
     }
   },
@@ -22,7 +25,7 @@ module.exports = {
     config.module
       .rule('js')
       .include
-      .add(path.resolve(__dirname, './docs-src'))
+      .add(resolve('docs-src'))
 
     config.module
       .rule('vue')

@@ -12,7 +12,8 @@ export default {
   mixins: [Validator, FocusControl],
   props: {
     data: { type: Object, default: () => ({}) },
-    columns: { type: Array, default: () => ([]) },
+    items: { type: Array, default: () => ([]) },
+    direction: { type: String, default: 'row' },
     currentPath: { type: String, default: '' },
     titleWidth: { type: String, default: '' },
     titleAlign: { type: String, default: 'right' },
@@ -21,18 +22,19 @@ export default {
     rowledge: { type: String, default: '24px' },
     focusOpen: { type: Boolean, default: true },
     focusOptions: { type: Object, default: () => {} },
-    focusTextAllSelected: { type: Boolean, default: true },
     width: { type: String, default: '' },
     messageType: { type: String, default: '' },
     focusStop: Boolean,
     focusPause: Boolean,
     readonly: Boolean,
-    autofocus: Boolean
+    autofocus: Boolean,
+    focusToSelect: Boolean // 聚焦是否全选
   },
   provide() {
     return {
       form: this,
-      root: this
+      root: this,
+      table: this
     }
   },
   inject: {
@@ -59,15 +61,21 @@ export default {
       this.editIsStop = val
     }
   },
+  created() {
+    const { focusToSelect } = this.$EFF
+    Object.assign(this, {
+      formFocusToSelect: this.focusToSelect || !!focusToSelect
+    })
+  },
   mounted() {
-    this.autofocus && this.$nextTick(() => {
-      this.focus()
+    this.$nextTick(() => {
+      this.autofocus && this.focus()
     })
   },
   methods: {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
-      const { prop, itemRender, format } = column
+      const { prop, itemRender, options, label = 'label', value = 'value', format } = column
       if (readonly) return XEUtils.get(data, prop)
       const params = { root: this, table, row: data, form: this, vue: this, data, column, prop }
       // 处理format
@@ -77,7 +85,7 @@ export default {
       if (typeof itemRender === 'function') {
         return itemRender($createElement, { table, form: this, data }) || ''
       } else {
-        const renderOpts = Object.assign({ name: 'input' }, itemRender)
+        const renderOpts = Object.assign({ name: 'input', options, label, value }, itemRender)
         const { name } = renderOpts
         const compConf = renderer.get(name)
         if (compConf) {
@@ -115,19 +123,21 @@ export default {
     }
   },
   render(h) {
-    const { columns, titleAlign, width, $slots, itemGutter, itemRender, data, popoverOpts } = this
-    return h('layout', {
-      class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : ''],
+    const { items, titleAlign, width, $slots, itemGutter, rowledge, itemRender, data, popoverOpts, direction } = this
+    return h('div', {
+      class: ['v-form', titleAlign ? `v-form--title-${titleAlign}` : '', direction === 'column' ? 'is--column' : ''],
       style: {
         width: width,
-        'margin-left': itemGutter ? `-${itemGutter / 2}px` : '',
-        'margin-right': itemGutter ? `-${itemGutter / 2}px` : ''
+        'column-gap': itemGutter + 'px',
+        'row-gap': rowledge
       }
     },
     [
-      columns.map(column => {
+      $slots.form || items.map(column => {
         const props = Object.assign({}, column, { data, column })
-        return h('v-form-item', { props }, [itemRender(column)])
+        const { prop } = column
+        const slot = $slots['item_' + prop]
+        return h('v-form-item', { props }, [slot || itemRender(column)])
       }),
       $slots.default,
       h('Popover', { ref: 'popover', props: popoverOpts })
@@ -142,22 +152,8 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  &::before, &::after{
-    display: table;
-    content: "";
-  }
-  &:after{
-    clear: both;
-  }
-
-  &-line{
-    &:before, &:after{
-      display: table;
-      content: "";
-    }
-    &:after {
-      clear: both;
-    }
+  &.is--column{
+    flex-direction: column;
   }
 
   .is--dirty::before{

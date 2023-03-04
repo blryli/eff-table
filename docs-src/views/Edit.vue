@@ -357,9 +357,10 @@ export default {
               format: ({ row }) => this.getHeightWeight(row)
             },
             edit: {
-              render: (h, { row, rowIndex }) => {
+              render: (h, { row, rowIndex, columnIndex }) => {
                 return {
                   name: 'popup',
+                  key: rowIndex + columnIndex,
                   props: { content: this.getHeightWeight(row) },
                   children: {
                     name: 'form',
@@ -433,10 +434,7 @@ export default {
                   '2': {
                     prop: 'address1',
                     name: 'select',
-                    props: {
-                      label: 'label',
-                      value: 'value'
-                    },
+                    props: { multiple: true, allowCreate: true },
                     options: () => [
                       { value: 'address1-1', label: '广东省深圳市' },
                       { value: 'address1-2', label: '广东省东莞市' }
@@ -463,7 +461,7 @@ export default {
   },
   methods: {
     getHeightWeight(row) {
-      const { height, weight } = row.heightWeight
+      const { height, weight } = row.heightWeight || {}
       return `${height ? height + 'cm' : ''}${weight ? '，' + weight + 'kg' : ''}`
     }
   }

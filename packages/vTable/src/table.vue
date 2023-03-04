@@ -64,7 +64,7 @@
     <div v-if="hasPagination" class="v-table-footer">
       <el-pagination
         class="p-el-pagination"
-        layout="sizes,prev,pager,next,jumper,total"
+        :layout="layout"
         :page-sizes="[10, 20, 30, 50, 100]"
         :current-page="pagination.pageNum"
         :page-size="pagination.pageSize"
@@ -73,7 +73,9 @@
         @current-change="pageChange"
         @prev-click="pageChange"
         @next-click="pageChange"
-      />
+      >
+        <slot v-if="showPaginationSlot" name="pagination"></slot>
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -114,11 +116,24 @@ export default {
       default() {
         return { pageNum: 1, pageSize: 10, total: 0 }
       }
-    }
+    },
+    // 是否显示分页插槽
+    showPaginationSlot: { type: Boolean, default: false },
+    pageLayout:{
+      type: Array,
+      default() {
+        return ['sizes','->','total','jumper','prev','pager','next']
+      },
+    },
   },
   data() {
     return {
       cols: []
+    }
+  },
+  computed: {
+    layout() {
+      return this.pageLayout.join(',');
     }
   },
   created() {
@@ -164,7 +179,7 @@ export default {
       localStorage.setItem(this.id, '')
     },
     reset() {
-      this.$slots.search[0].componentInstance.resetFields()
+      this.$slots.search[0].componentInstance.resetFields();
       this.search()
     },
     search() {

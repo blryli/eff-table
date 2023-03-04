@@ -11,16 +11,17 @@ export default {
     columnIndex: { type: Number, default: 0 },
     bodyColumnIndex: { type: Number, default: 0 },
     colid: { type: String, default: '' },
+    isLastColumn: Boolean,
     isChecked: Boolean
   },
   inject: ['table'],
   functional: true,
   render(h, context) {
-    const { props, data, parent, injections } = context
+    const { props, data, injections } = context
     const { table } = injections
-    const { spaceWidth, drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData } = table
-    const { column, columnIndex, colid, isChecked } = props
-    const { sortable, title, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
+    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border } = table
+    const { column, columnIndex, bodyColumnIndex, colid, isChecked, isLastColumn } = props
+    const { sortable, title, titleSort, titlePrefix, titleSuffix, type, rules = [], headerAlign, titleRender } = column
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
     const renderId = `header-column-${tableId}-${colid}`
@@ -28,17 +29,15 @@ export default {
     const isRequired = Boolean(rules.find(d => d.required))
 
     const columnStyle = {}
-    const { width = 0 } = column
-    const columnWidth = Math.max(width || spaceWidth, 40)
-    columnStyle.minWidth = columnWidth + 'px'
-    columnStyle.maxWidth = columnWidth + 'px'
-    if (!column.parent && columnIndex === 0) {
-      columnStyle.borderLeft = 0
-    }
+    const columnWidth = table.getColumnWidth(column)
+    columnStyle.flex = `0 0 ${columnWidth}px`
+    columnStyle['--width'] = columnWidth + 'px'
 
     const { titleClassName, drag, edit, fixed, prop, filter, filters } = column
 
     let columnClass = `eff-table__column`
+    if (border) columnClass += ' is--border'
+    if (bodyColumnIndex === 0) columnClass += ' is--start'
     // 对齐方式
     if (headerAlign) {
       columnClass += ` is--align-${headerAlign || 'left'}`
@@ -61,28 +60,25 @@ export default {
     if (isChecked) {
       columnClass += ' is--checked'
     }
+    if (table.isTypeColumn(column)) {
+      columnClass += ' is--type-column'
+    }
+    if (isLastColumn) {
+      columnClass += ' is--last-column'
+    }
 
     const sortActive = (order) => {
       const findColumn = table.sorts.find(d => [d].some(s => s === column))
       return findColumn && findColumn.order === order
     }
     const renderSelection = (h) => {
-      return h(VCheckbox, {
-        props: { value: table.selectionAll, indeterminate: table.indeterminate },
+      return (checkboxConfig || {}).showHeader === false ? '' : h(VCheckbox, {
+        props: { value: table.selectionAll, indeterminate: table.indeterminate, disabled: !table.tableData.length },
         key: columnIndex,
         on: { change: table.allselectionChange }
       })
     }
-    const titleRender = (h, { column, columnIndex }) => {
-      if (column.titleRender) {
-        if (typeof column.titleRender === 'function') {
-          return column.titleRender(h, { title: column.title, column, columnIndex })
-        } else {
-          console.error('titleRender 必须是函数')
-        }
-      }
-      return false
-    }
+
     const handleMouseenter = () => {
       const cell = document.getElementById(renderId)
       const cellTitle = cell.querySelector('.eff-cell--title')
@@ -96,12 +92,6 @@ export default {
     }
     const handleMouseleave = () => {
       table.$refs.popovers.tipClose()
-    }
-    const sortClick = (order) => {
-      const { sortChange } = parent
-      if (!sortChange) return
-      column.order = column.order && column.order === order ? '' : order
-      sortChange(column)
     }
     // filter
     if (filter) {
@@ -118,7 +108,8 @@ export default {
           return d
         })
       } else {
-        message = [...new Set(tableData.map(d => getFieldValue(d, prop)))].map(value => {
+        message = [...new Set(tableData.map(d => getFieldValue(d, prop)))].map(val => {
+          const value = val.toString()
           if (!value) return null
           return { label: value, value, checked: false }
         })
@@ -128,7 +119,7 @@ export default {
       table.$refs.filter.toggleTipShow({ reference, showAllways: true, placement: 'bottom', column })
     }
 
-    const slot = type === 'expand' ? '' : column.titleRender ? titleRender(h, { column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
+    const slot = type === 'expand' ? '' : titleRender ? titleRender(h, { title, column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
 
     const renderHelp = (title, icon) => {
       const { message } = title || {}
@@ -156,21 +147,21 @@ export default {
           tableEdit && columnIsEdit(column) ? <i class='eff-icon-edit' title='可编辑列' /> : ''
         }
         {
-          renderHelp(titlePrefix, prefixIcon)
+          XEUtils.isFunction(titlePrefix) ? titlePrefix(h, { column, title, prop }) : renderHelp(titlePrefix, prefixIcon)
         }
-        <span class='eff-cell--title'>{slot}</span>
+        <span class={['eff-cell--title', titleSort && 'is--cursor']} on-click={() => titleSort && !titleRender && table.handleClickSort(column)}>{slot}</span>
         {
-          renderHelp(titleSuffix, suffixIcon)
+          XEUtils.isFunction(titleSuffix) ? titleSuffix({ column, title, prop }) : renderHelp(titleSuffix, suffixIcon)
         }
         {
           sortable ? <span class='eff-cell--sort'>
             <i
               class={{ 'eff-cell--sort-asc': true, 'is--active': sortActive('asc') }}
-              on-click={() => sortClick('asc')}
+              on-click={() => table.handleSort(column, 'asc')}
             ></i>
             <i
               class={{ 'eff-cell--sort-desc': true, 'is--active': sortActive('desc') }}
-              on-click={() => sortClick('desc')}
+              on-click={() => table.handleSort(column, 'desc')}
             ></i>
           </span> : ''
         }

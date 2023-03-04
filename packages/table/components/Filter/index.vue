@@ -79,16 +79,16 @@ export default {
       visibleColumns.filter(column => {
         const { prop, filters } = column
         const valueList = []
-        const dataList = []
+        const labelList = []
         if (filters && filters.length) {
           filters.forEach(item => {
             if (item.checked) {
               valueList.push(item.value)
-              dataList.push(item.data)
+              labelList.push(item.label)
             }
           })
           if (valueList.length) {
-            filterList.push({ column, prop, values: valueList, datas: dataList })
+            filterList.push({ column, prop, values: valueList, labels: labelList })
           }
         }
       })

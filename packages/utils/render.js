@@ -1,7 +1,7 @@
 import XEUtils from 'xe-utils'
 import { render, getChildren } from 'core/render'
 import map from 'core/render/map'
-import { setFieldValue, getFieldValue, isNoValue } from 'pk/utils'
+import { setFieldValue, getFieldValue, isNoValue, getFormItemTitle } from 'pk/utils'
 
 let oldData = null
 
@@ -27,8 +27,7 @@ export function getOptions(renderOpts, params) {
 
 // 带标签的 children
 function getOptionsRender(h, renderOpts, params, optionName) {
-  const { props = {}} = renderOpts
-  const { labelKey = 'label', valueKey = 'value' } = props
+  const { label: labelKey = 'label', value: valueKey = 'value' } = renderOpts
   return getOptions(renderOpts, params).map(item => h(map.get(optionName), { key: item.value, props: { label: item[labelKey], value: item[valueKey], disabled: Boolean(item.disabled) }}))
 }
 
@@ -53,7 +52,7 @@ function renderVModel(h, renderOpts, params) {
   }
   const { placeholder } = renderOpts.props || {}
   const attrs = {
-    placeholder: placeholder || '请输入' + (column.title || '内容')
+    placeholder: placeholder || getFormItemTitle(column.title, table || data) || '请输入'
   }
 
   if (params.row) {
@@ -62,14 +61,13 @@ function renderVModel(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
         table.editField([{ row, rowIndex, columnIndex, content: val }])
       }
       // console.log('data', JSON.stringify(data, null, 2))
     },
     change: val => {
-      if (!table) return
       searchChange && searchChange(val)
     },
     blur: v => {
@@ -85,7 +83,7 @@ function renderVModel(h, renderOpts, params) {
 
 // 文本域 textarea
 function renderTextareaEdit(h, renderOpts, params) {
-  const { vue, data, prop, root } = params
+  const { vue, data, prop } = params
   const props = {
     value: getFieldValue(data, prop) || null,
     type: 'textarea'
@@ -96,7 +94,7 @@ function renderTextareaEdit(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
     },
     blur: v => {
       oldData = null
@@ -131,15 +129,16 @@ function renderSelect(h, renderOpts, params, renderType) {
   const { vue, data = {}, root, column, prop, searchChange } = params
   const props = {
     value: data[prop] === undefined ? null : getFieldValue(data, prop),
-    placeholder: oProps.placeholder || '请选择' + (column.title || '')
+    placeholder: oProps.placeholder || getFormItemTitle(column.title, data) || '请选择',
+    ...oProps
   }
+  const { multiple } = props
   const on = {
-    input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+    [multiple ? 'change' : 'input']: val => {
+      setFieldValue.call(vue, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => { oldData = null }
-
   }
   if (renderType) {
     Object.assign(props, {
@@ -178,7 +177,9 @@ function renderSelectEdit(h, renderOpts, params) {
 
 // 日期 datepick
 function renderDateCell(h, renderOpts = {}, params = {}) {
-  const { props: { format = 'yyyy-MM-dd' } = {}} = renderOpts
+  const { props = {}} = renderOpts
+  const { type } = props
+  const format = props.format || (type === 'datetime' ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd')
   const { row, prop } = params
   const cellLabel = row && prop && row[prop] || ''
   if (XEUtils.isArray(cellLabel)) {
@@ -197,7 +198,7 @@ function renderDatepicker(h, renderOpts, params, renderType) {
   }
   const on = {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
       searchChange && searchChange(val)
     },
     blur: v => {
@@ -275,7 +276,7 @@ function renderDialog(h, renderOpts, params) {
   const props = {
     visible: edit.dialogVisible,
     modal: false,
-    title: column.title,
+    title: getFormItemTitle(column.title, data),
     addendToBody: true
   }
 
@@ -321,7 +322,7 @@ function renderForm(h, renderOpts, params) {
 
 // 开关 switch
 function renderSwitch(h, renderOpts, params) {
-  const { vue, table, row, rowIndex, columnIndex, data, prop, root } = params
+  const { vue, table, row, rowIndex, columnIndex, data, prop } = params
   const isBoolean = typeof getFieldValue(data, prop) === 'boolean'
   const props = {
     value: isBoolean ? getFieldValue(data, prop) : '' + getFieldValue(data, prop),
@@ -334,7 +335,7 @@ function renderSwitch(h, renderOpts, params) {
   const onParams = { oldData: oldData, row, columnIndex, rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, isBoolean ? val : '' + val)
+      setFieldValue.call(vue, data, prop, isBoolean ? val : '' + val)
     },
     change: val => {
       if (table && ['radio', 'switch', 'radio-group', 'checkbox', 'checkbox-group'].indexOf(renderOpts.name) > -1) {
@@ -360,7 +361,7 @@ function renderSwitchSearch(h, renderOpts, params) {
 // 多选框组 checkbox-group
 function renderCheckboxGroup(h, renderOpts, params) {
   const { children = [] } = renderOpts
-  const { data, vue, prop, root } = params
+  const { data, vue, prop } = params
   const props = {
     value: getFieldValue(data, prop) || []
   }
@@ -370,7 +371,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
   const onParams = { oldData: oldData, row: params.row, columnIndex: params.columnIndex, rowIndex: params.rowIndex }
   const on = getOn(renderOpts.on, {
     input: val => {
-      setFieldValue.call(vue, root, data, prop, val)
+      setFieldValue.call(vue, data, prop, val)
     },
     blur: v => {
       oldData = null
@@ -387,7 +388,7 @@ function renderCheckboxGroup(h, renderOpts, params) {
 // 标签 tag
 function renderTag(h, renderOpts, params) {
   try {
-    const { labelKey = 'label' } = renderOpts
+    const { label: labelKey = 'label' } = renderOpts
     const { data, prop } = params || {}
     const value = getFieldValue(data, prop)
     if (!value) return ''
