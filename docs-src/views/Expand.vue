@@ -24,7 +24,7 @@
           <template #expand="{row}">
             <v-form
               :data="row"
-              :columns="[
+              :items="[
                 {title: '名字', prop: 'name'},
                 {title: '性别', prop: 'sex'},
                 {title: '手机', prop: 'phone'},
@@ -271,7 +271,7 @@ export default {
           return (
             <v-form
               data={row}
-              columns={[
+              items={[
                 { title: '名字', prop: 'name' },
                 { title: '性别', prop: 'sex' },
                 { title: '手机', prop: 'phone' },

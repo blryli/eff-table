@@ -252,7 +252,8 @@ export default {
   &__tags{
     width: 100%;
     display: flex;
-    column-gap: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
     &-tag{
       display: flex;
       align-items: center;

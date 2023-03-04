@@ -47,8 +47,8 @@ export default {
     },
     tableStyle() {
       const style = {}
-      const { height, $scopedSlots: { table }, heights } = this
-      if (height === '100%' && table) {
+      const { $scopedSlots: { table }, heights } = this
+      if (table) {
         style.height = heights.tableWrapperHeight + 'px'
       }
       return style
