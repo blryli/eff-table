@@ -48,7 +48,7 @@ export default {
   &.eff-table__header-wrapper,
   &.eff-table__body-wrapper,
   &.eff-table__footer{
-    overflow-y: hidden;
+    overflow-y: auto;
   }
 }
 .is-overflow--x{
