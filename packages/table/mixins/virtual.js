@@ -17,7 +17,7 @@ export default {
     isVirtual() {
       const { tableData: { length } = [], renderSize, useExpand, useGroupColumn, isSpanMethod, rowHeight } = this
       if (rowHeight === 'auto' || isSpanMethod || useExpand || useGroupColumn) return
-      return length > 50 && length > renderSize
+      return length > 30 && length > renderSize
     },
     renderData() {
       const { isVirtual, afterData, renderIndex, renderSize } = this
