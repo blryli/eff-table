@@ -16,9 +16,9 @@
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
-    <TableForm v-if="formConfig && formConfig.items" ref="tableForm" v-model="tForm" :form-config="formConfig">
-      <slot slot="form" name="form" v-bind="{data: tForm, items: formConfig.items}" />
-      <template v-for="item in formConfig.items">
+    <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
+      <slot slot="form" name="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
+      <template v-for="item in (formConfig || {items: []}).items">
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
       </template>
     </TableForm>
@@ -61,62 +61,66 @@
           :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
           :style="{width: leftWidth + 'px', height: fixedHeight}"
         >
-          <TableHeader
-            v-if="showHeader"
-            ref="leftHeader"
-            :visible-columns="rowHeight === 'auto' ? visibleColumns : visibleColumns.filter(d => d.fixed === 'left')"
-            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-            fixed="left"
-            @dragend="handleDragend"
-          />
-          <TableBody
-            ref="leftBody"
-            :body-columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-            :data="tableData"
-            fixed="left"
-            :validators="validators"
-            :messages="messages"
-          />
-          <TableFooter
-            v-if="showSummary"
-            :data="tableData"
-            :columns="rowHeight === 'auto' ? bodyColumns : bodyColumns.filter(d => d.fixed === 'left')"
-            :sum-text="sumText"
-            :summary-method="summaryMethod"
-            fixed="left"
-          />
+          <div class="eff-table__fixed-left--wrapper" :style="fixedStyle">
+            <TableHeader
+              v-if="showHeader"
+              ref="leftHeader"
+              :visible-columns="fixedVisibleColumns.left"
+              :body-columns="fixedBodyColumns.left"
+              fixed="left"
+              @dragend="handleDragend"
+            />
+            <TableBody
+              ref="leftBody"
+              :body-columns="fixedBodyColumns.left"
+              :data="tableData"
+              fixed="left"
+              :validators="validators"
+              :messages="messages"
+            />
+            <TableFooter
+              v-if="showSummary"
+              :data="tableData"
+              :columns="fixedBodyColumns.left"
+              :sum-text="sumText"
+              :summary-method="summaryMethod"
+              fixed="left"
+            />
+          </div>
         </div>
 
         <!-- fixed right  -->
         <div
           v-if="rightWidth && overflowX"
           :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-          :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
+          :style="{width: rightWidth + scrollYwidth + 'px', height: fixedHeight}"
         >
-          <TableHeader
-            v-if="showHeader"
-            ref="rightHeader"
-            :visible-columns="visibleColumns.filter(d => d.fixed ==='right')"
-            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-            fixed="right"
-            @dragend="handleDragend"
-          />
-          <TableBody
-            ref="rightBody"
-            :body-columns="bodyColumns.filter(d => d.fixed ==='right')"
-            :data="tableData"
-            :validators="validators"
-            :messages="messages"
-            fixed="right"
-          />
-          <TableFooter
-            v-if="showSummary"
-            :data="tableData"
-            :columns="bodyColumns.filter(d => d.fixed ==='right')"
-            :sum-text="sumText"
-            :summary-method="summaryMethod"
-            fixed="right"
-          />
+          <div class="eff-table__fixed-right--wrapper" :style="fixedStyle">
+            <TableHeader
+              v-if="showHeader"
+              ref="rightHeader"
+              :visible-columns="fixedVisibleColumns.right"
+              :body-columns="fixedBodyColumns.right"
+              fixed="right"
+              @dragend="handleDragend"
+            />
+            <TableBody
+              ref="rightBody"
+              :body-columns="fixedBodyColumns.right"
+              :data="tableData"
+              :validators="validators"
+              :messages="messages"
+              fixed="right"
+            />
+            <TableFooter
+              v-if="showSummary"
+              :data="tableData"
+              :columns="fixedBodyColumns.right"
+              :sum-text="sumText"
+              :summary-method="summaryMethod"
+              fixed="right"
+            />
+          </div>
         </div>
 
         <!-- footer存在时的 body 滚动 -->
@@ -401,6 +405,25 @@ export default {
       // }
       return plat(this.visibleColumns)
     },
+    fixedBodyColumns() {
+      const { rowHeight, bodyColumns } = this
+      if (rowHeight === 'auto') return { left: bodyColumns, right: bodyColumns }
+      return bodyColumns.reduce((acc, cur) => {
+        const { fixed } = cur
+        if (fixed) acc[fixed].push(cur)
+        console.log('acc', acc)
+        return acc
+      }, { left: [], right: [] })
+    },
+    fixedVisibleColumns() {
+      const { rowHeight, visibleColumns } = this
+      if (rowHeight === 'auto') return { left: visibleColumns, right: visibleColumns }
+      return visibleColumns.reduce((acc, cur) => {
+        const { fixed } = cur
+        if (fixed) acc[fixed].push(cur)
+        return acc
+      }, { left: [], right: [] })
+    },
     baseHeight() {
       return Math.max(this.baseRowHeight, 30)
     },
@@ -508,9 +531,6 @@ export default {
     },
     tableId() {
       return (~~(Math.random() * (1 << 30))).toString(36)
-    },
-    baseHeight() {
-      return Math.max(30, this.baseRowHeight)
     }
   },
   watch: {
