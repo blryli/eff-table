@@ -15,6 +15,7 @@ export default {
     message: { type: [String, Array], default: '' },
     enterable: Boolean,
     hideDelay: { type: Number, default: 200 },
+    offset: { type: Number, default: 0 },
     vslot: { type: [Object, Array], default: () => {} },
     addToBody: Boolean,
     isFixed: Boolean,
@@ -153,17 +154,23 @@ export default {
     },
     mouseenterWrap() {
       const { enterable, timeoutPending } = this
-      enterable && clearTimeout(timeoutPending)
+      if (enterable) {
+        clearTimeout(timeoutPending)
+        return
+      }
+      this.show = true
     },
     mouseleaveWrap() {
       if (this.enterable) {
         this.timeoutPending = setTimeout(() => {
           this.show = false
         }, 200)
+        return
       }
+      this.show = false
     },
     calculateCoordinate() {
-      const { addedBody, $el, reference, isFixed, table, form, transferPanel, popoverAddedBody, changeDirection } = this
+      const { addedBody, $el, reference, isFixed, table, form, transferPanel, offset, popoverAddedBody, changeDirection } = this
       !addedBody && popoverAddedBody()
       const popover = $el
       const referenceRect = getDomClientRect(reference)
@@ -175,10 +182,10 @@ export default {
       let left = referenceRect.centerX - (popoverRect.width / 2)
       switch (this.momentPlacement) {
         case 'top':
-          top = referenceRect.top - popoverRect.height - 10
+          top = referenceRect.top - popoverRect.height - 10 + offset
           break
         case 'bottom':
-          top = referenceRect.bottom + 10
+          top = referenceRect.bottom + 10 - offset
           break
 
         default:
@@ -187,14 +194,9 @@ export default {
       }
       const { left: tLeft, top: tTop } = getDomClientRect((transferPanel || form || table).$el)
       !isFixed && (left = left - tLeft)
-      if (left < 0) {
-        left = 0
-        this.arrowStyle.left = referenceRect.left + 6 + 'px'
-      } else {
-        this.arrowStyle.left = null
-      }
       popover.style.left = left + 'px'
       popover.style.top = top - (isFixed ? 0 : tTop) + 'px'
+      this.arrowStyle.left = popoverRect.width / 2 - 2 + 'px'
     },
     changeDirection(popoverRect, referenceRect, popover) {
       const allHeight = referenceRect.bottom + popoverRect.height + 5

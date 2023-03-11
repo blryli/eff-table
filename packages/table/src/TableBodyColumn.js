@@ -263,7 +263,7 @@ export default {
       let placement = 'top'
 
       if (showOverflow !== false && textOverflow(cellLabel)) {
-        table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true })
+        table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true, offset: 10 })
         placement = 'bottom'
       }
       message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message, isFixed: true })

@@ -12,7 +12,7 @@
           :items="[
             {title: '列数量',prop: 'columnNum',itemRender:{
               name: 'select',
-              options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000},{label: 2000, value: 2000}],
+              options: [{label: 50, value: 50},{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000}],
               on: {change: setColumns}
             }},
             {title: '行数量',prop: 'dataNum',itemRender:{
@@ -118,17 +118,28 @@ export default {
     return {
       htmlCode,
       jsCode,
-      form: { dataNum: 1000, columnNum: 100 },
+      form: { dataNum: 3000, columnNum: 50 },
       tableOptions: {
         maxHeight: 400,
         border: true,
         data: [],
         columns: [],
-        rowConfig: { rows: [{ height: 50, row: ({ row, columns }) => <div style='display: flex;'>
-          {columns.reduce((acc, cur) => {
-            return acc.concat(<div>{row[cur.prop]}</div>)
-          }, [])}
-        </div> }] }
+        // rowConfig: { rows: [{ height: 50, row: ({ row, columns }) => <div style='display: flex;'>
+        //   {columns.reduce((acc, cur) => {
+        //     return acc.concat(<div>{row[cur.prop]}</div>)
+        //   }, [])}
+        // </div> }] },
+        toolbarConfig: {
+          columnControl: true,
+          fullscreen: true,
+          buttons: [
+            { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
+            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }},
+            { name: 'button', code: 'save', children: '保存', props: { icon: 'el-icon-check' }, status: 'success' }
+          ]
+        }
       }
     }
   },
@@ -148,7 +159,7 @@ export default {
             width: 200
           }
         ]
-      }).array)
+      }).array).concat([{ title: '操作', fixed: 'right' }])
     },
     setData(val) {
       this.tableOptions.data = mock.mock({

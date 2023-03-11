@@ -1,5 +1,5 @@
 <template>
-  <div class="eff-table__form">
+  <div v-if="$slots.form || items.length" class="eff-table__form">
     <!-- {{ formTemplateConfig }} -->
     <v-form :items="$slots.form ? []: items" :data="form" :title-width="titleWidth" :item-gutter="itemGutter" rowledge="10px">
       <slot v-if="$slots.form" slot="form" name="form" />
@@ -64,7 +64,7 @@ export default {
   name: 'TableForm',
   props: {
     value: { type: Object, default: () => ({}) }, // 搜索对象
-    formConfig: { type: Object, default: () => ({}) },
+    formConfig: { type: Object, default: () => {} },
     loading: Boolean // 搜索按钮loading
   },
   data() {
@@ -127,7 +127,7 @@ export default {
   },
   watch: {
     height(height) {
-      this.table.formHeight = height
+      this.table.formHeight = height || 0
     }
   },
   created() {
@@ -156,7 +156,7 @@ export default {
       return 'filter_' + prop
     },
     query() {
-      this.table.commitProxy('query')
+      this.table.refresh()
     },
     clear(query = true) {
       const { beforeClear } = this

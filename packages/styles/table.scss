@@ -192,11 +192,19 @@
         opacity: 0;
       }
     }
+    &--wrapper{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
   }
   &__fixed-left{
     left: 0;
     &.is-scroll--start{
       box-shadow: 4px 3px 4px rgba(0, 0, 0, 0.12);
+    }
+    &--wrapper{
+      left: 0;
     }
   }
   &__fixed-right{
@@ -204,6 +212,9 @@
     box-shadow: -4px 3px 4px rgba(0, 0, 0, 0.12);
     &.is-scroll--end{
       box-shadow: none;
+    }
+    &--wrapper{
+      right: 0;
     }
   }
   .eff-cell{

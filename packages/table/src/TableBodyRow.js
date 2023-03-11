@@ -24,7 +24,7 @@ export default {
     const { props, injections } = context
     const { table } = injections
     const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, subtotal, treeFloor, treeIndex, vue } = props
-    const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, tableEditConfig, spanMethod, isSpanMethod } = table
+    const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, rowHeight, tableEditConfig, spanMethod, isSpanMethod } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
       if (isSpanMethod) return
@@ -78,7 +78,7 @@ export default {
     ]
 
     const rowStyle = {}
-    const { overflowX, bodyRenderWidth, rowHeight, _rowHeight, baseHeight } = table
+    const { overflowX, bodyRenderWidth, _rowHeight, baseHeight } = table
     rowStyle.height = summary ? baseHeight + 'px' : rowHeight === 'auto' ? '' : _rowHeight + 'px'
     if (overflowX && !fixed) {
       rowStyle.width = bodyRenderWidth + 'px'

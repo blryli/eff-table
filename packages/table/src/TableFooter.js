@@ -54,6 +54,7 @@ export default {
           style={ { marginLeft: fixed ? '' : table.bodyMarginLeft } }
         >
           <TableBodyRow
+            row-height={table.baseHeight}
             row={row}
             row-index={1}
             body-columns={fixed ? columns : table.renderColumn}

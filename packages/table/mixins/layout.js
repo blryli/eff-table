@@ -53,6 +53,14 @@ export default {
       }
       return style
     },
+    fixedStyle() {
+      const style = {}
+      const { isVirtual, rowHeight, fixedHeight, bodyWidth, rightWidth, scrollYwidth } = this
+      const width = !isVirtual && rowHeight === 'auto' ? bodyWidth + scrollYwidth : rightWidth
+      style.width = width + scrollYwidth + 'px'
+      style.height = fixedHeight
+      return style
+    },
     bodyRenderWidth() {
       const { columnIsVirtual, widths: { columnWidths }, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
       return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
@@ -142,6 +150,7 @@ export default {
         tableWrapperHeight,
         tableHeight,
         dataHeight,
+        tableMaxHeight,
         headerHeight,
         searchHeight,
         footerHeight,
@@ -171,7 +180,7 @@ export default {
         const { body } = this.$refs
         if (body) {
           this.bodyWrapper = body.$el
-          this.bodyHeight = this.bodyWrapper.querySelector('.eff-table__body').offsetHeight
+          this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
           this.bodyWrapperWidth = this.getBodyWidth()
           setOverflowX()
           scrollLeftEvent()
