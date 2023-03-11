@@ -1,22 +1,23 @@
 import XEUtils from 'xe-utils'
 export default {
   computed: {
-    // 列宽度集合
-    columnWidths() {
+    widths() {
       const { bodyColumns, getColumnWidth } = this
-      return bodyColumns.reduce((acc, cur) => acc.concat(getColumnWidth(cur)), [])
-    },
-    // 列总宽度
-    allMinWidth() {
-      return this.columnWidths.reduce((acc, cur) => acc + cur, 0)
-    },
-    leftWidth() {
-      const { bodyColumns, getColumnWidth } = this
-      return bodyColumns.reduce((acc, cur) => cur.fixed === 'left' ? acc + getColumnWidth(cur) : acc, 0)
-    },
-    rightWidth() {
-      const { bodyColumns, getColumnWidth } = this
-      return bodyColumns.reduce((acc, cur) => cur.fixed === 'right' ? acc + getColumnWidth(cur) : acc, 0)
+      return bodyColumns.reduce((acc, cur) => {
+        const width = cur.width || 0
+        const minWidth = cur.minWidth || 0
+        const type = cur.type
+        const calcWidth = getColumnWidth({ width, minWidth, type })
+        acc.columnWidths.push(calcWidth) // 列宽度集合
+        acc.allMinWidth += calcWidth // 列总宽度
+        if (cur.fixed === 'left') {
+          acc.leftWidth += calcWidth // 左固定列宽度
+        }
+        if (cur.fixed === 'right') {
+          acc.rightWidth += calcWidth // 右固定列宽度
+        }
+        return acc
+      }, { columnWidths: [], allMinWidth: 0, leftWidth: 0, rightWidth: 0 })
     },
     // 设置了固定宽度的列总宽度
     minWidth() {
@@ -28,12 +29,12 @@ export default {
     },
     // 每一份最小宽度占的真实宽度
     spaceWidth() {
-      const { bodyWrapperWidth, minWidth, scrollYwidth, minWidths } = this
+      const { bodyWrapperWidth, scrollYwidth, minWidth, minWidths } = this
       if (minWidth > bodyWrapperWidth) return 0
       return XEUtils.toFixed((bodyWrapperWidth - 2 - minWidth - scrollYwidth) / minWidths, 4)
     },
     showSpace() {
-      const { allMinWidth, bodyWrapperWidth, scrollYwidth } = this
+      const { widths: { allMinWidth }, bodyWrapperWidth, scrollYwidth } = this
       return allMinWidth + 11 < bodyWrapperWidth - 2 - scrollYwidth
     }
   },
@@ -43,7 +44,8 @@ export default {
     },
     getColumnWidth(column) {
       if (this.isTypeColumn(column)) return 30
-      return Math.max(column.width || Math.max(column.minWidth * this.spaceWidth, column.minWidth))
+      const { width, minWidth } = column
+      return Math.max(width || Math.max(minWidth * this.spaceWidth, minWidth))
     }
   }
 }

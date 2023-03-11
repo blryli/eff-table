@@ -9,7 +9,7 @@
       <div class="section-content">
         <v-form
           :data="form"
-          :columns="[
+          :items="[
             {title: '列数量',prop: 'columnNum',itemRender:{
               name: 'select',
               options: [{label: 100, value: 100},{label: 500, value: 500},{label: 1000, value: 1000},{label: 2000, value: 2000}],
@@ -21,6 +21,7 @@
               on: {change: setData}
             }},
           ]"
+          style="margin-bottom: 10px;"
         />
         <eff-table v-bind="tableOptions" />
       </div>
@@ -122,12 +123,17 @@ export default {
         maxHeight: 400,
         border: true,
         data: [],
-        columns: []
+        columns: [],
+        rowConfig: { rows: [{ height: 50, row: ({ row, columns }) => <div style='display: flex;'>
+          {columns.reduce((acc, cur) => {
+            return acc.concat(<div>{row[cur.prop]}</div>)
+          }, [])}
+        </div> }] }
       }
     }
   },
   mounted() {
-    this.setColumns(10)
+    this.setColumns(this.form.columnNum)
     this.setData(this.form.dataNum)
   },
   methods: {

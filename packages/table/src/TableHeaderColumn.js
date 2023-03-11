@@ -19,9 +19,10 @@ export default {
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border } = table
+    const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border, tableColumnConfig } = table
     const { column, columnIndex, bodyColumnIndex, colid, isChecked, isLastColumn } = props
     const { sortable, title, titleSort, titlePrefix, titleSuffix, type, rules = [], headerAlign, titleRender } = column
+    const clickSort = sortable && (tableColumnConfig.titleSort || titleSort)
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
     const renderId = `header-column-${tableId}-${colid}`
@@ -149,7 +150,7 @@ export default {
         {
           XEUtils.isFunction(titlePrefix) ? titlePrefix(h, { column, title, prop }) : renderHelp(titlePrefix, prefixIcon)
         }
-        <span class={['eff-cell--title', titleSort && 'is--cursor']} on-click={() => titleSort && !titleRender && table.handleClickSort(column)}>{slot}</span>
+        <span class={['eff-cell--title', clickSort && 'is--cursor']} on-click={() => (clickSort) && !titleRender && table.handleClickSort(column)}>{slot}</span>
         {
           XEUtils.isFunction(titleSuffix) ? titleSuffix({ column, title, prop }) : renderHelp(titleSuffix, suffixIcon)
         }

@@ -13,6 +13,7 @@
     @mouseup="rootMouseup"
     @mousemove="rootMousemove($event)"
   >
+    {{ renderIndex }}--{{ columnRenderIndex }}--{{ columnRenderEndIndex }}
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
@@ -57,9 +58,9 @@
 
         <!-- fixed left  -->
         <div
-          v-if="leftWidth && overflowX"
+          v-if="widths.leftWidth && overflowX"
           :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
-          :style="{width: leftWidth + 'px', height: fixedHeight}"
+          :style="{width: widths.leftWidth + 'px', height: fixedHeight}"
         >
           <TableHeader
             v-if="showHeader"
@@ -89,9 +90,9 @@
 
         <!-- fixed right  -->
         <div
-          v-if="rightWidth && overflowX"
-          :class="['eff-table__fixed-right', overflowX && rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-          :style="{width: rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
+          v-if="widths.rightWidth && overflowX"
+          :class="['eff-table__fixed-right', overflowX && widths.rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
+          :style="{width: widths.rightWidth + (overflowY ? 17 : 0) + 'px', height: fixedHeight}"
         >
           <TableHeader
             v-if="showHeader"
@@ -316,6 +317,7 @@ export default {
     treeConfig: { type: Object, default: () => ({}) }, // 树配置
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
+    rowConfig: { type: Object, default: () => ({}) }, // 列配置
     seniorQueryConfig: { type: Object, default: () => ({}) }, // 高级搜索配置
     footerActionConfig: { type: Object, default: () => ({}) } // 脚步配置pageConfig、showPager、showBorder、pageInLeft
   },

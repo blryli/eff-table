@@ -335,13 +335,13 @@ export default {
       }
     },
     fixOverflowX(cellIndex) {
-      const { columnWidths, bodyWrapperWidth } = this.table
+      const { widths: { columnWidths }, bodyWrapperWidth } = this.table
       this.table.scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0) - bodyWrapperWidth / 2
       return this.$nextTick()
     },
     fixOverflow(cell, cellIndex) {
       const { wrapper, table } = this
-      const { bodyWrapperWidth, _rowHeight, leftWidth, rightWidth, overflowX, overflowY, isScrollRightEnd } = table
+      const { bodyWrapperWidth, _rowHeight, widths: { leftWidth, rightWidth, columnWidths }, overflowX, overflowY, isScrollRightEnd } = table
       const overflow = isOverflow({ cell, wrapper, leftWidth, rightWidth, overflowX, overflowY })
       const { height: wrapperHeight } = wrapper.getBoundingClientRect()
       const colid = cell.getAttribute('data-colid')
@@ -350,7 +350,7 @@ export default {
       for (const key in overflow) {
         if (overflow[key]) {
           if ((key === 'left' && table.scrollLeft > 1) || (key === 'right' && !isScrollRightEnd)) {
-            const scrollLeft = this.table.columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
+            const scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
             this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
             this.table.scrollTop = rowIndex * _rowHeight - wrapperHeight / 2

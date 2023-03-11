@@ -7,6 +7,9 @@ export default {
 }
 </script>
 <style lang="scss">
+*{
+  box-sizing: border-box;
+}
 @import './imports.scss';
 .auto-width{
   .el-select__tags{

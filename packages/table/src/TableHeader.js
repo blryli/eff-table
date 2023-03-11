@@ -104,7 +104,7 @@ export default {
       return { columns: visibleColumns, startIndex: 0 }
     },
     xSpaceWidth() {
-      const { table: { leftWidth, rightWidth, bodyWidth }, fixed } = this
+      const { table: { widths: { leftWidth, rightWidth }, bodyWidth }, fixed } = this
       return fixed === 'left' ? leftWidth : fixed === 'right' ? rightWidth : bodyWidth
     }
   },

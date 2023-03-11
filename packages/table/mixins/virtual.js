@@ -24,8 +24,8 @@ export default {
       return isVirtual ? afterData.slice(renderIndex, renderSize + renderIndex) : afterData
     },
     renderSize() {
-      const { heights: { bodyHeight }, _rowHeight } = this
-      return parseInt(bodyHeight / _rowHeight + 6)
+      const { heights: { bodyHeight }, calcRowHeight } = this
+      return parseInt(bodyHeight / calcRowHeight + 6)
     },
     // 列虚拟滚动
     columnVisibleWidth() {
@@ -43,7 +43,7 @@ export default {
     },
     columnAccWidths() {
       if (!this.isVirtual) return
-      return this.columnWidths.reduce((acc, cur) => {
+      return this.widths.columnWidths.reduce((acc, cur) => {
         acc.num += cur
         acc.widths.push(acc.num)
         return acc
@@ -52,7 +52,7 @@ export default {
     dataAccHeight() {
       if (!this.isVirtual) return
       return this.tableData.reduce((acc, cur) => {
-        acc.num += this._rowHeight
+        acc.num += this.calcRowHeight
         acc.heights.push(acc.num)
         return acc
       }, { num: 0, heights: [] }).heights
@@ -65,8 +65,8 @@ export default {
       }
     },
     scrollTop(scrollTop) {
-      const { _rowHeight } = this
-      if (scrollTop < _rowHeight) {
+      const { calcRowHeight } = this
+      if (scrollTop < calcRowHeight) {
         this.renderIndex = 0
       }
       if (this.isVirtual) {
@@ -118,11 +118,11 @@ export default {
       this.columnRenderEndIndex = endIndex
     },
     toScroll(rowIndex) {
-      const { renderSize, _rowHeight } = this
+      const { renderSize, calcRowHeight } = this
       if (rowIndex < renderSize / 2) {
         this.scrollTop = 0
       } else {
-        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * _rowHeight
+        this.$refs.body.$el.scrollTop = this.scrollTop = (rowIndex - renderSize / 2) * calcRowHeight
       }
       return this.$nextTick()
     },

@@ -54,7 +54,7 @@ export default {
       return style
     },
     bodyRenderWidth() {
-      const { columnIsVirtual, columnWidths, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
+      const { columnIsVirtual, widths: { columnWidths }, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
       return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
     },
     fixedHeight() {
@@ -104,27 +104,35 @@ export default {
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
     },
+    // 100%高度
     autoHeight() {
       const { tableRect, height } = this
       return XEUtils.toFixed(tableRect ? window.innerHeight - tableRect.top - 20 : height, 2)
     },
+    // 自定义行高
+    rowsHeight() {
+      const rowConfig = this.rowConfig || {}
+      const rows = (rowConfig.rows || [])
+      return rows.length ? rows.reduce((acc, cur) => acc + (cur.height || 30), 0) : 0
+    },
+    // 实际行高度=行高+自定义行高
+    calcRowHeight() {
+      const { _rowHeight, rowsHeight } = this
+      return _rowHeight + rowsHeight
+    },
     heights() {
-      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, formHeight, toolbarHeight: tHeight, $EFF: { HeaderRowHeight: EFFHeaderRowHeight }} = this
+      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, formHeight, toolbarHeight: tHeight, $EFF: { HeaderRowHeight: EFFHeaderRowHeight }, calcRowHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
-
       const toolbarHeight = toolbar ? tHeight : 0
       const headerHeight = headerLoad && header ? ((headerRowHeight === 36 ? EFFHeaderRowHeight || headerRowHeight : headerRowHeight) || baseHeight) * headerRanked : 0
       const searchHeight = search ? baseHeight : 0
       const footerHeight = footer ? baseHeight : 0
       const footerActionHeight = footerAction ? baseHeight : 0
-      const dataHeight = afterData.length ? (afterData.length + treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
+      const dataHeight = afterData.length ? afterData.length * calcRowHeight + (treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHeight : tableMaxHeight || height || formHeight + toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - formHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
-      if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight) {
-        bodyHeight = dataHeight + overflowXHeight
-      }
-      if (!height && !tableMaxHeight) {
+      if (tableMaxHeight && (dataHeight + overflowXHeight) <= bodyHeight || !height && !tableMaxHeight) {
         bodyHeight = dataHeight + overflowXHeight
       }
       const tableWrapperHeight = tableHeight - formHeight - toolbarHeight - footerHeight - footerActionHeight
@@ -145,7 +153,7 @@ export default {
       const { columnIsVirtual, bodyWrapper } = this
       if (!columnIsVirtual || !bodyWrapper) return {}
       const { left, right } = bodyWrapper.getBoundingClientRect()
-      const { leftWidth, rightWidth } = this
+      const { leftWidth, rightWidth } = this.widths
       return { bodyLeft: left + leftWidth, bodyRight: right + rightWidth }
     }
   },
@@ -175,7 +183,7 @@ export default {
       })
     },
     setOverflowX() {
-      const { minWidth, bodyWrapperWidth, scrollYwidth, allMinWidth } = this
+      const { bodyWrapperWidth, scrollYwidth, minWidth, widths: { allMinWidth }} = this
       this.bodyWidth = Math.max(bodyWrapperWidth - 2, minWidth, allMinWidth) - scrollYwidth
       this.overflowX = minWidth > (bodyWrapperWidth - 1 - scrollYwidth) || allMinWidth > minWidth && allMinWidth > (bodyWrapperWidth - 1 - scrollYwidth)
     },

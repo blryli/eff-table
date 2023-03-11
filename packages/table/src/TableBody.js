@@ -41,7 +41,7 @@ export default {
       }
     },
     xSpaceWidth() {
-      const { table: { leftWidth, rightWidth, bodyWidth }, fixed } = this
+      const { table: { widths: { leftWidth, rightWidth }, bodyWidth }, fixed } = this
       return fixed === 'left' ? leftWidth : fixed === 'right' ? rightWidth : bodyWidth
     },
     treeIndex() {
@@ -140,7 +140,7 @@ export default {
     },
     renderExpand(row, rowIndex) {
       const { table, fixed, $createElement } = this
-      const { bodyRenderWidth, edit, rowId, editStore, expands, expandSlot, leftWidth, rightWidth } = table
+      const { bodyRenderWidth, edit, rowId, editStore, expands, expandSlot, widths: { leftWidth, rightWidth }} = table
       const { expanded, height } = expandSlot && expands.find(d => d.rowId === row[rowId]) || {}
       const classes = `eff-table__expanded expandid-${row[rowId]}`
       const style = { padding: '15px' }
@@ -158,7 +158,9 @@ export default {
   },
   render(h) {
     const { table, bodyStyle, xSpaceWidth, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot, _rowHeight, overflowX, overflowY } = table
+    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot, _rowHeight, overflowX, overflowY, rowConfig, widths: { columnWidths }} = table
+    let rows = (rowConfig || {}).rows || []
+    if (!Array.isArray(rows)) rows = []
     let classes = 'eff-table__body-wrapper'
     if (overflowX) classes += ' is-overflow--x'
     if (overflowY) classes += ' is-overflow--y'
@@ -204,7 +206,7 @@ export default {
               const trees = this.getTrees(row, currentIndex)
               const subtotalFindRow = subtotalData.filter(s => s.index === rowIndex)
               const subtotalRow = subtotalFindRow.length ? rowFun(subtotalFindRow.reduce((acc, cur) => XEUtils.merge(acc, cur.row), {}), 'subtotal') : []
-              return rowFun(row).concat(trees).concat(subtotalRow)
+              return rowFun(row).concat(trees).concat(subtotalRow).concat(rows.map(d => XEUtils.isFunction(d.row) ? <div class='eff-table__body-row--custom' style={{ height: d.height + 'px' }}>{d.row({ row, columns: bodyColumns, columnWidths })}</div> : ''))
             })
           }
           {

@@ -6,9 +6,6 @@ import Element from 'element-ui'
 import axios from 'axios'
 import('../package.json').then(config => import(`../dist/${config.name}.css`))
 import 'element-ui/lib/theme-chalk/index.css'
-Vue.use(EffTable, {request: axios})
-Vue.use(Element, { size: 'small' })
-
 // 模拟数据
 let templateId = 3
 const templateList = [
@@ -28,6 +25,10 @@ EffTable.Table.props.formRequest.default = () => ({
   add: ({name, value, formRequestParams}) => api.add({name, value, type: formRequestParams.type}),
   delete: ({row, formRequestParams}) => api.delete(row)
 })
+EffTable.Table.props.columnConfig.default = () => ({titleSort:true})
+Vue.use(EffTable, {request: axios})
+Vue.use(Element, { size: 'small' })
+
 
 new Vue({
   el: '#app',

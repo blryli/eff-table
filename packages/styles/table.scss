@@ -159,6 +159,12 @@
       &.current-row .eff-table__column {
         background-color: #e8f4ff;
       }
+      &--custom{
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        max-width: 100%;
+        overflow: hidden;
+      }
     }
   }
 
