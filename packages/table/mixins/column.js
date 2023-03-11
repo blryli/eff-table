@@ -19,11 +19,11 @@ export default {
         return acc
       }, { columnWidths: [], allMinWidth: 0, leftWidth: 0, rightWidth: 0 })
     },
-    // 设置了固定宽度的列总宽度
+    // 设置列固定宽度的列总宽度
     minWidth() {
       return this.bodyColumns.reduce((acc, cur) => cur.width ? acc + (cur.width || 0) : acc, 0)
     },
-    // 设置了最小宽度的列总宽度
+    // 设置列最小宽度的列总宽度
     minWidths() {
       return this.bodyColumns.reduce((acc, cur) => !cur.width ? acc + cur.minWidth : acc, 0)
     },
