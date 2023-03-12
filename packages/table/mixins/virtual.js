@@ -29,8 +29,8 @@ export default {
     },
     // 列虚拟滚动
     columnVisibleWidth() {
-      const { bodyWrapperWidth, overflowY } = this
-      return bodyWrapperWidth - (overflowY ? 17 : 0)
+      const { bodyWrapperWidth, scrollYwidth } = this
+      return bodyWrapperWidth - scrollYwidth
     },
     columnIsVirtual() {
       // return false
@@ -101,6 +101,12 @@ export default {
     })
   },
   methods: {
+    scrollEvent(e) {
+      const { scrollLeft, scrollTop } = e.target
+      this.scrollLeft = scrollLeft
+      this.fixedType = 'table'
+      this.scrollTop = scrollTop
+    },
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       if (!this.isVirtual) return
       if (!(this.tableData || []).length) return
@@ -113,9 +119,9 @@ export default {
       }
       const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
       const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
-      const endIndex = findEndIndex > -1 ? findEndIndex + 2 : columnAccWidths.length
-      this.columnRenderIndex = startIndex
-      this.columnRenderEndIndex = endIndex
+      const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
+      this.columnRenderIndex = Math.max(startIndex - 2, 0)
+      this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
     },
     toScroll(rowIndex) {
       const { renderSize, calcRowHeight } = this

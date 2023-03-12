@@ -55,7 +55,7 @@ export default {
     },
     fixedStyle() {
       const style = {}
-      const { isVirtual, rowHeight, fixedHeight, bodyWidth, rightWidth, scrollYwidth } = this
+      const { isVirtual, rowHeight, fixedHeight, bodyWidth, widths: { rightWidth }, scrollYwidth } = this
       const width = !isVirtual && rowHeight === 'auto' ? bodyWidth + scrollYwidth : rightWidth
       style.width = width + scrollYwidth + 'px'
       style.height = fixedHeight
@@ -66,10 +66,7 @@ export default {
       return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
     },
     fixedHeight() {
-      const { showSummary, heights, overflowX } = this
-      if (showSummary) {
-        return ''
-      }
+      const { heights, overflowX } = this
       const { headerHeight, bodyHeight, searchHeight } = heights
       let height = headerHeight + bodyHeight + searchHeight
       overflowX && (height -= 17)

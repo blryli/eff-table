@@ -123,8 +123,12 @@
           </div>
         </div>
 
-        <!-- footer存在时的 body 滚动 -->
-        <ScrollX v-if="showSummary && overflowX" />
+        <div v-show="overflowX" id="scrollX" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" class="eff-table__scrollx" @scroll="scrollEvent">
+          <div :style="{ width: bodyWidth + 2 + scrollYwidth + 'px', height: '1px' }" />
+        </div>
+        <div v-show="overflowY" id="scrollY" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEvent">
+          <div :style="{ width: '1px', height: heights.dataHeight + scrollXwidth + 'px' }" />
+        </div>
       </slot>
     </div>
     <FooterAction
@@ -213,7 +217,6 @@ import Drag from '../components/Drag'
 import Toolbar from '../components/Toolbar'
 import FooterAction from '../components/FooterAction'
 import Edit from '../components/Edit'
-import ScrollX from '../components/ScrollX'
 import Loading from 'pk/loading'
 import SelectRange from '../components/SelectRange'
 import Copy from '../components/Copy'
@@ -238,7 +241,6 @@ export default {
     Drag,
     Toolbar,
     Edit,
-    ScrollX,
     Loading,
     SelectRange,
     Copy,

@@ -15,6 +15,10 @@ export default {
   },
   inject: ['table'],
   computed: {
+    columns() {
+      const { fixed, bodyColumns, table: { renderColumn }} = this
+      return fixed ? bodyColumns : renderColumn
+    },
     bodyStyle() {
       const { bodyMarginTop, bodyMarginLeft, bodyRenderWidth } = this.table
       const style = {}
@@ -51,15 +55,14 @@ export default {
   watch: {
     'table.scrollTop'(scrollTop) {
       const { $el, fixed, table } = this
+      if (fixed === table.fixedType) return
       $el.scrollTop = scrollTop
-      if (fixed !== table.fixedType) {
-        $el.onscroll = null
+      $el.onscroll = null
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        $el.onscroll = $el._onscroll
         clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          $el.onscroll = $el._onscroll
-          clearTimeout(this.timer)
-        }, 100)
-      }
+      }, 100)
     },
     'table.scrollLeft'(val) {
       const { fixed, $el } = this
@@ -89,16 +92,17 @@ export default {
   },
   methods: {
     scrollEvent(e) {
-      const { fixed, $el, table } = this
-      const { body } = table.$refs
-      const { scrollTop } = $el
+      const { fixed, table } = this
+      const { scrollLeft, scrollTop } = e.target
       if (!fixed) {
-        const { scrollLeft } = body.$el
         table.scrollLeft = scrollLeft
       }
-      if (scrollTop === table.scrollTop) return
-      table.fixedType = fixed
-      table.scrollTop = scrollTop
+      if (table.fixedType !== fixed) {
+        table.fixedType = fixed
+      }
+      if (table.scrollTop !== scrollTop) {
+        table.scrollTop = scrollTop
+      }
     },
     getTrees(row, rowIndex) {
       const { table, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
@@ -157,8 +161,8 @@ export default {
     }
   },
   render(h) {
-    const { table, bodyStyle, xSpaceWidth, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
-    const { renderData, heights: { bodyHeight }, emptyText, renderColumn, renderIndex, expands, rowId, subtotalData, editStore, expandSlot, _rowHeight, overflowX, overflowY, rowConfig, widths: { columnWidths }} = table
+    const { columns, table, bodyStyle, xSpaceWidth, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
+    const { renderData, heights: { dataHeight, bodyHeight }, emptyText, renderIndex, expands, rowId, subtotalData, expandSlot, _rowHeight, overflowX, overflowY, rowConfig, widths: { columnWidths }} = table
     let rows = (rowConfig || {}).rows || []
     if (!Array.isArray(rows)) rows = []
     let classes = 'eff-table__body-wrapper'
@@ -167,7 +171,7 @@ export default {
     return (
       <div class={classes} style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
-        <div class='eff-table__body--y-space' style={{ height: table.heights.dataHeight + 'px' }} />
+        <div class='eff-table__body--y-space' style={{ height: dataHeight + 'px' }} />
         <div
           class='eff-table__body '
           style={bodyStyle}
@@ -185,7 +189,7 @@ export default {
                     key={currentIndex + key + uniqueId}
                     rowid={uniqueId}
                     row={row}
-                    body-columns={fixed ? bodyColumns : renderColumn}
+                    body-columns={columns}
                     fixed={fixed}
                     subtotal={true}
                   />
@@ -196,23 +200,40 @@ export default {
                   rowid={rowid}
                   row-index={currentIndex}
                   treeIndex={treeIndex}
-                  body-columns={fixed ? bodyColumns : renderColumn}
+                  body-columns={columns}
                   fixed={fixed}
                   vue={this}
                   messages={formatValidators[row[rowId]]}
-                />, expanded ? renderExpand(row, rowIndex) : '']
+                />]
               }
 
+              const renderRows = rowFun(row)
+              // 展开行
+              if (expanded) {
+                renderRows.push(renderExpand(row, rowIndex))
+              }
+              // 树
               const trees = this.getTrees(row, currentIndex)
+              if (trees.length) {
+                renderRows.push(trees)
+              }
+              // 小计
               const subtotalFindRow = subtotalData.filter(s => s.index === rowIndex)
-              const subtotalRow = subtotalFindRow.length ? rowFun(subtotalFindRow.reduce((acc, cur) => XEUtils.merge(acc, cur.row), {}), 'subtotal') : []
-              return rowFun(row).concat(trees).concat(subtotalRow).concat(rows.map(d => XEUtils.isFunction(d.row) ? <div class='eff-table__body-row--custom' style={{ height: d.height + 'px' }}>{d.row({ row, columns: bodyColumns, columnWidths })}</div> : ''))
+              if (subtotalFindRow.length) {
+                const subtotalRow = rowFun(subtotalFindRow.reduce((acc, cur) => XEUtils.merge(acc, cur.row), {}), 'subtotal')
+                renderRows.push(subtotalRow)
+              }
+              // 自定义行
+              if (rows.length) {
+                const customRows = rows.map(d => XEUtils.isFunction(d.row) ? <div class='eff-table__body-row--custom' style={{ height: d.height + 'px' }}>{d.row({ row, columns: bodyColumns, columnWidths })}</div> : '')
+                renderRows.push(customRows)
+              }
+              return renderRows
             })
           }
           {
             !renderData.length ? <div class='eff-empty-text' style={emptyStyle}>{ emptyText }</div> : ''
           }
-          {editStore.editRow ? '' : ''}
         </div>
       </div>
     )

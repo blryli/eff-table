@@ -28,6 +28,7 @@
     box-sizing: border-box;
   }
   &__body-wrapper{
+    position: relative;
     overflow-x: hidden;
     overflow-y: hidden;
   }
@@ -372,9 +373,20 @@
   width: 100%;
   position: absolute;
   left: 0;
-  bottom: 36px;
+  bottom: 0;
+  height: 17px;
   overflow-x: auto;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  z-index: 6;
+}
+.eff-table__scrolly{
+  height: 100%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 17px;
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 6;
 }
 
