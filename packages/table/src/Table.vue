@@ -17,7 +17,7 @@
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
     <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
-      <slot slot="form" :form="{data: tForm, items: (formConfig || {items: []}).items}" />
+      <slot slot="form" name="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
       <template v-for="item in (formConfig || {items: []}).items">
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
       </template>
@@ -29,7 +29,7 @@
       <slot name="toolbar" />
     </Toolbar>
     <div ref="table" :class="tableClass" :style="tableStyle">
-      <slot :table="{data: tableData}">
+      <slot name="table" v-bind="{data: tableData}">
         <div class="eff-table__wrapper">
           <TableHeader
             v-if="showHeader"
@@ -121,13 +121,6 @@
               fixed="right"
             />
           </div>
-        </div>
-
-        <div v-show="overflowX" id="scrollx" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventLeft">
-          <div :style="{ width: bodyWidth + 2 + scrollYwidth + 'px', height: '1px' }" />
-        </div>
-        <div v-show="overflowY" id="scrolly" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventTop">
-          <div :style="{ width: '1px', height: heights.dataHeight + scrollXwidth + 'px' }" />
         </div>
       </slot>
     </div>
