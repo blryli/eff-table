@@ -11,7 +11,7 @@
     @mouseenter="rootMouseenter"
     @mouseleave="rootMouseleave"
     @mouseup="rootMouseup"
-    @mousemove="rootMousemove($event)"
+    @mousemove="rootMousemove"
   >
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
@@ -123,10 +123,10 @@
           </div>
         </div>
 
-        <div v-show="overflowX" id="scrollX" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" class="eff-table__scrollx" @scroll="scrollEvent">
+        <div v-show="overflowX" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEvent">
           <div :style="{ width: bodyWidth + 2 + scrollYwidth + 'px', height: '1px' }" />
         </div>
-        <div v-show="overflowY" id="scrollY" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEvent">
+        <div v-show="overflowY" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEvent">
           <div :style="{ width: '1px', height: heights.dataHeight + scrollXwidth + 'px' }" />
         </div>
       </slot>
@@ -903,7 +903,7 @@ export default {
       this.$emit('table-mouse-move', { event })
     },
     rootMouseup(event) {
-      this.$emit('table-mouse-up', { event: event })
+      this.$emit('table-mouse-up', { event })
     },
     setEditStop(val) {
       this.tableEditConfig.editStop = val

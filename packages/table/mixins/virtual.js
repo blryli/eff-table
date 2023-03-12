@@ -104,8 +104,8 @@ export default {
     scrollEvent(e) {
       const { scrollLeft, scrollTop } = e.target
       this.scrollLeft = scrollLeft
-      this.fixedType = 'table'
       this.scrollTop = scrollTop
+      this.fixedType = 'table'
     },
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       if (!this.isVirtual) return
