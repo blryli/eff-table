@@ -127,7 +127,9 @@ export default {
     on(window, 'resize', this.close)
     this.$nextTick(() => {
       this.wrapper = this.table.$el.querySelector('.eff-table__body-wrapper')
-      this.body = this.wrapper.querySelector('.eff-table__body')
+      if (this.wrapper) {
+        this.body = this.wrapper.querySelector('.eff-table__body')
+      }
     })
   },
   beforeDestroy() {

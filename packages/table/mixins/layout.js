@@ -14,7 +14,9 @@ export default {
       headerLoad: false,
       bodyLoad: false,
       toolbarHeight: 0,
-      formHeight: 0
+      formHeight: 0,
+      scrollXNode: null,
+      scrollYNode: null
     }
   },
   created() {
@@ -183,6 +185,8 @@ export default {
           scrollLeftEvent()
           this.tableBodyEl = $el.querySelector('.eff-table__body')
         }
+        this.scrollXNode = document.getElementById('scrollx')
+        this.scrollYNode = document.getElementById('scrolly')
         setTimeout(() => {
           this.setTableRect()
         }, 0)

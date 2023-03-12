@@ -55,7 +55,7 @@ export default {
   watch: {
     'table.scrollTop'(scrollTop) {
       const { $el, fixed, table } = this
-      if (fixed === table.fixedType) return
+      if (fixed === table.scrollType) return
       $el.scrollTop = scrollTop
       $el.onscroll = null
       clearTimeout(this.timer)
@@ -89,6 +89,7 @@ export default {
     const { scrollLeft = 0, scrollTop = 0 } = this.table
     this.table.scrollLeft = scrollLeft - 0.1
     this.table.scrollTop = scrollTop - 0.1
+    this.table.scrollType = 'activated'
   },
   methods: {
     scrollEvent(e) {
@@ -97,8 +98,8 @@ export default {
       if (!fixed) {
         table.scrollLeft = scrollLeft
       }
-      if (table.fixedType !== fixed) {
-        table.fixedType = fixed
+      if (table.scrollType !== fixed) {
+        table.scrollType = fixed
       }
       if (table.scrollTop !== scrollTop) {
         table.scrollTop = scrollTop

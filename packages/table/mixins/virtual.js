@@ -4,7 +4,7 @@ export default {
       renderIndex: 0,
       columnRenderIndex: 0,
       columnRenderEndIndex: 0,
-      fixedType: '',
+      scrollType: '',
       scrollLeft: 0,
       scrollTop: 0,
       bodyMarginTop: 0,
@@ -65,12 +65,15 @@ export default {
       }
     },
     scrollTop(scrollTop) {
-      const { calcRowHeight } = this
+      const { calcRowHeight, scrollYNode } = this
       if (scrollTop < calcRowHeight) {
         this.renderIndex = 0
       }
       if (this.isVirtual) {
         this.renderIndex = this.dataAccHeight.findIndex(d => d > scrollTop)
+      }
+      if (scrollYNode && this.scrollType !== 'table') {
+        scrollYNode.scrollTop = scrollTop
       }
     },
     renderIndex(index) {
@@ -101,17 +104,19 @@ export default {
     })
   },
   methods: {
-    scrollEvent(e) {
-      const { scrollLeft, scrollTop } = e.target
-      this.scrollLeft = scrollLeft
-      this.scrollTop = scrollTop
-      this.fixedType = 'table'
+    scrollEventLeft(e) {
+      this.scrollLeft = e.target.scrollLeft
+      this.scrollType = 'table'
+    },
+    scrollEventTop(e) {
+      this.scrollTop = e.target.scrollTop
+      this.scrollType = 'table'
     },
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       if (!this.isVirtual) return
       if (!(this.tableData || []).length) return
       this.scrollLeft = scrollLeft
-      const { columnIsVirtual, columnAccWidths, columnVisibleWidth } = this
+      const { columnIsVirtual, columnAccWidths, columnVisibleWidth, scrollXNode } = this
       if (!columnIsVirtual) {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
@@ -122,6 +127,9 @@ export default {
       const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
       this.columnRenderIndex = Math.max(startIndex - 2, 0)
       this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
+      if (scrollXNode && this.scrollType !== 'table') {
+        scrollXNode.scrollLeft = scrollLeft
+      }
     },
     toScroll(rowIndex) {
       const { renderSize, calcRowHeight } = this
