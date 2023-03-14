@@ -124,11 +124,17 @@ export default {
         border: true,
         data: [],
         columns: [],
-        // rowConfig: { rows: [{ height: 50, row: ({ row, columns }) => <div style='display: flex;'>
-        //   {columns.reduce((acc, cur) => {
-        //     return acc.concat(<div>{row[cur.prop]}</div>)
-        //   }, [])}
-        // </div> }] },
+        // rowConfig: { rows: [{
+        //   height: 50,
+        //   show: ({ row }) => {
+        //     console.log('row', row)
+        //     return true
+        //   },
+        //   row: ({ row, columns }) => <div style='display: flex;padding: 0 40px'>
+        //     {columns.reduce((acc, cur) => {
+        //       return acc.concat(<div>{row[cur.prop]}</div>)
+        //     }, [])}
+        //   </div> }] },
         toolbarConfig: {
           fullscreen: true
         }

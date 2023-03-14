@@ -61,7 +61,7 @@
           :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
           :style="{width: widths.leftWidth + 'px', height: fixedHeight}"
         >
-          <div class="eff-table__fixed-left--wrapper" :style="fixedStyle">
+          <div class="eff-table__fixed-left--wrapper" :style="getFixedStyle('left')">
             <TableHeader
               v-if="showHeader"
               ref="leftHeader"
@@ -95,7 +95,7 @@
           :class="['eff-table__fixed-right', overflowX && widths.rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
           :style="{width: widths.rightWidth + scrollYwidth + 'px', height: fixedHeight}"
         >
-          <div class="eff-table__fixed-right--wrapper" :style="fixedStyle">
+          <div class="eff-table__fixed-right--wrapper" :style="getFixedStyle('right')">
             <TableHeader
               v-if="showHeader"
               ref="rightHeader"

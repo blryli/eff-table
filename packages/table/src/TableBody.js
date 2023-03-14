@@ -226,7 +226,14 @@ export default {
               }
               // 自定义行
               if (rows.length) {
-                const customRows = rows.map(d => XEUtils.isFunction(d.row) ? <div class='eff-table__body-row--custom' style={{ height: d.height + 'px' }}>{d.row({ row, columns: bodyColumns, columnWidths })}</div> : '')
+                const customRows = rows.map(d => {
+                  if (!XEUtils.isFunction(d.row)) return ''
+                  const { show } = d
+                  if (show && XEUtils.isFunction(show)) {
+                    if (!show({ row, columns: bodyColumns })) return ''
+                  }
+                  return <div class='eff-table__body-row--custom' style={{ height: d.height + 'px' }}>{fixed ? '' : d.row({ row, columns: bodyColumns, columnWidths })}</div>
+                })
                 renderRows.push(customRows)
               }
               return renderRows

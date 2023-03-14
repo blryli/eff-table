@@ -55,14 +55,6 @@ export default {
       }
       return style
     },
-    fixedStyle() {
-      const style = {}
-      const { isVirtual, rowHeight, fixedHeight, bodyWidth, widths: { rightWidth }, scrollYwidth } = this
-      const width = !isVirtual && rowHeight === 'auto' ? bodyWidth + scrollYwidth : rightWidth
-      style.width = width + scrollYwidth + 'px'
-      style.height = fixedHeight
-      return style
-    },
     bodyRenderWidth() {
       const { columnIsVirtual, widths: { columnWidths }, columnRenderIndex, columnRenderEndIndex, bodyWidth } = this
       return columnIsVirtual && columnRenderEndIndex ? columnWidths.slice(columnRenderIndex, columnRenderEndIndex).reduce((acc, cur) => acc + cur, 0) : bodyWidth
@@ -166,6 +158,14 @@ export default {
     }
   },
   methods: {
+    getFixedStyle(fixed) {
+      const style = {}
+      const { isVirtual, rowHeight, fixedHeight, bodyWidth, widths, scrollYwidth } = this
+      const width = !isVirtual && rowHeight === 'auto' ? bodyWidth + scrollYwidth : widths[fixed + 'Width']
+      style.width = width + scrollYwidth + 'px'
+      style.height = fixedHeight
+      return style
+    },
     getBodyWidth() {
       let node = this.$el
       while (node && node.parentNode && node.getBoundingClientRect().width === 0) {
