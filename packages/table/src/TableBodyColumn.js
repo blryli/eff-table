@@ -3,7 +3,7 @@ import VRadio from 'pk/radio'
 import { textOverflow, eqCellValue } from 'pk/utils/dom'
 import { renderer } from 'pk/utils/render'
 import RowDrag from 'pk/icon/src/rowDrag'
-import { getFieldValue, initField, isVNode, isNoValue } from 'pk/utils'
+import { getFieldValue, initField, isNoValue } from 'pk/utils'
 import XEUtils from 'xe-utils'
 import Icon from 'pk/icon'
 
@@ -186,6 +186,13 @@ export default {
         on: { change: selected => table.rowSelectionChange(row, selected, true) }
       })
     }
+    const isVNode = node => {
+      // 获取 vnode 实例
+      const vnode = vue.$createElement('span', '')
+      // VNode 构造函数
+      const VNode = vnode.constructor
+      return node instanceof VNode
+    }
     const cellRender = function() {
       const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
       const renderCell = (cellRender) => {
@@ -234,7 +241,7 @@ export default {
       }
       if (XEUtils.isFunction(cellRender)) {
         const cellRenderFunc = cellRender(h, { row, rowIndex, column, columnIndex, prop })
-        return isVNode(cellRenderFunc) ? (cellRenderFunc || '') : XEUtils.isObject(cellRenderFunc) ? renderCell(cellRenderFunc) : cellRenderFunc
+        return isVNode(cellRenderFunc) ? ([cellRenderFunc] || '') : XEUtils.isObject(cellRenderFunc) ? renderCell(cellRenderFunc) : cellRenderFunc
       } else {
         return renderCell(cellRender)
       }

@@ -122,6 +122,12 @@
             />
           </div>
         </div>
+        <div v-show="overflowX" id="scrollx" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventLeft">
+          <div :style="{ width: bodyWidth + 2 + scrollYwidth + 'px', height: '1px' }" />
+        </div>
+        <div v-show="overflowY" id="scrolly" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventTop">
+          <div :style="{ width: '1px', height: heights.dataHeight + scrollXwidth + 'px' }" />
+        </div>
       </slot>
     </div>
     <FooterAction
