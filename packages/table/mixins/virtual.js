@@ -35,14 +35,15 @@ export default {
     columnIsVirtual() {
       // return false
       const { tableData, useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
-      return !isSpanMethod && tableData && tableData.length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth + 200
+      console.log('bodyWidth > columnVisibleWidth', bodyWidth, columnVisibleWidth)
+      return !isSpanMethod && tableData && tableData.length && !useExpand && !useGroupColumn && bodyWidth > columnVisibleWidth * 2
     },
     renderColumn() {
       const { columnIsVirtual, bodyColumns, columnRenderIndex, columnRenderEndIndex } = this
       return columnIsVirtual && columnRenderEndIndex ? bodyColumns.slice(columnRenderIndex, columnRenderEndIndex) : bodyColumns
     },
     columnAccWidths() {
-      if (!this.isVirtual) return
+      if (!this.columnIsVirtual) return
       return this.widths.columnWidths.reduce((acc, cur) => {
         acc.num += cur
         acc.widths.push(acc.num)
@@ -113,7 +114,6 @@ export default {
       this.scrollType = 'table'
     },
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
-      if (!this.isVirtual) return
       if (!(this.tableData || []).length) return
       this.scrollLeft = scrollLeft
       const { columnIsVirtual, columnAccWidths, columnVisibleWidth, scrollXNode } = this
