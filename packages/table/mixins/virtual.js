@@ -9,7 +9,8 @@ export default {
       scrollTop: 0,
       bodyMarginTop: 0,
       bodyMarginLeft: 0,
-      scrollLeftDir: null
+      scrollLeftDir: null,
+      scrollList: {}
     }
   },
   computed: {
@@ -64,21 +65,18 @@ export default {
         this.renderIndex = 0
       }
     },
-    scrollTop(scrollTop) {
-      const { calcRowHeight, scrollYNode } = this
-      if (scrollTop < calcRowHeight) {
-        this.renderIndex = 0
-      }
-      if (this.isVirtual) {
-        this.renderIndex = this.dataAccHeight.findIndex(d => d > scrollTop)
-      }
-      if (scrollYNode && this.scrollType !== 'table') {
-        scrollYNode.scrollTop = scrollTop
-      }
-    },
-    renderIndex(index) {
-      this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
-    },
+    // scrollTop(scrollTop) {
+    //   const { calcRowHeight, scrollYNode } = this
+    //   if (scrollTop < calcRowHeight) {
+    //     this.renderIndex = 0
+    //   }
+    //   if (this.isVirtual) {
+    //     this.renderIndex = this.dataAccHeight.findIndex(d => d > scrollTop)
+    //   }
+    //   if (scrollYNode && this.scrollType !== 'table') {
+    //     scrollYNode.scrollTop = scrollTop
+    //   }
+    // },
     columnIsVirtual(val) {
       if (val) {
         this.scrollLeftEvent()
@@ -101,9 +99,30 @@ export default {
     this.$nextTick(() => {
       const { columnIsVirtual, scrollLeftEvent } = this
       columnIsVirtual && scrollLeftEvent()
+      this.scrollList.table = document.getElementById('scrolly')
     })
   },
   methods: {
+    handleScroll(e, fixed) {
+      const { scrollList } = this
+      const { scrollLeft, scrollTop } = e.target
+      const { calcRowHeight } = this
+      if (scrollTop < calcRowHeight) {
+        this.renderIndex = 0
+      }
+      if (this.isVirtual) {
+        const index = this.dataAccHeight.findIndex(d => d > scrollTop)
+        this.renderIndex = index
+        this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
+      }
+      for (const key in scrollList) {
+        if (key !== fixed) {
+          const node = scrollList[key]
+          node.scrollLeft = scrollLeft
+          node.scrollTop = scrollTop
+        }
+      }
+    },
     scrollEventLeft(e) {
       this.scrollLeft = e.target.scrollLeft
       this.scrollType = 'table'
@@ -111,6 +130,7 @@ export default {
     scrollEventTop(e) {
       this.scrollTop = e.target.scrollTop
       this.scrollType = 'table'
+      this.handleScroll(e, 'table')
     },
     scrollLeftEvent(scrollLeft = this.scrollLeft) {
       if (!this.isVirtual) return

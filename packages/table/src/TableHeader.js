@@ -383,11 +383,11 @@ export default {
       const { header } = this.$refs
       if (!header) return
       this.height = header.offsetHeight
-      on(this.$el, 'scroll', this.handleScroll)
+      !this.fixed && on(this.$el, 'scroll', this.handleScroll)
     })
   },
   beforeDestroy() {
-    off(this.$el, 'scroll', this.handleScroll)
+    !this.fixed && off(this.$el, 'scroll', this.handleScroll)
   },
   render(h) {
     const { table, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, marginLeft, xSpaceWidth, contextmenuList, contextmenuListMethod, contextmenuClick } = this

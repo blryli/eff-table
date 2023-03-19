@@ -118,9 +118,9 @@ export default {
     return {
       htmlCode,
       jsCode,
-      form: { dataNum: 3000, columnNum: 50 },
+      form: { dataNum: 300, columnNum: 10 },
       tableOptions: {
-        maxHeight: 400,
+        height: 600,
         border: true,
         data: [],
         columns: [],
@@ -157,7 +157,7 @@ export default {
             width: 200
           }
         ]
-      }).array).concat([{ title: '操作', fixed: 'right', cellRender: () => <el-button type='text'>编辑</el-button> }])
+      }).array).concat([{ title: '操作', fixed: 'right', prop: 'name' }])
     },
     setData(val) {
       this.tableOptions.data = mock.mock({

@@ -53,31 +53,34 @@ export default {
     }
   },
   watch: {
-    'table.scrollTop'(scrollTop) {
-      const { $el, fixed, table } = this
-      if (fixed === table.scrollType) return
-      $el.scrollTop = scrollTop
-      $el.onscroll = null
-      clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
-        $el.onscroll = $el._onscroll
-        clearTimeout(this.timer)
-      }, 100)
-    },
-    'table.scrollLeft'(val) {
-      const { fixed, $el } = this
-      !fixed && ($el.scrollLeft = val)
-    },
+    // 'table.scrollTop'(scrollTop) {
+    //   const { $el, fixed, table } = this
+    //   if (fixed === table.scrollType) return
+    //   $el.scrollTop = scrollTop
+    //   $el.onscroll = null
+    //   clearTimeout(this.timer)
+    //   this.timer = setTimeout(() => {
+    //     $el.onscroll = $el._onscroll
+    //     clearTimeout(this.timer)
+    //   }, 100)
+    // },
+    // 'table.scrollLeft'(val) {
+    //   const { fixed, $el } = this
+    //   !fixed && ($el.scrollLeft = val)
+    // },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
     }
   },
   mounted() {
-    const { table, $el, scrollEvent } = this
+    const { table, $el, scrollEvent, fixed } = this
     table.bodyLoad = true
     $el.onscroll = scrollEvent
     $el._onscroll = scrollEvent
+    this.$nextTick(() => {
+      this.table.scrollList[fixed] = document.getElementById('scroll' + fixed)
+    })
   },
   beforeDestroy() {
     const { $el } = this
@@ -93,17 +96,22 @@ export default {
   },
   methods: {
     scrollEvent(e) {
-      const { fixed, table } = this
-      const { scrollLeft, scrollTop } = e.target
-      if (!fixed) {
-        table.scrollLeft = scrollLeft
-      }
-      if (table.scrollType !== fixed) {
-        table.scrollType = fixed
-      }
-      if (table.scrollTop !== scrollTop) {
-        table.scrollTop = scrollTop
-      }
+      this.table.handleScroll(e, this.fixed)
+      // if (!fixed) {
+      //   table.scrollLeft = scrollLeft
+      // }
+      // if (table.scrollType !== fixed) {
+      //   table.scrollType = fixed
+      // }
+      // if (fixed === table.scrollType) return
+      // $el.scrollTop = scrollTop
+      // !fixed && ($el.scrollLeft = scrollLeft)
+      // $el.onscroll = null
+      // clearTimeout(this.timer)
+      // this.timer = setTimeout(() => {
+      //   $el.onscroll = $el._onscroll
+      //   clearTimeout(this.timer)
+      // }, 100)
     },
     getTrees(row, rowIndex) {
       const { table, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
@@ -170,7 +178,7 @@ export default {
     if (overflowX) classes += ' is-overflow--x'
     if (overflowY) classes += ' is-overflow--y'
     return (
-      <div class={classes} style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
+      <div class={classes} id={'scroll' + fixed} style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: dataHeight + 'px' }} />
         <div

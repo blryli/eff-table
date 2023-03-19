@@ -122,9 +122,9 @@
             />
           </div>
         </div>
-        <div v-show="overflowX" id="scrollx" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventLeft">
+        <!-- <div v-show="overflowX" id="scrollx" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventLeft">
           <div :style="{ width: bodyWidth + 2 + scrollYwidth + 'px', height: '1px' }" />
-        </div>
+        </div> -->
         <div v-show="overflowY" id="scrolly" class="eff-table__scrolly" :style="{ width: '17px', height: heights.bodyHeight + 'px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventTop">
           <div :style="{ width: '1px', height: heights.dataHeight + scrollXwidth + 'px' }" />
         </div>
@@ -535,24 +535,24 @@ export default {
     }
   },
   watch: {
-    scrollTop(val) {
-      if (val > 2) {
-        this.scrolling = true
-        const timer = setTimeout(() => {
-          this.scrolling = false
-          clearTimeout(timer)
-        }, 100)
-      }
-    },
-    scrollLeft(val) {
-      if (val > 2) {
-        this.scrolling = true
-        const timer = setTimeout(() => {
-          this.scrolling = false
-          clearTimeout(timer)
-        }, 100)
-      }
-    },
+    // scrollTop(val) {
+    //   if (val > 2) {
+    //     this.scrolling = true
+    //     const timer = setTimeout(() => {
+    //       this.scrolling = false
+    //       clearTimeout(timer)
+    //     }, 100)
+    //   }
+    // },
+    // scrollLeft(val) {
+    //   if (val > 2) {
+    //     this.scrolling = true
+    //     const timer = setTimeout(() => {
+    //       this.scrolling = false
+    //       clearTimeout(timer)
+    //     }, 100)
+    //   }
+    // },
     data(data, oldData) {
       if (this.scrolling) return
       this.loadTableData(data)
