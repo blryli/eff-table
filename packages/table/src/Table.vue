@@ -408,20 +408,20 @@ export default {
       return plat(this.visibleColumns)
     },
     fixedBodyColumns() {
-      const { rowHeight, bodyColumns } = this
+      const { rowHeight, bodyColumns, widths } = this
       if (rowHeight === 'auto') return { left: bodyColumns, right: bodyColumns }
       return bodyColumns.reduce((acc, cur) => {
         const { fixed } = cur
-        if (fixed) acc[fixed].push(cur)
+        if (fixed && acc[fixed] && widths[fixed + 'Width']) acc[fixed].push(cur)
         return acc
       }, { left: [], right: [] })
     },
     fixedVisibleColumns() {
-      const { rowHeight, visibleColumns } = this
+      const { rowHeight, visibleColumns, widths } = this
       if (rowHeight === 'auto') return { left: visibleColumns, right: visibleColumns }
       return visibleColumns.reduce((acc, cur) => {
         const { fixed } = cur
-        if (fixed) acc[fixed].push(cur)
+        if (fixed && acc[fixed] && widths[fixed + 'Width']) acc[fixed].push(cur)
         return acc
       }, { left: [], right: [] })
     },

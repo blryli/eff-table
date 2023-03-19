@@ -23,7 +23,7 @@
           ]"
           style="margin-bottom: 10px;"
         />
-        <eff-table v-bind="tableOptions" />
+        <eff-table ref="table" v-bind="tableOptions" />
       </div>
     </section>
 
@@ -118,9 +118,9 @@ export default {
     return {
       htmlCode,
       jsCode,
-      form: { dataNum: 300, columnNum: 10 },
+      form: { dataNum: 3000, columnNum: 10 },
       tableOptions: {
-        height: 600,
+        height: '100%',
         border: true,
         data: [],
         columns: [],
