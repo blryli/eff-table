@@ -1,7 +1,6 @@
 <template>
   <div
     ref="tableWrapper"
-    :key="tableId"
     class="eff-table"
     :class="{
       'is--screenfull': isScreenfull,
@@ -229,6 +228,7 @@ import SeniorQuery from 'pk/senior-query'
 // import Sort from '../components/Sort'
 import XEUtils from 'xe-utils'
 import { getFieldValue, setFieldValue, getSubfieldColumns, getComColumns } from 'pk/utils'
+import { on, off } from 'pk/utils/dom'
 import { getOptions } from 'pk/utils/render'
 
 export default {
@@ -604,18 +604,18 @@ export default {
   },
   mounted() {
     this.$on('edit-fields', this.editField)
+    on(window, 'beforeunload', this.beforeunload)
   },
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
-  },
-  destroyed() {
-    this.destroy()
+    for (const key in this.$data) {
+      this.$data[key] = null
+    }
   },
   methods: {
-    destroy() {
-      for (const key in this.$data) {
-        this.$data[key] = null
-      }
+    beforeunload() {
+      this.$destroy()
+      off(window, 'beforeunload', this.beforeunload)
     },
     loadTableData(data = this.data) {
       const { editStore, rowId, loadData, useExpand } = this

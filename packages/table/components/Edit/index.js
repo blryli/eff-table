@@ -209,7 +209,7 @@ export default {
       if (!this.show) return
       // 滚动时取消编辑状态
       this.scrollNum = this.scrollNum + 1
-      if (this.scrollNum > 2) this.show = false
+      if (this.scrollNum > 3) this.show = false
     },
     to() {
       if (this.hasTree) return
@@ -351,12 +351,14 @@ export default {
       let isOver = false
       for (const key in overflow) {
         if (overflow[key]) {
+          let scrollLeft = table.scrollLeft
+          let scrollTop = table.scrollTop
           if ((key === 'left' && table.scrollLeft > 1) || (key === 'right' && !isScrollRightEnd)) {
-            const scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0)
-            this.table.scrollLeft = scrollLeft - bodyWrapperWidth / 2
+            scrollLeft = columnWidths.slice(0, cellIndex).reduce((acc, cur) => acc + cur, 0) - bodyWrapperWidth / 2
           } else if (key === 'top' || key === 'bottom') {
-            this.table.scrollTop = rowIndex * _rowHeight - wrapperHeight / 2
+            scrollTop = rowIndex * _rowHeight - wrapperHeight / 2
           }
+          this.table.handleScroll(scrollLeft, scrollTop, '#')
           isOver = true
         }
       }

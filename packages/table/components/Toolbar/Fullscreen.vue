@@ -35,7 +35,9 @@ export default {
     this.init()
   },
   beforeDestroy() {
-    this.destroy()
+    if (screenfull.isEnabled) {
+      screenfull.off('change', this.change)
+    }
   },
   methods: {
     click(e) {
@@ -55,11 +57,6 @@ export default {
     init() {
       if (screenfull.isEnabled) {
         screenfull.on('change', this.change)
-      }
-    },
-    destroy() {
-      if (screenfull.isEnabled) {
-        screenfull.off('change', this.change)
       }
     }
   }
