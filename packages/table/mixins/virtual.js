@@ -67,9 +67,8 @@ export default {
       }
     },
     columnIsVirtual(val) {
-      if (val) {
-        this.handleScroll()
-      } else {
+      if (!val) {
+        this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
       }
     }
@@ -99,39 +98,41 @@ export default {
           }, 100)
         }
       }
-      // 滚动中
-      if (edit) {
-        this.scrolling = true
-        clearTimeout(timer)
-        var timer = setTimeout(() => {
-          this.scrolling = false
-          clearTimeout(timer)
-        }, 100)
-      }
-      // 纵向虚拟滚动
-      if (scrollTop < calcRowHeight) {
-        this.renderIndex = 0
-        this.bodyMarginTop = ''
-      } else if (isVirtual && this.scrollTop !== scrollTop) {
+      if (this.scrollTop !== scrollTop) {
         this.scrollTop = scrollTop
-        const index = this.dataAccHeight.findIndex(d => d > scrollTop)
-        this.renderIndex = index
-        this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
+        // 纵向虚拟滚动
+        if (isVirtual) {
+          const index = this.dataAccHeight.findIndex(d => d > scrollTop)
+          this.renderIndex = index
+          this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
+          if (scrollTop < calcRowHeight) {
+            this.renderIndex = 0
+            this.bodyMarginTop = ''
+          }
+        }
       }
-      // 横向虚拟滚动
-      if (!columnIsVirtual) {
-        this.columnRenderIndex = 0
-        this.bodyMarginLeft = ''
-      } else if (columnIsVirtual && this.scrollLeft !== scrollLeft) {
+      if (this.scrollLeft !== scrollLeft) {
         this.scrollLeft = scrollLeft
-        const { columnAccWidths, columnVisibleWidth } = this
-        const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
-        const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
-        const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
-        const columnRenderIndex = Math.max(startIndex - 2, 0)
-        this.columnRenderIndex = columnRenderIndex
-        this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
-        this.bodyMarginLeft = (columnRenderIndex > 0 ? this.columnAccWidths[columnRenderIndex - 1] : 0) + 'px'
+        // 横向虚拟滚动
+        if (columnIsVirtual) {
+          const { columnAccWidths, columnVisibleWidth } = this
+          const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
+          const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
+          const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
+          const columnRenderIndex = Math.max(startIndex - 2, 0)
+          this.columnRenderIndex = columnRenderIndex
+          this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
+          this.bodyMarginLeft = (columnRenderIndex > 0 ? this.columnAccWidths[columnRenderIndex - 1] : 0) + 'px'
+        }
+        // 滚动中
+        if (edit) {
+          this.scrolling = true
+          clearTimeout(timer)
+          var timer = setTimeout(() => {
+            this.scrolling = false
+            clearTimeout(timer)
+          }, 100)
+        }
       }
     },
     toScroll(rowIndex) {

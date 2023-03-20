@@ -16,7 +16,7 @@
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
-    <!-- {{ heights }} -->
+    <!-- {{ scrollLeft }}--{{ scrollTop }} -->
     <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
       <slot slot="form" name="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
       <template v-for="item in (formConfig || {items: []}).items">

@@ -49,9 +49,9 @@
         <router-link class="menu-list" to="/SeniorQueryApi">SeniorQuery 高级搜索</router-link>
       </div>
       <div class="container">
-        <router-view />
-        <!-- <keep-alive>
-        </keep-alive> -->
+        <keep-alive>
+          <router-view :key="$route.path" />
+        </keep-alive>
       </div>
     </div>
 

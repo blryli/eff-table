@@ -79,6 +79,7 @@ export default {
       const { table, fixed } = this
       const { scrollLeft, scrollTop } = e.target
       table.handleScroll(fixed ? undefined : scrollLeft, scrollTop, fixed)
+      return false
     },
     getTrees(row, rowIndex) {
       const { rowId, treeIds, tableTreeConfig: { children }} = this.table
