@@ -14,9 +14,7 @@ export default {
       headerLoad: false,
       bodyLoad: false,
       toolbarHeight: 0,
-      formHeight: 0,
-      scrollXNode: null,
-      scrollYNode: null
+      formHeight: 0
     }
   },
   created() {
@@ -175,22 +173,22 @@ export default {
     },
     resize() {
       this.$nextTick(() => {
-        const { $el, setOverflowX, handleScroll } = this
+        const { $el, setOverflowX, scrollLeft, scrollTop, handleScroll } = this
         const { body } = this.$refs
         if (body) {
           this.bodyWrapper = body.$el
           this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
           this.bodyWrapperWidth = this.getBodyWidth()
           setOverflowX()
-          handleScroll()
+          handleScroll(scrollLeft + 0.01, scrollTop + 0.01, '#')
 
           this.tableBodyEl = $el.querySelector('.eff-table__body')
+        } else {
+          !this.$scopedSlots.table && this.resize()
         }
-        this.scrollXNode = document.getElementById('scrollx')
-        this.scrollYNode = document.getElementById('scrolly')
         setTimeout(() => {
           this.setTableRect()
-        }, 0)
+        }, 100)
       })
     },
     setOverflowX() {
@@ -208,17 +206,10 @@ export default {
     }
   },
   activated() {
-    this.timer = setTimeout(() => {
-      this.resize()
-      clearTimeout(this.timer)
-    }, 300)
+    this.resize()
   },
   mounted() {
     this.resize()
-    this.timer = setTimeout(() => {
-      this.resize()
-      clearTimeout(this.timer)
-    }, 500)
   },
   beforeDestroy() {
     off(window, 'resize', this.resize, { passive: true })

@@ -122,7 +122,6 @@ export default {
       tableOptions: {
         height: '100%',
         border: true,
-        edit: true,
         data: [],
         columns: [],
         // rowConfig: { rows: [{
@@ -157,8 +156,7 @@ export default {
             show: true,
             prop: 'name',
             title: () => '列' + num++,
-            width: 200,
-            edit: true
+            width: 200
           }
         ]
       }).array).concat([{ title: '操作', fixed: 'right', prop: 'name' }])

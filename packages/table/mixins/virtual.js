@@ -74,15 +74,11 @@ export default {
       }
     }
   },
-  activated() {
-    // 缓存的页面，切回页面时，保持最后的滚动姿势
-    this.handleScroll()
-  },
   beforeDestroy() {
     this.scrollList = null
   },
   methods: {
-    handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '#') {
+    handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '') {
       const { scrollList, isVirtual, columnIsVirtual, edit } = this
       const { calcRowHeight } = this
       // 同步滚动
@@ -91,7 +87,9 @@ export default {
         const node = scrollList[key]
         if (!node) continue
         node.onscroll = null
-        !fixed && (node.scrollLeft = scrollLeft)
+        if (['', 'header', 'footer'].includes(key)) {
+          node.scrollLeft = scrollLeft
+        }
         if (['', 'left', 'right'].includes(key)) {
           node.scrollTop = scrollTop
           clearTimeout(node.timer)
@@ -101,7 +99,7 @@ export default {
           }, 100)
         }
       }
-      // 编辑
+      // 滚动中
       if (edit) {
         this.scrolling = true
         clearTimeout(timer)
