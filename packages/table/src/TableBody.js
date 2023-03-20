@@ -53,21 +53,6 @@ export default {
     }
   },
   watch: {
-    // 'table.scrollTop'(scrollTop) {
-    //   const { $el, fixed, table } = this
-    //   if (fixed === table.scrollType) return
-    //   $el.scrollTop = scrollTop
-    //   $el.onscroll = null
-    //   clearTimeout(this.timer)
-    //   this.timer = setTimeout(() => {
-    //     $el.onscroll = $el._onscroll
-    //     clearTimeout(this.timer)
-    //   }, 100)
-    // },
-    // 'table.scrollLeft'(val) {
-    //   const { fixed, $el } = this
-    //   !fixed && ($el.scrollLeft = val)
-    // },
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
@@ -76,10 +61,11 @@ export default {
   mounted() {
     const { table, $el, scrollEvent, fixed } = this
     table.bodyLoad = true
-    $el.onscroll = scrollEvent
-    $el._onscroll = scrollEvent
     this.$nextTick(() => {
-      this.table.scrollList[fixed] = document.getElementById('scroll' + fixed)
+      if (table.scrollList[fixed]) return
+      $el.onscroll = scrollEvent
+      $el._onscroll = scrollEvent
+      table.scrollList[fixed] = $el
     })
   },
   beforeDestroy() {
@@ -87,38 +73,20 @@ export default {
     $el.onscroll = null
     $el._onscroll = null
   },
-  activated() {
-    // 缓存的页面，切回页面时，保持最后的滚动姿势
-    const { scrollLeft = 0, scrollTop = 0 } = this.table
-    this.table.scrollLeft = scrollLeft - 0.1
-    this.table.scrollTop = scrollTop - 0.1
-    this.table.scrollType = 'activated'
-  },
   methods: {
     scrollEvent(e) {
-      this.table.handleScroll(e, this.fixed)
-      // if (!fixed) {
-      //   table.scrollLeft = scrollLeft
-      // }
-      // if (table.scrollType !== fixed) {
-      //   table.scrollType = fixed
-      // }
-      // if (fixed === table.scrollType) return
-      // $el.scrollTop = scrollTop
-      // !fixed && ($el.scrollLeft = scrollLeft)
-      // $el.onscroll = null
-      // clearTimeout(this.timer)
-      // this.timer = setTimeout(() => {
-      //   $el.onscroll = $el._onscroll
-      //   clearTimeout(this.timer)
-      // }, 100)
+      e.preventDefault()
+      const { table, fixed } = this
+      const { scrollLeft, scrollTop } = e.target
+      table.handleScroll(fixed ? undefined : scrollLeft, scrollTop, fixed)
     },
     getTrees(row, rowIndex) {
-      const { table, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
-      const { renderColumn, rowId, treeIds, tableTreeConfig: { children }} = table
+      const { rowId, treeIds, tableTreeConfig: { children }} = this.table
       if (!(row[children] && row[children].length && treeIds[row[rowId]])) {
         return []
       }
+      const { table, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
+      const { renderColumn } = table
 
       const trees = []
       const treeFloor = 1
@@ -178,7 +146,7 @@ export default {
     if (overflowX) classes += ' is-overflow--x'
     if (overflowY) classes += ' is-overflow--y'
     return (
-      <div class={classes} id={'scroll' + fixed} style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
+      <div class={classes} style={{ height: bodyHeight + 'px', '--rowHeight': _rowHeight + 'px' }}>
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: dataHeight + 'px' }} />
         <div

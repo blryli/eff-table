@@ -175,14 +175,15 @@ export default {
     },
     resize() {
       this.$nextTick(() => {
-        const { $el, setOverflowX, scrollLeftEvent } = this
+        const { $el, setOverflowX, handleScroll } = this
         const { body } = this.$refs
         if (body) {
           this.bodyWrapper = body.$el
           this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
           this.bodyWrapperWidth = this.getBodyWidth()
           setOverflowX()
-          scrollLeftEvent()
+          handleScroll()
+
           this.tableBodyEl = $el.querySelector('.eff-table__body')
         }
         this.scrollXNode = document.getElementById('scrollx')

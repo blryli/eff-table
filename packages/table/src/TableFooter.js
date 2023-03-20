@@ -38,26 +38,31 @@ export default {
       }, {})
     }
   },
-  watch: {
-    'table.scrollLeft'(val) {
-      if (this.fixed) return
-      this.$el.scrollLeft = val
-    }
+  mounted() {
+    this.$nextTick(() => {
+      const { fixed, table, $el } = this
+      if (fixed) return
+      if (table.scrollList.footer) return
+      table.scrollList.footer = $el
+    })
   },
   render(h) {
     const { row, columns, style, table, fixed } = this
+    const { overflowY, bodyWidth, bodyMarginLeft, renderColumn, baseHeight } = table
+    let classes = 'eff-table__footer'
+    if (overflowY) classes += ' is-overflow--y'
     return (
-      <div class='eff-table__footer' style={style}>
-        <div class='eff-table__body--x-space' style={{ width: table.bodyWidth + 'px' }} />
+      <div class={classes} style={style}>
+        <div class='eff-table__body--x-space' style={{ width: bodyWidth + 'px' }} />
         <div
           class='eff-table__body'
-          style={ { marginLeft: fixed ? '' : table.bodyMarginLeft } }
+          style={ { marginLeft: fixed ? '' : bodyMarginLeft } }
         >
           <TableBodyRow
-            row-height={table.baseHeight}
+            row-height={baseHeight}
             row={row}
             row-index={1}
-            body-columns={fixed ? columns : table.renderColumn}
+            body-columns={fixed ? columns : renderColumn}
             fixed={fixed}
             summary={true}
           />

@@ -118,10 +118,11 @@ export default {
     return {
       htmlCode,
       jsCode,
-      form: { dataNum: 3000, columnNum: 10 },
+      form: { dataNum: 3000, columnNum: 50 },
       tableOptions: {
         height: '100%',
         border: true,
+        edit: true,
         data: [],
         columns: [],
         // rowConfig: { rows: [{
@@ -137,7 +138,9 @@ export default {
         //   </div> }] },
         toolbarConfig: {
           fullscreen: true
-        }
+        },
+        showSummary: true,
+        footerActionConfig: { showPager: true, showBorder: true }
       }
     }
   },
@@ -154,7 +157,8 @@ export default {
             show: true,
             prop: 'name',
             title: () => '列' + num++,
-            width: 200
+            width: 200,
+            edit: true
           }
         ]
       }).array).concat([{ title: '操作', fixed: 'right', prop: 'name' }])

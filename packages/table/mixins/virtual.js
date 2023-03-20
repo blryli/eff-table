@@ -9,7 +9,6 @@ export default {
       scrollTop: 0,
       bodyMarginTop: 0,
       bodyMarginLeft: 0,
-      scrollLeftDir: null,
       scrollList: {}
     }
   },
@@ -64,91 +63,77 @@ export default {
     isVirtual(val) {
       if (!val) {
         this.renderIndex = 0
+        this.bodyMarginTop = ''
       }
     },
-    // scrollTop(scrollTop) {
-    //   const { calcRowHeight, scrollYNode } = this
-    //   if (scrollTop < calcRowHeight) {
-    //     this.renderIndex = 0
-    //   }
-    //   if (this.isVirtual) {
-    //     this.renderIndex = this.dataAccHeight.findIndex(d => d > scrollTop)
-    //   }
-    //   if (scrollYNode && this.scrollType !== 'table') {
-    //     scrollYNode.scrollTop = scrollTop
-    //   }
-    // },
     columnIsVirtual(val) {
       if (val) {
-        this.scrollLeftEvent()
+        this.handleScroll()
       } else {
         this.bodyMarginLeft = ''
       }
-    },
-    scrollLeft(scrollLeft, oldScrollLeft) {
-      const { columnIsVirtual, scrollLeftEvent } = this
-      this.scrollLeftDir = scrollLeft > oldScrollLeft ? 'right' : 'left'
-      if (columnIsVirtual) {
-        scrollLeftEvent(scrollLeft)
-      }
-    },
-    columnRenderIndex(startIndex) {
-      this.bodyMarginLeft = (startIndex > 0 ? this.columnAccWidths[startIndex - 1] : 0) + 'px'
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      const { columnIsVirtual, scrollLeftEvent } = this
-      columnIsVirtual && scrollLeftEvent()
-      this.scrollList.table = document.getElementById('scrolly')
-    })
+  activated() {
+    // 缓存的页面，切回页面时，保持最后的滚动姿势
+    this.handleScroll()
+  },
+  beforeDestroy() {
+    this.scrollList = null
   },
   methods: {
-    handleScroll(e, fixed) {
-      const { scrollList } = this
-      const { scrollLeft, scrollTop } = e.target
+    handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '#') {
+      const { scrollList, isVirtual, columnIsVirtual, edit } = this
       const { calcRowHeight } = this
+      // 同步滚动
+      for (const key in scrollList) {
+        if (key === fixed) continue
+        const node = scrollList[key]
+        if (!node) continue
+        node.onscroll = null
+        !fixed && (node.scrollLeft = scrollLeft)
+        if (['', 'left', 'right'].includes(key)) {
+          node.scrollTop = scrollTop
+          clearTimeout(node.timer)
+          node.timer = setTimeout(() => {
+            node.onscroll = node._onscroll
+            clearTimeout(node.timer)
+          }, 100)
+        }
+      }
+      // 编辑
+      if (edit) {
+        this.scrolling = true
+        clearTimeout(timer)
+        var timer = setTimeout(() => {
+          this.scrolling = false
+          clearTimeout(timer)
+        }, 100)
+      }
+      // 纵向虚拟滚动
       if (scrollTop < calcRowHeight) {
         this.renderIndex = 0
-      }
-      if (this.isVirtual) {
+        this.bodyMarginTop = ''
+      } else if (isVirtual && this.scrollTop !== scrollTop) {
+        this.scrollTop = scrollTop
         const index = this.dataAccHeight.findIndex(d => d > scrollTop)
         this.renderIndex = index
         this.bodyMarginTop = (index > 0 ? this.dataAccHeight[index - 1] : 0) + 'px'
       }
-      for (const key in scrollList) {
-        if (key !== fixed) {
-          const node = scrollList[key]
-          node.scrollLeft = scrollLeft
-          node.scrollTop = scrollTop
-        }
-      }
-    },
-    scrollEventLeft(e) {
-      this.scrollLeft = e.target.scrollLeft
-      this.scrollType = 'table'
-    },
-    scrollEventTop(e) {
-      this.scrollTop = e.target.scrollTop
-      this.scrollType = 'table'
-      this.handleScroll(e, 'table')
-    },
-    scrollLeftEvent(scrollLeft = this.scrollLeft) {
-      if (!(this.tableData || []).length) return
-      this.scrollLeft = scrollLeft
-      const { columnIsVirtual, columnAccWidths, columnVisibleWidth, scrollXNode } = this
+      // 横向虚拟滚动
       if (!columnIsVirtual) {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
-        return
-      }
-      const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
-      const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
-      const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
-      this.columnRenderIndex = Math.max(startIndex - 2, 0)
-      this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
-      if (scrollXNode && this.scrollType !== 'table') {
-        scrollXNode.scrollLeft = scrollLeft
+      } else if (columnIsVirtual && this.scrollLeft !== scrollLeft) {
+        this.scrollLeft = scrollLeft
+        const { columnAccWidths, columnVisibleWidth } = this
+        const startIndex = columnAccWidths.findIndex(d => d > scrollLeft)
+        const findEndIndex = columnAccWidths.findIndex(d => d > columnAccWidths[startIndex] + columnVisibleWidth)
+        const endIndex = findEndIndex > -1 ? findEndIndex : columnAccWidths.length
+        const columnRenderIndex = Math.max(startIndex - 2, 0)
+        this.columnRenderIndex = columnRenderIndex
+        this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
+        this.bodyMarginLeft = (columnRenderIndex > 0 ? this.columnAccWidths[columnRenderIndex - 1] : 0) + 'px'
       }
     },
     toScroll(rowIndex) {

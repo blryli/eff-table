@@ -334,7 +334,6 @@ export default {
       this.editStore.insertList.push(...records)
       this.updateCache()
       this.resize()
-      this.scrollLeftEvent()
       return this.$nextTick().then(() => rowIndex)
     },
     refresh() {

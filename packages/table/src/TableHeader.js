@@ -1,7 +1,7 @@
 import TableHeaderColumn from './TableHeaderColumn'
 import Search from '../components/Search'
 import Contextmenu from 'pk/contextmenu'
-import { on, off, hasClass, onMousemove, getCell } from 'pk/utils/dom'
+import { hasClass, onMousemove, getCell } from 'pk/utils/dom'
 
 export default {
   name: 'TableHeader',
@@ -14,7 +14,6 @@ export default {
   data() {
     return {
       dragingTarget: null,
-      height: 0,
       isDraging: false,
       isColumnsChange: false,
       searchData: [],
@@ -34,10 +33,6 @@ export default {
   watch: {
     'table.tableForm'(val) {
       if (JSON.stringify(val) === '[]') this.searchData = []
-    },
-    'table.scrollLeft'(val) {
-      if (this.fixed) return
-      this.$el.scrollLeft = val
     },
     'table.tableColumns'() {
       // columns 变化之后重新渲染搜索组件
@@ -153,9 +148,6 @@ export default {
         }, [])
       }
       return render(columns)
-    },
-    handleScroll(e) {
-      this.table.scrollLeft = e.target.scrollLeft
     },
     handleClick(event) {
       const { table } = this
@@ -378,16 +370,16 @@ export default {
     }
   },
   mounted() {
+    const { table, fixed, $refs, $el } = this
     this.table.headerLoad = true
     this.$nextTick(() => {
-      const { header } = this.$refs
+      const { header } = $refs
       if (!header) return
       this.height = header.offsetHeight
-      !this.fixed && on(this.$el, 'scroll', this.handleScroll)
+      if (fixed) return
+      if (table.scrollList.header) return
+      table.scrollList.header = $el
     })
-  },
-  beforeDestroy() {
-    !this.fixed && off(this.$el, 'scroll', this.handleScroll)
   },
   render(h) {
     const { table, bodyColumns, isDraging, handleClick, handleMousemove, handleMouseleave, renderColumns, dragStyle, moveMousedown, isColumnsChange, searchData, marginLeft, xSpaceWidth, contextmenuList, contextmenuListMethod, contextmenuClick } = this
