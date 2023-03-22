@@ -58,6 +58,11 @@ export default {
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
     }
   },
+  updated() {
+    if (!this.fixed && this.table.rowHeight === 'auto') {
+      this.table.bodyHeight = this.$refs.body.offsetHeight
+    }
+  },
   mounted() {
     const { table, $el, scrollEvent, fixed } = this
     table.bodyLoad = true
@@ -151,6 +156,7 @@ export default {
         <div class='eff-table__body--x-space' style={{ width: xSpaceWidth + 'px' }} />
         <div class='eff-table__body--y-space' style={{ height: dataHeight + 'px' }} />
         <div
+          ref='body'
           class='eff-table__body '
           style={bodyStyle}
         >

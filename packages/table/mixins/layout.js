@@ -37,6 +37,9 @@ export default {
     }
   },
   computed: {
+    isRowHeightAuto() {
+      return this.rowHeight === 'auto'
+    },
     tableClass() {
       let tClass = 'eff-table__container'
       const { stripe, heights } = this
@@ -92,11 +95,10 @@ export default {
       return getDeepth(this.visibleColumns)
     },
     overflowY() {
-      const { bodyHeight: bHeight, rowHeight } = this
+      const { isRowHeightAuto, bodyHeight: bodyAllHeight, scrollXwidth } = this
       const { bodyHeight, tableMaxHeight, dataHeight } = this.heights
-      const overflowXHeight = (this.overflowX ? 17 : 0)
-      const height = rowHeight === 'auto' ? bHeight : dataHeight
-      return bodyHeight && (tableMaxHeight ? height - 2 > tableMaxHeight : height - 2 > bodyHeight - overflowXHeight)
+      const height = isRowHeightAuto ? bodyAllHeight : dataHeight
+      return bodyHeight && (tableMaxHeight ? height - 2 > bodyHeight : height - 2 > bodyHeight - scrollXwidth)
     },
     expandsHeight() {
       return this.expands.reduce((acc, cur) => cur.expanded ? acc + cur.height : acc, 0)
@@ -118,14 +120,14 @@ export default {
       return _rowHeight + rowsHeight
     },
     heights() {
-      const { height, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, formHeight, toolbarHeight: tHeight, $EFF: { HeaderRowHeight: EFFHeaderRowHeight }, calcRowHeight } = this
+      const { height, isRowHeightAuto, tableMaxHeight, autoHeight, isScreenfull, screenfullHeight, afterData, _rowHeight, baseHeight, headerRowHeight, headerRanked, search, headerLoad, bodyLoad, overflowX, treeNum, subtotalData, expandsHeight, formHeight, toolbarHeight: tHeight, $EFF: { HeaderRowHeight: EFFHeaderRowHeight }, calcRowHeight } = this
       const { toolbar, header, footer, footerAction } = this.$refs
       const toolbarHeight = toolbar ? tHeight : 0
       const headerHeight = headerLoad && header ? ((headerRowHeight === 36 ? EFFHeaderRowHeight || headerRowHeight : headerRowHeight) || baseHeight) * headerRanked : 0
       const searchHeight = search ? baseHeight : 0
       const footerHeight = footer ? baseHeight : 0
       const footerActionHeight = footerAction ? baseHeight : 0
-      const dataHeight = afterData.length ? afterData.length * calcRowHeight + (treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
+      const dataHeight = isRowHeightAuto ? this.bodyHeight : afterData.length ? afterData.length * calcRowHeight + (treeNum + subtotalData.length) * _rowHeight + expandsHeight : _rowHeight
       const overflowXHeight = (overflowX ? 17 : 0)
       const tableHeight = isScreenfull ? screenfullHeight : height === '100%' ? autoHeight : tableMaxHeight || height || formHeight + toolbarHeight + headerHeight + searchHeight + footerHeight + footerActionHeight + dataHeight
       let bodyHeight = (bodyLoad ? tableHeight - formHeight - toolbarHeight - headerHeight - footerHeight - footerActionHeight - searchHeight : 0)
@@ -173,21 +175,26 @@ export default {
     },
     resize() {
       this.$nextTick(() => {
-        const { $el, setOverflowX, scrollLeft, scrollTop, handleScroll } = this
+        const { $el, setOverflowX, scrollLeft, scrollTop, handleScroll, isRowHeightAuto } = this
         const { body } = this.$refs
         if (body) {
           this.bodyWrapper = body.$el
-          this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
           this.bodyWrapperWidth = this.getBodyWidth()
           setOverflowX()
           handleScroll(scrollLeft + 0.01, scrollTop + 0.01, '#')
-
           this.tableBodyEl = $el.querySelector('.eff-table__body')
+          if (!isRowHeightAuto) {
+            const timer = setTimeout(() => {
+              this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
+              clearTimeout(timer)
+            }, 100)
+          }
         } else {
           !this.$scopedSlots.table && this.resize()
         }
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           this.setTableRect()
+          clearTimeout(timer)
         }, 100)
       })
     },

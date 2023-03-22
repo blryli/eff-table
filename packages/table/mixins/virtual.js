@@ -15,8 +15,8 @@ export default {
   computed: {
     // 行虚拟滚动
     isVirtual() {
-      const { tableData: { length } = [], renderSize, useExpand, useGroupColumn, isSpanMethod, rowHeight } = this
-      if (rowHeight === 'auto' || isSpanMethod || useExpand || useGroupColumn) return false
+      const { tableData: { length } = [], renderSize, useExpand, useGroupColumn, isSpanMethod, isRowHeightAuto } = this
+      if (isRowHeightAuto || isSpanMethod || useExpand || useGroupColumn) return false
       return length > 30 && length > renderSize
     },
     renderData() {
@@ -34,8 +34,8 @@ export default {
     },
     columnIsVirtual() {
       // return false
-      const { useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
-      if (isSpanMethod || useExpand || useGroupColumn) return false
+      const { isRowHeightAuto, useGroupColumn, useExpand, bodyWidth, isSpanMethod, columnVisibleWidth } = this
+      if (isRowHeightAuto || isSpanMethod || useExpand || useGroupColumn) return false
       return bodyWidth > columnVisibleWidth * 2
     },
     renderColumn() {
