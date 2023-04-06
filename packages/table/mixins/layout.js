@@ -183,6 +183,7 @@ export default {
           setOverflowX()
           handleScroll(scrollLeft + 0.01, scrollTop + 0.01, '#')
           this.tableBodyEl = $el.querySelector('.eff-table__body')
+          this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
           if (!isRowHeightAuto) {
             const timer = setTimeout(() => {
               this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight

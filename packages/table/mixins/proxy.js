@@ -41,7 +41,7 @@ export default {
     },
     query(query) {
       this.loadingOpen()
-      this.getList(query).then(data => {
+      return this.getList(query).then(data => {
         if (!data) data = []
         if (Array.isArray(data)) {
           // 无分页
@@ -55,8 +55,9 @@ export default {
         this.loadingClose()
         // console.log('tableData', JSON.stringify(this.tableData, null, 2))
       }).catch(e => {
-        console.error(e)
+        this.reloadData([])
         this.loadingClose()
+        return e
       }).finally(() => {
         this.doLayout()
       })

@@ -324,20 +324,25 @@ export default {
     }
 
     let slot
-    if (type === 'expand') {
-      const { onlyField } = tableExpandConfig
-      const hasExpand = row => !onlyField || onlyField && row[onlyField]
-      slot = hasExpand(row) ? expandRender(h) : ''
-    } else if (type === 'row-drag') {
-      slot = h(RowDrag)
-    } else if (row[columnIndex] !== undefined) {
-      slot = row[columnIndex]
-    } else if (type === 'selection') {
-      slot = renderSelection(h)
-    } else if (type === 'radio') {
-      slot = renderRadio(h)
-    } else {
-      slot = cellRender(h)
+    try {
+      if (type === 'expand') {
+        const { onlyField } = tableExpandConfig
+        const hasExpand = row => !onlyField || onlyField && row[onlyField]
+        slot = hasExpand(row) ? expandRender(h) : ''
+      } else if (type === 'row-drag') {
+        slot = h(RowDrag)
+      } else if (row[columnIndex] !== undefined) {
+        slot = row[columnIndex]
+      } else if (type === 'selection') {
+        slot = renderSelection(h)
+      } else if (type === 'radio') {
+        slot = renderRadio(h)
+      } else {
+        slot = cellRender(h)
+      }
+    } catch (error) {
+      console.error(error)
+      slot = ''
     }
     const labelStyle = {}
     if (rowHeight === 'auto') {
