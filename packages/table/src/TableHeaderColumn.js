@@ -119,13 +119,13 @@ export default {
       }
       table.$refs.filter.toggleTipShow({ reference, showAllways: true, placement: 'bottom', column })
     }
-    let titleSlot
+    let slot
     try {
-      titleSlot = titleRender && titleRender(h, { title, column, columnIndex })
+      slot = type === 'expand' ? '' : titleRender ? titleRender(h, { title, column, columnIndex }) : type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
     } catch (error) {
+      slot = title
       console.error(error)
     }
-    const slot = type === 'expand' ? '' : titleSlot || type === 'selection' ? renderSelection(h) : type === 'index' ? (title || '#') : title
 
     const renderHelp = (title, icon) => {
       const { message } = title || {}

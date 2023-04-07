@@ -32,7 +32,7 @@ export default {
   render(h, context) {
     const { props, data, injections } = context
     const { table } = injections
-    const { vue, row, rowid, rowIndex, column, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
+    const { vue, row, rowid, rowIndex, column, fixed, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align, showOverflow } = column
     const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border, getColumnWidth } = table
     const _rowId = row[rowId]
@@ -317,7 +317,7 @@ export default {
         vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
       }
     }
-    if ((childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
+    if (fixed !== 'right' && (childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
       treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
         {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
       </span>
