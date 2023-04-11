@@ -147,9 +147,12 @@ export default {
     this.throttleClick = XEUtils.throttle(this.tagClick)
   },
   updated() {
-    this.$nextTick(() => {
-      this.height = this.$el.offsetHeight
-    })
+    const timer = setTimeout(() => {
+      this.$nextTick(() => {
+        this.height = this.$el.offsetHeight
+      })
+      clearTimeout(timer)
+    }, 0);
   },
   methods: {
     getFilterProp(prop) {

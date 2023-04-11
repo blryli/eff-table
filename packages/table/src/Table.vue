@@ -337,7 +337,6 @@ export default {
       currentRow: null,
       lineShow: false,
       isScreenfull: false,
-      tableBodyEl: null,
       hoverRowid: null,
       isLoading: false,
       editStore: {

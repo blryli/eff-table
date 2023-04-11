@@ -175,20 +175,23 @@ export default {
     },
     resize() {
       this.$nextTick(() => {
-        const { $el, setOverflowX, scrollLeft, scrollTop, handleScroll, isRowHeightAuto } = this
+        const { setOverflowX, scrollLeft, scrollTop, handleScroll, isRowHeightAuto } = this
         const { body } = this.$refs
         if (body) {
           this.bodyWrapper = body.$el
           this.bodyWrapperWidth = this.getBodyWidth()
           setOverflowX()
           handleScroll(scrollLeft + 0.01, scrollTop + 0.01, '#')
-          this.tableBodyEl = $el.querySelector('.eff-table__body')
-          this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
-          if (!isRowHeightAuto) {
-            const timer = setTimeout(() => {
-              this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
-              clearTimeout(timer)
-            }, 100)
+          try {
+            this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
+            if (!isRowHeightAuto) {
+              const timer = setTimeout(() => {
+                this.bodyHeight = body.$el.querySelector('.eff-table__body').offsetHeight
+                clearTimeout(timer)
+              }, 100)
+            }
+          } catch (error) {
+            console.debug('querySelector .eff-table__body is not find')
           }
         } else {
           !this.$scopedSlots.table && this.resize()
