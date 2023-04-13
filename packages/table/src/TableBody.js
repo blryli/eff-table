@@ -13,6 +13,11 @@ export default {
     messages: { type: Array, default: () => [] },
     fixed: { type: String, default: '' }
   },
+  data() {
+    return {
+      height: null
+    }
+  },
   inject: ['table'],
   computed: {
     columns() {
@@ -56,12 +61,15 @@ export default {
     'table.minWidth'(val) {
       const { bodyWrapperWidth, scrollYwidth } = this.table
       val <= bodyWrapperWidth - scrollYwidth && (this.$el.scrollLeft = 0)
+    },
+    height(height) {
+      this.table.bodyHeight = height
     }
   },
   updated() {
-    if (!this.fixed && this.table.rowHeight === 'auto') {
-      this.table.bodyHeight = this.$refs.body.offsetHeight
-    }
+    this.$nextTick(() => {
+      this.height = this.$refs.body.offsetHeight
+    })
   },
   mounted() {
     const { table, $el, scrollEvent, fixed } = this
