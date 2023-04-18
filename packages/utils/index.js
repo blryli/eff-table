@@ -1,4 +1,14 @@
 import XEUtils from 'xe-utils'
+
+/**
+ * 生成随机ID
+ * @param name ID前缀
+ * @returns 返回name+随机Id
+ */
+export function getId(name) {
+  return (name || '') + (~~(Math.random() * (1 << 30))).toString(36)
+}
+
 /**
  * * 获取对象类型
  * @param {params} params

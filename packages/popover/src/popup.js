@@ -15,9 +15,6 @@ export default {
   methods: {
     focus() {
       this.table.$refs.popovers.editTipShow({ reference: this.$el, vslot: this.$slots.default, placement: 'bottom' })
-      setTimeout(() => {
-        console.log(this.$children)
-      }, 100)
       this.$nextTick(() => {
         const { componentInstance } = this.$slots.default[0]
         if (componentInstance) {

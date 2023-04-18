@@ -31,6 +31,7 @@ export const isOverflow = function({ cell, wrapper, leftWidth, rightWidth, overf
 export const shake = function(node, placement = 'y') {
   const classes = 'is-shake--' + placement
   node.classList.add(classes)
+  clearTimeout(timer)
   const timer = setTimeout(() => {
     node.classList.remove(classes)
     clearTimeout(timer)

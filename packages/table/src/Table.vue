@@ -444,7 +444,7 @@ export default {
     afterData() {
       const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
       const { remote, searchMethod } = searchConfig
-      let data = tableData.slice(0)
+      let data = XEUtils.clone(tableData, true)
       const filterList = []
       // 筛选数据
       if (filters && filters.length || searchForm.length) {
@@ -606,26 +606,8 @@ export default {
     on(window, 'beforeunload', this.beforeunload)
   },
   beforeDestroy() {
+    off(window, 'beforeunload', this.beforeunload)
     this.$off('edit-fields', this.editField)
-    for (const key in this.$data) {
-      this.$data[key] = null
-    }
-    function destroyDeep(vnode) {
-      let vnodes
-      if (vnode.children || vnode.componentInstance?._vnode?.children) {
-        vnodes = vnode.children || vnode.componentInstance._vnode.children
-        for (const vn of vnodes) {
-          destroyDeep(vn)
-        }
-      }
-
-      vnode.componentInstance?.$destroy()
-      setTimeout(() => {
-        vnode.componentInstance = undefined
-        vnode.elm.innerHTML = ''
-      }, 0)
-    }
-    destroyDeep(this._vnode)
   },
   methods: {
     beforeunload() {

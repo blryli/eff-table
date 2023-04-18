@@ -125,6 +125,8 @@ export default {
   beforeDestroy() {
     this.addedBody && removeBody(this, 'popover')
     this.addedBody = false
+    this.timer = null
+    this.timeoutPending = null
   },
   methods: {
     popoverAddedBody() {

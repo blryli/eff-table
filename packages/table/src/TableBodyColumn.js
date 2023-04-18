@@ -194,7 +194,8 @@ export default {
       return node instanceof VNode
     }
     const cellRender = function() {
-      const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
+      const { prop, config = {}, type, edit: { render } = {}} = column
+      const cellRender = XEUtils.clone(column.cellRender, true)
       const renderCell = (cellRender) => {
         // 处理动态渲染器
         const dynamicConfig = {}
