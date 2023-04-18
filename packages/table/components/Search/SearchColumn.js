@@ -125,7 +125,7 @@ export default {
     },
     searchRender(h) {
       const { column } = this
-      const { search } = column
+      const search = XEUtils.clone(column.search, true)
       if (search) {
         const { table, form, prop, columnIndex, searchChange } = this
         const { config } = column
