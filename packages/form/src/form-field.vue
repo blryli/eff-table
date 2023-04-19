@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{'v-form-filed': true, 'is--dirty': isDirty}"
+    :class="{'v-form-filed': true}"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
   >
@@ -10,7 +10,6 @@
 
 <script>
 import { on, off, getOneChildNode, getOneChildComponent } from 'pk/form/utils/dom'
-import { eqCellValue } from 'pk/utils/dom'
 import XEUtils from 'xe-utils'
 import { initField } from 'pk/utils'
 export default {
@@ -29,8 +28,7 @@ export default {
       handlerNode: null,
       input: null,
       component: null,
-      initValue: null,
-      isDirty: false
+      initValue: null
     }
   },
   inject: {
@@ -76,11 +74,15 @@ export default {
     })
   },
   beforeDestroy() {
-    this.watcher = null
-    const { rules, input, component, trigger, handleValidate, onFocus, onBlur } = this
+    this.component = null
+    this.input = null
+    this.handlerNode = null
+    this.initValue = null
+    const { rules, input, component, trigger, handleValidate, onFocus, onBlur, visibleChange } = this
     if (this.$children.length && component) {
-      component.$off('focus', () => onFocus(component))
+      component.$off('focus', onFocus)
       component.$off('blur', onBlur)
+      component.$off('visible-change', visibleChange)
       if (rules.length) {
         component.$off(trigger, handleValidate)
       }
@@ -98,17 +100,15 @@ export default {
     init() {
       if (this.form.readonly) return
       this.component = getOneChildComponent(this)
-      const { form, prop, rules, trigger, component, $el, onFocus, onBlur, handleValidate } = this
+      const { form, prop, rules, trigger, component, $el, onFocus, onBlur, handleValidate, visibleChange } = this
       if (this.$children.length && component) {
         // 如果是组件存在并且有 getInput 方法
         if (component.getInput) {
           this.handlerNode = this.input = component.getInput()
         }
-        component.$on('focus', () => onFocus(component))
+        component.$on('focus', onFocus)
         component.$on('blur', onBlur)
-        component.$on('visible-change', val => {
-          this.root.editIsStop = val
-        })
+        component.$on('visible-change', visibleChange)
         if (rules.length) {
           component.$on(trigger, handleValidate)
         }
@@ -129,7 +129,12 @@ export default {
       }
       form.$emit('form-item-change', { prop, slot: this, input: this.input, rules })
     },
-    onFocus(component) {
+    visibleChange(val) {
+      if(!this.form.focusOpen) return
+      this.root.editIsStop = val
+    },
+    onFocus() {
+      const {component} = this
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
       // 聚焦时全选
       if (this.form.formFocusToSelect) {
@@ -146,9 +151,7 @@ export default {
     },
     handleValidate() {
       const { root, data, prop, rules } = this
-      rules.length && root.validateField(prop, rules, data).then(res => {
-        this.updateStatus()
-      })
+      rules.length && root.validateField(prop, rules, data)
     },
     setNodeStyle() {
       const { handlerNode, message, validatorStyle } = this
@@ -157,19 +160,13 @@ export default {
         handlerNode.style[key] = message ? style : ''
       }
     },
-    updateStatus() {
-      const { data = {}, prop, initValue } = this
-      this.isDirty = !eqCellValue({ [prop]: initValue }, data, prop)
-    },
     updateField() {
       const { data, prop } = this
       this.initValue = XEUtils.get(data, prop)
-      this.updateStatus()
     },
     resetField() {
       const { data, prop } = this
       XEUtils.set(data, prop, this.initValue)
-      this.updateStatus()
     }
   }
 }

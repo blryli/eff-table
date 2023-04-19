@@ -106,12 +106,12 @@ export default {
     tipClose() {
       this.$refs.popover.doHide()
     },
-    // 清除状态
-    clearStatus() {
-      this.formItems.forEach(d => {
-        d.slot.updateField()
-      })
-    },
+    // // 清除状态
+    // clearStatus() {
+    //   this.formItems.forEach(d => {
+    //     d.slot.updateField()
+    //   })
+    // },
     // 重置表单
     resetFields() {
       this.clearValidate()

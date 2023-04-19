@@ -134,6 +134,8 @@ export default {
   },
   beforeDestroy() {
     off(window, 'resize', this.close)
+    this.wrapper = null
+    this.body = null
     const { editRender, component, validateShowpopover } = this
     // 原生input
     if (editRender && editRender.tag === 'input') {

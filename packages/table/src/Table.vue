@@ -17,9 +17,9 @@
     <div>{{ filterList }}</div> -->
     <!-- {{ scrollLeft }}--{{ scrollTop }} -->
     <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
-      <slot slot="form" name="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
+      <slot name="form" slot="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
       <template v-for="item in (formConfig || {items: []}).items">
-        <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
+        <slot :name="'item_'+item.prop" :slot="'item_'+item.prop" v-bind="{data: tForm, item}" />
       </template>
     </TableForm>
     <Toolbar
