@@ -195,7 +195,7 @@ export default {
     }
     const cellRender = function() {
       const { prop, config = {}, type, edit: { render } = {}} = column
-      const cellRender = XEUtils.clone(column.cellRender, true)
+      const cellRender = column.cellRender
       const renderCell = (cellRender) => {
         // 处理动态渲染器
         const dynamicConfig = {}
@@ -354,7 +354,7 @@ export default {
       key: treeFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
       style: Object.assign(column.style || {}, style),
-      on: {
+      on: scrolling ? {} : {
         mouseenter: event => handleMouseenter(event, slot),
         mouseleave: event => handleMouseleave(event, slot),
         mouseup: event => handleMouseUp(event),

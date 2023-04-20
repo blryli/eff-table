@@ -73,6 +73,11 @@ export default {
         this.columnRenderIndex = 0
         this.bodyMarginLeft = ''
       }
+    },
+    scrolling(val) {
+      if(val) {
+        this.$refs.popovers.tipClose()
+      }
     }
   },
   beforeDestroy() {

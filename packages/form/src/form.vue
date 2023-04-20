@@ -76,7 +76,7 @@ export default {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
       const { prop, options, label = 'label', value = 'value', format } = column
-      const itemRender = XEUtils.clone(column.itemRender, true)
+      const itemRender = column.itemRender
       if (readonly) return XEUtils.get(data, prop)
       const params = { root: this, table, row: data, form: this, vue: this, data, column, prop }
       // 处理format

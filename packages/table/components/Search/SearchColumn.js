@@ -98,9 +98,11 @@ export default {
       this.form.type = this.value.operator || operatorDefault || 'like'
     },
     handleMouseenter(e) {
+      if(this.table?.scrolling) return
       this.$refs.popover.doShow()
     },
     handleMouseleave() {
+      if(this.table?.scrolling) return
       this.$refs.popover.doHide()
     },
     operatorChange(type) {
@@ -125,7 +127,7 @@ export default {
     },
     searchRender(h) {
       const { column } = this
-      const search = XEUtils.clone(column.search, true)
+      const search = column.search
       if (search) {
         const { table, form, prop, columnIndex, searchChange } = this
         const { config } = column

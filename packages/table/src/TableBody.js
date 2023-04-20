@@ -15,7 +15,8 @@ export default {
   },
   data() {
     return {
-      height: null
+      height: null,
+      ticking: false
     }
   },
   inject: ['table'],
@@ -76,8 +77,8 @@ export default {
     table.bodyLoad = true
     this.$nextTick(() => {
       if (table.scrollList[fixed]) return
-      $el.onscroll = XEUtils.debounce(scrollEvent,10)
-      $el._onscroll = XEUtils.debounce(scrollEvent,10)
+      $el.onscroll = scrollEvent
+      $el._onscroll = scrollEvent
       table.scrollList[fixed] = $el
     })
   },
@@ -89,10 +90,17 @@ export default {
   methods: {
     scrollEvent(e) {
       e.preventDefault()
+      if(!this.ticking) {
+        requestAnimationFrame(() => this.realFunc(e));
+        this.ticking = true;
+      }
+      return false
+    },
+    realFunc(e) {
       const { table, fixed } = this
       const { scrollLeft, scrollTop } = e.target
       table.handleScroll(fixed ? undefined : scrollLeft, scrollTop, fixed)
-      return false
+      this.ticking = false;
     },
     getTrees(row, rowIndex) {
       const { rowId, treeIds, tableTreeConfig: { children }} = this.table

@@ -996,7 +996,7 @@ export default {
         })
         this.tableColumns = [...columns]
         this.sortChange(null, true).then(() => {
-          const tableData = XEUtils.clone(this.tableData, true)
+          const tableData = this.tableData.slice(0)
           if (tableData.length) {
             this.subtotalColumns = headerCheckedColumns.filter(column => {
               let isNumber = true
