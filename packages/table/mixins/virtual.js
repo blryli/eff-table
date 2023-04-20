@@ -9,7 +9,9 @@ export default {
       scrollTop: 0,
       bodyMarginTop: 0,
       bodyMarginLeft: 0,
-      scrollList: {}
+      scrollList: {},
+      scrolling: false,
+      scrollTimer: null
     }
   },
   computed: {
@@ -75,15 +77,19 @@ export default {
   },
   beforeDestroy() {
     this.scrollList = null
+    this.scrollTimer = null
   },
   methods: {
     handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '') {
-      const { scrollList, isVirtual, columnIsVirtual, edit } = this
+      // 滚动中
+      this.scrolling = true
+      clearTimeout(this.scrollTimer)
+      
+      const { scrollList, isVirtual, columnIsVirtual } = this
       const { calcRowHeight } = this
       // 同步滚动
-      for (const key in scrollList) {
+      for (const [key,node] of Object.entries(scrollList)) {
         if (key === fixed) continue
-        const node = scrollList[key]
         if (!node) continue
         node.onscroll = null
         if (['', 'header', 'footer'].includes(key)) {
@@ -95,7 +101,7 @@ export default {
           node.timer = setTimeout(() => {
             node.onscroll = node._onscroll
             clearTimeout(node.timer)
-          }, 100)
+          }, 200)
         }
       }
       if (this.scrollTop !== scrollTop) {
@@ -124,16 +130,12 @@ export default {
           this.columnRenderEndIndex = Math.min(endIndex + 2, columnAccWidths.length)
           this.bodyMarginLeft = (columnRenderIndex > 0 ? this.columnAccWidths[columnRenderIndex - 1] : 0) + 'px'
         }
-        // 滚动中
-        if (edit) {
-          this.scrolling = true
-          clearTimeout(timer)
-          var timer = setTimeout(() => {
-            this.scrolling = false
-            clearTimeout(timer)
-          }, 100)
-        }
       }
+      this.scrollTimer = setTimeout(() => {
+        this.scrolling = false
+        clearTimeout(this.scrollTimer)
+        this.scrollTimer = null
+      }, 300)
     },
     toScroll(rowIndex) {
       const { renderSize, calcRowHeight } = this

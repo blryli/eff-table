@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, fixed, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align, showOverflow } = column
-    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border, getColumnWidth } = table
+    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border, getColumnWidth, scrolling } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -259,7 +259,7 @@ export default {
       return expand
     }
     const handleMouseenter = function(event, slot) {
-      if (summary || subtotal) return
+      if (scrolling || summary || subtotal) return
       const cell = document.getElementById(cellId)
       const cellLabel = cell.querySelector('.eff-cell--label')
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
@@ -267,17 +267,22 @@ export default {
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
-
+      
       let placement = 'top'
-
+      
       if (showOverflow !== false && textOverflow(cellLabel)) {
         table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true, offset: 10 })
         placement = 'bottom'
       }
       message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message, isFixed: true })
     }
+    const handleMousemove = function(event) {
+      if (scrolling || summary || subtotal) return
+      const cell = document.getElementById(cellId)
+      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
+    }
     const handleMouseleave = function(event, slot) {
-      if (summary || subtotal) return
+      if (scrolling || summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.$refs.popovers.tipClose()
@@ -293,11 +298,6 @@ export default {
       if (summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
-    }
-    const handleMousemove = function(event) {
-      if (summary || subtotal) return
-      const cell = document.getElementById(cellId)
-      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
     }
 
     // 表格树 tree

@@ -103,4 +103,9 @@ export default {
 .is--cursor{
   cursor: pointer;
 }
+.is--scrolling{
+  .eff-table__body-row, .eff-table__column{
+    pointer-events: none;
+  }
+}
 </style>

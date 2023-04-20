@@ -76,8 +76,8 @@ export default {
     table.bodyLoad = true
     this.$nextTick(() => {
       if (table.scrollList[fixed]) return
-      $el.onscroll = scrollEvent
-      $el._onscroll = scrollEvent
+      $el.onscroll = XEUtils.debounce(scrollEvent,10)
+      $el._onscroll = XEUtils.debounce(scrollEvent,10)
       table.scrollList[fixed] = $el
     })
   },

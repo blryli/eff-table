@@ -24,14 +24,14 @@ export default {
     const { props, injections } = context
     const { table } = injections
     const { bodyColumns, row, rowid, rowIndex, messages, fixed, summary, subtotal, treeFloor, treeIndex, vue } = props
-    const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, rowHeight, tableEditConfig, spanMethod, isSpanMethod } = table
+    const { rowId, showSpace, columnRenderIndex, currentRow, rowClassName, editStore, edit: tableEdit, copy, rowHeight, tableEditConfig, spanMethod, isSpanMethod, scrolling } = table
     const isPending = Boolean(editStore.pendingList.find(d => d[rowId] === row[rowId]))
     const handleMouseenter = function() {
-      if (isSpanMethod) return
+      if (scrolling || isSpanMethod) return
       table.hoverRowid = rowid
     }
     const handleMouseleave = function() {
-      if (isSpanMethod) return
+      if (scrolling || isSpanMethod) return
       table.hoverRowid = null
     }
     const handleEvent = function(event, name) {

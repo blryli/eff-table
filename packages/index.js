@@ -1,6 +1,5 @@
 const pkg = require('../package.json')
 import Table from './table'
-import VTable from './vTable/src/table'
 import Popup from './popover/src/popup'
 import Layout from './layout/src/layout'
 import Panel from './panel/src/Panel'
@@ -29,7 +28,6 @@ const components = [
   FormItem,
   Panel,
   Icon,
-  VTable,
   Styles,
   steps,
   help,
@@ -66,7 +64,6 @@ export default {
   FormField,
   Icon,
   Panel,
-  VTable,
   steps,
   help,
   ciphertext,

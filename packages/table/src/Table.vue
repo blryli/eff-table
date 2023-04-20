@@ -4,6 +4,7 @@
     class="eff-table"
     :class="{
       'is--screenfull': isScreenfull,
+      'is--scrolling': scrolling,
       'is--copy': selectRange || copy
     }"
     :style="style"
@@ -444,7 +445,7 @@ export default {
     afterData() {
       const { tableData, filters, sorts, searchForm, sortConfig = {}, tableId, rowId, searchConfig } = this
       const { remote, searchMethod } = searchConfig
-      let data = XEUtils.clone(tableData, true)
+      let data = tableData.slice(0)
       const filterList = []
       // 筛选数据
       if (filters && filters.length || searchForm.length) {
