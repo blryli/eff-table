@@ -381,7 +381,7 @@ export default {
                     })
                   })
                   resolve({ list: data, pageNum: 1, pageSize: 10, total: 4 })
-                }, 500)
+                }, 0)
               })
             }
           }

@@ -11,7 +11,11 @@ export default {
       bodyMarginLeft: 0,
       scrollList: {},
       scrolling: false,
+<<<<<<< HEAD
       scrollingTimer: null
+=======
+      scrollTimer: null
+>>>>>>> 41715fa8c397c5e2613094fd4bb3de43ef272992
     }
   },
   computed: {
@@ -82,18 +86,26 @@ export default {
   },
   beforeDestroy() {
     this.scrollList = null
+    this.scrollTimer = null
   },
   methods: {
     handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '') {
+<<<<<<< HEAD
       this.scrolling = true
       this.scrollingTimer = null
       
       const { scrollList, isVirtual, columnIsVirtual, edit } = this
+=======
+      // 滚动中
+      this.scrolling = true
+      clearTimeout(this.scrollTimer)
+      
+      const { scrollList, isVirtual, columnIsVirtual } = this
+>>>>>>> 41715fa8c397c5e2613094fd4bb3de43ef272992
       const { calcRowHeight } = this
       // 同步滚动
-      for (const key in scrollList) {
+      for (const [key,node] of Object.entries(scrollList)) {
         if (key === fixed) continue
-        const node = scrollList[key]
         if (!node) continue
         node.onscroll = null
         if (['', 'header', 'footer'].includes(key)) {
@@ -105,7 +117,7 @@ export default {
           node.timer = setTimeout(() => {
             node.onscroll = node._onscroll
             clearTimeout(node.timer)
-          }, 100)
+          }, 200)
         }
       }
       if (this.scrollTop !== scrollTop) {

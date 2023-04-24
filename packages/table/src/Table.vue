@@ -4,6 +4,7 @@
     class="eff-table"
     :class="{
       'is--screenfull': isScreenfull,
+      'is--scrolling': scrolling,
       'is--copy': selectRange || copy
     }"
     :style="style"
@@ -17,9 +18,9 @@
     <div>{{ filterList }}</div> -->
     <!-- {{ scrollLeft }}--{{ scrollTop }} -->
     <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
-      <slot slot="form" name="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
+      <slot name="form" slot="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
       <template v-for="item in (formConfig || {items: []}).items">
-        <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" v-bind="{data: tForm, item}" />
+        <slot :name="'item_'+item.prop" :slot="'item_'+item.prop" v-bind="{data: tForm, item}" />
       </template>
     </TableForm>
     <Toolbar
@@ -607,6 +608,7 @@ export default {
     on(window, 'beforeunload', this.beforeunload)
   },
   beforeDestroy() {
+    off(window, 'beforeunload', this.beforeunload)
     this.$off('edit-fields', this.editField)
     off(window, 'beforeunload', this.beforeunload)
     for (const key in this.$data) {
@@ -1014,7 +1016,7 @@ export default {
         })
         this.tableColumns = [...columns]
         this.sortChange(null, true).then(() => {
-          const tableData = XEUtils.clone(this.tableData, true)
+          const tableData = this.tableData.slice(0)
           if (tableData.length) {
             this.subtotalColumns = headerCheckedColumns.filter(column => {
               let isNumber = true

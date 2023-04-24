@@ -194,7 +194,8 @@ export default {
       return node instanceof VNode
     }
     const cellRender = function() {
-      const { cellRender, prop, config = {}, type, edit: { render } = {}} = column
+      const { prop, config = {}, type, edit: { render } = {}} = column
+      const cellRender = column.cellRender
       const renderCell = (cellRender) => {
         // 处理动态渲染器
         const dynamicConfig = {}
@@ -266,9 +267,9 @@ export default {
       if (!cell.classList.contains('eff-cell') && cell.childNodes.length) {
         return
       }
-
+      
       let placement = 'top'
-
+      
       if (showOverflow !== false && textOverflow(cellLabel)) {
         table.$refs.popovers.tipShow({ reference: cell.parentNode, placement, effect: 'dark', message: cellLabel.innerText, isFixed: true, offset: 10 })
         placement = 'bottom'
@@ -355,7 +356,7 @@ export default {
       key: treeFloor + '-' + rowIndex + '-' + columnIndex,
       class: columnClass,
       style: Object.assign(column.style || {}, style),
-      on: {
+      on: scrolling ? {} : {
         mouseenter: event => handleMouseenter(event, slot),
         mouseleave: event => handleMouseleave(event, slot),
         mouseup: event => handleMouseUp(event),

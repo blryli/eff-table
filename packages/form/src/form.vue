@@ -75,7 +75,8 @@ export default {
   methods: {
     itemRender(column) {
       const { $createElement, table, data, readonly } = this
-      const { prop, itemRender, options, label = 'label', value = 'value', format } = column
+      const { prop, options, label = 'label', value = 'value', format } = column
+      const itemRender = column.itemRender
       if (readonly) return XEUtils.get(data, prop)
       const params = { root: this, table, row: data, form: this, vue: this, data, column, prop }
       // 处理format
@@ -105,12 +106,12 @@ export default {
     tipClose() {
       this.$refs.popover.doHide()
     },
-    // 清除状态
-    clearStatus() {
-      this.formItems.forEach(d => {
-        d.slot.updateField()
-      })
-    },
+    // // 清除状态
+    // clearStatus() {
+    //   this.formItems.forEach(d => {
+    //     d.slot.updateField()
+    //   })
+    // },
     // 重置表单
     resetFields() {
       this.clearValidate()

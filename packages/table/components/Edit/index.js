@@ -134,6 +134,8 @@ export default {
   },
   beforeDestroy() {
     off(window, 'resize', this.close)
+    this.wrapper = null
+    this.body = null
     const { editRender, component, validateShowpopover } = this
     // 原生input
     if (editRender && editRender.tag === 'input') {
@@ -192,7 +194,7 @@ export default {
       }
 
       // 解决回车选中值和回车跳下一个的冲突问题
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         for (const placement in placements) {
           const str = placements[placement]
           if (keysStr === str) {
@@ -201,6 +203,7 @@ export default {
 
             // 跳下一个处理
             this.to()
+            clearTimeout(timer)
             break
           }
         }

@@ -21,7 +21,8 @@ export default {
     const { table } = injections
     const { drag: tableDrag, edit: tableEdit, tableId, isSpanMethod, tableData, checkboxConfig, border, tableColumnConfig } = table
     const { column, columnIndex, bodyColumnIndex, colid, isChecked, isLastColumn } = props
-    const { sortable, title, titleSort, titlePrefix, titleSuffix, type, rules = [], headerAlign, titleRender } = column
+    const { sortable, title, titleSort, titlePrefix, titleSuffix, type, rules = [], headerAlign } = column
+    const titleRender = column.titleRender
     const clickSort = sortable && (tableColumnConfig.titleSort || titleSort)
     const { icon: prefixIcon = 'question' } = titlePrefix || {}
     const { icon: suffixIcon = 'question' } = titleSuffix || {}
