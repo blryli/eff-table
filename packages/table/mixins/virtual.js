@@ -11,11 +11,7 @@ export default {
       bodyMarginLeft: 0,
       scrollList: {},
       scrolling: false,
-<<<<<<< HEAD
       scrollingTimer: null
-=======
-      scrollTimer: null
->>>>>>> 41715fa8c397c5e2613094fd4bb3de43ef272992
     }
   },
   computed: {
@@ -90,18 +86,10 @@ export default {
   },
   methods: {
     handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '') {
-<<<<<<< HEAD
       this.scrolling = true
       this.scrollingTimer = null
       
       const { scrollList, isVirtual, columnIsVirtual, edit } = this
-=======
-      // 滚动中
-      this.scrolling = true
-      clearTimeout(this.scrollTimer)
-      
-      const { scrollList, isVirtual, columnIsVirtual } = this
->>>>>>> 41715fa8c397c5e2613094fd4bb3de43ef272992
       const { calcRowHeight } = this
       // 同步滚动
       for (const [key,node] of Object.entries(scrollList)) {
