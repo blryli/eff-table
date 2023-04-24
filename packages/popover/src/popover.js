@@ -125,6 +125,8 @@ export default {
   beforeDestroy() {
     this.addedBody && removeBody(this, 'popover')
     this.addedBody = false
+    this.timer = null
+    this.timeoutPending = null
   },
   methods: {
     popoverAddedBody() {
@@ -147,6 +149,7 @@ export default {
       if (this.enterable) {
         this.timeoutPending = setTimeout(() => {
           this.show = false
+          this.timeoutPending = null
         }, this.hideDelay)
       } else {
         this.show = false
@@ -164,6 +167,7 @@ export default {
       if (this.enterable) {
         this.timeoutPending = setTimeout(() => {
           this.show = false
+          this.timeoutPending = null
         }, 200)
         return
       }

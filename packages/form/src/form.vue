@@ -20,7 +20,7 @@ export default {
     lineHeight: { type: String, default: '32px' },
     itemGutter: { type: Number, default: 0 },
     rowledge: { type: String, default: '24px' },
-    focusOpen: { type: Boolean, default: true },
+    focusOpen: { type: Boolean, default: false },
     focusOptions: { type: Object, default: () => {} },
     width: { type: String, default: '' },
     messageType: { type: String, default: '' },

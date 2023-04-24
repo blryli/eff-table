@@ -17,13 +17,24 @@ export default {
   },
   created() {
     const { focusOpen, lineSlotChange, onFocus, onBlur, keyup, click } = this
+    this.$on('form-item-change', lineSlotChange)
     if (focusOpen) {
-      this.$on('form-item-change', lineSlotChange)
       this.$on('on-focus', onFocus)
       this.$on('on-blur', onBlur)
 
       on(window, 'keyup', keyup)
       on(window, 'click', click)
+    }
+  },
+  beforeDestroy() {
+    const { focusOpen, lineSlotChange, onFocus, onBlur, keyup, click } = this
+    this.$off('form-item-change', lineSlotChange)
+    if (focusOpen) {
+      this.$off('on-focus', onFocus)
+      this.$off('on-blur', onBlur)
+
+      off(window, 'keyup', keyup)
+      off(window, 'click', click)
     }
   },
   computed: {
@@ -193,17 +204,6 @@ export default {
       const index = prop ? formItems.findIndex(d => d.prop === prop) : formItems.findIndex(d => _isCanFocus(d))
       if (index === -1) return
       return getFocusNode(index)
-    }
-  },
-  beforeDestroy() {
-    const { focusOpen, lineSlotChange, onFocus, onBlur, keyup, click } = this
-    if (focusOpen) {
-      this.$off('form-item-change', lineSlotChange)
-      this.$off('on-focus', onFocus)
-      this.$off('on-blur', onBlur)
-
-      off(window, 'keyup', keyup)
-      off(window, 'click', click)
     }
   }
 }

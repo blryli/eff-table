@@ -39,7 +39,7 @@ export default {
       if (columnIsEdit(column)) {
         const { rowIndex, table, $createElement } = this
         const { tableSourceData, tableTreeConfig, rowId } = table
-        const { children } = tableTreeConfig
+        const { children } = tableTreeConfig || {}
         const rowid = row[rowId]
         const { item: sourceRow } = XEUtils.findTree(tableSourceData, item => item[rowId] === rowid, children) || {}
 
@@ -143,6 +143,8 @@ export default {
       // 实时校验
       component.$off('input', validateShowpopover)
     }
+    this.wrapper = null
+    this.body = null
   },
   methods: {
     handleValidate() {

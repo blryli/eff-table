@@ -185,6 +185,7 @@ export default {
         } else {
           !this.$scopedSlots.table && this.resize()
         }
+        this.setTableRect()
         const timer = setTimeout(() => {
           this.setTableRect()
           clearTimeout(timer)
@@ -200,7 +201,7 @@ export default {
       this.resize()
     },
     setTableRect() {
-      const tableWrapper = this.$refs.tableWrapper
+      const tableWrapper = this.$el
       if (!tableWrapper) return
       this.tableRect = tableWrapper.getBoundingClientRect()
     }

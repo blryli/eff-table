@@ -8,6 +8,8 @@ export default {
   },
   computed: {
     treeNum() {
+      const {tableTreeConfig} = this
+      if(!tableTreeConfig) return 0
       const { tableData, rowId, treeIds, tableTreeConfig: { children } = {}} = this
 
       let num = 0
@@ -31,6 +33,7 @@ export default {
       this.$set(this.treeIds, rowid, true)
     },
     setTreeExpandAll(data, expand) {
+      if(!this.tableTreeConfig) return
       if (!Array.isArray(data)) {
         console.error('setTreeExpandAll方法第一个参数必须是数组')
         return
@@ -51,6 +54,7 @@ export default {
       this.setTreeExpandAll(this.tableData || [], false)
     },
     removeTreeExpand(row) {
+      if(!tableTreeConfig) return
       const { rowId, tableData, tableTreeConfig: { children }} = this
       const rowid = row[rowId]
       const getTree = XEUtils.findTree(tableData, item => item[rowId] === rowid, children)

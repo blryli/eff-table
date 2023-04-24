@@ -153,7 +153,7 @@ export default {
   },
   render(h) {
     const { columns, table, bodyStyle, xSpaceWidth, emptyStyle, fixed, bodyColumns, formatValidators, treeIndex, renderExpand } = this
-    const { renderData, heights: { dataHeight, bodyHeight }, emptyText, renderIndex, expands, rowId, subtotalData, expandSlot, _rowHeight, overflowX, overflowY, rowConfig, widths: { columnWidths }} = table
+    const { renderData, heights: { dataHeight, bodyHeight }, emptyText, renderIndex, expands, rowId, subtotalData, expandSlot, _rowHeight, overflowX, overflowY, rowConfig, widths: { columnWidths }, tableTreeConfig} = table
     let rows = (rowConfig || {}).rows || []
     if (!Array.isArray(rows)) rows = []
     let classes = 'eff-table__body-wrapper'
@@ -205,9 +205,11 @@ export default {
                 renderRows.push(renderExpand(row, rowIndex))
               }
               // 树
-              const trees = this.getTrees(row, currentIndex)
-              if (trees.length) {
-                renderRows.push(trees)
+              if(tableTreeConfig) {
+                const trees = this.getTrees(row, currentIndex)
+                if (trees.length) {
+                  renderRows.push(trees)
+                }
               }
               // 小计
               const subtotalFindRow = subtotalData.filter(s => s.index === rowIndex)

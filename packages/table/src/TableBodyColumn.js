@@ -34,7 +34,7 @@ export default {
     const { table } = injections
     const { vue, row, rowid, rowIndex, column, fixed, columnIndex, rowspan, colspan, disabled, treeIndex, treeFloor, summary, subtotal } = props
     const { type, prop, className, align, showOverflow } = column
-    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border, getColumnWidth } = table
+    const { rowId, cellClassName, editStore: { updateList }, copy, tableId, bodyColumns, rowHeight, _rowHeight, isSpanMethod, tableExpandConfig, keyword, border, getColumnWidth, tableTreeConfig, scrolling } = table
     const _rowId = row[rowId]
     // 为特殊prop时，初始化值
     if (vue && prop && !(prop in row) && !column.initField && getFieldValue(row, prop) === undefined) {
@@ -258,7 +258,7 @@ export default {
       return expand
     }
     const handleMouseenter = function(event, slot) {
-      if (summary || subtotal) return
+      if (scrolling || summary || subtotal) return
       const cell = document.getElementById(cellId)
       const cellLabel = cell.querySelector('.eff-cell--label')
       table.$emit('cell-mouse-enter', { row, column, rowIndex, columnIndex, cell, event, slot })
@@ -275,8 +275,13 @@ export default {
       }
       message && table.$refs.popovers.validTipShow({ reference: cell.parentNode, placement, effect: 'error', message, isFixed: true })
     }
+    const handleMousemove = function(event) {
+      if (scrolling || summary || subtotal) return
+      const cell = document.getElementById(cellId)
+      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
+    }
     const handleMouseleave = function(event, slot) {
-      if (summary || subtotal) return
+      if (scrolling || summary || subtotal) return
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-leave', { row, column, rowIndex, columnIndex, cell, event, slot })
       table.$refs.popovers.tipClose()
@@ -293,34 +298,31 @@ export default {
       const cell = document.getElementById(cellId)
       table.$emit('cell-mouse-down', { column, columnIndex, cell, event, rowIndex })
     }
-    const handleMousemove = function(event) {
-      if (summary || subtotal) return
-      const cell = document.getElementById(cellId)
-      table.$emit('cell-mouse-move', { column, columnIndex, cell, event, rowIndex })
-    }
 
     // 表格树 tree
-    const { lazy, loadMethod, children } = table.tableTreeConfig
     let treeIcon = ''
-
-    const childs = row[children] || []
-    const treeClick = function(e) {
-      // 异步加载
-      if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
-        vue.$set(table.treeIds, _rowId, false)
-        loadMethod({ row, rowIndex }).then(res => {
-          vue.$set(table.treeIds, _rowId, true)
-          vue.$set(row, children, res)
-          table.loadTableData(table.tableData)
-        })
-      } else {
-        vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
+    if(tableTreeConfig) {
+      const { lazy, loadMethod, children } = tableTreeConfig
+  
+      const childs = row[children] || []
+      const treeClick = function(e) {
+        // 异步加载
+        if (lazy && !childs.length && XEUtils.isFunction(loadMethod)) {
+          vue.$set(table.treeIds, _rowId, false)
+          loadMethod({ row, rowIndex }).then(res => {
+            vue.$set(table.treeIds, _rowId, true)
+            vue.$set(row, children, res)
+            table.loadTableData(table.tableData)
+          })
+        } else {
+          vue.$set(table.treeIds, _rowId, !table.treeIds[_rowId])
+        }
       }
-    }
-    if (fixed !== 'right' && (childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
-      treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
-        {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
-      </span>
+      if (fixed !== 'right' && (childs.length || row.hasChild) && columnIndex === treeIndex && !isSpanMethod) {
+        treeIcon = <span class='eff-table--expand-handle' on-click={e => treeClick(e)}>
+          {lazy && table.treeIds[_rowId] === false && !childs.length ? <Icon icon='refresh' class='tree-loading'/> : <Icon icon={table.treeIds[_rowId] ? 'caret-bottom' : 'caret-right'} />}
+        </span>
+      }
     }
 
     let slot

@@ -319,7 +319,7 @@ export default {
     formRequest: { type: Object, default: () => {} }, // 表单代理配置
     proxyConfig: { type: Object, default: () => {} }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
-    treeConfig: { type: Object, default: () => ({}) }, // 树配置
+    treeConfig: { type: Object, default: () => {} }, // 树配置
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     rowConfig: { type: Object, default: () => ({}) }, // 列配置
@@ -361,7 +361,8 @@ export default {
       isSpanMethod: false, // 是否存在合并行或列,
       tableMaxHeight: this.maxHeight,
       useFilter: false, // 是否使用过滤功能
-      filters: [] // 过滤集合
+      filters: [], // 过滤集合
+      tableTreeConfig: {}
       // mergerCells: [] // 合并行或列
     }
   },
@@ -589,7 +590,7 @@ export default {
       tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableDragConfig: XEUtils.merge({}, this.dragConfig),
       tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableTreeConfig: this.treeConfig && XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
       tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
       tableFooterConfig: XEUtils.merge({}, footerActionConfig, this.footerActionConfig)
     })
@@ -607,6 +608,7 @@ export default {
   },
   beforeDestroy() {
     this.$off('edit-fields', this.editField)
+    off(window, 'beforeunload', this.beforeunload)
     for (const key in this.$data) {
       this.$data[key] = null
     }
@@ -630,7 +632,6 @@ export default {
   methods: {
     beforeunload() {
       this.$destroy()
-      off(window, 'beforeunload', this.beforeunload)
     },
     loadTableData(data = this.data) {
       const { editStore, rowId, loadData, useExpand } = this

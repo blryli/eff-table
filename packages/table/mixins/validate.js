@@ -57,7 +57,7 @@ export default {
       })
     },
     validate(rows, all) {
-      const { table, tableData, columns, editStore, tableTreeConfig: { children } = {}} = this
+      const { table, tableData, columns, editStore} = this
       const { insertList, updateList, pendingList } = editStore
       let validData
       if (rows === true) {
@@ -68,12 +68,16 @@ export default {
         validData = all ? tableData : insertList.concat(updateList)
       }
       // 支持表格树的校验
-      const getChilds = rows => {
-        return rows.reduce((acc, row) => {
-          return !pendingList.some(p => p === row) ? acc.concat([row, ...getChilds(row[children] || [])]) : acc
-        }, [])
+      const tableTreeConfig = this.tableTreeConfig || {}
+      const { children } = tableTreeConfig
+      if(children) {
+        const getChilds = rows => {
+          return rows.reduce((acc, row) => {
+            return !pendingList.some(p => p === row) ? acc.concat([row, ...getChilds(row[children] || [])]) : acc
+          }, [])
+        }
+        validData = getChilds(validData)
       }
-      validData = getChilds(validData)
 
       return validate(validData, columns, this.validateField, table)
     },
