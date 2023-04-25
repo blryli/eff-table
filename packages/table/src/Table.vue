@@ -636,12 +636,12 @@ export default {
       this.$destroy()
     },
     loadTableData(data = this.data) {
-      const { editStore, rowId, loadData, useExpand } = this
+      const { editStore, rowId, loadData, useExpand , tableTreeConfig} = this
       this.tableData = Object.freeze(XEUtils.mapTree(data, d => {
         !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
         return d
       }))
-      this.tableSourceData = Object.freeze(XEUtils.toTreeArray(XEUtils.clone(data, true)))
+      this.tableSourceData = Object.freeze(tableTreeConfig ? XEUtils.toTreeArray(XEUtils.clone(data, true)) : XEUtils.clone(data, true))
       editStore.insertList = []
       if (rowId === '_rowId') {
         this.clearStatus()
@@ -881,7 +881,7 @@ export default {
     },
     // 更新数据行map
     updateCache() {
-      const { tableData, rowId, tableTreeConfig: { children = 'children' } = {}} = this
+      const { tableData, rowId, tableTreeConfig: { children } = {}} = this
       if (!this.tableDataMap) {
         Object.assign(this, {
           tableDataMap: new Map()
@@ -891,9 +891,11 @@ export default {
       const setMap = data => {
         data.forEach(d => {
           this.tableDataMap.set(d[rowId], d)
-          const childs = d[children]
-          if (childs && childs.length) {
-            setMap(childs)
+          if(children) {
+            const childs = d[children]
+            if (childs && childs.length) {
+              setMap(childs)
+            }
           }
         })
       }

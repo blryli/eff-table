@@ -8,7 +8,7 @@
 
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-bind="tableOptions" />
+        <eff-table ref="table" v-bind="tableOptions" @selection-change="selectionChange" />
       </div>
     </section>
 
@@ -30,7 +30,7 @@
     </p>
     <section class="demo">
       <div class="section-content">
-        <eff-table ref="table" v-bind="tableOptions1" />
+        <eff-table ref="table" v-bind="tableOptions1" @selection-change="selectionChange" />
       </div>
     </section>
 
@@ -280,6 +280,9 @@ export default {
           resolve(childs)
         }, 1000)
       })
+    },
+    selectionChange(selection) {
+      console.log('selection', selection)
     }
   }
 }
