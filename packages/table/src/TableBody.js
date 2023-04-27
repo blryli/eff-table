@@ -90,17 +90,17 @@ export default {
   methods: {
     scrollEvent(e) {
       e.preventDefault()
-      if(!this.ticking) {
-        requestAnimationFrame(() => this.realFunc(e));
-        this.ticking = true;
-      }
-      return false
-    },
-    realFunc(e) {
       const { table, fixed } = this
+      table.scrolling = true
+      table.scrollingTimer = null
       const { scrollLeft, scrollTop } = e.target
       table.handleScroll(fixed ? undefined : scrollLeft, scrollTop, fixed)
-      this.ticking = false;
+      // 滚动中
+      table.scrollingTimer = setTimeout(() => {
+        table.scrolling = false
+        table.scrollingTimer = null
+      }, 300)
+      return false
     },
     getTrees(row, rowIndex) {
       const { rowId, treeIds, tableTreeConfig: { children }} = this.table

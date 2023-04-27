@@ -86,9 +86,6 @@ export default {
   },
   methods: {
     handleScroll(scrollLeft = this.scrollLeft, scrollTop = this.scrollTop, fixed = '') {
-      this.scrolling = true
-      this.scrollingTimer = null
-      
       const { scrollList, isVirtual, columnIsVirtual, edit } = this
       const { calcRowHeight } = this
       // 同步滚动
@@ -135,11 +132,6 @@ export default {
           this.bodyMarginLeft = (columnRenderIndex > 0 ? this.columnAccWidths[columnRenderIndex - 1] : 0) + 'px'
         }
       }
-      // 滚动中
-      this.scrollingTimer = setTimeout(() => {
-        this.scrolling = false
-        this.scrollingTimer = null
-      }, 300)
     },
     toScroll(rowIndex) {
       const { renderSize, calcRowHeight } = this
