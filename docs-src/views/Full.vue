@@ -13,10 +13,7 @@
             <VRender :config="{name: 'date-picker'}" />
           </VRender>
         </VRender> -->
-        <eff-table
-          ref="table"
-          v-bind="tableOptions"
-        />
+        <eff-table ref="table" v-bind="tableOptions" />
       </div>
 
     </section>
@@ -205,10 +202,10 @@ export default {
           editHistory: true,
           seniorQuery: true,
           buttons: [
-            { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' }},
-            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' }},
-            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' }}
+            { name: 'button', code: 'add_focus', children: '新增', props: { icon: 'el-icon-plus' } },
+            { name: 'button', code: 'insert_focus', children: '插入', props: { icon: 'el-icon-plus' } },
+            { name: 'button', code: 'delete', children: '直接删除', props: { icon: 'el-icon-delete' } },
+            { name: 'button', code: 'mark_cancel', children: '删除/取消', props: { icon: 'el-icon-delete' } }
           ]
         },
         proxyConfig: {
@@ -241,7 +238,7 @@ export default {
             save: ({ body }) => axios.post('url', body)
           }
         },
-        footerActionConfig: { showPager: true, showBorder: true },
+        footerActionConfig: { showPager: true, showBorder: true, cacheName: 'full' },
         columns: [
           {
             show: true,
@@ -274,9 +271,11 @@ export default {
             search: true,
             config: { name: 'input' },
             cellRender: {},
-            rules: [{ validator: ({ value }) => {
-              return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 200))
-            } }],
+            rules: [{
+              validator: ({ value }) => {
+                return new Promise(resolve => setTimeout(() => resolve(value !== '666' && '编码有误，必须是666'), 200))
+              }
+            }],
             edit: { disabled: ({ row, rowIndex }) => (row.select === '2') }
           },
           {

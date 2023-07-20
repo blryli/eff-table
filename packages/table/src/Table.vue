@@ -1,126 +1,59 @@
 <template>
-  <div
-    ref="tableWrapper"
-    class="eff-table"
-    :class="{
-      'is--screenfull': isScreenfull,
-      'is--scrolling': scrolling,
-      'is--copy': selectRange || copy
-    }"
-    :style="style"
-    @mouseenter="rootMouseenter"
-    @mouseleave="rootMouseleave"
-    @mouseup="rootMouseup"
-    @mousemove="rootMousemove"
-  >
+  <div ref="tableWrapper" class="eff-table" :class="{
+    'is--screenfull': isScreenfull,
+    'is--scrolling': scrolling,
+    'is--copy': selectRange || copy
+  }" :style="style" @mouseenter="rootMouseenter" @mouseleave="rootMouseleave" @mouseup="rootMouseup"
+    @mousemove="rootMousemove">
     <!-- {{ tableData }}
     <div>{{ checkeds.map(d => d.id) }}</div>
     <div>{{ filterList }}</div> -->
     <!-- {{ scrollLeft }}--{{ scrollTop }} -->
     <TableForm ref="tableForm" v-model="tForm" :form-config="formConfig || {}">
-      <slot name="form" slot="form" v-bind="{data: tForm, items: (formConfig || {items: []}).items}" />
-      <template v-for="item in (formConfig || {items: []}).items">
-        <slot :name="'item_'+item.prop" :slot="'item_'+item.prop" v-bind="{data: tForm, item}" />
+      <slot slot="form" name="form" v-bind="{ data: tForm, items: (formConfig || { items: [] }).items }" />
+      <template v-for="item in (formConfig || { items: [] }).items">
+        <slot :slot="'item_' + item.prop" :name="'item_' + item.prop" v-bind="{ data: tForm, item }" />
       </template>
     </TableForm>
-    <Toolbar
-      v-if="showToolbar"
-      ref="toolbar"
-    >
+    <Toolbar v-if="showToolbar" ref="toolbar">
       <slot name="toolbar" />
     </Toolbar>
     <div ref="table" :class="tableClass" :style="tableStyle">
-      <slot name="table" v-bind="{data: tableData}">
+      <slot name="table" v-bind="{ data: tableData }">
         <div class="eff-table__wrapper">
-          <TableHeader
-            v-if="showHeader"
-            ref="header"
-            :visible-columns="visibleColumns"
-            :body-columns="bodyColumns"
-            @dragend="handleDragend"
-          />
-          <TableBody
-            ref="body"
-            :body-columns="bodyColumns"
-            :data="tableData"
-            :validators="validators"
-            :messages="messages"
-          />
-          <TableFooter
-            v-if="showSummary"
-            ref="footer"
-            :data="tableData"
-            :columns="bodyColumns"
-            :sum-text="sumText"
-            :summary-method="summaryMethod"
-          />
+          <TableHeader v-if="showHeader" ref="header" :visible-columns="visibleColumns" :body-columns="bodyColumns"
+            @dragend="handleDragend" />
+          <TableBody ref="body" :body-columns="bodyColumns" :data="tableData" :validators="validators"
+            :messages="messages" />
+          <TableFooter v-if="showSummary" ref="footer" :data="tableData" :columns="bodyColumns" :sum-text="sumText"
+            :summary-method="summaryMethod" />
         </div>
 
         <!-- fixed left  -->
-        <div
-          v-if="widths.leftWidth && overflowX"
+        <div v-if="widths.leftWidth && overflowX"
           :class="['eff-table__fixed-left', scrollLeft > 2 ? 'is-scroll--start' : '']"
-          :style="{width: widths.leftWidth + 'px', height: fixedHeight}"
-        >
+          :style="{ width: widths.leftWidth + 'px', height: fixedHeight }">
           <div class="eff-table__fixed-left--wrapper" :style="getFixedStyle('left')">
-            <TableHeader
-              v-if="showHeader"
-              ref="leftHeader"
-              :visible-columns="fixedVisibleColumns.left"
-              :body-columns="fixedBodyColumns.left"
-              fixed="left"
-              @dragend="handleDragend"
-            />
-            <TableBody
-              ref="leftBody"
-              :body-columns="fixedBodyColumns.left"
-              :data="tableData"
-              fixed="left"
-              :validators="validators"
-              :messages="messages"
-            />
-            <TableFooter
-              v-if="showSummary"
-              :data="tableData"
-              :columns="fixedBodyColumns.left"
-              :sum-text="sumText"
-              :summary-method="summaryMethod"
-              fixed="left"
-            />
+            <TableHeader v-if="showHeader" ref="leftHeader" :visible-columns="fixedVisibleColumns.left"
+              :body-columns="fixedBodyColumns.left" fixed="left" @dragend="handleDragend" />
+            <TableBody ref="leftBody" :body-columns="fixedBodyColumns.left" :data="tableData" fixed="left"
+              :validators="validators" :messages="messages" />
+            <TableFooter v-if="showSummary" :data="tableData" :columns="fixedBodyColumns.left" :sum-text="sumText"
+              :summary-method="summaryMethod" fixed="left" />
           </div>
         </div>
 
         <!-- fixed right  -->
-        <div
-          v-if="widths.rightWidth && overflowX"
+        <div v-if="widths.rightWidth && overflowX"
           :class="['eff-table__fixed-right', overflowX && widths.rightWidth && isScrollRightEnd ? 'is-scroll--end' : '']"
-          :style="{width: widths.rightWidth + scrollYwidth + 'px', height: fixedHeight}"
-        >
+          :style="{ width: widths.rightWidth + scrollYwidth + 'px', height: fixedHeight }">
           <div class="eff-table__fixed-right--wrapper" :style="getFixedStyle('right')">
-            <TableHeader
-              v-if="showHeader"
-              ref="rightHeader"
-              :visible-columns="fixedVisibleColumns.right"
-              :body-columns="fixedBodyColumns.right"
-              fixed="right"
-              @dragend="handleDragend"
-            />
-            <TableBody
-              ref="rightBody"
-              :body-columns="fixedBodyColumns.right"
-              :data="tableData"
-              :validators="validators"
-              :messages="messages"
-              fixed="right"
-            />
-            <TableFooter
-              v-if="showSummary"
-              :data="tableData"
-              :columns="fixedBodyColumns.right"
-              :sum-text="sumText"
-              :summary-method="summaryMethod"
-              fixed="right"
-            />
+            <TableHeader v-if="showHeader" ref="rightHeader" :visible-columns="fixedVisibleColumns.right"
+              :body-columns="fixedBodyColumns.right" fixed="right" @dragend="handleDragend" />
+            <TableBody ref="rightBody" :body-columns="fixedBodyColumns.right" :data="tableData" :validators="validators"
+              :messages="messages" fixed="right" />
+            <TableFooter v-if="showSummary" :data="tableData" :columns="fixedBodyColumns.right" :sum-text="sumText"
+              :summary-method="summaryMethod" fixed="right" />
           </div>
         </div>
         <!-- <div v-show="overflowX" id="scrollx" class="eff-table__scrollx" :style="{ height: '17px', bottom: heights.footerHeight+'px' }" @scroll="scrollEventLeft">
@@ -131,30 +64,16 @@
         </div> -->
       </slot>
     </div>
-    <FooterAction
-      v-if="showFooterToolbar"
-      ref="footerAction"
-    >
+    <FooterAction v-if="showFooterToolbar" ref="footerAction">
       <slot name="footer_action" />
     </FooterAction>
     <!-- 拖动 -->
-    <drag
-      v-if="drag || rowDrag"
-      ref="drag"
-      v-model="tableColumns"
-      :column-control="toolbarConfig.columnControl"
-      @cardClose="handleCardClose"
-      @change="dargChange"
-      @row-change="dragRowChange"
-    />
+    <drag v-if="drag || rowDrag" ref="drag" v-model="tableColumns" :column-control="toolbarConfig.columnControl"
+      @cardClose="handleCardClose" @change="dargChange" @row-change="dragRowChange" />
 
     <!-- 列批量控制 -->
-    <column-batch-control
-      v-if="border && drag && (toolbarConfig || {}).columnBatchControl"
-      ref="columnBatchControl"
-      v-model="tableColumns"
-      @cardClose="handleCardClose"
-    />
+    <column-batch-control v-if="border && drag && (toolbarConfig || {}).columnBatchControl" ref="columnBatchControl"
+      v-model="tableColumns" @cardClose="handleCardClose" />
 
     <!-- 批量替换 -->
     <template v-if="toolbarConfig.replace">
@@ -302,25 +221,25 @@ export default {
     keyword: { type: String, default: '' }, // 合计行第一列的文本
     summaryMethod: { type: Function, default: null }, // 合计方法
     messages: { type: Array, default: () => [] }, // 单元格提示信息集合
-    beforeInsert: { type: Function, default: () => {} }, // 插入数据前的钩子函数
-    scopedSlots: { type: Object, default: () => {} }, // 插槽
-    spanMethod: { type: Function, default: () => {} }, // 行列合并方法
+    beforeInsert: { type: Function, default: () => { } }, // 插入数据前的钩子函数
+    scopedSlots: { type: Object, default: () => { } }, // 插槽
+    spanMethod: { type: Function, default: () => { } }, // 行列合并方法
     drag: Boolean, // 是否开启列拖动功能
     rowDrag: Boolean, // 是否开启行拖动功能
     search: Boolean, // 是否开启搜索行功能
     edit: Boolean, // 是否开启编辑功能
     copy: Boolean, // 是否开启复制功能
     selectRange: Boolean, // 表格区域选择功能，（复制功能打开时默认开启）
-    editConfig: { type: Object, default: () => {} }, // 编辑配置
-    dragConfig: { type: Object, default: () => {} }, // 编辑配置
+    editConfig: { type: Object, default: () => { } }, // 编辑配置
+    dragConfig: { type: Object, default: () => { } }, // 编辑配置
     checkboxConfig: { type: Object, default: () => ({}) }, // 编辑配置
     searchConfig: { type: Object, default: () => ({}) }, // 搜索配置
     sortConfig: { type: Object, default: () => ({}) }, // 排序配置
-    formConfig: { type: Object, default: () => {} }, // 表单配置
-    formRequest: { type: Object, default: () => {} }, // 表单代理配置
-    proxyConfig: { type: Object, default: () => {} }, // 代理配置
+    formConfig: { type: Object, default: () => { } }, // 表单配置
+    formRequest: { type: Object, default: () => { } }, // 表单代理配置
+    proxyConfig: { type: Object, default: () => { } }, // 代理配置
     toolbarConfig: { type: Object, default: () => ({}) }, // 工具栏配置
-    treeConfig: { type: Object, default: () => {} }, // 树配置
+    treeConfig: { type: Object, default: () => { } }, // 树配置
     expandConfig: { type: Object, default: () => ({}) }, // 展开行配置
     columnConfig: { type: Object, default: () => ({}) }, // 列配置
     rowConfig: { type: Object, default: () => ({}) }, // 列配置
@@ -591,13 +510,21 @@ export default {
       tableEditConfig: XEUtils.merge({ trigger: 'click', editStop: false, editLoop: true }, this.editConfig),
       tableDragConfig: XEUtils.merge({}, this.dragConfig),
       tableColumnConfig: XEUtils.merge({ sort: [], width: 0 }, this.columnConfig),
-      tableTreeConfig: this.treeConfig && XEUtils.merge({ lazy: false, loadMethod: ({ row }) => {}, children: 'children', defaultExpandeds: [] }, this.treeConfig),
+      tableTreeConfig: this.treeConfig && XEUtils.merge({ lazy: false, loadMethod: ({ row }) => { }, children: 'children', defaultExpandeds: [] }, this.treeConfig),
       tableExpandConfig: XEUtils.merge({ expandAll: false, defaultExpandeds: [], onlyField: '' }, this.expandConfig),
       tableFooterConfig: XEUtils.merge({}, footerActionConfig, this.footerActionConfig)
     })
     const pageConfig = this.tableFooterConfig.pageConfig || {}
     if (pageConfig.pageSize) {
       this.pager.pageSize = pageConfig.pageSize
+    }
+    const { cacheName } = this.tableFooterConfig
+    if (cacheName) {
+      const tablePageCache = JSON.parse(localStorage.getItem('tablePageCache')) || {}
+      const cache = tablePageCache[cacheName]
+      if (cache) {
+        this.pager.pageSize = +cache
+      }
     }
     if ((this.data || []).length) {
       this.loadTableData(this.data)
@@ -636,7 +563,7 @@ export default {
       this.$destroy()
     },
     loadTableData(data = this.data) {
-      const { editStore, rowId, loadData, useExpand , tableTreeConfig} = this
+      const { editStore, rowId, loadData, useExpand, tableTreeConfig } = this
       this.tableData = Object.freeze(XEUtils.mapTree(data, d => {
         !d[rowId] && this.$set(d, rowId, XEUtils.uniqueId())
         return d
@@ -717,7 +644,7 @@ export default {
       return this.editField(fields)
     },
     handleCopy({ row, rowIndex, column, columnIndex, prop, content }) {
-      const { config, edit: { render = {}} = {}} = column
+      const { config, edit: { render = {} } = {} } = column
       const opts = XEUtils.merge({ name: 'input' }, config, render)
       if (!opts.name) opts.name = 'input'
       const { name, props } = opts
@@ -785,7 +712,7 @@ export default {
         }
         return setFieldValue.call(this, row, prop, showValue)
       } else if (name === 'switch') { // 开关
-        const { props = {}} = opts
+        const { props = {} } = opts
         const activeValue = props['active-value'] || true
         const inactiveValue = props['inactive-value'] || false
         let data = content
@@ -881,7 +808,7 @@ export default {
     },
     // 更新数据行map
     updateCache() {
-      const { tableData, rowId, tableTreeConfig: { children } = {}} = this
+      const { tableData, rowId, tableTreeConfig: { children } = {} } = this
       if (!this.tableDataMap) {
         Object.assign(this, {
           tableDataMap: new Map()
@@ -891,7 +818,7 @@ export default {
       const setMap = data => {
         data.forEach(d => {
           this.tableDataMap.set(d[rowId], d)
-          if(children) {
+          if (children) {
             const childs = d[children]
             if (childs && childs.length) {
               setMap(childs)
@@ -1042,16 +969,16 @@ export default {
                     accumulation = num
                     curNum = num
                   } else if (num !== curNum) {
-                    subtotalData.push({ index: i - 1, len: prevNum, row: { [prop]: accumulation, subtotal: true }})
+                    subtotalData.push({ index: i - 1, len: prevNum, row: { [prop]: accumulation, subtotal: true } })
                     if (last) {
-                      subtotalData.push({ index: i, len: 1, row: { [prop]: num, subtotal: true }})
+                      subtotalData.push({ index: i, len: 1, row: { [prop]: num, subtotal: true } })
                     }
                     accumulation = num
                     curNum = num
                   } else {
                     accumulation += num
                     if (last) {
-                      subtotalData.push({ index: i, len: prevNum + 1, row: { [prop]: accumulation, subtotal: true }})
+                      subtotalData.push({ index: i, len: prevNum + 1, row: { [prop]: accumulation, subtotal: true } })
                     }
                   }
                 }

@@ -1,32 +1,32 @@
 {
-  "editor.tabSize": 2,
-  "files.associations": {
-      "*.vue": "vue"
-  },
-  "eslint.options": {
-      "extensions": [
-          ".js",
-          ".vue"
-      ]
-  },
-  "search.exclude": {
-      "**/node_modules": true,
-      "**/bower_components": true,
-      "**/dist": true
-  },
-  "emmet.syntaxProfiles": {
-      "javascript": "js",
-      "vue": "html",
-      "vue-html": "html"
-  },
-  "git.confirmSync": false,
-  "editor.renderWhitespace": "boundary",
-  "editor.cursorBlinking": "smooth",
-  "editor.minimap.enabled": true,
-  "editor.minimap.renderCharacters": false,
-  "editor.fontFamily": "'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
-  "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}",
-  "editor.codeLens": true,
+    "editor.tabSize": 2,
+    "files.associations": {
+        "*.vue": "vue"
+    },
+    "eslint.options": {
+        "extensions": [
+            ".js",
+            ".vue"
+        ]
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true
+    },
+    "emmet.syntaxProfiles": {
+        "javascript": "js",
+        "vue": "html",
+        "vue-html": "html"
+    },
+    "git.confirmSync": false,
+    "editor.renderWhitespace": "boundary",
+    "editor.cursorBlinking": "smooth",
+    "editor.minimap.enabled": true,
+    "editor.minimap.renderCharacters": false,
+    "editor.fontFamily": "'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+    "window.title": "${dirty}${activeEditorMedium}${separator}${rootName}",
+    "editor.codeLens": true,
     "editor.snippetSuggestions": "top",
     "git.enableSmartCommit": true,
     "editor.wordWrap": "on",
@@ -40,5 +40,6 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },
-    "editor.guides.indentation": false
+    "editor.guides.indentation": false,
+    "vue.codeActions.enabled": false
 }

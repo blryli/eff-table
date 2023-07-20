@@ -14,6 +14,12 @@ export default {
       this.table.pager.pageSize = pageSize
       this.table.commitProxy('query')
       this.table.$emit('table-page-num-change', { pageSize })
+      const { cacheName } = this.table.tableFooterConfig
+      if (cacheName) {
+        const tablePageCache = JSON.parse(localStorage.getItem('tablePageCache')) || {}
+        tablePageCache[cacheName] = pageSize
+        localStorage.setItem('tablePageCache', JSON.stringify(tablePageCache))
+      }
     },
     onCurrentChange(pageNum) {
       this.table.pager.pageNum = pageNum
@@ -24,9 +30,9 @@ export default {
   render(h) {
     const render = renderer.get('default').renderDefault
     const { pageNum, pageSize, total, table } = this
-    const { tableFooterConfig: { pageConfig = {}} = {}} = table
+    const { tableFooterConfig: { pageConfig = {} } = {} } = table
     const props = Object.assign({
-      pageSizes: [10, 50, 100, 200, 300, 400],
+      pageSizes: [20, 50, 100, 200, 300, 400],
       layout: 'total,prev,pager,next,sizes,jumper',
       pagerCount: 5
     }, pageConfig, { currentPage: pageNum, pageSize, total })

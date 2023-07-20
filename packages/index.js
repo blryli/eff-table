@@ -1,6 +1,7 @@
 const pkg = require('../package.json')
 import Table from './table'
 import Popup from './popover/src/popup'
+import Popover from './popover'
 import Layout from './layout/src/layout'
 import Panel from './panel/src/Panel'
 import { render } from 'core/render'
@@ -21,6 +22,7 @@ import AutoWidth from './directives/auto-width'
 const directives = [AutoWidth]
 const components = [
   Table,
+  Popover,
   Popup,
   Layout,
   VRender,
@@ -55,6 +57,7 @@ export default {
   version: pkg.version,
   install,
   Table,
+  Popover,
   Popup,
   Layout,
   render,
