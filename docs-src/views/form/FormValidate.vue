@@ -10,6 +10,7 @@
     </p>
     <section class="demo">
       <p>
+        <el-button type="primary" @click="showName = !showName">{{ showName?'隐藏':'显示' }}名字</el-button>
         <el-button type="primary" @click="validate">校 验</el-button>
         <el-button type="primary" @click="validateField">校验名字字段</el-button>
         <el-button type="primary" @click="clearValidate">清除校验</el-button>
@@ -18,6 +19,7 @@
       <div class="section-content">
         <v-form ref="form" :data="data">
           <v-form-item
+            v-if="showName"
             title="名字"
             prop="name"
             :span="8"
@@ -190,15 +192,16 @@ export default {
         name: '',
         sex: '',
         age: ''
-      }
+      },
+      showName: true
     }
   },
   methods: {
     validate() {
-      this.$refs.form.validate().catch(e => console.log(e))
+      this.$refs.form.validate().catch(e => console.log('message', e))
     },
     validateField() {
-      this.$refs.form.validateField('name').catch(e => console.log(e))
+      this.$refs.form.validateField('name').catch(e => console.log('message', e))
     },
     clearValidate() {
       this.$refs.form.clearValidate()

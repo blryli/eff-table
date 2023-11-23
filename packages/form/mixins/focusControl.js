@@ -60,7 +60,13 @@ export default {
     lineSlotChange(obj) {
       const formItems = [...this.formItems]
       const index = formItems.findIndex(d => d.prop === obj.prop)
-      index === -1 ? formItems.push(obj) : formItems.splice(index, 1, obj)
+      if (obj.type === 'push') {
+        formItems.push(obj)
+      } else {
+        formItems.splice(index, 1)
+        const i = this.validators.findIndex(d => d.prop === obj.prop)
+        i > -1 && this.validators.splice(i, 1)
+      }
       this.formItems = Object.freeze(formItems)
       // console.log(JSON.stringify(this.formItems.map(d => d.prop), null, 2))
     },

@@ -30,7 +30,6 @@
     "editor.snippetSuggestions": "top",
     "git.enableSmartCommit": true,
     "editor.wordWrap": "on",
-    "workbench.activityBar.visible": true,
     "workbench.sideBar.location": "left",
     "editor.quickSuggestions": {
         "strings": true

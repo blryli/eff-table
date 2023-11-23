@@ -75,7 +75,7 @@ export default {
   },
   beforeDestroy() {
     this.watcher = null
-    const { rules, input, component, trigger, handleValidate, onFocus, onBlur, visibleChange } = this
+    const { form, prop, rules, input, component, trigger, handleValidate, onFocus, onBlur, visibleChange } = this
     this.component = null
     this.input = null
     this.handlerNode = null
@@ -96,6 +96,7 @@ export default {
         }
       }
     }
+    form.$emit('form-item-change', { prop, slot: this, input: this.input, rules, type: 'splice' })
   },
   methods: {
     init() {
@@ -128,14 +129,14 @@ export default {
           }
         }
       }
-      form.$emit('form-item-change', { prop, slot: this, input: this.input, rules })
+      form.$emit('form-item-change', { prop, slot: this, input: this.input, rules, type: 'push' })
     },
     visibleChange(val) {
-      if(!this.form.focusOpen) return
+      if (!this.form.focusOpen) return
       this.root.editIsStop = val
     },
     onFocus() {
-      const {component} = this
+      const { component } = this
       this.form.focusOpen && this.form.$emit('on-focus', this.prop)
       // 聚焦时全选
       if (this.form.formFocusToSelect) {
