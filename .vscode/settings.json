@@ -37,7 +37,7 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
     "explorer.confirmDelete": false,
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": "explicit"
     },
     "editor.guides.indentation": false,
     "vue.codeActions.enabled": false

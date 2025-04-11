@@ -7,7 +7,7 @@
         <slot :slot="'item_'+item.prop" :name="'item_'+item.prop" />
       </template>
       <div v-if="showQuery" class="eff-table__form__query">
-        <el-button :class="['eff-table__form__search', isSave ? 'has-save' : '']" :loading="loading" @click="query">查询</el-button>
+        <el-button :class="['eff-table__form__search', isSave ? 'has-save' : '']" type="primary" :loading="loading" @click="query">查询</el-button>
         <el-popover v-if="isSave" ref="popover" placement="bottom-end" trigger="click">
           <small v-if="!list.length" class="text-gray-500">暂无搜索模板</small>
           <div v-for="(d, i) in list" :key="i" class="eff-table__form__dropdown">
@@ -19,7 +19,7 @@
               <el-button slot="reference" type="text">删除</el-button>
             </el-popconfirm>
           </div>
-          <el-button slot="reference" icon="el-icon-arrow-down" class="eff-table__form__down" title="选择查询模板" />
+          <el-button slot="reference" icon="el-icon-arrow-down" plain class="eff-table__form__down" title="选择查询模板" />
         </el-popover>
       </div>
       <div v-if="isSave">
@@ -152,7 +152,7 @@ export default {
         this.height = this.$el.offsetHeight
       })
       clearTimeout(timer)
-    }, 0);
+    }, 0)
   },
   methods: {
     getFilterProp(prop) {
@@ -241,16 +241,13 @@ export default {
   &__search{
     max-height: 32px;
     padding: 8px 10px;
-    color: #333;
     &.has-save{
       border-radius: 3px 0 0 3px;
     }
   }
   &__down{
-    border-left-color: transparent;
     padding:8px 5px;
     border-radius: 0 3px 3px 0;
-    color: #333;
   }
   &__tags{
     width: 100%;

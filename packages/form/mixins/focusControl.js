@@ -61,7 +61,7 @@ export default {
       const formItems = [...this.formItems]
       const index = formItems.findIndex(d => d.prop === obj.prop)
       if (obj.type === 'push') {
-        formItems.push(obj)
+        index < 0 ? formItems.push(obj) : formItems.splice(index, 1, obj)
       } else {
         formItems.splice(index, 1)
         const i = this.validators.findIndex(d => d.prop === obj.prop)
